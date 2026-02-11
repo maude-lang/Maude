@@ -49,12 +49,6 @@ FreeNullarySymbol::FreeNullarySymbol(int id)
 {
 }
 
-bool
-FreeNullarySymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  return DISC_NET.applyReplaceFast(subject, context);
-}
-
 void
 FreeNullarySymbol::reset()
 {

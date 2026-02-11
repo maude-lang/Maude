@@ -1,3 +1,17 @@
+2026-02-11  Saruman the White  <eker@eker10>
+
+	* freeNullarySymbol.hh (class FreeNullarySymbol): deleted decl for
+	eqRewrite()
+	(class FreeNullarySymbol): deleted data member cached - even
+	having this looks like a bug since we already derive from DagRoot
+
+	* freeNullarySymbol.cc (FreeNullarySymbol::eqRewrite): deleted
+
+	* freeSimpleSymbol.hh: deleted
+
+	* freeSymbol.cc (FreeSymbol::newFreeSymbol): don't use
+	FreeSimpleSymbol<> class template
+
 2026-01-30  Saruman the White  <eker@eker10>
 
 	* freeDagNode.hh (FreeDagNode::getArgument): take Index

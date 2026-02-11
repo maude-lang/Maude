@@ -33,12 +33,7 @@ class FreeNullarySymbol : public FreeSymbol, public DagRoot
 {
 public:
   FreeNullarySymbol(int id);
-
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
   void reset();
-
-private:
-  DagRoot cached;
 };
 
 #endif
