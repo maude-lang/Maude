@@ -101,6 +101,8 @@ private:
   void memoStrategy(MemoTable::SourceSet& from, DagNode* subject, RewritingContext& context);
 
   template<int n>
+  static bool eqRewriteCtorFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  template<int n>
   static bool eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   static bool eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context);
