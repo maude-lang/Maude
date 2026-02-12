@@ -1,5 +1,15 @@
 2026-02-11  Saruman the White  <eker@eker10>
 
+	* freeSymbol.hh (class FreeSymbol): added decl for function
+	template eqRewriteCtorFast()
+
+	* freeSymbol.cc (FreeSymbol::compileEquations): call
+	setEqRewrite() here
+	(FreeSymbol::FreeSymbol): don't call setEqRewrite() here
+	(FreeSymbol::eqRewriteCtorFast): added function template
+	(FreeSymbol::compileEquations): use eqRewriteCtorFast<>()
+	instantiations
+
 	* freeNullarySymbol.hh (class FreeNullarySymbol): deleted decl for
 	eqRewrite()
 	(class FreeNullarySymbol): deleted data member cached - even

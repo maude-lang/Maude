@@ -73,6 +73,15 @@
 
 template<int n>
 bool
+FreeSymbol::eqRewriteCtorFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return false;
+}
+
+template<int n>
+bool
 FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   Assert(symbol == subject->symbol(), "bad symbol");  
@@ -113,27 +122,14 @@ FreeSymbol::FreeSymbol(int id, int arity, const Vector<int>& strategy, bool memo
   : Symbol(id, arity, memoFlag)
 {
   setStrategy(strategy, arity, memoFlag);
-  if (arity <= 3 && standardStrategy())
-    {
-      if (arity == 0)
-	setEqRewrite(&eqRewriteFast<0>);
-      else if (arity == 1)
-	setEqRewrite(&eqRewriteFast<1>);
-      else if (arity == 2)
-	setEqRewrite(&eqRewriteFast<2>);
-      else if (arity == 3)
-	setEqRewrite(&eqRewriteFast<3>);
-   }
-  else
-    setEqRewrite(&eqRewriteSlow);
 }
 
 void
 FreeSymbol::compileEquations()
 {
   const Vector<Equation*>& equations = getEquations();
-  int nrEquations = equations.length();
-  for (int i = 0; i < nrEquations; i++)
+  Index nrEquations = equations.size();
+  for (Index i = 0; i < nrEquations; ++i)
     {
       Equation* e = equations[i];
       Term* p = e->getLhs();
@@ -141,9 +137,9 @@ FreeSymbol::compileEquations()
 	{
 	  e->compile(false);
 	  //
-	  //	Even though we pass compileLhs as false, if the equation has the variant property it will
-	  //	get compiled anyway and we need to reset the slot indices to make it safe to use them
-	  //	in constructing a discrimination net.
+	  //	Even though we pass compileLhs as false, if the equation has the variant
+	  //	property it will get compiled anyway and we need to reset the slot indices
+	  //	to make it safe to use them in constructing a discrimination net.
 	  //
 	  f->resetSlotIndices();
 	  f->setSlotIndex(0);
@@ -151,13 +147,68 @@ FreeSymbol::compileEquations()
       else
 	e->compile(true);  // foreign equation so compile lhs
     }
-
   FreePreNet n(false);
   n.buildNet(this);
   n.semiCompile(discriminationNet);
   //
   //	In future we will pick more specialized functions.
   //
+  if (standardStrategy())
+    {
+      if (nrEquations == 0)
+	{
+	  switch (arity())
+	    {
+	    case 0:
+	      {
+		setEqRewrite(&eqRewriteCtorFast<0>);
+		return;
+	      }
+	    case 1:
+	      {
+		setEqRewrite(&eqRewriteCtorFast<1>);
+		return;
+	      }
+	    case 2:
+	      {
+		setEqRewrite(&eqRewriteCtorFast<2>);
+		return;
+	      }
+	    case 3:
+	      {
+		setEqRewrite(&eqRewriteCtorFast<3>);
+		return;
+	      }
+	    }
+	}
+      else
+	{
+	  switch (arity())
+	    {
+	    case 0:
+	      {
+		setEqRewrite(&eqRewriteFast<0>);
+		return;
+	      }
+	    case 1:
+	      {
+		setEqRewrite(&eqRewriteFast<1>);
+		return;
+	      }
+	    case 2:
+	      {
+		setEqRewrite(&eqRewriteFast<2>);
+		return;
+	      }
+	    case 3:
+	      {
+		setEqRewrite(&eqRewriteFast<3>);
+		return;
+	      }
+	    }
+	}
+    }
+  setEqRewrite(&eqRewriteSlow);
 }
 
 Term*
