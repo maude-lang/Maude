@@ -42,6 +42,7 @@ public:
 				   int arity,
 				   const Vector<int>& strategy = standard,
 				   bool memoFlag = false);
+  bool lowArity() const;
 
   Term* makeTerm(const Vector<Term*>& args);
   DagNode* makeDagNode(const Vector<DagNode*>& args);
@@ -104,6 +105,8 @@ private:
   static bool eqRewriteCtorFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
   template<int n>
   static bool eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  template<int n>
+  static bool eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   static bool eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
@@ -126,6 +129,12 @@ FreeSymbol::tryEquations(DagNode* subject, RewritingContext& context)
   //
   Assert(this == subject->symbol(), "bad symbol");
   return discriminationNet.applyReplace(subject, context);
+}
+
+inline bool
+FreeSymbol::lowArity() const
+{
+  return arity() <= 3;  // HACK - should get this magic number in a clean way
 }
 
 #endif

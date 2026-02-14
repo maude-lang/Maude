@@ -72,6 +72,7 @@
 FreeNet::FreeNet()
 {
   fast = true;  // until we know otherwise
+  freeAndLowArity = true;  // assume all tested symbols are free and lowArity
 }
 
 FreeNet::~FreeNet()
@@ -85,7 +86,8 @@ int
 FreeNet::allocateNode(int nrMatchArcs)
 {
   //
-  //	We will need a real node for each exiting arc from the virtual node that is labeled with a symbol. 
+  //	We will need a real node for each exiting arc from the virtual node that is labeled
+  //	with a symbol. 
   //
   int len = net.length();
   net.resize(len + nrMatchArcs);
@@ -105,8 +107,15 @@ FreeNet::fillOutNode(int nodeNr,
   Vector<Triple> triples(nrSymbols);
   for (int i = 0; i < nrSymbols; i++)
     {
+      Symbol* s = symbols[i];
+      if (freeAndLowArity)
+	{
+	  FreeSymbol* fs = dynamic_cast<FreeSymbol*>(s);
+	  if (!fs || !(fs->lowArity()))
+	    freeAndLowArity = false;
+	}
       Assert(symbols[i] != 0, "null symbol");
-      triples[i].symbol = symbols[i];
+      triples[i].symbol = s;
       triples[i].slot = slots[i];
       triples[i].subtree = targets[i];
     }

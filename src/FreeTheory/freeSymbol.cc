@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -83,6 +83,15 @@ FreeSymbol::eqRewriteCtorFast(Symbol* symbol, DagNode* subject, RewritingContext
 template<int n>
 bool
 FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplace(subject, context);
+}
+
+template<int n>
+bool
+FreeSymbol::eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
@@ -183,28 +192,57 @@ FreeSymbol::compileEquations()
 	}
       else
 	{
-	  switch (arity())
+	  if (discriminationNet.onlyFreeLowAritySymbols())
 	    {
-	    case 0:
-	      {
-		setEqRewrite(&eqRewriteFast<0>);
-		return;
-	      }
-	    case 1:
-	      {
-		setEqRewrite(&eqRewriteFast<1>);
-		return;
-	      }
-	    case 2:
-	      {
-		setEqRewrite(&eqRewriteFast<2>);
-		return;
-	      }
-	    case 3:
-	      {
-		setEqRewrite(&eqRewriteFast<3>);
-		return;
-	      }
+	      switch (arity())
+		{
+		case 0:
+		  {
+		    setEqRewrite(&eqRewriteSuperFast<0>);
+		    return;
+		  }
+		case 1:
+		  {
+		    setEqRewrite(&eqRewriteSuperFast<1>);
+		    return;
+		  }
+		case 2:
+		  {
+		    setEqRewrite(&eqRewriteSuperFast<2>);
+		    return;
+		  }
+		case 3:
+		  {
+		    setEqRewrite(&eqRewriteSuperFast<3>);
+		    return;
+		  }
+		}
+	    }
+	  else
+	    {
+	      switch (arity())
+		{
+		case 0:
+		  {
+		    setEqRewrite(&eqRewriteFast<0>);
+		    return;
+		  }
+		case 1:
+		  {
+		    setEqRewrite(&eqRewriteFast<1>);
+		    return;
+		  }
+		case 2:
+		  {
+		    setEqRewrite(&eqRewriteFast<2>);
+		    return;
+		  }
+		case 3:
+		  {
+		    setEqRewrite(&eqRewriteFast<3>);
+		    return;
+		  }
+		}
 	    }
 	}
     }

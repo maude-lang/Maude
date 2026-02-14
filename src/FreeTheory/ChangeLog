@@ -1,3 +1,24 @@
+2026-02-13  Saruman the White  <eker@eker10>
+
+	* freeNetExec.cc (FreeNet::applyReplaceFast2): assume that any
+	symbol whose argument list is stored, has internal storage
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteFast): use applyReplace()
+	instead of applyReplaceFast()
+
+	* freeNet.hh (class FreeNet): added data member freeAndLowArity
+
+	* freeSymbol.cc (FreeSymbol::compileEquations): support
+	eqRewriteSuperFast<>()
+	(FreeSymbol::eqRewriteSuperFast): added function template
+
+	* freeNet.hh (FreeNet::onlyFreeLowAritySymbols): added
+
+	* freeSymbol.hh (FreeSymbol::lowArity): added
+
+	* freeNet.cc (FreeNet::FreeNet): initialize freeAndLowArity
+	(FreeNet::fillOutNode): update freeAndLowArity
+
 2026-02-11  Saruman the White  <eker@eker10>
 
 	* freeSymbol.hh (class FreeSymbol): added decl for function
