@@ -105,7 +105,7 @@ FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols.
+  //	binary and ternary top symbols in the discrimination net.
   //
   long i;
   DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
@@ -139,7 +139,7 @@ FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
 	    {
 	      long s = n->slot;
 	      if (s >= 0)
-		stackBase[s] = static_cast<FreeDagNode*>(d)->argArray();
+		stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
 	      i = n->equal;
 	      if (i <= 0)
 		break;

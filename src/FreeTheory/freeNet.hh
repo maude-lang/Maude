@@ -53,6 +53,7 @@ public:
   void buildRemainders(const Vector<Equation*>& equations,
 		       const PatternSet& patternsUsed,
 		       const Vector<int>& slotTranslation);
+  bool onlyFreeLowAritySymbols() const;
   //
   //	Functions to use a FreeNet.
   //
@@ -120,6 +121,7 @@ private:
   Vector<FreeRemainder*> remainders;
   Vector<PatternSet> applicable;
   bool fast;
+  bool freeAndLowArity;
 
   friend class FreeInstruction;
   friend class FreeGeneralExtor;
@@ -148,6 +150,12 @@ inline bool
 FreeNet::fastHandling() const
 {
   return fast;
+}
+
+inline bool
+FreeNet::onlyFreeLowAritySymbols() const
+{
+  return freeAndLowArity;
 }
 
 #endif
