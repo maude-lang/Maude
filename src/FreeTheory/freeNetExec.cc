@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 
 bool
 FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
-{
+{ 
   //
   //	First traverse discrimination net to find the sequence of equations
   //	(actually remainder pointers) which match the free symbol skeleton in the
@@ -93,7 +93,7 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
   const FreeRemainder* r = *p;
   do
     {
-      if (r->fastMatchReplace(subject, context, stack))
+      if (r->generalMatchReplace(subject, context, stack))
 	return true;
     }
   while ((r = *(++p)) != 0);
@@ -101,7 +101,7 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
 }
 
 bool
-FreeNet::applyReplaceFast2(DagNode* subject, RewritingContext& context)
+FreeNet::applyReplaceFast(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
@@ -237,7 +237,7 @@ FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
     {
       if (r->isOwise())
 	break;
-      if (r->fastMatchReplace(subject, context, stack))
+      if (r->generalMatchReplace(subject, context, stack))
 	return true;
     }
   while ((r = *(++p)) != 0);

@@ -48,6 +48,9 @@ public:
   FreeRemainder(Equation* eqn);  // trivial FreeRemainder for foreign equations
   ~FreeRemainder();
 
+  bool generalMatchReplace(DagNode* subject,
+			   RewritingContext& context,
+			   Vector<DagNode**>& stack) const;
   bool fastMatchReplace(DagNode* subject,
 			RewritingContext& context,
 			Vector<DagNode**>& stack) const;
@@ -125,8 +128,55 @@ FreeRemainder::fastMatchReplace(DagNode* subject,
 	      context.bind(i.varIndex, d);
 	    }
 	}
+      else
+	{
+	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
+	  for (const FreeVariable& i : freeVariables)
+	    {
+	      DagNode* d = stackBase[i.position][i.argIndex];
+	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
+	      if (d->fastLeq(i.sort))
+		context.bind(i.varIndex, d);
+	      else
+		return false;
+	    }
+	}
+      equation->getRhsBuilder().replace(subject, context);
+      context.incrementEqCount();
+      MemoryCell::okToCollectGarbage();
+      return true;
+    }
+  return slowMatchReplace(subject, context, stack);
+}
+
+inline bool 
+FreeRemainder::generalMatchReplace(DagNode* subject,
+				RewritingContext& context,
+				Vector<DagNode**>& stack) const
+{
+  //
+  //	We handle general case, including the "super-fast" and "fast" cases.
+  //	
+  if (!(RewritingContext::getTraceStatus()))
+    {
+      if (fast > 0)
+	{
+	  //
+	  //	Super-fast case: bind variables without sort check.
+	  //
+	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
+	  for (const FreeVariable& i : freeVariables)
+	    {
+	      DagNode* d = stackBase[i.position][i.argIndex];
+	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
+	      context.bind(i.varIndex, d);
+	    }
+	}
       else if (fast < 0)
 	{
+	  //
+	  //	Fast case: bind variables after fast sort check.
+	  //
 	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
 	  for (const FreeVariable& i : freeVariables)
 	    {

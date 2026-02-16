@@ -1,3 +1,41 @@
+2026-02-15  Saruman the White  <eker@eker10>
+
+	* freeSymbol.hh (class FreeSymbol): delete decl for eqRewrite()
+
+	* freeSymbol.cc (FreeSymbol::eqRewrite): deleted
+
+	* freeNetExec.cc (FreeNet::applyReplaceFast2): renamed to
+	applyReplaceFast()
+
+	* freeNet.hh (FreeNet::applyReplaceFast): deleted
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteCtorFast): added comment
+	(FreeSymbol::eqRewriteFast): added comment
+	(FreeSymbol::eqRewriteSuperFast): added comment
+
+	* freeNetExec.cc (FreeNet::applyReplaceFast2): use
+	fastMatchReplace()
+
+	* freeSymbol.cc (FreeSymbol::compileEquations): only use
+	eqRewriteSuperFast<>() if discrimination has fastHandling()
+
+	* freeRemainder.hh (class FreeRemainder): added decl for
+	generalMatchReplace()
+
+	* freeNetExec.cc (FreeNet::applyReplaceNoOwise2): use
+	generalMatchReplace() rather than fastMatchReplace()
+	(FreeNet::applyReplaceFast2): ditto
+	(FreeNet::applyReplace2): ditto
+
+	* freeRemainder.hh (FreeRemainder::fastMatchReplace): renamed to
+	generalMatchReplace()
+	(FreeRemainder::fastMatchReplace): don't handle general case
+
+	* freeRemainder.cc (FreeRemainder::slowMatchReplace2):
+	local_inline -> inline
+	(FreeRemainder::slowMatchReplace2): added comment
+	(FreeRemainder::slowMatchReplace): added comment
+
 2026-02-13  Saruman the White  <eker@eker10>
 
 	* freeNetExec.cc (FreeNet::applyReplaceFast2): assume that any

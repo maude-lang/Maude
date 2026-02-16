@@ -47,7 +47,6 @@ public:
   Term* makeTerm(const Vector<Term*>& args);
   DagNode* makeDagNode(const Vector<DagNode*>& args);
   void compileEquations();
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
   void computeBaseSort(DagNode* subject);
   void normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& context);
   void stackArguments(DagNode* subject,

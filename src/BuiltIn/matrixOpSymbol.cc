@@ -378,5 +378,5 @@ MatrixOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   //
   //	NumberOpSymbol doesn't know how to deal with this.
   //
-  return FreeSymbol::eqRewrite(subject, context);tryEquations(subject, context);
+  return tryEquations(subject, context);
 }
