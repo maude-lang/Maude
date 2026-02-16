@@ -1,3 +1,8 @@
+2026-02-15  Saruman the White  <eker@eker10>
+
+	* metaLevelOpSymbol.cc (MetaLevelOpSymbol::complexStrategy): use
+	tryEquations() instead of FreeSymbol::eqRewrite()
+
 2026-02-10  Saruman the White  <eker@eker10>
 
 	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decls for

@@ -75,6 +75,10 @@ template<int n>
 bool
 FreeSymbol::eqRewriteCtorFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
+  //
+  //	Symbol has 0, 1, 2 or 3 arguments, standard strategy and no equations.
+  //	We reduce the arguments using the unroller idiom and then return false.
+  //
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
   return false;
@@ -84,6 +88,11 @@ template<int n>
 bool
 FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
+  //
+  //	Symbol has 0, 1, 2 or 3 arguments and standard strategy and equations.
+  //	We reduce the arguments using the unroller idiom and use
+  //	discrimination applyReplace()
+  //
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
   return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplace(subject, context);
@@ -93,6 +102,23 @@ template<int n>
 bool
 FreeSymbol::eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
+  //
+  //	Symbol has 0, 1, 2 or 3 arguments and standard strategy and equations.
+  //
+  //	Furthermore, all symbols in the discrimination net are both free
+  //	and have arity 0, 1, 2 or 3.
+  //
+  //	Furthermore, all equations are fast:
+  //    * have a lhs that parses into a non-error sort
+  //	* be left linear
+  //	* be unconditional
+  //	* have no "problem" variables (bound from a lazy position)
+  //	* have the sort of each variable qualify with fastGeqSufficient()
+  //	* not foreign; i.e. have a foreign symbol on top that can collapse into our theory
+  //
+  //	We reduce the arguments using the unroller idiom and use
+  //	discrimination applyReplaceFast()
+  //
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
   return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplaceFast(subject, context);
@@ -166,6 +192,7 @@ FreeSymbol::compileEquations()
     {
       if (nrEquations == 0)
 	{
+	  //cout << "ctor " << this << endl;
 	  switch (arity())
 	    {
 	    case 0:
@@ -192,8 +219,9 @@ FreeSymbol::compileEquations()
 	}
       else
 	{
-	  if (discriminationNet.onlyFreeLowAritySymbols())
+	  if (discriminationNet.onlyFreeLowAritySymbols() && discriminationNet.fastHandling())
 	    {
+	      //cout << "super fast " << this << endl;
 	      switch (arity())
 		{
 		case 0:
@@ -220,6 +248,7 @@ FreeSymbol::compileEquations()
 	    }
 	  else
 	    {
+	      //cout << "fast " << this << endl;
 	      switch (arity())
 		{
 		case 0:
@@ -246,6 +275,7 @@ FreeSymbol::compileEquations()
 	    }
 	}
     }
+  //cout << "setEqRewrite() " << this << endl;
   setEqRewrite(&eqRewriteSlow);
 }
 
@@ -263,22 +293,6 @@ FreeSymbol::makeDagNode(const Vector<DagNode*>& args)
   for (int i = arity() - 1; i >= 0; i--)
     args2[i] = args[i];
   return f;
-}
-
-bool
-FreeSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  // cout << "attempting " << this << "\n";
-  Assert(this == subject->symbol(), "bad symbol");  
-  if (standardStrategy())
-    {
-      int nrArgs = arity();
-      DagNode* const* args = static_cast<FreeDagNode*>(subject)->argArray();
-      for (int i = nrArgs; i > 0; i--, args++)
-        (*args)->reduce(context);
-      return DISC_NET.applyReplace(subject, context);
-    }
-  return complexStrategy(subject, context);
 }
 
 bool

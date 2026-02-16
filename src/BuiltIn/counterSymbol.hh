@@ -43,7 +43,6 @@ protected:
 			  Vector<Vector<const char*> >& data);
   void compileEquations();
   void resetRules();
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
   DagNode* ruleRewrite(DagNode* subject, RewritingContext& context);
 
 private:

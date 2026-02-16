@@ -329,5 +329,5 @@ MetaLevelOpSymbol::complexStrategy(DagNode* subject, RewritingContext& context)
       else
 	d->getArgument(a - 1)->reduce(context);
     }
-  return (this->*descentFunction)(d, context) || FreeSymbol::eqRewrite(subject, context);
+  return (this->*descentFunction)(d, context) || tryEquations(subject, context);
 }

@@ -86,19 +86,10 @@ void
 CounterSymbol::compileEquations()
 {
   //
-  //	Needed to avoid calling NumberOpSymbol::compileEquations()
+  //	Needed to avoid calling NumberOpSymbol::compileEquations(), because
+  //	NumberOpSymbol::eqRewrite() doesn't understand us.
   //
   FreeSymbol::compileEquations();
-}
-
-bool
-CounterSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  //
-  //	Jump straight to FreeSymbol as NumberOpSymbol doesn't know how to deal with this.
-  //	Needed to avoid calling NumberOpSymbol::eqRewrite()
-  //
-  return FreeSymbol::eqRewrite(subject, context);
 }
 
 DagNode* 

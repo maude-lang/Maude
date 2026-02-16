@@ -206,11 +206,16 @@ FreeRemainder::~FreeRemainder()
     delete nonGroundAliens[i].automaton;
 }
 
-local_inline bool 
+inline bool 
 FreeRemainder::slowMatchReplace2(DagNode* subject,
 				 RewritingContext& context,
 				 Vector<DagNode**>& stack) const
 {
+  //
+  //	The only reason for having this as separate function is to have
+  //	many returns, each of which exits through the slowMatchReplace()
+  //	code
+  //
   Subproblem* subproblem = 0;  // need to zero subproblem here since later code may not initialize it
   if (foreign)
     {
@@ -345,6 +350,9 @@ FreeRemainder::slowMatchReplace(DagNode* subject,
 				RewritingContext& context,
 				Vector<DagNode**>& stack) const
 {
+  //
+  //	Wrapper around slowMatchReplace2().
+  //
   context.clear(equation->getNrProtectedVariables());
   bool r = slowMatchReplace2(subject, context, stack);
   context.finished();

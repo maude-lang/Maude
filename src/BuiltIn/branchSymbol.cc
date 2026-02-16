@@ -204,7 +204,7 @@ BranchSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   //
   for (int i = 1; i <= nrTerms; i++)
     f->getArgument(i)->reduce(context);
-  return FreeSymbol::eqRewrite(subject, context);
+  return tryEquations(subject, context);
 }
 
 void
