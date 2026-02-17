@@ -4018,7 +4018,8 @@
 	* searchState.hh (setInitialSubstitution): move here and
 	rewritten; we now take responsibility for delete the substitution info
 
-	* searchState.cc (~SearchState): delete context, don't call context.finished()
+	* searchState.cc (~SearchState): delete context, don't call
+	context.finished()
 	(SearchState): changed handling of context
 	(findNextRewrite): changed handling of context
 	(getResult): changed handling of context
@@ -5009,7 +5010,7 @@
 
 	* sortConstraintTable.cc (orderSortConstraints): use STL sort function
 	(compareSortConstraints): becomes sortConstraintLeq()
-	
+
 ===================================Engine50==================================================
 
 1999-06-25  Steven Eker  <eker@goo.csl.sri.com>

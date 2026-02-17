@@ -219,7 +219,8 @@ FreeSymbol::compileEquations()
 	}
       else
 	{
-	  if (discriminationNet.onlyFreeLowAritySymbols() && discriminationNet.fastHandling())
+	  if (discriminationNet.onlyFreeLowAritySymbols() &&
+	      discriminationNet.getSpeed() != FreeRemainder::SLOW)
 	    {
 	      //cout << "super fast " << this << endl;
 	      switch (arity())
@@ -627,7 +628,7 @@ FreeSymbol::makeCanonicalCopy(DagNode* original, HashConsSet* hcs)
 Instruction*
 FreeSymbol::generateFinalInstruction(const Vector<int>& argumentSlots)
 {
-  if (!(discriminationNet.fastHandling()))
+  if (discriminationNet.getSpeed() == FreeRemainder::SLOW)
     return new FreeGeneralExtorFinal(this, argumentSlots);
 
   int nrArgs = arity();
@@ -655,7 +656,7 @@ FreeSymbol::generateFinalInstruction(const Vector<int>& argumentSlots)
 Instruction*
 FreeSymbol::generateInstruction(int destination, const Vector<int>& argumentSlots, Instruction* nextInstruction)
 {
-  if (!(discriminationNet.fastHandling()))
+  if (discriminationNet.getSpeed() == FreeRemainder::SLOW)
     return new FreeGeneralExtor(this, argumentSlots, destination, nextInstruction);
 
   int nrArgs = arity();
