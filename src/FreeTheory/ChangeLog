@@ -1,3 +1,32 @@
+2026-02-17  Saruman the White  <eker@eker10>
+
+	* freeNet.cc (FreeNet::buildRemainders): simplified using speed
+	rather than fast
+	(FreeNet::tripleLt): local_inline -> inline
+
+	* freeSymbol.cc (FreeSymbol::compileEquations): use getSpeed()
+	rather than fastHandling
+	(FreeSymbol::generateFinalInstruction): ditto
+	(FreeSymbol::generateInstruction): ditto
+
+	* freeNet.cc (FreeNet::FreeNet): init speed rather than fast
+
+	* freeNet.hh (FreeNet::fastHandling): replaced by getSpeed()
+	(class FreeNet): replaced data member fast by speed
+
+	* freeRemainder.cc (FreeRemainder::FreeRemainder): replace fast
+	with speed
+	(FreeRemainder::dump): replace fast with speed
+
+	* freeRemainder.hh (enum Speed): added
+	(lowest): added
+	(FreeRemainder::fastHandling): replaced by getSpeed()
+	(FreeRemainder::fastMatchReplace)
+	(FreeRemainder::generalMatchReplace)
+	(FreeRemainder::fastCheckAndBind)
+	(FreeRemainder::generalCheckAndBind): use speed rather than fast
+	data member
+
 2026-02-15  Saruman the White  <eker@eker10>
 
 	* freeSymbol.hh (class FreeSymbol): delete decl for eqRewrite()

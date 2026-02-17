@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
   //	Preliminary determination of whether remainder will qualify
   //	for "fast" or "super-fast" runtime treatment
   //
-  fast = !(eqn->hasCondition());
+  speed = eqn->hasCondition() ? SLOW : SUPER_FAST;
   {
     //
     //  Variables that will be unbound.
@@ -102,14 +102,11 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         freeVariables[i].varIndex = v->getIndex();
 	Sort* sort = v->getSort();
 	if (!(sort->fastGeqSufficient()))
-	  fast = false;  // need slow handling for full sort check
+	  speed = SLOW;  // need slow handling for full sort check
 	else
 	  {
-	    if (fast > 0)  // currently super-fast
-	      {
-		if (!(sort->errorFreeMaximal()))
-		  fast = -1;  // downgrade super-fast to fast
-	      }
+	    if (speed == SUPER_FAST && !(sort->errorFreeMaximal()))
+	      speed = FAST;
 	  }
         freeVariables[i].sort = sort;
       }
@@ -153,7 +150,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         boundVariables[i].position = slotTranslation[parent->getSlotIndex()];
         boundVariables[i].argIndex = oc.argIndex();
         boundVariables[i].varIndex = v->getIndex();
-	fast = false;  // need slow handling if there are nonlinear variables
+	speed = SLOW;  // need slow handling if there are nonlinear variables
       }
   }
   {
@@ -170,7 +167,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         groundAliens[i].position = slotTranslation[parent->getSlotIndex()];
         groundAliens[i].argIndex = oc.argIndex();
         groundAliens[i].alien = oc.term();
-	fast = false;  // need slow handling if there are alien subterms
+	speed = SLOW;  // need slow handling if there are alien subterms
       }
   }
   {
@@ -187,7 +184,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
         nonGroundAliens[i].position = slotTranslation[parent->getSlotIndex()];
         nonGroundAliens[i].argIndex = oc.argIndex();
         nonGroundAliens[i].automaton = subAutomata[i];
-	fast = false;  // need slow handling if there are alien subterms
+	speed = SLOW;  // need slow handling if there are alien subterms
       }
   }
 }
@@ -196,7 +193,7 @@ FreeRemainder::FreeRemainder(Equation* eqn)
  : foreign(true),
    equation(eqn)
 {
-  fast = false;
+  speed = SLOW;
 }
 
 FreeRemainder::~FreeRemainder()
@@ -426,7 +423,7 @@ FreeRemainder::dump(ostream& s, int indentLevel)
   s << Indent(indentLevel) << "Begin{FreeRemainder}\n";
   ++indentLevel;
   equation->dump(s, indentLevel);
-  s << Indent(indentLevel) << "fast = " << static_cast<int>(fast) << "\tforeign = " << foreign << '\n';
+  s << Indent(indentLevel) << "speed = " << speed << "\tforeign = " << foreign << '\n';
   s << Indent(indentLevel) << "freeVariables:\n";
   ++indentLevel;
   int nrRealVariables = equation->getNrRealVariables();

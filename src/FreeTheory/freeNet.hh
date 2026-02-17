@@ -64,7 +64,7 @@ public:
   //	For stack machine execution.
   //
   long findRemainderListIndex(DagNode** argumentList);
-  bool fastHandling() const;
+  FreeRemainder::Speed getSpeed() const;
 
 #ifdef DUMP
   void dump(ostream& s, int indentLevel = 0);
@@ -120,7 +120,7 @@ private:
   Vector<Vector<FreeRemainder*> > fastApplicable;
   Vector<FreeRemainder*> remainders;
   Vector<PatternSet> applicable;
-  bool fast;
+  FreeRemainder::Speed speed;
   bool freeAndLowArity;
 
   friend class FreeInstruction;
@@ -140,10 +140,10 @@ FreeNet::applyReplaceNoOwise(DagNode* subject, RewritingContext& context)
   return !applicable.isNull() ? applyReplaceNoOwise2(subject, context) : false;
 }
 
-inline bool
-FreeNet::fastHandling() const
+inline FreeRemainder::Speed
+FreeNet::getSpeed() const
 {
-  return fast;
+  return speed;
 }
 
 inline bool

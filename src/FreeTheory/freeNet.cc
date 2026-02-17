@@ -71,7 +71,7 @@
 
 FreeNet::FreeNet()
 {
-  fast = true;  // until we know otherwise
+  speed = FreeRemainder::SUPER_FAST;  // until we know otherwise
   freeAndLowArity = true;  // assume all tested symbols are free and lowArity
 }
 
@@ -161,21 +161,11 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
   for (int i : patternsUsed)
     {
       Equation* e = equations[i];
-      if (FreeTerm* f = dynamic_cast<FreeTerm*>(e->getLhs()))
-	{
-	  FreeRemainder* r = f->compileRemainder(e, slotTranslation);
-	  remainders[i] = r;
-	  //
-	  //	If a remainder doesn't have fast handling, neither can the discrimination net.
-	  //
-	  if (!(r->fastHandling()))
-	    fast = false;
-	}
-      else
-	{
-	  remainders[i] = new FreeRemainder(e);  // remainder for "foreign" equation
-	  fast = false;  // a foreign equation always disables fast handling for the net
-	}
+      FreeTerm* f = dynamic_cast<FreeTerm*>(e->getLhs());
+      FreeRemainder* r = f ? f->compileRemainder(e, slotTranslation) :
+	new FreeRemainder(e);  // remainder for "foreign" equation
+      speed = FreeRemainder::lowest(speed, r->getSpeed());
+      remainders[i] = r;
     }
   //
   //	Build null terminated pointer version of applicable for added speed.
@@ -194,7 +184,7 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
     }
 }
 
-local_inline bool
+inline bool
 FreeNet::tripleLt(const Triple& p1, const Triple& p2)
 {
   return p1.symbol->getIndexWithinModule() < p2.symbol->getIndexWithinModule();
