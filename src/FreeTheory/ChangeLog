@@ -1,5 +1,32 @@
 2026-02-17  Saruman the White  <eker@eker10>
 
+	* freeSymbol.hh (class FreeSymbol): eqRewriteCtorFast<>() ->
+	eqRewriteCtorUnroll<>()
+	(class FreeSymbol): added decl for eqRewriteUnroll<>()
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteCtorFast): becomes
+	eqRewriteCtorUnroll<>()
+	(FreeSymbol::chooseEqRewriteFunction): added
+	(FreeSymbol::compileEquations): use chooseEqRewriteFunction()
+
+	* freeNet.hh (class FreeNet): deleted decl for applyReplaceFast2()
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteFast): becomes
+	eqRewriteUnroll<>()
+	(FreeSymbol::eqRewriteSuperFast): becomes eqRewriteFast<>()
+	(FreeSymbol::eqRewriteSuperFast): added
+
+	* freeNet.hh (class FreeNet): applyReplaceFast() decl ->
+	(class FreeNet): added decl for superFastApplyReplace()
+
+	* freeNetExec.cc (FreeNet::applyReplaceFast): becomes
+	fastApplyReplace()
+	(FreeNet::superFastApplyReplace): added
+
+	* freeRemainder.hh (FreeRemainder::fastMatchReplace): only handle
+	fast case and general case (if we're tracing)
+	(FreeRemainder::superFastMatchReplace): added
+
 	* freeNet.cc (FreeNet::buildRemainders): simplified using speed
 	rather than fast
 	(FreeNet::tripleLt): local_inline -> inline

@@ -57,7 +57,6 @@
 #include "freePreNet.hh"
 #include "freeNet.hh"
 #include "freeSymbol.hh"
-//#include "freeSimpleSymbol.hh"
 #include "freeNullarySymbol.hh"
 #include "freeDagNode.hh"
 #include "freeOccurrence.hh"
@@ -73,7 +72,7 @@
 
 template<int n>
 bool
-FreeSymbol::eqRewriteCtorFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+FreeSymbol::eqRewriteCtorUnroll(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   //
   //	Symbol has 0, 1, 2 or 3 arguments, standard strategy and no equations.
@@ -86,12 +85,11 @@ FreeSymbol::eqRewriteCtorFast(Symbol* symbol, DagNode* subject, RewritingContext
 
 template<int n>
 bool
-FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+FreeSymbol::eqRewriteUnroll(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   //
   //	Symbol has 0, 1, 2 or 3 arguments and standard strategy and equations.
-  //	We reduce the arguments using the unroller idiom and use
-  //	discrimination applyReplace()
+  //	We reduce the arguments using the unroller idiom and use applyReplace()
   //
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
@@ -100,7 +98,7 @@ FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& co
 
 template<int n>
 bool
-FreeSymbol::eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   //
   //	Symbol has 0, 1, 2 or 3 arguments and standard strategy and equations.
@@ -108,20 +106,34 @@ FreeSymbol::eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContex
   //	Furthermore, all symbols in the discrimination net are both free
   //	and have arity 0, 1, 2 or 3.
   //
-  //	Furthermore, all equations are fast:
+  //	Furthermore, all used remainders are are FAST or SUPER_FAST:
   //    * have a lhs that parses into a non-error sort
   //	* be left linear
   //	* be unconditional
   //	* have no "problem" variables (bound from a lazy position)
   //	* have the sort of each variable qualify with fastGeqSufficient()
-  //	* not foreign; i.e. have a foreign symbol on top that can collapse into our theory
+  //	* not foreign (already ruled out by all symbols in the net being free)
   //
-  //	We reduce the arguments using the unroller idiom and use
-  //	discrimination applyReplaceFast()
+  //	We reduce the arguments using the unroller idiom and use fastApplyReplaceFast()
   //
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
-  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.applyReplaceFast(subject, context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.fastApplyReplace(subject, context);
+}
+
+template<int n>
+bool
+FreeSymbol::eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  //
+  //	All the requirements for eqRewriteFast() but also all used remainders are
+  //	SUPER_FAST - i.e. sorts of terms bound to variable need not be checked.
+  //
+  //	We reduce the arguments using the unroller idiom and use superFastapplyReplace()
+  //
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.superFastApplyReplace(subject, context);
 }
 
 bool
@@ -185,99 +197,102 @@ FreeSymbol::compileEquations()
   FreePreNet n(false);
   n.buildNet(this);
   n.semiCompile(discriminationNet);
+  setEqRewrite(chooseEqRewriteFunction());
+}
+
+EqRewriter::EqRewriteFunctionPtr
+FreeSymbol::chooseEqRewriteFunction() const
+{
   //
-  //	In future we will pick more specialized functions.
+  //	Pick a specialized function to do the equational rewriting.
+  //	We have 16 fast functions and a backstop.
   //
   if (standardStrategy())
     {
-      if (nrEquations == 0)
+      //
+      //	We only optimize in the standard strategy case.
+      //
+      if (getEquations().size() == 0)
 	{
+	  //
+	  //	Pure constructor case.
+	  //
 	  //cout << "ctor " << this << endl;
 	  switch (arity())
 	    {
 	    case 0:
-	      {
-		setEqRewrite(&eqRewriteCtorFast<0>);
-		return;
-	      }
+	      return &eqRewriteCtorUnroll<0>;
 	    case 1:
-	      {
-		setEqRewrite(&eqRewriteCtorFast<1>);
-		return;
-	      }
+	      return &eqRewriteCtorUnroll<1>;
 	    case 2:
-	      {
-		setEqRewrite(&eqRewriteCtorFast<2>);
-		return;
-	      }
+	      return &eqRewriteCtorUnroll<2>;
 	    case 3:
-	      {
-		setEqRewrite(&eqRewriteCtorFast<3>);
-		return;
-	      }
+	      return &eqRewriteCtorUnroll<3>;
 	    }
 	}
       else
 	{
-	  if (discriminationNet.onlyFreeLowAritySymbols() &&
-	      discriminationNet.getSpeed() != FreeRemainder::SLOW)
+	  if (discriminationNet.onlyFreeLowAritySymbols())
 	    {
-	      //cout << "super fast " << this << endl;
-	      switch (arity())
+	      //
+	      //	The descrimination net only has low arity free symbols.
+	      //	See if we qualify for FAST or SUPER_FAST execution.
+	      //
+	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
 		{
-		case 0:
-		  {
-		    setEqRewrite(&eqRewriteSuperFast<0>);
-		    return;
-		  }
-		case 1:
-		  {
-		    setEqRewrite(&eqRewriteSuperFast<1>);
-		    return;
-		  }
-		case 2:
-		  {
-		    setEqRewrite(&eqRewriteSuperFast<2>);
-		    return;
-		  }
-		case 3:
-		  {
-		    setEqRewrite(&eqRewriteSuperFast<3>);
-		    return;
-		  }
+		  //cout << "fast " << this << endl;
+		  switch (arity())
+		    {
+		    case 0:
+		      return &eqRewriteFast<0>;
+		    case 1:
+		      return &eqRewriteFast<1>;
+		    case 2:
+		      return &eqRewriteFast<2>;
+		    case 3:
+		      return &eqRewriteFast<3>;
+		    default:
+		      CantHappen("arity = " << arity() << " in low arity branch");
+		    }
+		}
+	      if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
+		{
+		  //cout << "super-fast " << this << endl;
+		  switch (arity())
+		    {
+		    case 0:
+		      return &eqRewriteSuperFast<0>;
+		    case 1:
+		      return &eqRewriteSuperFast<1>;
+		    case 2:
+		      return &eqRewriteSuperFast<2>;
+		    case 3:
+		      return &eqRewriteSuperFast<3>;
+		    default:
+		      CantHappen("arity = " << arity() << " in low arity branch");
+		    }
 		}
 	    }
-	  else
+	  //
+	  //	Might still be able to use the unroller idiom for to reduce arguments.
+	  //
+	  switch (arity())
 	    {
-	      //cout << "fast " << this << endl;
-	      switch (arity())
-		{
-		case 0:
-		  {
-		    setEqRewrite(&eqRewriteFast<0>);
-		    return;
-		  }
-		case 1:
-		  {
-		    setEqRewrite(&eqRewriteFast<1>);
-		    return;
-		  }
-		case 2:
-		  {
-		    setEqRewrite(&eqRewriteFast<2>);
-		    return;
-		  }
-		case 3:
-		  {
-		    setEqRewrite(&eqRewriteFast<3>);
-		    return;
-		  }
-		}
+	    case 0:
+	      return &eqRewriteUnroll<0>;
+	    case 1:
+	      return &eqRewriteUnroll<1>;
+	    case 2:
+	      return &eqRewriteUnroll<2>;
+	    case 3:
+	      return &eqRewriteUnroll<3>;
 	    }
 	}
     }
-  //cout << "setEqRewrite() " << this << endl;
-  setEqRewrite(&eqRewriteSlow);
+  //
+  //	The backstop.
+  //
+  return &eqRewriteSlow;
 }
 
 Term*
