@@ -110,6 +110,11 @@ private:
   template<int n>
   static bool eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
+  template<int n>
+  static bool eqRewriteNullNetFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  template<int n>
+  static bool eqRewriteNullNetSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
+
   static bool eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
 protected:
