@@ -236,6 +236,7 @@ FreeSymbol::chooseEqRewriteFunction() const
 	    {
 	      //
 	      //	The descrimination net only has low arity free symbols.
+	      //	This doesn't imply that we are low arity.
 	      //	See if we qualify for FAST or SUPER_FAST execution.
 	      //
 	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
@@ -251,9 +252,8 @@ FreeSymbol::chooseEqRewriteFunction() const
 		      return &eqRewriteFast<2>;
 		    case 3:
 		      return &eqRewriteFast<3>;
-		    default:
-		      CantHappen("arity = " << arity() << " in low arity branch");
 		    }
+		  return &eqRewriteSlow;
 		}
 	      if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
 		{
@@ -268,9 +268,8 @@ FreeSymbol::chooseEqRewriteFunction() const
 		      return &eqRewriteSuperFast<2>;
 		    case 3:
 		      return &eqRewriteSuperFast<3>;
-		    default:
-		      CantHappen("arity = " << arity() << " in low arity branch");
 		    }
+		  return &eqRewriteSlow;
 		}
 	    }
 	  //
