@@ -123,6 +123,18 @@ FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& co
 
 template<int n>
 bool
+FreeSymbol::eqRewriteNullNetFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Degenerate case of the above when the discrimination net is empty.
+  //
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.fastNullNet(subject, context);
+}
+
+template<int n>
+bool
 FreeSymbol::eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   //
@@ -134,6 +146,18 @@ FreeSymbol::eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContex
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
   return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.superFastApplyReplace(subject, context);
+}
+
+template<int n>
+bool
+FreeSymbol::eqRewriteNullNetSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Degenerate case of the above when the discrimination net is empty.
+  //
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.superFastNullNet(subject, context);
 }
 
 bool
@@ -205,7 +229,7 @@ FreeSymbol::chooseEqRewriteFunction() const
 {
   //
   //	Pick a specialized function to do the equational rewriting.
-  //	We have 16 fast functions and a backstop.
+  //	We have 24 fast functions and a backstop.
   //
   if (standardStrategy())
     {
@@ -232,7 +256,45 @@ FreeSymbol::chooseEqRewriteFunction() const
 	}
       else
 	{
-	  if (discriminationNet.onlyFreeLowAritySymbols())
+	  if (discriminationNet.emptyNet())
+	    {
+	      //
+	      //	Nothing to match; we only have remainders.
+	      //
+	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
+		{
+		  //cout << "null net fast " << this << endl;
+		  switch (arity())
+		    {
+		    case 0:
+		      return &eqRewriteNullNetFast<0>;
+		    case 1:
+		      return &eqRewriteNullNetFast<1>;
+		    case 2:
+		      return &eqRewriteNullNetFast<2>;
+		    case 3:
+		      return &eqRewriteNullNetFast<3>;
+		    }
+		  return &eqRewriteSlow;
+		}
+	      if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
+		{
+		  //cout << "null net super-fast " << this << endl;
+		  switch (arity())
+		    {
+		    case 0:
+		      return &eqRewriteNullNetSuperFast<0>;
+		    case 1:
+		      return &eqRewriteNullNetSuperFast<1>;
+		    case 2:
+		      return &eqRewriteNullNetSuperFast<2>;
+		    case 3:
+		      return &eqRewriteNullNetSuperFast<3>;
+		    }
+		  return &eqRewriteSlow;
+		}
+	    }
+	  else if (discriminationNet.onlyFreeLowAritySymbols())
 	    {
 	      //
 	      //	The descrimination net only has low arity free symbols.

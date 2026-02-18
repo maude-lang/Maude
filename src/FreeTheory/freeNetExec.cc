@@ -105,55 +105,50 @@ FreeNet::fastApplyReplace(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols in the discrimination net.
+  //	binary and ternary top symbols in the  (non-empty) discrimination net.
   //	Also all our remainders must be FAST or SUPER-FAST.
   //
   long i;
   DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
   stack[0] = topArgArray;
-  if (!(net.isNull()))  // at least one pattern has free symbols
+  Vector<TestNode>::const_iterator netBase = net.begin();
+  Vector<TestNode>::const_iterator n = netBase;
+  Vector<DagNode**>::iterator stackBase = stack.begin();
+  DagNode* d = topArgArray[n->argIndex];
+  int symbolIndex = d->symbol()->getIndexWithinModule();
+  for (;;)
     {
-      Vector<TestNode>::const_iterator netBase = net.begin();
-      Vector<TestNode>::const_iterator n = netBase;
-      Vector<DagNode**>::iterator stackBase = stack.begin();
-      DagNode* d = topArgArray[n->argIndex];
-      int symbolIndex = d->symbol()->getIndexWithinModule();
-      for (;;)
+      long p;
+      int diff = symbolIndex - n->symbolIndex;
+      if (diff != 0)
 	{
-	  long p;
-	  int diff = symbolIndex - n->symbolIndex;
-	  if (diff != 0)
+	  i = n->notEqual[diff < 0];
+	  if (i <= 0)
 	    {
-	      i = n->notEqual[diff < 0];
-	      if (i <= 0)
-		{
-		  if (i == 0)
-		    return false;
-		  break;
-		}
-	      n = netBase + i;
-	      p = n->position;
-	      if (p < 0)
-		continue;
+	      if (i == 0)
+		return false;
+	      break;
 	    }
-	  else
-	    {
-	      long s = n->slot;
-	      if (s >= 0)
-		stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
-	      i = n->equal;
-	      if (i <= 0)
-		break;
-	      n = netBase + i;
-	      p = n->position;
-	    }
-	  d = stackBase[p][n->argIndex];
-	  symbolIndex = d->symbol()->getIndexWithinModule();
+	  n = netBase + i;
+	  p = n->position;
+	  if (p < 0)
+	    continue;
 	}
-      i = ~i;
+      else
+	{
+	  long s = n->slot;
+	  if (s >= 0)
+	    stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
+	  i = n->equal;
+	  if (i <= 0)
+	    break;
+	  n = netBase + i;
+	  p = n->position;
+	}
+      d = stackBase[p][n->argIndex];
+      symbolIndex = d->symbol()->getIndexWithinModule();
     }
-  else
-    i = 0;
+  i = ~i;
   //
   //	Now go through the sequence of remainders, trying to finish the
   //	matching process for each one in turn.
@@ -174,60 +169,97 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols in the discrimination net.
+  //	binary and ternary top symbols in the (non-empty) discrimination net.
   //	Also all our remainders must be SUPER-FAST.
   //
   long i;
   DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
   stack[0] = topArgArray;
-  if (!(net.isNull()))  // at least one pattern has free symbols
+  Vector<TestNode>::const_iterator netBase = net.begin();
+  Vector<TestNode>::const_iterator n = netBase;
+  Vector<DagNode**>::iterator stackBase = stack.begin();
+  DagNode* d = topArgArray[n->argIndex];
+  int symbolIndex = d->symbol()->getIndexWithinModule();
+  for (;;)
     {
-      Vector<TestNode>::const_iterator netBase = net.begin();
-      Vector<TestNode>::const_iterator n = netBase;
-      Vector<DagNode**>::iterator stackBase = stack.begin();
-      DagNode* d = topArgArray[n->argIndex];
-      int symbolIndex = d->symbol()->getIndexWithinModule();
-      for (;;)
+      long p;
+      int diff = symbolIndex - n->symbolIndex;
+      if (diff != 0)
 	{
-	  long p;
-	  int diff = symbolIndex - n->symbolIndex;
-	  if (diff != 0)
+	  i = n->notEqual[diff < 0];
+	  if (i <= 0)
 	    {
-	      i = n->notEqual[diff < 0];
-	      if (i <= 0)
-		{
-		  if (i == 0)
-		    return false;
-		  break;
-		}
-	      n = netBase + i;
-	      p = n->position;
-	      if (p < 0)
-		continue;
+	      if (i == 0)
+		return false;
+	      break;
 	    }
-	  else
-	    {
-	      long s = n->slot;
-	      if (s >= 0)
-		stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
-	      i = n->equal;
-	      if (i <= 0)
-		break;
-	      n = netBase + i;
-	      p = n->position;
-	    }
-	  d = stackBase[p][n->argIndex];
-	  symbolIndex = d->symbol()->getIndexWithinModule();
+	  n = netBase + i;
+	  p = n->position;
+	  if (p < 0)
+	    continue;
 	}
-      i = ~i;
+      else
+	{
+	  long s = n->slot;
+	  if (s >= 0)
+	    stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
+	  i = n->equal;
+	  if (i <= 0)
+	    break;
+	  n = netBase + i;
+	  p = n->position;
+	}
+      d = stackBase[p][n->argIndex];
+      symbolIndex = d->symbol()->getIndexWithinModule();
     }
-  else
-    i = 0;
+  i = ~i;
   //
   //	Now go through the sequence of remainders, trying to finish the
   //	matching process for each one in turn.
   //
   Vector<FreeRemainder*>::const_iterator p = fastApplicable[i].begin();
+  const FreeRemainder* r = *p;
+  do
+    {
+      if (r->superFastMatchReplace(subject, context, stack))
+	return true;
+    }
+  while ((r = *(++p)) != 0);
+  return false;
+}
+
+bool
+FreeNet::fastNullNet(DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Optimized version for a null discrimination net and fast or super-fast remainders.
+  //
+  //	Go through the sequence of remainders, trying to finish the
+  //	matching process for each one in turn.
+  //
+  stack[0] = static_cast<FreeDagNode*>(subject)->internal;;
+  Vector<FreeRemainder*>::const_iterator p = fastApplicable[0].begin();
+  const FreeRemainder* r = *p;
+  do
+    {
+      if (r->fastMatchReplace(subject, context, stack))
+	return true;
+    }
+  while ((r = *(++p)) != 0);
+  return false;
+}
+
+bool
+FreeNet::superFastNullNet(DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Optimized version for a null discrimination net and super-fast remainders.
+  //
+  //	Go through the sequence of remainders, trying to finish the
+  //	matching process for each one in turn.
+  //
+  stack[0] = static_cast<FreeDagNode*>(subject)->internal;;
+  Vector<FreeRemainder*>::const_iterator p = fastApplicable[0].begin();
   const FreeRemainder* r = *p;
   do
     {

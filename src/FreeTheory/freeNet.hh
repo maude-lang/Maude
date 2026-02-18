@@ -53,7 +53,9 @@ public:
   void buildRemainders(const Vector<Equation*>& equations,
 		       const PatternSet& patternsUsed,
 		       const Vector<int>& slotTranslation);
+  bool emptyNet() const;
   bool onlyFreeLowAritySymbols() const;
+  FreeRemainder::Speed getSpeed() const;
   //
   //	Functions to use a FreeNet.
   //
@@ -62,10 +64,14 @@ public:
   bool superFastApplyReplace(DagNode* subject, RewritingContext& context);
   bool applyReplaceNoOwise(DagNode* subject, RewritingContext& context);
   //
+  //	Degenerate cases when the net is empty.
+  //
+  bool fastNullNet(DagNode* subject, RewritingContext& context);
+  bool superFastNullNet(DagNode* subject, RewritingContext& context);
+  //
   //	For stack machine execution.
   //
   long findRemainderListIndex(DagNode** argumentList);
-  FreeRemainder::Speed getSpeed() const;
 
 #ifdef DUMP
   void dump(ostream& s, int indentLevel = 0);
@@ -138,6 +144,12 @@ inline bool
 FreeNet::applyReplaceNoOwise(DagNode* subject, RewritingContext& context)
 {
   return !applicable.isNull() ? applyReplaceNoOwise2(subject, context) : false;
+}
+
+inline bool
+FreeNet::emptyNet() const
+{
+  return net.isNull();
 }
 
 inline FreeRemainder::Speed
