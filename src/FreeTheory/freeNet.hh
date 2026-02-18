@@ -58,7 +58,8 @@ public:
   //	Functions to use a FreeNet.
   //
   bool applyReplace(DagNode* subject, RewritingContext& context);
-  bool applyReplaceFast(DagNode* subject, RewritingContext& context);
+  bool fastApplyReplace(DagNode* subject, RewritingContext& context);
+  bool superFastApplyReplace(DagNode* subject, RewritingContext& context);
   bool applyReplaceNoOwise(DagNode* subject, RewritingContext& context);
   //
   //	For stack machine execution.
@@ -112,7 +113,6 @@ private:
 			int argIndex);
   bool moreImportant(Symbol* first, Symbol* second);
   bool applyReplace2(DagNode* subject, RewritingContext& context);
-  bool applyReplaceFast2(DagNode* subject, RewritingContext& context);
   bool applyReplaceNoOwise2(DagNode* subject, RewritingContext& context);
 
   Vector<DagNode**> stack;
