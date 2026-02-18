@@ -465,6 +465,7 @@ MetaLevel::downAttr(DagNode* metaAttr, AttributeInfo& ai)
 	return false;
       if (!(succSymbol->getSignedInt(safeCast(FreeDagNode*, metaAttr)->getArgument(0), ai.rpo)))
 	return false;
+      ai.symbolType.setFlags(SymbolType::RPO);
     }
   else if (ma == metadataSymbol)
     {
