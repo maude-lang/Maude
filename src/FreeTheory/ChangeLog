@@ -1,5 +1,9 @@
 2026-02-17  Saruman the White  <eker@eker10>
 
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): fix bug
+	where we weren't considering high arity symbols that have low
+	arity (or empty) descrimination nets
+
 	* freeSymbol.hh (class FreeSymbol): eqRewriteCtorFast<>() ->
 	eqRewriteCtorUnroll<>()
 	(class FreeSymbol): added decl for eqRewriteUnroll<>()
