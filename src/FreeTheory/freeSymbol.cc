@@ -229,7 +229,7 @@ FreeSymbol::chooseEqRewriteFunction() const
 {
   //
   //	Pick a specialized function to do the equational rewriting.
-  //	We have 24 fast functions and a backstop.
+  //	We have 21 fast functions and a backstop.
   //
   if (standardStrategy())
     {
@@ -263,22 +263,32 @@ FreeSymbol::chooseEqRewriteFunction() const
 	      //
 	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
 		{
-		  //cout << "null net fast " << this << endl;
-		  switch (arity())
+		  if (discriminationNet.singleRemainder())
 		    {
-		    case 0:
-		      return &eqRewriteNullNetFast<0>;
-		    case 1:
-		      return &eqRewriteNullNetFast<1>;
-		    case 2:
-		      return &eqRewriteNullNetFast<2>;
-		    case 3:
-		      return &eqRewriteNullNetFast<3>;
+		      //cout << "null net fast " << this << endl;
+		      switch (arity())
+			{
+			case 0:
+			  {
+			    CantHappen("nullary symbol " << this << " must be super-fast");
+			    break;
+			  }
+			case 1:
+			  return &eqRewriteNullNetFast<1>;
+			case 2:
+			  return &eqRewriteNullNetFast<2>;
+			case 3:
+			  return &eqRewriteNullNetFast<3>;
+			}
 		    }
 		  return &eqRewriteSlow;
 		}
 	      if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
 		{
+		  //
+		  //	Remainder can't fail, and thus there should only be one.
+		  //FIXME
+		  //Assert(discriminationNet.singleRemainder(), "more than one remainder for " << this);
 		  //cout << "null net super-fast " << this << endl;
 		  switch (arity())
 		    {
@@ -297,7 +307,7 @@ FreeSymbol::chooseEqRewriteFunction() const
 	  else if (discriminationNet.onlyFreeLowAritySymbols())
 	    {
 	      //
-	      //	The descrimination net only has low arity free symbols.
+	      //	The discrimination net only has low arity free symbols.
 	      //	This doesn't imply that we are low arity.
 	      //	See if we qualify for FAST or SUPER_FAST execution.
 	      //
@@ -307,7 +317,10 @@ FreeSymbol::chooseEqRewriteFunction() const
 		  switch (arity())
 		    {
 		    case 0:
-		      return &eqRewriteFast<0>;
+		      {
+			CantHappen("nullary symbol " << this << " can't have non-null net");
+			break;
+		      }
 		    case 1:
 		      return &eqRewriteFast<1>;
 		    case 2:
@@ -323,7 +336,10 @@ FreeSymbol::chooseEqRewriteFunction() const
 		  switch (arity())
 		    {
 		    case 0:
-		      return &eqRewriteSuperFast<0>;
+		      {
+			CantHappen("nullary symbol " << this << " can't have non-null net");
+			break;
+		      }
 		    case 1:
 		      return &eqRewriteSuperFast<1>;
 		    case 2:

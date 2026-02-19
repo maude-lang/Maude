@@ -234,19 +234,9 @@ FreeNet::fastNullNet(DagNode* subject, RewritingContext& context)
   //
   //	Optimized version for a null discrimination net and fast or super-fast remainders.
   //
-  //	Go through the sequence of remainders, trying to finish the
-  //	matching process for each one in turn.
-  //
-  stack[0] = static_cast<FreeDagNode*>(subject)->internal;;
-  Vector<FreeRemainder*>::const_iterator p = fastApplicable[0].begin();
-  const FreeRemainder* r = *p;
-  do
-    {
-      if (r->fastMatchReplace(subject, context, stack))
-	return true;
-    }
-  while ((r = *(++p)) != 0);
-  return false;
+  stack[0] = static_cast<FreeDagNode*>(subject)->internal;
+  return fastApplicable[0][0]->fastMatchReplace(subject, context, stack);
+
 }
 
 bool
@@ -255,19 +245,8 @@ FreeNet::superFastNullNet(DagNode* subject, RewritingContext& context)
   //
   //	Optimized version for a null discrimination net and super-fast remainders.
   //
-  //	Go through the sequence of remainders, trying to finish the
-  //	matching process for each one in turn.
-  //
-  stack[0] = static_cast<FreeDagNode*>(subject)->internal;;
-  Vector<FreeRemainder*>::const_iterator p = fastApplicable[0].begin();
-  const FreeRemainder* r = *p;
-  do
-    {
-      if (r->superFastMatchReplace(subject, context, stack))
-	return true;
-    }
-  while ((r = *(++p)) != 0);
-  return false;
+  stack[0] = static_cast<FreeDagNode*>(subject)->internal;
+  return fastApplicable[0][0]->superFastMatchReplace(subject, context, stack);
 }
 
 bool
