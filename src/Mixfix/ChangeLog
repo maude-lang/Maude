@@ -1,3 +1,8 @@
+2026-02-19  Rubén Rubio  <rubenrub@ucm.es>
+
+	* yices2_Bindings.cc: added YICES_ prefix no STATUS constants for
+	compatibility with Yices 2.7 (and temporary compatibility code)
+
 2026-01-20  Rubén Rubio  <rubenrub@ucm.es>
 
 	* lexer.ll (id): added rpo to BAR_OP_ATTRIBUTE termination

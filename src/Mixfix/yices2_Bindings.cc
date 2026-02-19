@@ -54,6 +54,13 @@
 #include "token.hh"
 #include "variableGenerator.hh"
 
+// Yices 2.7.0 added a YICES_ prefix to STATUS_(UN)SAT constants. Since
+// older versions are still around, we add the following for them.
+#if __YICES_VERSION_MAJOR < 7
+#define YICES_STATUS_SAT STATUS_SAT
+#define YICES_STATUS_UNSAT STATUS_UNSAT
+#endif
+
 int VariableGenerator::nrUsers = 0;
 
 VariableGenerator::VariableGenerator(const SMT_Info& smtInfo)
@@ -94,9 +101,9 @@ VariableGenerator::assertDag(DagNode* dag)
   smt_status_t result = yices_check_context(smtContext, NULL);
   DebugAdvisory("yices_check_context() returned " << result);
 
-  if (result == STATUS_SAT)
+  if (result == YICES_STATUS_SAT)
     return SAT;
-  if (result == STATUS_UNSAT)
+  if (result == YICES_STATUS_UNSAT)
     return UNSAT;
   IssueWarning("Yices2 not able to determine satisfiability  - giving up.");
   return SAT_UNKNOWN;
@@ -123,9 +130,9 @@ VariableGenerator::checkDag(DagNode* dag)
   DebugAdvisory("yices_check_context() returned " << result);
   yices_pop(smtContext);
 
-  if (result == STATUS_SAT)
+  if (result == YICES_STATUS_SAT)
     return SAT;
-  if (result == STATUS_UNSAT)
+  if (result == YICES_STATUS_UNSAT)
     return UNSAT;
   IssueWarning("Yices2 not able to determine satisfiability  - giving up.");
   return SAT_UNKNOWN;
