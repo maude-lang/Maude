@@ -56,6 +56,7 @@ public:
   bool emptyNet() const;
   bool onlyFreeLowAritySymbols() const;
   FreeRemainder::Speed getSpeed() const;
+  bool singleRemainder() const;
   //
   //	Functions to use a FreeNet.
   //
@@ -162,6 +163,15 @@ inline bool
 FreeNet::onlyFreeLowAritySymbols() const
 {
   return freeAndLowArity;
+}
+
+inline bool
+FreeNet::singleRemainder() const
+{
+  //
+  //	True iff there is only a single applicable remainder.
+  //
+  return fastApplicable.size() == 1 && fastApplicable[0].size() == 2;  // counting final nullptr
 }
 
 #endif
