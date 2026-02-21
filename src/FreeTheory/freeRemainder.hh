@@ -134,12 +134,18 @@ FreeRemainder::superFastMatchReplace(DagNode* subject,
 {
   if (!(RewritingContext::getTraceStatus()))
     {
-      Vector<DagNode**>::const_iterator stackBase = stack.begin();
-      for (const FreeVariable& i : freeVariables)
+      const Vector<DagNode**>::const_iterator stackBase = stack.begin();
+      if (!freeVariables.isNull())
 	{
-	  DagNode* d = stackBase[i.position][i.argIndex];
-	  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	  context.bind(i.varIndex, d);
+	  Vector<FreeVariable>::const_iterator i = freeVariables.begin();
+	  const Vector<FreeVariable>::const_iterator e = freeVariables.end();
+	  do
+	    {
+	      DagNode* d = stackBase[i->position][i->argIndex];
+	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
+	      context.bind(i->varIndex, d);
+	    }
+	  while (++i != e);
 	}
       equation->getRhsBuilder().replace(subject, context);
       context.incrementEqCount();
@@ -156,15 +162,21 @@ FreeRemainder::fastMatchReplace(DagNode* subject,
 {
   if (!(RewritingContext::getTraceStatus()))
     {
-      Vector<DagNode**>::const_iterator stackBase = stack.begin();
-      for (const FreeVariable& i : freeVariables)
+      const Vector<DagNode**>::const_iterator stackBase = stack.begin();
+      if (!freeVariables.isNull())
 	{
-	  DagNode* d = stackBase[i.position][i.argIndex];
-	  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	  if (d->fastLeq(i.sort))
-	    context.bind(i.varIndex, d);
-	  else
-	    return false;
+	  Vector<FreeVariable>::const_iterator i = freeVariables.begin();
+	  const Vector<FreeVariable>::const_iterator e = freeVariables.end();
+	  do
+	    {
+	      DagNode* d = stackBase[i->position][i->argIndex];
+	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
+	      if (d->fastLeq(i->sort))
+		context.bind(i->varIndex, d);
+	      else
+		return false;
+	    }
+ 	  while (++i != e);
 	}
       equation->getRhsBuilder().replace(subject, context);
       context.incrementEqCount();
