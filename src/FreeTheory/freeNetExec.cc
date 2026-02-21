@@ -105,16 +105,17 @@ FreeNet::fastApplyReplace(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols in the  (non-empty) discrimination net.
+  //	binary and ternary top symbols in the (non-empty) discrimination net,
+  //	where each fastApplicable list has a single remainder.
   //	Also all our remainders must be FAST or SUPER-FAST.
   //
   long i;
-  DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
-  stack[0] = topArgArray;
   Vector<TestNode>::const_iterator netBase = net.begin();
   Vector<TestNode>::const_iterator n = netBase;
   Vector<DagNode**>::iterator stackBase = stack.begin();
+  DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
   DagNode* d = topArgArray[n->argIndex];
+  stack[0] = topArgArray;
   int symbolIndex = d->symbol()->getIndexWithinModule();
   for (;;)
     {
@@ -148,20 +149,7 @@ FreeNet::fastApplyReplace(DagNode* subject, RewritingContext& context)
       d = stackBase[p][n->argIndex];
       symbolIndex = d->symbol()->getIndexWithinModule();
     }
-  i = ~i;
-  //
-  //	Now go through the sequence of remainders, trying to finish the
-  //	matching process for each one in turn.
-  //
-  Vector<FreeRemainder*>::const_iterator p = fastApplicable[i].begin();
-  const FreeRemainder* r = *p;
-  do
-    {
-      if (r->fastMatchReplace(subject, context, stack))
-	return true;
-    }
-  while ((r = *(++p)) != 0);
-  return false;
+  return fastApplicable[~i][0]->fastMatchReplace(subject, context, stack);
 }
 
 bool
@@ -169,16 +157,17 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols in the (non-empty) discrimination net.
+  //	binary and ternary top symbols in the (non-empty) discrimination net,
+  //	where each fastApplicable list has a single remainder.
   //	Also all our remainders must be SUPER-FAST.
   //
   long i;
-  DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
-  stack[0] = topArgArray;
   Vector<TestNode>::const_iterator netBase = net.begin();
   Vector<TestNode>::const_iterator n = netBase;
   Vector<DagNode**>::iterator stackBase = stack.begin();
+  DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
   DagNode* d = topArgArray[n->argIndex];
+  stack[0] = topArgArray;
   int symbolIndex = d->symbol()->getIndexWithinModule();
   for (;;)
     {
@@ -212,20 +201,7 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
       d = stackBase[p][n->argIndex];
       symbolIndex = d->symbol()->getIndexWithinModule();
     }
-  i = ~i;
-  //
-  //	Now go through the sequence of remainders, trying to finish the
-  //	matching process for each one in turn.
-  //
-  Vector<FreeRemainder*>::const_iterator p = fastApplicable[i].begin();
-  const FreeRemainder* r = *p;
-  do
-    {
-      if (r->superFastMatchReplace(subject, context, stack))
-	return true;
-    }
-  while ((r = *(++p)) != 0);
-  return false;
+  return fastApplicable[~i][0]->superFastMatchReplace(subject, context, stack);
 }
 
 bool
@@ -236,7 +212,6 @@ FreeNet::fastNullNet(DagNode* subject, RewritingContext& context)
   //
   stack[0] = static_cast<FreeDagNode*>(subject)->internal;
   return fastApplicable[0][0]->fastMatchReplace(subject, context, stack);
-
 }
 
 bool

@@ -74,7 +74,7 @@ FreeRemainder::FreeRemainder(Equation* eqn,
 			     const Vector<LhsAutomaton*>& subAutomata,
 			     const Vector<int>& slotTranslation)
   : foreign(false),
-    freeVariables(freeVars.size()),
+    freeVariables(freeVars.size()),  // will be null Vector if size == 0
     equation(eqn),
     boundVariables(boundVars.size()),
     groundAliens(gndAliens.size()),

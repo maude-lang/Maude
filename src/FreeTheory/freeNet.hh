@@ -56,7 +56,7 @@ public:
   bool emptyNet() const;
   bool onlyFreeLowAritySymbols() const;
   FreeRemainder::Speed getSpeed() const;
-  bool singleRemainder() const;
+  int getMaxNrRemainders() const;
   //
   //	Functions to use a FreeNet.
   //
@@ -128,6 +128,7 @@ private:
   Vector<FreeRemainder*> remainders;
   Vector<PatternSet> applicable;
   FreeRemainder::Speed speed;
+  int maxNrRemainders;
   bool freeAndLowArity;
 
   friend class FreeInstruction;
@@ -159,19 +160,16 @@ FreeNet::getSpeed() const
   return speed;
 }
 
+inline int
+FreeNet::getMaxNrRemainders() const
+{
+  return maxNrRemainders;
+}
+
 inline bool
 FreeNet::onlyFreeLowAritySymbols() const
 {
   return freeAndLowArity;
-}
-
-inline bool
-FreeNet::singleRemainder() const
-{
-  //
-  //	True iff there is only a single applicable remainder.
-  //
-  return fastApplicable.size() == 1 && fastApplicable[0].size() == 2;  // counting final nullptr
 }
 
 #endif

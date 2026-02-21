@@ -263,33 +263,33 @@ FreeSymbol::chooseEqRewriteFunction() const
 	      //
 	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
 		{
-		  if (discriminationNet.singleRemainder())
+		  if (discriminationNet.getMaxNrRemainders() == 1)
 		    {
-		      //cout << "null net fast " << this << endl;
+		      //cout << "null-net fast " << this << endl;
 		      switch (arity())
 			{
-			case 0:
-			  {
-			    CantHappen("nullary symbol " << this << " must be super-fast");
-			    break;
-			  }
 			case 1:
 			  return &eqRewriteNullNetFast<1>;
 			case 2:
 			  return &eqRewriteNullNetFast<2>;
 			case 3:
 			  return &eqRewriteNullNetFast<3>;
+			case 0:
+			  CantHappen("nullary symbol " << this << " must be super-fast");
+			  // fall into default case
+			default:
+			  return &eqRewriteSlow;
 			}
 		    }
-		  return &eqRewriteSlow;
 		}
-	      if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
+	      else if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
 		{
 		  //
 		  //	Remainder can't fail, and thus there should only be one.
 		  //FIXME
-		  //Assert(discriminationNet.singleRemainder(), "more than one remainder for " << this);
-		  //cout << "null net super-fast " << this << endl;
+		  //Assert(discriminationNet.getMaxNrRemainders() == 1,
+		  //       "more than one remainder for " << this);
+		  //cout << "null-net super-fast " << this << endl;
 		  switch (arity())
 		    {
 		    case 0:
@@ -300,8 +300,9 @@ FreeSymbol::chooseEqRewriteFunction() const
 		      return &eqRewriteNullNetSuperFast<2>;
 		    case 3:
 		      return &eqRewriteNullNetSuperFast<3>;
+		    default:
+		      return &eqRewriteSlow;
 		    }
-		  return &eqRewriteSlow;
 		}
 	    }
 	  else if (discriminationNet.onlyFreeLowAritySymbols())
@@ -313,45 +314,53 @@ FreeSymbol::chooseEqRewriteFunction() const
 	      //
 	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
 		{
-		  //cout << "fast " << this << endl;
-		  switch (arity())
+		  if (discriminationNet.getMaxNrRemainders() == 1)
 		    {
-		    case 0:
-		      {
-			CantHappen("nullary symbol " << this << " can't have non-null net");
-			break;
-		      }
-		    case 1:
-		      return &eqRewriteFast<1>;
-		    case 2:
-		      return &eqRewriteFast<2>;
-		    case 3:
-		      return &eqRewriteFast<3>;
+		      //cout << "fast " << this << endl;
+		      switch (arity())
+			{
+			case 1:
+			  return &eqRewriteFast<1>;
+			case 2:
+			  return &eqRewriteFast<2>;
+			case 3:
+			  return &eqRewriteFast<3>;
+			case 0:
+			  CantHappen("nullary symbol " << this << " can't have non-null net");
+			  // fall into default case
+			default:
+			  return &eqRewriteSlow;
+			}
 		    }
-		  return &eqRewriteSlow;
 		}
-	      if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
+	      else if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
 		{
+		  //
+		  //	Remainder can't fail, and thus there should only be one.
+		  //FIXME
+		  //Assert(discriminationNet.getMaxNrRemainders() == 1,
+		  //       "more than one remainder for " << this);
 		  //cout << "super-fast " << this << endl;
 		  switch (arity())
 		    {
-		    case 0:
-		      {
-			CantHappen("nullary symbol " << this << " can't have non-null net");
-			break;
-		      }
 		    case 1:
 		      return &eqRewriteSuperFast<1>;
 		    case 2:
 		      return &eqRewriteSuperFast<2>;
 		    case 3:
 		      return &eqRewriteSuperFast<3>;
+		    case 0:
+			CantHappen("nullary symbol " << this << " can't have non-null net");
+			// fall into default case
+		    default:
+		      return &eqRewriteSlow;
 		    }
-		  return &eqRewriteSlow;
 		}
 	    }
 	  //
-	  //	Might still be able to use the unroller idiom for to reduce arguments.
+	  //	We have the standard strategy and equations, though the discrimination net
+	  //	or remainders rule out one of the fast/super-fast routines
+	  //    We might still be able to use the unroller idiom for to reduce arguments.
 	  //
 	  switch (arity())
 	    {
@@ -369,6 +378,7 @@ FreeSymbol::chooseEqRewriteFunction() const
   //
   //	The backstop.
   //
+  //cout << "slow " << this << endl;
   return &eqRewriteSlow;
 }
 

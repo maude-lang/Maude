@@ -1,3 +1,35 @@
+2026-02-20  Saruman the White  <eker@eker10>
+
+	* freeNetExec.cc (FreeNet::fastApplyReplace): delay filling out
+	stack[0]
+	(FreeNet::superFastApplyReplace): ditto
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): reorganized
+
+	* freeNet.hh (FreeNet::singleRemainder): deleted
+
+	* freeNetExec.cc (FreeNet::superFastApplyReplace): only deal with
+	a single remainder in each fastApplicable Vector
+	(FreeNet::fastApplyReplace): ditto
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): use
+	getMaxNrRemainders() == 1 instead of singleRemainder()
+	(FreeSymbol::chooseEqRewriteFunction): only use eqRewriteFast<>()
+	and eqRewriteSuperFast<>() if getMaxNrRemainders() == 1
+
+	* freeNet.hh (class FreeNet): added data member maxNrRemainders
+	(FreeNet::getMaxNrRemainders): added
+
+	* freeNet.cc (FreeNet::FreeNet): init maxNrRemainders
+	(FreeNet::buildRemainders): update maxNrRemainders
+
+	* freeRemainder.cc (FreeRemainder::FreeRemainder): added comment
+
+	* freeRemainder.hh (FreeRemainder::superFastMatchReplace):
+	isNull() optimization so we don't check first for a non-null
+	Vector and then for a non-empty Vector
+	(FreeRemainder::fastMatchReplace): ditto
+
 2026-02-18  Saruman the White  <eker@eker10>
 
 	* freeNetExec.cc (FreeNet::fastNullNet)

@@ -73,6 +73,7 @@ FreeNet::FreeNet()
 {
   speed = FreeRemainder::SUPER_FAST;  // until we know otherwise
   freeAndLowArity = true;  // assume all tested symbols are free and lowArity
+  maxNrRemainders = 0;
 }
 
 FreeNet::~FreeNet()
@@ -175,8 +176,11 @@ FreeNet::buildRemainders(const Vector<Equation*>& equations,
   for (int i = 0; i < nrApplicables; i++)
     {
       PatternSet& liveSet = applicable[i];
+      int nrRemainders = liveSet.size();
+      if (nrRemainders > maxNrRemainders)
+	maxNrRemainders = nrRemainders;
       Vector<FreeRemainder*>& rems = fastApplicable[i];
-      rems.resize(liveSet.size() + 1);
+      rems.resize(nrRemainders + 1);
       Vector<FreeRemainder*>::iterator r = rems.begin();
       for (int j : liveSet)
 	*r++ = remainders[j];
