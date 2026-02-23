@@ -1,3 +1,20 @@
+Overview of Changes in Maude 3.5.1 (alpha164) (2025-07-10)
+==========================================================
+* new LTL+ and MODEL-CHECKER+ modules for easily obtaining witnesses of LTL properties
+* fixed several bugs related to module instantiation and op to term and strat to expr mappings
+* sort, class, and view naming restrictions are now checked and enforced
+* other bug fixes
+
+Overview of Changes in Maude 3.5 (2024-09-25)
+=============================================
+* term disjunctions for vu-narrow
+* variant folding for vu-narrow
+* show frontier/most general states/path for vu-narrow
+* states may now subsume their ancestors in vu-narrow
+* extra built-in operations for strings
+* initial equality operator handles more cases
+* reading from stdin stream supports continuation lines
+
 Overview of Changes in Maude 3.5 beta (alpha163) (2023-06-07)
 =============================================================
 * rat() conversion operator is more tolerant of leading zeros

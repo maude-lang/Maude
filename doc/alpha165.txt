@@ -1,0 +1,75 @@
+Alpha 165 release notes
+========================
+
+New feature
+===========
+
+Operator declarations can now take an attribute rpo <number> to be used by
+the termination checker of the NuITP tool, based on recursive path orderings.
+
+  op f : Foo -> Foo [rpo 4] .
+  op g : Foo -> Foo [rpo 3] .
+
+Maude does not use the value of this attribute except for checking that it is
+consistent among all declarations in the module.
+
+
+Other changes
+==============
+
+(1) The qid operator of the QID module, which convert strings into quoted
+identifiers, now supports UTF-8 strings. Previously, the following command
+
+  Maude> red in QID : qid("lógica") .
+  result [Qid]: qid("l\303\263gica")
+
+yielded an error term, while now it produces a valid quoted identifier:
+
+  Maude> red in QID : qid("lógica") .
+  result Qid: 'lógica
+
+(2) Using an undeclared sort in a subsorts declaration does no longer emit a
+warning and it is considered an implicit sort declaration. For example,
+
+  fmod SUBSORT is
+    subsort A < B .
+  endfm
+
+will not show the warnings
+
+  Warning: <standard input>, line 1 (fmod A): undeclared sort A.
+  Warning: <standard input>, line 1 (fmod A): undeclared sort B.
+
+and A and B will be implicitly declared (as already happened).
+
+  Maude> show all SUBSORT .
+  fmod A is
+    sorts Bool A B .
+    subsort A < B .
+    ...
+  endfm
+
+(3) Consistency is checked for the attributes like latex, prec, strat, frozen,
+gather, and format among all subsort-overloaded operator declarations of the
+same operator. For instance,
+
+  fmod CONSISTENCY is
+    protecting INT .
+    op f : Int -> Bool [format (r o)] .
+    op f : Nat -> Bool [format (b o)] .
+  endfm
+
+now shows
+
+  Warning: <standard input>, line 4 (fmod CONSISTENCY): declaration for f
+    has different attributes from declaration on <standard input>, line 3
+    (fmod CONSISTENCY).
+  Warning: <standard input>, line 1 (fmod CONSISTENCY): this module contains
+    one or more errors that could not be patched up and thus it cannot be used
+    or imported.
+
+As before, ditto can be used in subsequent subsort-overloaded declarations to
+copy the attributes of the first declaration.
+
+(4) Better warnings for associative non-preregularity and associative ctor
+inconsistency.
