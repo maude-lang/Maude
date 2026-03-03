@@ -134,9 +134,9 @@ FreeRemainder::superFastMatchReplace(DagNode* subject,
 {
   if (!(RewritingContext::getTraceStatus()))
     {
-      const Vector<DagNode**>::const_iterator stackBase = stack.begin();
       if (!freeVariables.isNull())
 	{
+	  const Vector<DagNode**>::const_iterator stackBase = stack.begin();
 	  Vector<FreeVariable>::const_iterator i = freeVariables.begin();
 	  const Vector<FreeVariable>::const_iterator e = freeVariables.end();
 	  do
@@ -162,9 +162,9 @@ FreeRemainder::fastMatchReplace(DagNode* subject,
 {
   if (!(RewritingContext::getTraceStatus()))
     {
-      const Vector<DagNode**>::const_iterator stackBase = stack.begin();
       if (!freeVariables.isNull())
 	{
+	  const Vector<DagNode**>::const_iterator stackBase = stack.begin();
 	  Vector<FreeVariable>::const_iterator i = freeVariables.begin();
 	  const Vector<FreeVariable>::const_iterator e = freeVariables.end();
 	  do
@@ -201,12 +201,18 @@ FreeRemainder::generalMatchReplace(DagNode* subject,
 	  //
 	  //	Super-fast case: bind variables without sort check.
 	  //
-	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
-	  for (const FreeVariable& i : freeVariables)
+	  if (!freeVariables.isNull())
 	    {
-	      DagNode* d = stackBase[i.position][i.argIndex];
-	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	      context.bind(i.varIndex, d);
+	      Vector<DagNode**>::const_iterator stackBase = stack.begin();
+	      Vector<FreeVariable>::const_iterator i = freeVariables.begin();
+	      const Vector<FreeVariable>::const_iterator e = freeVariables.end();
+	      do
+		{
+		  DagNode* d = stackBase[i->position][i->argIndex];
+		  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
+		  context.bind(i->varIndex, d);
+		}
+	      while (++i != e);
 	    }
 	}
       else if (speed > 0)
@@ -214,15 +220,21 @@ FreeRemainder::generalMatchReplace(DagNode* subject,
 	  //
 	  //	Fast case: bind variables after fast sort check.
 	  //
-	  Vector<DagNode**>::const_iterator stackBase = stack.begin();
-	  for (const FreeVariable& i : freeVariables)
+	  if (!freeVariables.isNull())
 	    {
-	      DagNode* d = stackBase[i.position][i.argIndex];
-	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
-	      if (d->fastLeq(i.sort))
-		context.bind(i.varIndex, d);
-	      else
-		return false;
+	      Vector<DagNode**>::const_iterator stackBase = stack.begin();
+	      Vector<FreeVariable>::const_iterator i = freeVariables.begin();
+	      const Vector<FreeVariable>::const_iterator e = freeVariables.end();
+	      do
+		{
+		  DagNode* d = stackBase[i->position][i->argIndex];
+		  Assert(d->getSortIndex() != Sort::SORT_UNKNOWN, "missing sort information");
+		  if (d->fastLeq(i->sort))
+		    context.bind(i->varIndex, d);
+		  else
+		    return false;
+		}
+	      while (++i != e);
 	    }
 	}
       else
