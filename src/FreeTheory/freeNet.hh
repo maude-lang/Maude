@@ -53,6 +53,9 @@ public:
   void buildRemainders(const Vector<Equation*>& equations,
 		       const PatternSet& patternsUsed,
 		       const Vector<int>& slotTranslation);
+  //
+  //	Functions to query properties of a FreeNet.
+  //
   bool emptyNet() const;
   bool onlyFreeLowAritySymbols() const;
   FreeRemainder::Speed getSpeed() const;
