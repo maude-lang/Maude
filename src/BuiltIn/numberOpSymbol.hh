@@ -52,7 +52,6 @@ protected:
   void postInterSymbolPass();
   void reset();
   void compileEquations();
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
 
   SuccSymbol* getSuccSymbol() const;
   MinusSymbol* getMinusSymbol() const;

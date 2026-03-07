@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -186,80 +186,6 @@ CUI_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, Rewriting
 	}
     }
   return false;
-}
-
-bool
-CUI_Symbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  CUI_DagNode* s = static_cast<CUI_DagNode*>(subject);
-  DagNode** args = s->argArray;
-  if (standardStrategy())
-    {
-      args[0]->reduce(context);
-      args[1]->reduce(context);
-      if (s->normalizeAtTop())
-	return false;
-      return !(equationFree()) && applyReplace(s, context);
-    }
-  else
-    {
-      if (isMemoized())
-	{
-	  MemoTable::SourceSet from;
-	  bool result = memoStrategy(from, subject, context);
-	  memoEnter(from, subject);
-	  //
-	  //	We may need to return true in the case we collapse to a unreduced subterm.
-	  //
-	  return result;
-	}
-      //
-      //	Execute user supplied strategy.
-      //
-      const Vector<int>& userStrategy = getStrategy();
-      int stratLen = userStrategy.length();
-      bool seenZero = false;
-      for (int i = 0; i < stratLen; i++)
-        {
-          int a = userStrategy[i];
-          if(a == 0)
-            {
-              if (!seenZero)
-                {
-		  args[0]->computeTrueSort(context);
-		  args[1]->computeTrueSort(context);
-		  seenZero = true;
-		}
-	      //
-	      //	If we collapse to one of our subterms which has not been
-	      //	reduced we pretend that we did a rewrite so that the
-	      //	reduction process continues.
-	      //
-	      if (s->normalizeAtTop())
-		return !(s->isReduced());
-              if ((i + 1 == stratLen) ? applyReplace(s, context) :
-		  applyReplaceNoOwise(s, context))
-                return true;
-            }
-          else
-            {
-              --a;  // real arguments start at 0 not 1
-              if (seenZero)
-                {
-                  args[a] = args[a]->copyReducible();
-                  //
-                  //    A previous call to applyReplace() may have
-                  //    computed a true sort for our subject which will be
-                  //    invalidated by the reduce we are about to do.
-                  //
-                  s->repudiateSortInfo();
-                }
-              args[a]->reduce(context);
-            }
-        }
-      return false;
-    }
 }
 
 bool

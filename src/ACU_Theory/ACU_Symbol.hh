@@ -42,7 +42,6 @@ public:
   DagNode* makeDagNode(const Vector<DagNode*>& args);
   void computeBaseSort(DagNode* subject);
   void normalizeAndComputeTrueSort(DagNode* subject, RewritingContext& context);
-  bool eqRewrite(DagNode* subject, RewritingContext& context);  
   DagNode* ruleRewrite(DagNode* subject, RewritingContext& context);
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
