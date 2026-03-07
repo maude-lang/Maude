@@ -1,3 +1,11 @@
+2026-03-06  Saruman the White  <eker@eker10>
+
+	* AU_Symbol.hh (class AU_Symbol): deleted decl for eqRewrite()
+
+	* AU_Symbol.cc (AU_Symbol::eqRewriteStandardStrategy): fix
+	Assert()
+	(AU_Symbol::eqRewrite): deleted
+
 2025-01-20  Saruman the White  <eker@eker10>
 
 	* AU_Symbol.hh (class AU_Symbol): added decls for
