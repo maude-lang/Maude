@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ AU_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, Rewriting
     {
       DagNode* d2 = d->argArray[i];
       Assert(d2->getSortIndex() != Sort::SORT_UNKNOWN,
-	     "AU_Symbol::eqRewrite(): unknown sort for AU argument " << d2 <<
+	     "AU_Symbol::eqRewriteStandardStrategy(): unknown sort for AU argument " << d2 <<
 	     " at index " << i << " in subject " << subject <<
 	     " d->getNormalizationStatus() = " << d->getNormalizationStatus());
     }
@@ -199,64 +199,6 @@ AU_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingC
   Assert(symbol == subject->symbol(), "bad symbol");
   AU_Symbol* s = safeCastNonNull<AU_Symbol*>(symbol);
   return s->complexStrategy(safeCast(AU_DagNode*, subject), context);
-}
-
-bool
-AU_Symbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  if (standardStrategy())
-    {
-      if (safeCast(AU_BaseDagNode*, subject)->isDeque())
-	{
-	  Assert(equationFree(), "deque with equations");
-	  return false;
-	}
-      else
-	{
-	  AU_DagNode* s = safeCast(AU_DagNode*, subject);
-	  if (s->isFresh())
-	    {
-	      //
-	      //	Not safe to use iterator because reduce() can
-	      //	call garbage collector which can relocate argArray.
-	      //
-	      int nrArgs = s->argArray.length();
-	      for (int i = 0; i < nrArgs; i++)
-		s->argArray[i]->reduce(context);
-	      //
-	      //	We always need to renormalize at the top because
-	      //	shared subterms may have rewritten.
-	      //
-	      if (s->normalizeAtTop() <= AU_DagNode::DEQUED)
-		return false;  // COLLAPSED or DEQUED
-	    }
-	  //
-	  //	Even we were created by an assignment we could
-	  //	be equation-free and not reduced because our true
-	  //	sort was not known because of a membership axiom.
-	  //
-	  if (equationFree())
-	    return false;
-
-#ifndef NO_ASSERT
-	  //
-	  //	Look for Riesco 1/18/10 bug.
-	  //
-	  for (int i = 0; i < s->argArray.length(); i++)
-	    {
-	      DagNode* d = s->argArray[i];
-	      Assert(d->getSortIndex() != Sort::SORT_UNKNOWN,
-		     "AU_Symbol::eqRewrite(): unknown sort for AU argument " << d <<
-		     " at index " << i << " in subject " << subject <<
-		     " s->getNormalizationStatus() = " << s->getNormalizationStatus());
-	    }
-#endif
-
-	  return rewriteAtTop(s, context);
-	}
-    }
-  return complexStrategy(safeCast(AU_DagNode*, subject), context);
 }
 
 bool

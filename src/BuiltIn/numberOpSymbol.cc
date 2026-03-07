@@ -183,21 +183,15 @@ NumberOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& co
 {
   Assert(symbol == subject->symbol(), "bad symbol");
   NumberOpSymbol* s = safeCastNonNull<NumberOpSymbol*>(symbol);
-  //  This is a hack; eventually we'll inline this function.
-  return s->eqRewrite(subject, context);
-}
-
-bool
-NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  int nrArgs = arity();
-  FreeDagNode* d = safeCast(FreeDagNode*, subject);
+  int nrArgs = s->arity();
+  SuccSymbol* succSymbol = s->succSymbol;
+  MinusSymbol* minusSymbol = s->minusSymbol;
+  FreeDagNode* d = safeCastNonNull<FreeDagNode*>(subject);
   bool specialEval = (succSymbol != 0);
   //
   //	Evaluate our arguments and check that they are all numbers
   //
-  for (int i = 0; i < nrArgs; i++)
+  for (int i = 0; i < nrArgs; ++i)
     {
       DagNode* a = d->getArgument(i);
       a->reduce(context);
@@ -214,7 +208,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
       mpz_class r;
       if (nrArgs == 1)
 	{
-	  switch (op)
+	  switch (s->op)
 	    {
 	    case '-':
 	      {
@@ -247,7 +241,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	    minusSymbol->getNeg(d1, storage1) : succSymbol->getNat(d1);
 	  if (nrArgs == 2)
 	    {
-	      switch (op)
+	      switch (s->op)
 		{
 		  //
 		  //	These seven operations are really AC and are just
@@ -407,7 +401,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		default:
 		  {
 		    bool b;
-		    switch (op)
+		    switch (s->op)
 		      {
 		      case '<':
 			{
@@ -437,13 +431,14 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 			  break;
 			}
 		      default:
-			CantHappen("bad number op " << op << " in subject " << subject);
+			CantHappen("bad number op " << s->op << " in subject " << subject);
 			b = false;  // avoid compiler warning
 		      }
-		    Assert(trueTerm.getTerm() != 0 && falseTerm.getTerm() != 0,
+		    Assert(s->trueTerm.getTerm() != nullptr &&
+			   s->falseTerm.getTerm() != nullptr,
 			   "null true/false for relational op");
-		    return context.builtInReplace(subject, b ? trueTerm.getDag() :
-						  falseTerm.getDag());
+		    return context.builtInReplace(subject, b ? s->trueTerm.getDag() :
+						  s->falseTerm.getDag());
 		  }
 		}
 	    }
@@ -454,7 +449,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	      DagNode* d2 = d->getArgument(2);
 	      const mpz_class& a2 = (d2->symbol() == minusSymbol) ? 
 		minusSymbol->getNeg(d2, storage2) : succSymbol->getNat(d2);
-	      switch (op)
+	      switch (s->op)
 		{
 		case CODE('m', 'o'):
 		  {
@@ -473,7 +468,7 @@ NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	context.builtInReplace(subject, minusSymbol->makeNegDag(r));
     }
  fail:
-  return tryEquations(subject, context);
+  return s->tryEquations(subject, context);
 }
 
 bool
