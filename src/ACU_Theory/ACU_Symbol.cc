@@ -223,32 +223,6 @@ ACU_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, Rewriting
 }
 
 bool
-ACU_Symbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  if (standardStrategy())
-    {
-      if (safeCast(ACU_BaseDagNode*, subject)->isFresh())
-	{
-	  ACU_DagNode* s = safeCast(ACU_DagNode*, subject);
-	  int nrArgs = s->argArray.length();
-          for (int i = 0; i < nrArgs; i++)
-            s->argArray[i].dagNode->reduce(context);
-	  //
-	  //	We always need to renormalize at the top because
-	  //	shared subterms may have rewritten.
-	  //
-	  if (s->normalizeAtTop())
-	    return false;
-	}
-      if (equationFree())
-	return false;
-      return rewriteAtTop(subject, context);
-    }
-  return complexStrategy(subject, context);
-}
-
-bool
 ACU_Symbol::complexStrategy(DagNode* subject, RewritingContext& context)
 {
   if (isMemoized())

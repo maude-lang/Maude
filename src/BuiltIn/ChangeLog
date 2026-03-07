@@ -1,3 +1,23 @@
+2026-03-06  Saruman the White  <eker@eker10>
+
+	* CUI_NumberOpSymbol.hh (class CUI_NumberOpSymbol): deleted decl
+	for 2 arg version of eqRewrite()
+
+	* CUI_NumberOpSymbol.cc (CUI_NumberOpSymbol::eqRewrite): deleted 2
+	arg version
+
+	* numberOpSymbol.hh (class NumberOpSymbol): deleted dec for 2 arg
+	version of eqRewrite()
+
+	* numberOpSymbol.cc (NumberOpSymbol::eqRewrite): merge 2 arg
+	version into 3 arg version
+
+	* ACU_NumberOpSymbol.hh (class ACU_NumberOpSymbol): deleted decl
+	for 2 arg version of eqRewrite()
+
+	* ACU_NumberOpSymbol.cc (ACU_NumberOpSymbol::eqRewrite): deleted 2
+	arg version
+
 2026-02-15  Saruman the White  <eker@eker10>
 
 	* branchSymbol.cc (BranchSymbol::eqRewrite): call tryEquations()
