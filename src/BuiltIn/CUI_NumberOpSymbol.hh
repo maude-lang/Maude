@@ -44,7 +44,6 @@ protected:
   void getSymbolAttachments(Vector<const char*>& purposes,
 			    Vector<Symbol*>& symbols);
   void compileEquations();
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
 
 private:
   static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);

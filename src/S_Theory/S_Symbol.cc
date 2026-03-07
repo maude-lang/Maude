@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -202,75 +202,6 @@ S_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingCo
 	      subject->repudiateSortInfo();
 	    }
 	  d->arg->reduce(context);
-	}
-    }
-  return false;
-}
-
-bool
-S_Symbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  S_DagNode* s = safeCast(S_DagNode*, subject);
-  if (standardStrategy())
-    {
-      //
-      //	Fast eager strategy case.
-      //
-      s->arg->reduce(context);
-      s->normalizeAtTop();  // always needed because shared node may have rewritten
-      if (equationFree())
-	return false;
-      S_ExtensionInfo extensionInfo(s);
-      return applyReplace(subject, context, &extensionInfo);
-    }
-  if (isMemoized())
-    {
-      //
-      //	Memoized case - get the reduced form and enter
-      //	it in the memoization table.
-      //
-      MemoTable::SourceSet from;
-      memoStrategy(from, subject, context);
-      memoEnter(from, subject);
-      return false;
-    }
-  //
-  //	Complex strategy case.
-  //
-  S_ExtensionInfo extensionInfo(s);
-  const Vector<int>& userStrategy = getStrategy();
-  int stratLen = userStrategy.length();
-  bool seenZero = false;
-
-  for (int i = 0; i < stratLen; i++)
-    {
-      if(userStrategy[i] == 0)
-	{
-	  if (!seenZero)
-	    {
-	      s->arg->computeTrueSort(context);
-	      seenZero = true;
-	    }
-	  s->normalizeAtTop();
-	  if ((i + 1 == stratLen) ?
-	      applyReplace(subject, context, &extensionInfo) :
-	      applyReplaceNoOwise(subject, context, &extensionInfo))
-	      return true;
-	}
-      else
-	{
-	  if (seenZero)
-	    {
-	      s->arg->copyReducible();
-	      //
-	      //	A previous call to applyReplace() may have
-	      //	computed a true sort for our subject which will be
-	      //	invalidated by the reduce we are about to do.
-	      //
-	      subject->repudiateSortInfo();
-	    }
-	  s->arg->reduce(context);
 	}
     }
   return false;

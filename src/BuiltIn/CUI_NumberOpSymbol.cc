@@ -153,39 +153,3 @@ CUI_NumberOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext
     }
   return s->normalizeAndTryEquations(subject, context);
 }
-
-bool
-CUI_NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  CUI_DagNode* d = safeCast(CUI_DagNode*, subject);
-  bool specialEval = true;
-  //
-  //	Evaluate our arguments and check that they are both numbers.
-  //
-  for (int i = 0; i < 2; i++)
-    {
-      DagNode* a = d->getArgument(i);
-      a->reduce(context);
-      if (!(succSymbol != 0 && succSymbol->isNat(a)))
-	specialEval = false;
-    }
-  if (specialEval)
-    {
-      const mpz_class& a0 = succSymbol->getNat(d->getArgument(0));
-      const mpz_class& a1 = succSymbol->getNat(d->getArgument(1));
-      mpz_class r;
-      switch (op)
-	{
-	case CODE('s', 'd'):
-	  {
-	    r = abs(a0 - a1);
-	    break;
-	  }
-	default:
-	  CantHappen("bad number op");
-	}
-      return succSymbol->rewriteToNat(subject, context, r);
-    }
-  return CUI_Symbol::eqRewrite(subject, context);
-}

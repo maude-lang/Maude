@@ -144,15 +144,6 @@ ACU_NumberOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext
 }
 
 bool
-ACU_NumberOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  if (reduceArgumentsAndNormalize(subject, context))
-    return false;  // collapsed under us
-  return eqRewrite2(subject, context);  // keep our stack frame small
-}
-
-bool
 ACU_NumberOpSymbol::eqRewrite2(DagNode* subject, RewritingContext& context)
 {
   //
