@@ -138,7 +138,7 @@ FreeNet::fastApplyReplace(DagNode* subject, RewritingContext& context)
       else
 	{
 	  long s = n->slot;
-	  if (s >= 0)
+	  //if (s >= 0)
 	    stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
 	  i = n->equal;
 	  if (i <= 0)
@@ -190,7 +190,7 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
       else
 	{
 	  long s = n->slot;
-	  if (s >= 0)
+	  //if (s >= 0)
 	    stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
 	  i = n->equal;
 	  if (i <= 0)

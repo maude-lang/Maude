@@ -1,3 +1,14 @@
+2026-03-06  Saruman the White  <eker@eker10>
+
+	* freePreNetSemiCompiler.cc (FreePreNet::semiCompileNode):
+	allocate a slot for constants, so that the fast path code doesn't
+	have to branch
+
+	* freeNetExec.cc (FreeNet::superFastApplyReplace): allows store
+	pointer to internal in stackBase[s] now that we allocate a slot
+	even for constants
+	(FreeNet::fastApplyReplace): ditto
+
 2026-03-02  Saruman the White  <eker@eker10>
 
 	* freeRemainder.hh (FreeRemainder::fastMatchReplace): don't load
