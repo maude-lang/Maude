@@ -62,7 +62,12 @@ FreePreNet::semiCompileNode(FreeNet& freeNet, int nodeNr, const SlotMap& slotMap
 	  int target = n.sons[i].target;
 	  Assert(symbol != 0, "null symbol");
 	  symbols[i] = symbol;
-	  if (dynamic_cast<FreeSymbol*>(symbol) != 0 && symbol->arity() > 0)
+	  //
+	  //	Treat constants as regular function symbols to avoid special
+	  //	casing in fast paths and to make general paths easier to branch
+	  //	predicts.
+	  //
+	  if (dynamic_cast<FreeSymbol*>(symbol) != nullptr /*&& symbol->arity() > 0*/)
 	    {
 	      int slot = allocateSlot(netVec[target]->first.liveSet, testPosition, symbol);
 	      SlotMap newMap(slotMap);
