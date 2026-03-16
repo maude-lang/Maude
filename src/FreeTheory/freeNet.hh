@@ -64,6 +64,7 @@ public:
   //	Functions to use a FreeNet.
   //
   bool applyReplace(DagNode* subject, RewritingContext& context);
+  bool lowArityApplyReplace(DagNode* subject, RewritingContext& context);
   bool fastApplyReplace(DagNode* subject, RewritingContext& context);
   bool superFastApplyReplace(DagNode* subject, RewritingContext& context);
   bool applyReplaceNoOwise(DagNode* subject, RewritingContext& context);

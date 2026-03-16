@@ -1,3 +1,21 @@
+2026-03-15  Saruman the White  <eker@eker10>
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): support
+	eqRewriteLowArity<>
+
+	* freeSymbol.hh (class FreeSymbol): added decl for function
+	template eqRewriteLowArity()
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteFast): fix comment
+	(FreeSymbol::eqRewriteLowArity): added
+
+	* freeNet.hh (class FreeNet): added decl for
+	lowArityApplyReplace()
+
+	* freeNetExec.cc (FreeNet::lowArityApplyReplace): added
+	(FreeNet::fastApplyReplace, FreeNet::superFastApplyReplace):
+	cleaned up
+
 2026-03-06  Saruman the White  <eker@eker10>
 
 	* freePreNetSemiCompiler.cc (FreePreNet::semiCompileNode):

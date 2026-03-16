@@ -101,11 +101,73 @@ FreeNet::applyReplace2(DagNode* subject, RewritingContext& context)
 }
 
 bool
+FreeNet::lowArityApplyReplace(DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Optimized version of the the above that only works for unary,
+  //	binary and ternary top symbols, and free symbols with arity <=3
+  //	in the (non-empty) discrimination net.
+  //
+  long i;
+  Vector<TestNode>::const_iterator netBase = net.begin();
+  Vector<TestNode>::const_iterator n = netBase;
+  Vector<DagNode**>::iterator stackBase = stack.begin();
+  DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
+  DagNode* d = topArgArray[n->argIndex];
+  stack[0] = topArgArray;
+  int symbolIndex = d->symbol()->getIndexWithinModule();
+  for (;;)
+    {
+      long p;
+      int diff = symbolIndex - n->symbolIndex;
+      if (diff != 0)
+	{
+	  i = n->notEqual[diff < 0];
+	  if (i <= 0)
+	    {
+	      if (i == 0)
+		return false;
+	      break;
+	    }
+	  n = netBase + i;
+	  p = n->position;
+	  if (p < 0)
+	    continue;
+	}
+      else
+	{
+	  stackBase[n->slot] = static_cast<FreeDagNode*>(d)->internal;
+	  i = n->equal;
+	  if (i <= 0)
+	    break;
+	  n = netBase + i;
+	  p = n->position;
+	}
+      d = stackBase[p][n->argIndex];
+      symbolIndex = d->symbol()->getIndexWithinModule();
+    }
+  //
+  //	Now go through the sequence of remainders, trying to finish the
+  //	matching process for each one in turn.
+  //
+  Vector<FreeRemainder*>::const_iterator p = fastApplicable[~i].begin();
+  const FreeRemainder* r = *p;
+  do
+    {
+      if (r->generalMatchReplace(subject, context, stack))
+	return true;
+    }
+  while ((r = *(++p)) != 0);
+  return false;
+}
+
+bool
 FreeNet::fastApplyReplace(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols in the (non-empty) discrimination net,
+  //	binary and ternary top symbols, and free symbols with arity <=3
+  //	in the (non-empty) discrimination net,
   //	where each fastApplicable list has a single remainder.
   //	Also all our remainders must be FAST or SUPER-FAST.
   //
@@ -137,9 +199,7 @@ FreeNet::fastApplyReplace(DagNode* subject, RewritingContext& context)
 	}
       else
 	{
-	  long s = n->slot;
-	  //if (s >= 0)
-	    stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
+	  stackBase[n->slot] = static_cast<FreeDagNode*>(d)->internal;
 	  i = n->equal;
 	  if (i <= 0)
 	    break;
@@ -157,7 +217,8 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
 {
   //
   //	Optimized version of the the above that only works for unary,
-  //	binary and ternary top symbols in the (non-empty) discrimination net,
+  //	binary and ternary top symbols, and free symbols with arity <=3
+  //	in the (non-empty) discrimination net,
   //	where each fastApplicable list has a single remainder.
   //	Also all our remainders must be SUPER-FAST.
   //
@@ -189,9 +250,7 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
 	}
       else
 	{
-	  long s = n->slot;
-	  //if (s >= 0)
-	    stackBase[s] = static_cast<FreeDagNode*>(d)->internal;
+	  stackBase[n->slot] = static_cast<FreeDagNode*>(d)->internal;
 	  i = n->equal;
 	  if (i <= 0)
 	    break;
