@@ -98,13 +98,34 @@ FreeSymbol::eqRewriteUnroll(Symbol* symbol, DagNode* subject, RewritingContext& 
 
 template<int n>
 bool
+FreeSymbol::eqRewriteLowArity(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Symbol has 1, 2 or 3 arguments and standard strategy and equations.
+  //
+  //	Furthermore, all symbols in the discrimination net are free
+  //	and have arity 0, 1, 2 or 3.
+  //	Furthermore the discrimination net cannot be null - there must be at least
+  //	one free symbol to test.
+  //
+  //	We reduce the arguments using the unroller idiom and use lowArityApplyReplace()
+  //
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.lowArityApplyReplace(subject, context);
+}
+
+//
+//	We don't bother with a degenerate case of eqRewriteLowArity().
+//
+
+template<int n>
+bool
 FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   //
-  //	Symbol has 0, 1, 2 or 3 arguments and standard strategy and equations.
-  //
-  //	Furthermore, all symbols in the discrimination net are both free
-  //	and have arity 0, 1, 2 or 3.
+  //	All the requirements for eqRewriteLowArity(), together with the
+  //	requirement that there is a single used remainder in each applicable list.
   //
   //	Furthermore, all used remainders are are FAST or SUPER_FAST:
   //    * have a lhs that parses into a non-error sort
@@ -114,7 +135,7 @@ FreeSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& co
   //	* have the sort of each variable qualify with fastGeqSufficient()
   //	* not foreign (already ruled out by all symbols in the net being free)
   //
-  //	We reduce the arguments using the unroller idiom and use fastApplyReplaceFast()
+  //	We reduce the arguments using the unroller idiom and use fastApplyReplace()
   //
   Assert(symbol == subject->symbol(), "bad symbol");  
   reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
@@ -229,7 +250,7 @@ FreeSymbol::chooseEqRewriteFunction() const
 {
   //
   //	Pick a specialized function to do the equational rewriting.
-  //	We have 21 fast functions and a backstop.
+  //	We have 24 fast functions and a backstop.
   //
   if (standardStrategy())
     {
@@ -356,11 +377,29 @@ FreeSymbol::chooseEqRewriteFunction() const
 		      return &eqRewriteSlow;
 		    }
 		}
+	      //
+	      //	We have a remainder that is not FAST or SUPER_FAST and/or
+	      //	we have multiple remainders in some applicable list.
+	      //
+	      switch (arity())
+		{
+		case 1:
+		  return &eqRewriteLowArity<1>;
+		case 2:
+		  return &eqRewriteLowArity<2>;
+		case 3:
+		  return &eqRewriteLowArity<3>;
+		case 0:
+		  CantHappen("nullary symbol " << this << " can't have non-null net");
+		  // fall into default case
+		default:
+		  return &eqRewriteSlow;
+		}
 	    }
 	  //
 	  //	We have the standard strategy and equations, though the discrimination net
 	  //	or remainders rule out one of the fast/super-fast routines
-	  //    We might still be able to use the unroller idiom for to reduce arguments.
+	  //    We might still be able to use the unroller idiom to reduce arguments.
 	  //
 	  switch (arity())
 	    {

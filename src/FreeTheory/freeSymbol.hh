@@ -106,6 +106,8 @@ private:
   template<int n>
   static bool eqRewriteUnroll(Symbol* symbol, DagNode* subject, RewritingContext& context);
   template<int n>
+  static bool eqRewriteLowArity(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  template<int n>
   static bool eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
   template<int n>
   static bool eqRewriteSuperFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
