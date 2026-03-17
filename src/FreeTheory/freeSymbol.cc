@@ -307,9 +307,9 @@ FreeSymbol::chooseEqRewriteFunction() const
 		{
 		  //
 		  //	Remainder can't fail, and thus there should only be one.
-		  //FIXME
-		  //Assert(discriminationNet.getMaxNrRemainders() == 1,
-		  //       "more than one remainder for " << this);
+		  //
+		  Assert(discriminationNet.getMaxNrRemainders() == 1,
+		         "more than one remainder for " << this);
 		  //cout << "null-net super-fast " << this << endl;
 		  switch (arity())
 		    {

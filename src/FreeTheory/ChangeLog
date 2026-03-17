@@ -1,3 +1,13 @@
+2026-03-16  Saruman the White  <eker@eker10>
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): Assert()
+	that there is only one remainder in the null net super fast case
+
+	* freePreNet.cc (FreePreNet::buildNet): allow potentialSubsumers
+	to be ground - otherwise constants can't subsume themselves and
+	since there are no arguments, subsumption can't happen on
+	arguments
+
 2026-03-15  Saruman the White  <eker@eker10>
 
 	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): support
