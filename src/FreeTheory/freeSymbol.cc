@@ -245,6 +245,13 @@ FreeSymbol::compileEquations()
   setEqRewrite(chooseEqRewriteFunction());
 }
 
+/*
+#define Return(p)							\
+  { (cerr << Tty(Tty::RED) << this << " uses "#p << Tty(Tty::RESET) << endl); return &p; }
+*/
+
+#define Return(p) return &p;
+
 EqRewriter::EqRewriteFunctionPtr
 FreeSymbol::chooseEqRewriteFunction() const
 {
@@ -262,17 +269,16 @@ FreeSymbol::chooseEqRewriteFunction() const
 	  //
 	  //	Pure constructor case.
 	  //
-	  //cout << "ctor " << this << endl;
 	  switch (arity())
 	    {
 	    case 0:
-	      return &eqRewriteCtorUnroll<0>;
+	      Return(eqRewriteCtorUnroll<0>);
 	    case 1:
-	      return &eqRewriteCtorUnroll<1>;
+	      Return(eqRewriteCtorUnroll<1>);
 	    case 2:
-	      return &eqRewriteCtorUnroll<2>;
+	      Return(eqRewriteCtorUnroll<2>);
 	    case 3:
-	      return &eqRewriteCtorUnroll<3>;
+	      Return(eqRewriteCtorUnroll<3>);
 	    }
 	}
       else
@@ -286,20 +292,19 @@ FreeSymbol::chooseEqRewriteFunction() const
 		{
 		  if (discriminationNet.getMaxNrRemainders() == 1)
 		    {
-		      //cout << "null-net fast " << this << endl;
 		      switch (arity())
 			{
 			case 1:
-			  return &eqRewriteNullNetFast<1>;
+			  Return(eqRewriteNullNetFast<1>);
 			case 2:
-			  return &eqRewriteNullNetFast<2>;
+			  Return(eqRewriteNullNetFast<2>);
 			case 3:
-			  return &eqRewriteNullNetFast<3>;
+			  Return(eqRewriteNullNetFast<3>);
 			case 0:
 			  CantHappen("nullary symbol " << this << " must be super-fast");
 			  // fall into default case
 			default:
-			  return &eqRewriteSlow;
+			  Return(eqRewriteSlow);
 			}
 		    }
 		}
@@ -310,19 +315,18 @@ FreeSymbol::chooseEqRewriteFunction() const
 		  //
 		  Assert(discriminationNet.getMaxNrRemainders() == 1,
 		         "more than one remainder for " << this);
-		  //cout << "null-net super-fast " << this << endl;
 		  switch (arity())
 		    {
 		    case 0:
-		      return &eqRewriteNullNetSuperFast<0>;
+		      Return(eqRewriteNullNetSuperFast<0>);
 		    case 1:
-		      return &eqRewriteNullNetSuperFast<1>;
+		      Return(eqRewriteNullNetSuperFast<1>);
 		    case 2:
-		      return &eqRewriteNullNetSuperFast<2>;
+		      Return(eqRewriteNullNetSuperFast<2>);
 		    case 3:
-		      return &eqRewriteNullNetSuperFast<3>;
+		      Return(eqRewriteNullNetSuperFast<3>);
 		    default:
-		      return &eqRewriteSlow;
+		      Return(eqRewriteSlow);
 		    }
 		}
 	    }
@@ -337,20 +341,19 @@ FreeSymbol::chooseEqRewriteFunction() const
 		{
 		  if (discriminationNet.getMaxNrRemainders() == 1)
 		    {
-		      //cout << "fast " << this << endl;
 		      switch (arity())
 			{
 			case 1:
-			  return &eqRewriteFast<1>;
+			  Return(eqRewriteFast<1>);
 			case 2:
-			  return &eqRewriteFast<2>;
+			  Return(eqRewriteFast<2>);
 			case 3:
-			  return &eqRewriteFast<3>;
+			  Return(eqRewriteFast<3>);
 			case 0:
 			  CantHappen("nullary symbol " << this << " can't have non-null net");
 			  // fall into default case
 			default:
-			  return &eqRewriteSlow;
+			  Return(eqRewriteSlow);
 			}
 		    }
 		}
@@ -358,23 +361,22 @@ FreeSymbol::chooseEqRewriteFunction() const
 		{
 		  //
 		  //	Remainder can't fail, and thus there should only be one.
-		  //FIXME
-		  //Assert(discriminationNet.getMaxNrRemainders() == 1,
-		  //       "more than one remainder for " << this);
-		  //cout << "super-fast " << this << endl;
+		  //
+		  Assert(discriminationNet.getMaxNrRemainders() == 1,
+		         "more than one remainder for " << this);
 		  switch (arity())
 		    {
 		    case 1:
-		      return &eqRewriteSuperFast<1>;
+		      Return(eqRewriteSuperFast<1>);
 		    case 2:
-		      return &eqRewriteSuperFast<2>;
+		      Return(eqRewriteSuperFast<2>);
 		    case 3:
-		      return &eqRewriteSuperFast<3>;
+		      Return(eqRewriteSuperFast<3>);
 		    case 0:
 			CantHappen("nullary symbol " << this << " can't have non-null net");
 			// fall into default case
 		    default:
-		      return &eqRewriteSlow;
+		      Return(eqRewriteSlow);
 		    }
 		}
 	      //
@@ -384,16 +386,16 @@ FreeSymbol::chooseEqRewriteFunction() const
 	      switch (arity())
 		{
 		case 1:
-		  return &eqRewriteLowArity<1>;
+		  Return(eqRewriteLowArity<1>);
 		case 2:
-		  return &eqRewriteLowArity<2>;
+		  Return(eqRewriteLowArity<2>);
 		case 3:
-		  return &eqRewriteLowArity<3>;
+		  Return(eqRewriteLowArity<3>);
 		case 0:
 		  CantHappen("nullary symbol " << this << " can't have non-null net");
 		  // fall into default case
 		default:
-		  return &eqRewriteSlow;
+		  Return(eqRewriteSlow);
 		}
 	    }
 	  //
@@ -404,21 +406,20 @@ FreeSymbol::chooseEqRewriteFunction() const
 	  switch (arity())
 	    {
 	    case 0:
-	      return &eqRewriteUnroll<0>;
+	      Return(eqRewriteUnroll<0>);
 	    case 1:
-	      return &eqRewriteUnroll<1>;
+	      Return(eqRewriteUnroll<1>);
 	    case 2:
-	      return &eqRewriteUnroll<2>;
+	      Return(eqRewriteUnroll<2>);
 	    case 3:
-	      return &eqRewriteUnroll<3>;
+	      Return(eqRewriteUnroll<3>);
 	    }
 	}
     }
   //
   //	The backstop.
   //
-  //cout << "slow " << this << endl;
-  return &eqRewriteSlow;
+  Return(eqRewriteSlow);
 }
 
 Term*
