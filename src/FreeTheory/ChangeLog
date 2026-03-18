@@ -1,3 +1,8 @@
+2026-03-18  Saruman the White  <eker@eker10>
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): wrap return
+	to see which function is chosen
+
 2026-03-16  Saruman the White  <eker@eker10>
 
 	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): Assert()
