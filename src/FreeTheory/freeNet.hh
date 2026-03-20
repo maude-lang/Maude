@@ -57,7 +57,7 @@ public:
   //	Functions to query properties of a FreeNet.
   //
   bool emptyNet() const;
-  bool onlyFreeLowAritySymbols() const;
+  bool noHighArityFreeSymbols() const;
   FreeRemainder::Speed getSpeed() const;
   int getMaxNrRemainders() const;
   //
@@ -71,6 +71,7 @@ public:
   //
   //	Degenerate cases when the net is empty.
   //
+  bool generalNullNet(DagNode* subject, RewritingContext& context);
   bool fastNullNet(DagNode* subject, RewritingContext& context);
   bool superFastNullNet(DagNode* subject, RewritingContext& context);
   //
@@ -133,7 +134,7 @@ private:
   Vector<PatternSet> applicable;
   FreeRemainder::Speed speed;
   int maxNrRemainders;
-  bool freeAndLowArity;
+  bool alienOrLowArity;
 
   friend class FreeInstruction;
   friend class FreeGeneralExtor;
@@ -171,9 +172,9 @@ FreeNet::getMaxNrRemainders() const
 }
 
 inline bool
-FreeNet::onlyFreeLowAritySymbols() const
+FreeNet::noHighArityFreeSymbols() const
 {
-  return freeAndLowArity;
+  return alienOrLowArity;
 }
 
 #endif

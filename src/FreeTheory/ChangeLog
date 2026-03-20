@@ -1,3 +1,38 @@
+2026-03-19  Saruman the White  <eker@eker10>
+
+	* freeSymbol.hh (class FreeSymbol): eqRewriteCtorUnroll<>() ->
+	eqRewriteCtor<>()
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction):
+	eqRewriteCtorUnroll<>() -> eqRewriteCtor<>()
+	(FreeSymbol::eqRewriteCtorUnroll): becomes eqRewriteCtor()
+	(FreeSymbol::eqRewriteLowArity): update description
+
+	* freeNetExec.cc (FreeNet::generalNullNet): commented out
+
+	* freeNet.hh (class FreeNet): added decl for generalNullNet()
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction):
+	onlyFreeLowAritySymbols() -> noHighArityFreeSymbols()
+
+	* freeNetExec.cc (FreeNet::lowArityApplyReplace): deal with aliens
+	and constants
+	(FreeNet::fastApplyReplace): revert to dealing with constants
+	(FreeNet::superFastApplyReplace): ditto
+	(FreeNet::generalNullNet): added
+
+	* freeNet.hh (class FreeNet): freeAndLowArity -> alienOrLowArity
+	(FreeNet::onlyFreeLowAritySymbols): becomes
+	noHighArityFreeSymbols()
+
+	* freeNet.cc (FreeNet::FreeNet): freeAndLowArity becomes
+	alienOrLowArity
+	(FreeNet::fillOutNode): freeAndLowArity -> alienOrLowArity
+
+	* freePreNetSemiCompiler.cc (FreePreNet::semiCompileNode): revert
+	treating constants as functions for storing pointers to arguments
+	lists
+
 2026-03-18  Saruman the White  <eker@eker10>
 
 	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): wrap return
