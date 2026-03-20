@@ -72,7 +72,7 @@
 
 template<int n>
 bool
-FreeSymbol::eqRewriteCtorUnroll(Symbol* symbol, DagNode* subject, RewritingContext& context)
+FreeSymbol::eqRewriteCtor(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   //
   //	Symbol has 0, 1, 2 or 3 arguments, standard strategy and no equations.
@@ -103,8 +103,8 @@ FreeSymbol::eqRewriteLowArity(Symbol* symbol, DagNode* subject, RewritingContext
   //
   //	Symbol has 1, 2 or 3 arguments and standard strategy and equations.
   //
-  //	Furthermore, all symbols in the discrimination net are free
-  //	and have arity 0, 1, 2 or 3.
+  //	Furthermore, all symbols in the discrimination net are either alien or
+  //	free with arity 0, 1, 2 or 3.
   //	Furthermore the discrimination net cannot be null - there must be at least
   //	one free symbol to test.
   //
@@ -116,7 +116,7 @@ FreeSymbol::eqRewriteLowArity(Symbol* symbol, DagNode* subject, RewritingContext
 }
 
 //
-//	We don't bother with a degenerate case of eqRewriteLowArity().
+//	We don't bother with a degenerate case of eqRewriteLowArity() at the moment.
 //
 
 template<int n>
@@ -272,13 +272,13 @@ FreeSymbol::chooseEqRewriteFunction() const
 	  switch (arity())
 	    {
 	    case 0:
-	      Return(eqRewriteCtorUnroll<0>);
+	      Return(eqRewriteCtor<0>);
 	    case 1:
-	      Return(eqRewriteCtorUnroll<1>);
+	      Return(eqRewriteCtor<1>);
 	    case 2:
-	      Return(eqRewriteCtorUnroll<2>);
+	      Return(eqRewriteCtor<2>);
 	    case 3:
-	      Return(eqRewriteCtorUnroll<3>);
+	      Return(eqRewriteCtor<3>);
 	    }
 	}
       else
@@ -330,7 +330,7 @@ FreeSymbol::chooseEqRewriteFunction() const
 		    }
 		}
 	    }
-	  else if (discriminationNet.onlyFreeLowAritySymbols())
+	  else if (discriminationNet.noHighArityFreeSymbols())
 	    {
 	      //
 	      //	The discrimination net only has low arity free symbols.

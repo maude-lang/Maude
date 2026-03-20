@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@
 FreeNet::FreeNet()
 {
   speed = FreeRemainder::SUPER_FAST;  // until we know otherwise
-  freeAndLowArity = true;  // assume all tested symbols are free and lowArity
+  alienOrLowArity = true;  // assume all tested symbols are alien or low arity
   maxNrRemainders = 0;
 }
 
@@ -109,11 +109,11 @@ FreeNet::fillOutNode(int nodeNr,
   for (int i = 0; i < nrSymbols; i++)
     {
       Symbol* s = symbols[i];
-      if (freeAndLowArity)
+      if (alienOrLowArity)
 	{
 	  FreeSymbol* fs = dynamic_cast<FreeSymbol*>(s);
-	  if (!fs || !(fs->lowArity()))
-	    freeAndLowArity = false;
+	  if (fs && !(fs->lowArity()))
+	    alienOrLowArity = false;
 	}
       Assert(symbols[i] != 0, "null symbol");
       triples[i].symbol = s;

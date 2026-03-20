@@ -102,7 +102,7 @@ private:
   void memoStrategy(MemoTable::SourceSet& from, DagNode* subject, RewritingContext& context);
 
   template<int n>
-  static bool eqRewriteCtorUnroll(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  static bool eqRewriteCtor(Symbol* symbol, DagNode* subject, RewritingContext& context);
   template<int n>
   static bool eqRewriteUnroll(Symbol* symbol, DagNode* subject, RewritingContext& context);
   template<int n>
