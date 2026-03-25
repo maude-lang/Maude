@@ -1,3 +1,11 @@
+2026-03-25  Saruman the White  <eker@eker10>
+
+	* freeNetExec.cc (FreeNet::applyReplaceNoOwise2): added comment to
+	explain purpose
+	(FreeNet::lowArityApplyReplace): reordered pre-loop setup
+	(FreeNet::fastApplyReplace): ditto
+	(FreeNet::superFastApplyReplace): ditto
+
 2026-03-19  Saruman the White  <eker@eker10>
 
 	* freeSymbol.hh (class FreeSymbol): eqRewriteCtorUnroll<>() ->
