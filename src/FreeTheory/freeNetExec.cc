@@ -110,12 +110,12 @@ FreeNet::lowArityApplyReplace(DagNode* subject, RewritingContext& context)
   //
   long i;
   Vector<TestNode>::const_iterator netBase = net.begin();
-  Vector<TestNode>::const_iterator n = netBase;
   Vector<DagNode**>::iterator stackBase = stack.begin();
   DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
+  Vector<TestNode>::const_iterator n = netBase;
   DagNode* d = topArgArray[n->argIndex];
-  stack[0] = topArgArray;
   int symbolIndex = d->symbol()->getIndexWithinModule();
+  stack[0] = topArgArray;
   for (;;)
     {
       long p;
@@ -173,12 +173,12 @@ FreeNet::fastApplyReplace(DagNode* subject, RewritingContext& context)
   //
   long i;
   Vector<TestNode>::const_iterator netBase = net.begin();
-  Vector<TestNode>::const_iterator n = netBase;
   Vector<DagNode**>::iterator stackBase = stack.begin();
   DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
+  Vector<TestNode>::const_iterator n = netBase;
   DagNode* d = topArgArray[n->argIndex];
-  stack[0] = topArgArray;
   int symbolIndex = d->symbol()->getIndexWithinModule();
+  stack[0] = topArgArray;
   for (;;)
     {
       long p;
@@ -223,12 +223,12 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
   //
   long i;
   Vector<TestNode>::const_iterator netBase = net.begin();
-  Vector<TestNode>::const_iterator n = netBase;
   Vector<DagNode**>::iterator stackBase = stack.begin();
   DagNode** topArgArray = static_cast<FreeDagNode*>(subject)->internal;
+  Vector<TestNode>::const_iterator n = netBase;
   DagNode* d = topArgArray[n->argIndex];
-  stack[0] = topArgArray;
   int symbolIndex = d->symbol()->getIndexWithinModule();
+  stack[0] = topArgArray;
   for (;;)
     {
       long p;
@@ -265,6 +265,10 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
 }
 
 /* no use for this yet
+ * null nets with non-fast remainders seem rare; even if we have
+ * unstable aliens, we still expect a base case to generate a node
+ * in the net
+ 
 bool
 FreeNet::generalNullNet(DagNode* subject, RewritingContext& context)
 {
@@ -308,6 +312,8 @@ FreeNet::superFastNullNet(DagNode* subject, RewritingContext& context)
 bool
 FreeNet::applyReplaceNoOwise2(DagNode* subject, RewritingContext& context)
 {
+  //
+  //	This is needed for non-final 0s in complex strategies.
   //
   //	First traverse discrimination net to find the sequence of equations
   //	(actually remainder pointers) which match the free symbol skeleton in the
