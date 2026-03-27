@@ -47,7 +47,8 @@ public:
 #endif
 
 private:
-  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  static bool eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  static bool eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context);
   //
   //	This class is final so we can make these overload private.
   //
@@ -64,7 +65,6 @@ private:
 
   void postInterSymbolPass();
   void reset();
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
   //
   //	We don't accept or compile any equations.
   //

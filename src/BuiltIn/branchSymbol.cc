@@ -184,29 +184,6 @@ BranchSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& cont
   return s->tryEquations(subject, context);
 }
 
-bool
-BranchSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  FreeDagNode* f = static_cast<FreeDagNode*>(subject);
-  DagNode *e = f->getArgument(0);
-  e->reduce(context);
-
-  int nrTerms = testTerms.length();
-  for (int i = 0; i < nrTerms; i++)
-    {
-      if(testTerms[i]->equal(e))
-	return context.builtInReplace(subject, f->getArgument(i + 1));
-    }
-  //
-  //	First argument failed to match any of our test terms. We now need to reduce
-  //	all other arguments.
-  //
-  for (int i = 1; i <= nrTerms; i++)
-    f->getArgument(i)->reduce(context);
-  return tryEquations(subject, context);
-}
-
 void
 BranchSymbol::compileOpDeclarations()
 {

@@ -123,41 +123,39 @@ EqualitySymbol::reset()
 }
 
 bool
-EqualitySymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+EqualitySymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   Assert(symbol == subject->symbol(), "bad symbol");
   EqualitySymbol* s = safeCastNonNull<EqualitySymbol*>(symbol);
-  //  This is a hack; eventually we'll inline this function.
-  return s->eqRewrite(subject, context);
-}
-
-bool
-EqualitySymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
   FreeDagNode* f = static_cast<FreeDagNode*>(subject);
   DagNode* l = f->getArgument(0);
   DagNode* r = f->getArgument(1);
-  if (standardStrategy())
-    {
-      l->reduce(context);
-      r->reduce(context);
-    }
-  else
-    {
-      const Vector<int>& userStrategy = getStrategy();
-      for(int i = 0;; i++)
-	{
-	  int a = userStrategy[i];
-	  if (a == 0)
-	    break;
-	  f->getArgument(a - 1)->reduce(context);
-	}
-      l->computeTrueSort(context);  // we don't need the sort but we do need to normalize
-      r->computeTrueSort(context);
-    }
+  l->reduce(context);
+  r->reduce(context);
   return context.builtInReplace(subject, l->equal(r) ?
-				equalTerm.getDag() : notEqualTerm.getDag());
+				s->equalTerm.getDag() : s->notEqualTerm.getDag());
+}
+
+bool
+EqualitySymbol::eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  EqualitySymbol* s = safeCastNonNull<EqualitySymbol*>(symbol);
+  FreeDagNode* f = static_cast<FreeDagNode*>(subject);
+  const Vector<int>& userStrategy = s->getStrategy();
+  for(int i = 0;; ++i)
+    {
+      int a = userStrategy[i];
+      if (a == 0)
+	break;
+      f->getArgument(a - 1)->reduce(context);
+    }
+  DagNode* l = f->getArgument(0);
+  DagNode* r = f->getArgument(1);
+  l->computeTrueSort(context);  // we don't need the sort but we do need to normalize
+  r->computeTrueSort(context);
+  return context.builtInReplace(subject, l->equal(r) ?
+				s->equalTerm.getDag() : s->notEqualTerm.getDag());
 }
 
 bool
@@ -179,7 +177,7 @@ EqualitySymbol::acceptEquation(Equation* /* equation */)
 void
 EqualitySymbol::compileEquations()
 {
-  setEqRewrite(&EqualitySymbol::eqRewrite);
+  setEqRewrite(standardStrategy() ? &eqRewriteFast : &eqRewriteSlow);
 }
 
 Instruction*

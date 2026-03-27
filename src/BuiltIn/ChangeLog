@@ -1,3 +1,30 @@
+2026-03-26  Saruman the White  <eker@eker10>
+
+	* sortTestSymbol.hh (class SortTestSymbol): deleted decl for 2 arg
+	version of eqRewrite()
+
+	* sortTestSymbol.cc (SortTestSymbol::eqRewrite): deleted 2 arg
+	version
+
+	* equalitySymbol.hh (class EqualitySymbol): eqRewrite() ->
+	eqRewriteFast(); added decl for eqRewriteSlow()
+
+	* equalitySymbol.cc (EqualitySymbol::eqRewriteSlow): added
+	(EqualitySymbol::eqRewrite): becomes eqRewriteFast()
+	(EqualitySymbol::compileEquations): select eqRewriteFast() or
+	eqRewriteSlow()
+
+	* equalitySymbol.hh (class EqualitySymbol): deleted decl for 2 arg
+	eqRewrite()
+
+	* equalitySymbol.cc (EqualitySymbol::eqRewrite): fuse both
+	versions
+
+	* branchSymbol.hh (class BranchSymbol): deleted decl for 2 arg
+	eqRewrite()
+
+	* branchSymbol.cc (BranchSymbol::eqRewrite): deleted 2 arg version
+
 2026-03-06  Saruman the White  <eker@eker10>
 
 	* CUI_NumberOpSymbol.hh (class CUI_NumberOpSymbol): deleted decl

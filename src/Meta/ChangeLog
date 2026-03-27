@@ -1,3 +1,12 @@
+2026-03-26  Saruman the White  <eker@eker10>
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): eqRewrite() ->
+	eqRewriteFast(); complexStrategy() -> eqRewriteSlow()
+
+	* metaLevelOpSymbol.cc (MetaLevelOpSymbol::complexStrategy):
+	becomes eqRewriteSlow()
+	(MetaLevelOpSymbol::eqRewrite): becomes eqRewriteFast
+
 2026-02-18  Saruman the White  <eker@eker10>
 
 	* metaDownOps.cc (MetaLevel::downAttr): fix bug where rpo flag is

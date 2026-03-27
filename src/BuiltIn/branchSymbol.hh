@@ -48,7 +48,6 @@ protected:
   //
   //	Built in equational rewriting semantics and strategy.
   //
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
   void stackArguments(DagNode* subject,
 		      Vector<RedexPosition>& stack,
 		      int parentIndex,

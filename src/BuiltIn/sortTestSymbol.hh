@@ -42,8 +42,6 @@ public:
 private:
   static const Vector<int>& makeLazyStrategy();
   static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
-
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
   //
   //	We don't accept or compile any equations.
   //
