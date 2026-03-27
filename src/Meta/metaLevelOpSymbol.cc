@@ -274,37 +274,26 @@ void
 MetaLevelOpSymbol::compileEquations()
 {
   FreeSymbol::compileEquations();
-  setEqRewrite(&MetaLevelOpSymbol::eqRewrite);
+  setEqRewrite(standardStrategy() ? &eqRewriteFast : &eqRewriteSlow);
 }
 
 bool
-MetaLevelOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context)
+MetaLevelOpSymbol::eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   Assert(symbol == subject->symbol(), "bad symbol");
   MetaLevelOpSymbol* s = safeCastNonNull<MetaLevelOpSymbol*>(symbol);
-  //  This is a hack; eventually we'll inline this function.
-  return s->eqRewrite(subject, context);
-}
-
-bool
-MetaLevelOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  Assert(metaLevel != 0, "metaLevel not set for " << this << " during postInterSymbolPass()");
   FreeDagNode* d = safeCast(FreeDagNode*, subject);
-  if (standardStrategy())
-    {
-      const int nrArgs = arity();
-      for (int i = 0; i < nrArgs; ++i)
-	d->getArgument(i)->reduce(context);
-      return (this->*descentFunction)(d, context) || tryEquations(subject, context);
-    }
-  return complexStrategy(subject, context);
+  const int nrArgs = s->arity();
+  for (int i = 0; i < nrArgs; ++i)
+    d->getArgument(i)->reduce(context);
+  return (s->*(s->descentFunction))(d, context) || s->tryEquations(subject, context);
 }
 
 bool
-MetaLevelOpSymbol::complexStrategy(DagNode* subject, RewritingContext& context)
+MetaLevelOpSymbol::eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
+  Assert(symbol == subject->symbol(), "bad symbol");
+  MetaLevelOpSymbol* s = safeCastNonNull<MetaLevelOpSymbol*>(symbol);
   FreeDagNode* d = safeCast(FreeDagNode*, subject);
   //
   //	Execute user supplied strategy.
@@ -313,7 +302,7 @@ MetaLevelOpSymbol::complexStrategy(DagNode* subject, RewritingContext& context)
   //	(1) we have no way to apply user equations at an non-final zero; and
   //	(2) we have no way to replace semi-eager arguments so that they can be evaluated.
   //
-  const Vector<int>& userStrategy = getStrategy();
+  const Vector<int>& userStrategy = s->getStrategy();
   const int stratLen = userStrategy.length() - 1;
   for (int i = 0; i < stratLen; ++i)
     {
@@ -323,11 +312,12 @@ MetaLevelOpSymbol::complexStrategy(DagNode* subject, RewritingContext& context)
 	  //
 	  //	Zero must be the end of the strategy and is treated as such.
 	  //
-	  IssueWarning("multiple zeros in strategy for MetaLevelOpSymbol " << QUOTE(this) << " not supported.");
+	  IssueWarning("multiple zeros in strategy for MetaLevelOpSymbol " <<
+		       QUOTE(s) << " not supported.");
 	  break;
 	}
       else
 	d->getArgument(a - 1)->reduce(context);
     }
-  return (this->*descentFunction)(d, context) || tryEquations(subject, context);
+  return (s->*(s->descentFunction))(d, context) || s->tryEquations(subject, context);
 }

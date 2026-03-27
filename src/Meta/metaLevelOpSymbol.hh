@@ -73,13 +73,13 @@ protected:
   void postInterSymbolPass();
   void compileEquations();
   void reset();
-  bool eqRewrite(DagNode* subject, RewritingContext& context);
 
 private:
   typedef bool (MetaLevelOpSymbol::*DescentFunctionPtr)
     (FreeDagNode* subject, RewritingContext& context);
 
-  static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  static bool eqRewriteFast(Symbol* symbol, DagNode* subject, RewritingContext& context);
+  static bool eqRewriteSlow(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
   static RewritingContext* term2RewritingContext(Term* term, RewritingContext& context);
 
@@ -127,8 +127,6 @@ private:
 							 RewritingContext& context,
 							 int variantFlags) const;
   DagNode* makeNarrowingSearchPathResult(MetaModule* m, NarrowingSequenceSearch3* state) const;
-
-  bool complexStrategy(DagNode* subject, RewritingContext& context);
 
   bool metaStratRewrite(FreeDagNode* subject, RewritingContext& context,
 			DagNode* (StrategicSearch::*func)(void));

@@ -96,31 +96,6 @@ SortTestSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& co
   return true;
 }
 
-bool
-SortTestSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
-{
-  Assert(this == subject->symbol(), "bad symbol");
-  DagNode *t = static_cast<FreeDagNode*>(subject)->getArgument(0);
-  if (eagerFlag)
-    t->reduce(context);
-  else
-    t->computeTrueSort(context);
-  t->symbol()->constrainToExactSort(t, context);  // HACK
-  FreeSymbol* result = (t->leq(cmpSort)) ? leqResult : notLeqResult;
-  bool trace = RewritingContext::getTraceStatus();
-  if (trace)
-    {
-      context.tracePreEqRewrite(subject, 0, RewritingContext::BUILTIN);
-      if (context.traceAbort())
-	return false;
-    }
-  (void) new(subject) FreeDagNode(result);
-  context.incrementEqCount();
-  if (trace)
-    context.tracePostEqRewrite(subject);
-  return true;
-}
-
 //
 //	User equations don't make sense so we neither accept nor compile them.
 //
