@@ -98,6 +98,9 @@ protected:
 
 private:
   EqRewriter::EqRewriteFunctionPtr chooseEqRewriteFunction() const;
+  EqRewriter::EqRewriteFunctionPtr chooseNullNetFunction() const;
+  EqRewriter::EqRewriteFunctionPtr chooseNonNullNetFunction() const;
+
   bool complexStrategy(DagNode* subject, RewritingContext& context);
   void memoStrategy(MemoTable::SourceSet& from, DagNode* subject, RewritingContext& context);
 
