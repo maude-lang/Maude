@@ -1,5 +1,8 @@
 2026-03-31  Saruman the White  <eker@eker10>
 
+	* freeNet.cc (FreeNet::moreImportant): changed heuristic to favor
+	non-free symbols
+
 	* freeSymbol.cc (FreeSymbol::chooseNullNetFunction): use
 	eqRewriteNullNetGeneral<>()
 
