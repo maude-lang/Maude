@@ -1,5 +1,15 @@
 2026-03-31  Saruman the White  <eker@eker10>
 
+	* freeSymbol.cc (FreeSymbol::chooseNullNetFunction): use
+	eqRewriteNullNetGeneral<>()
+
+	* freeNetExec.cc (FreeNet::generalNullNet): uncommented
+
+	* freeSymbol.hh: added decl for template eqRewriteNullNetGeneral()
+
+	* freeSymbol.cc (FreeSymbol::eqRewriteNullNetGeneral): added
+	template
+
 	* freeSymbol.hh (class FreeSymbol): added decls for
 	chooseNullNetFunction() and chooseNonNullNetFunction()
 
