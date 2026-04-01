@@ -1,3 +1,13 @@
+2026-03-31  Saruman the White  <eker@eker10>
+
+	* freeSymbol.hh (class FreeSymbol): added decls for
+	chooseNullNetFunction() and chooseNonNullNetFunction()
+
+	* freeSymbol.cc (FreeSymbol::chooseNullNetFunction)
+	(FreeSymbol::chooseNonNullNetFunction): added
+	(FreeSymbol::chooseEqRewriteFunction): use chooseNullNetFunction()
+	and chooseNonNullNetFunction()
+
 2026-03-25  Saruman the White  <eker@eker10>
 
 	* freeNetExec.cc (FreeNet::applyReplaceNoOwise2): added comment to

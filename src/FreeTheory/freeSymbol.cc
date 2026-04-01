@@ -245,31 +245,35 @@ FreeSymbol::compileEquations()
   setEqRewrite(chooseEqRewriteFunction());
 }
 
-/*
+#if 0
+
 #define Return(p)							\
   { (cerr << Tty(Tty::RED) << this << " uses "#p << Tty(Tty::RESET) << endl); return &p; }
-*/
+
+#else
 
 #define Return(p) return &p;
+
+#endif
 
 EqRewriter::EqRewriteFunctionPtr
 FreeSymbol::chooseEqRewriteFunction() const
 {
   //
   //	Pick a specialized function to do the equational rewriting.
-  //	We have 24 fast functions and a backstop.
+  //	We have 4 + 7 + 12 = 23 fast functions and a backstop.
   //
-  if (standardStrategy())
+  //	We only optimize if for symbols with standard strategy and arity 0,.., 3.
+  //
+  int nrArgs = arity();
+  if (nrArgs <= 3 && standardStrategy())
     {
-      //
-      //	We only optimize in the standard strategy case.
-      //
       if (getEquations().size() == 0)
 	{
 	  //
 	  //	Pure constructor case.
 	  //
-	  switch (arity())
+	  switch (nrArgs)
 	    {
 	    case 0:
 	      Return(eqRewriteCtor<0>);
@@ -281,145 +285,147 @@ FreeSymbol::chooseEqRewriteFunction() const
 	      Return(eqRewriteCtor<3>);
 	    }
 	}
-      else
-	{
-	  if (discriminationNet.emptyNet())
-	    {
-	      //
-	      //	Nothing to match; we only have remainders.
-	      //
-	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
-		{
-		  if (discriminationNet.getMaxNrRemainders() == 1)
-		    {
-		      switch (arity())
-			{
-			case 1:
-			  Return(eqRewriteNullNetFast<1>);
-			case 2:
-			  Return(eqRewriteNullNetFast<2>);
-			case 3:
-			  Return(eqRewriteNullNetFast<3>);
-			case 0:
-			  CantHappen("nullary symbol " << this << " must be super-fast");
-			  // fall into default case
-			default:
-			  Return(eqRewriteSlow);
-			}
-		    }
-		}
-	      else if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
-		{
-		  //
-		  //	Remainder can't fail, and thus there should only be one.
-		  //
-		  Assert(discriminationNet.getMaxNrRemainders() == 1,
-		         "more than one remainder for " << this);
-		  switch (arity())
-		    {
-		    case 0:
-		      Return(eqRewriteNullNetSuperFast<0>);
-		    case 1:
-		      Return(eqRewriteNullNetSuperFast<1>);
-		    case 2:
-		      Return(eqRewriteNullNetSuperFast<2>);
-		    case 3:
-		      Return(eqRewriteNullNetSuperFast<3>);
-		    default:
-		      Return(eqRewriteSlow);
-		    }
-		}
-	    }
-	  else if (discriminationNet.noHighArityFreeSymbols())
-	    {
-	      //
-	      //	The discrimination net only has low arity free symbols.
-	      //	This doesn't imply that we are low arity.
-	      //	See if we qualify for FAST or SUPER_FAST execution.
-	      //
-	      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
-		{
-		  if (discriminationNet.getMaxNrRemainders() == 1)
-		    {
-		      switch (arity())
-			{
-			case 1:
-			  Return(eqRewriteFast<1>);
-			case 2:
-			  Return(eqRewriteFast<2>);
-			case 3:
-			  Return(eqRewriteFast<3>);
-			case 0:
-			  CantHappen("nullary symbol " << this << " can't have non-null net");
-			  // fall into default case
-			default:
-			  Return(eqRewriteSlow);
-			}
-		    }
-		}
-	      else if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
-		{
-		  //
-		  //	Remainder can't fail, and thus there should only be one.
-		  //
-		  Assert(discriminationNet.getMaxNrRemainders() == 1,
-		         "more than one remainder for " << this);
-		  switch (arity())
-		    {
-		    case 1:
-		      Return(eqRewriteSuperFast<1>);
-		    case 2:
-		      Return(eqRewriteSuperFast<2>);
-		    case 3:
-		      Return(eqRewriteSuperFast<3>);
-		    case 0:
-			CantHappen("nullary symbol " << this << " can't have non-null net");
-			// fall into default case
-		    default:
-		      Return(eqRewriteSlow);
-		    }
-		}
-	      //
-	      //	We have a remainder that is not FAST or SUPER_FAST and/or
-	      //	we have multiple remainders in some applicable list.
-	      //
-	      switch (arity())
-		{
-		case 1:
-		  Return(eqRewriteLowArity<1>);
-		case 2:
-		  Return(eqRewriteLowArity<2>);
-		case 3:
-		  Return(eqRewriteLowArity<3>);
-		case 0:
-		  CantHappen("nullary symbol " << this << " can't have non-null net");
-		  // fall into default case
-		default:
-		  Return(eqRewriteSlow);
-		}
-	    }
-	  //
-	  //	We have the standard strategy and equations, though the discrimination net
-	  //	or remainders rule out one of the fast/super-fast routines
-	  //    We might still be able to use the unroller idiom to reduce arguments.
-	  //
-	  switch (arity())
-	    {
-	    case 0:
-	      Return(eqRewriteUnroll<0>);
-	    case 1:
-	      Return(eqRewriteUnroll<1>);
-	    case 2:
-	      Return(eqRewriteUnroll<2>);
-	    case 3:
-	      Return(eqRewriteUnroll<3>);
-	    }
-	}
+      if (discriminationNet.emptyNet())
+	return chooseNullNetFunction();
+      return chooseNonNullNetFunction();
     }
   //
   //	The backstop.
   //
   Return(eqRewriteSlow);
+}
+
+EqRewriter::EqRewriteFunctionPtr
+FreeSymbol::chooseNullNetFunction() const
+{
+  //
+  //	We don't have any stable symbols to match; just one or more remainders.
+  //	We use one of 7 fast functions or the backstop.
+  //
+  int nrArgs = arity();
+  if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
+    {
+      //
+      //	Remainder can't fail, and thus there should only be one.
+      //
+      Assert(discriminationNet.getMaxNrRemainders() == 1,
+	     "more than one remainder for " << this);
+      switch (nrArgs)
+	{
+	case 0:
+	  Return(eqRewriteNullNetSuperFast<0>);
+	case 1:
+	  Return(eqRewriteNullNetSuperFast<1>);
+	case 2:
+	  Return(eqRewriteNullNetSuperFast<2>);
+	case 3:
+	  Return(eqRewriteNullNetSuperFast<3>);
+	}
+    }
+  if (discriminationNet.getSpeed() == FreeRemainder::FAST)
+    {
+      if (discriminationNet.getMaxNrRemainders() == 1)
+	{
+	  switch (nrArgs)
+	    {
+	    case 1:
+	      Return(eqRewriteNullNetFast<1>);
+	    case 2:
+	      Return(eqRewriteNullNetFast<2>);
+	    case 3:
+	      Return(eqRewriteNullNetFast<3>);
+	    case 0:
+	      //
+	      //	We can't bind variables so we're either slow or super-fast.
+	      //
+	      CantHappen("nullary symbol " << this << " must be super-fast");
+	    }
+	}
+    }
+  Return(eqRewriteSlow);
+}
+
+EqRewriter::EqRewriteFunctionPtr
+FreeSymbol::chooseNonNullNetFunction() const
+{
+  //
+  //	We have stable symbols to match.
+  //	We can use one of 12 fast functions.
+  //
+  int nrArgs = arity();
+  Assert(nrArgs != 0, "nullary symbol " << this << " can't have non-null net");
+
+  if (discriminationNet.noHighArityFreeSymbols())
+    {
+      //
+      //	The discrimination net only has low arity free symbols and
+      //	perhaps stable aliens.
+      //	See if we qualify for FAST or SUPER_FAST execution.
+      //
+      if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
+	{
+	  //
+	  //	Remainder can't fail, and thus there should only be one.
+	  //
+	  Assert(discriminationNet.getMaxNrRemainders() == 1,
+		 "more than one remainder for " << this);
+	  switch (nrArgs)
+	    {
+	    case 1:
+	      Return(eqRewriteSuperFast<1>);
+	    case 2:
+	      Return(eqRewriteSuperFast<2>);
+	    case 3:
+	      Return(eqRewriteSuperFast<3>);
+	    }
+	}
+      if (discriminationNet.getSpeed() == FreeRemainder::FAST)
+	{
+	  if (discriminationNet.getMaxNrRemainders() == 1)
+	    {
+	      switch (nrArgs)
+		{
+		case 1:
+		  Return(eqRewriteFast<1>);
+		case 2:
+		  Return(eqRewriteFast<2>);
+		case 3:
+		  Return(eqRewriteFast<3>);
+		}
+	    }
+	}
+      //
+      //	We have a remainder that is not FAST or SUPER_FAST and/or
+      //	we have multiple remainders in some applicable list.
+      //	We can still execute the free net assuming internal storage
+      //	of arguments.
+      //
+      switch (nrArgs)
+	{
+	case 1:
+	  Return(eqRewriteLowArity<1>);
+	case 2:
+	  Return(eqRewriteLowArity<2>);
+	case 3:
+	  Return(eqRewriteLowArity<3>);	  
+	}
+    }
+  //
+  //	Due to high arity free symbols that need to be matched we need to
+  //	run general purpose free net code.
+  //	We can still unroll the reduction of our arguments.
+  //
+  switch (nrArgs)
+    {
+    case 1:
+      Return(eqRewriteUnroll<1>);
+    case 2:
+      Return(eqRewriteUnroll<2>);
+    case 3:
+      Return(eqRewriteUnroll<3>);
+    }
+  CantHappen("Didn't find a fast function for " << this);
+  return nullptr;
 }
 
 Term*
