@@ -249,16 +249,18 @@ FreeNet::moreImportant(Symbol* first, Symbol* second)
   //
   //	Heuristic to decide which symbol is more important and thus
   //	should have the fastest matching.
-  //	The current heuristic favors free symbols over non-free symbols and
-  //	high arity symbols over low arity symbols.
+  //	The current heuristic favors stable non-free symbols over free symbols
+  //	and high arity symbols over low arity symbols.
+  //	The idea is we want to optimize the induction case at the expense of
+  //	basis case.
   //
   //	Returns true if first symbol is considered more important.
   //
   FreeSymbol* f = dynamic_cast<FreeSymbol*>(first);
   FreeSymbol* s = dynamic_cast<FreeSymbol*>(second);
-  if (f != 0 && s == 0)
-    return true;
   if (f == 0 && s != 0)
+    return true;
+  if (f != 0 && s == 0)
     return false;
   return first->arity() > second->arity();
 }
