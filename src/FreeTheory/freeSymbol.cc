@@ -115,9 +115,23 @@ FreeSymbol::eqRewriteLowArity(Symbol* symbol, DagNode* subject, RewritingContext
   return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.lowArityApplyReplace(subject, context);
 }
 
-//
-//	We don't bother with a degenerate case of eqRewriteLowArity() at the moment.
-//
+template<int n>
+bool
+FreeSymbol::eqRewriteNullNetGeneral(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  //
+  //	Symbol has 1, 2 or 3 arguments and standard strategy and equations.
+  //	Degenerate case when the discrimination net is empty, but we can't use
+  //	fast or super-fast cases because remainders.
+  //	This typically happens when we have a definition given by one or more
+  //	conditional equations.
+  //
+  //	We reduce the arguments using the unroller idiom and use generalNullNet(()
+  //
+  Assert(symbol == subject->symbol(), "bad symbol");  
+  reduceArgs<n>(static_cast<FreeDagNode*>(subject), context);
+  return safeCastNonNull<FreeSymbol*>(symbol)->discriminationNet.generalNullNet(subject, context);
+}
 
 template<int n>
 bool
@@ -261,7 +275,7 @@ FreeSymbol::chooseEqRewriteFunction() const
 {
   //
   //	Pick a specialized function to do the equational rewriting.
-  //	We have 4 + 7 + 12 = 23 fast functions and a backstop.
+  //	We have 4 + 10 + 12 = 26 fast functions and a backstop.
   //
   //	We only optimize if for symbols with standard strategy and arity 0,.., 3.
   //
@@ -300,7 +314,7 @@ FreeSymbol::chooseNullNetFunction() const
 {
   //
   //	We don't have any stable symbols to match; just one or more remainders.
-  //	We use one of 7 fast functions or the backstop.
+  //	We use one of 10 fast functions or the backstop.
   //
   int nrArgs = arity();
   if (discriminationNet.getSpeed() == FreeRemainder::SUPER_FAST)
@@ -342,6 +356,23 @@ FreeSymbol::chooseNullNetFunction() const
 	    }
 	}
     }
+  //
+  //	We have a simple defintion, but with a non-trivial remainder. We don't
+  //	both with the 0 arity case because this only arises with a constant
+  //	condition.
+  //
+  switch (nrArgs)
+    {
+    case 1:
+      Return(eqRewriteNullNetGeneral<1>);
+    case 2:
+      Return(eqRewriteNullNetGeneral<2>);
+    case 3:
+      Return(eqRewriteNullNetGeneral<3>);
+    }
+  //
+  //	Catch the pathological constant condition case.
+  //
   Return(eqRewriteSlow);
 }
 

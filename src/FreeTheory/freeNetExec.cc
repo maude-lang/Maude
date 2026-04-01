@@ -264,11 +264,6 @@ FreeNet::superFastApplyReplace(DagNode* subject, RewritingContext& context)
   return fastApplicable[~i][0]->superFastMatchReplace(subject, context, stack);
 }
 
-/* no use for this yet
- * null nets with non-fast remainders seem rare; even if we have
- * unstable aliens, we still expect a base case to generate a node
- * in the net
- 
 bool
 FreeNet::generalNullNet(DagNode* subject, RewritingContext& context)
 {
@@ -287,7 +282,6 @@ FreeNet::generalNullNet(DagNode* subject, RewritingContext& context)
   while ((r = *(++p)) != nullptr);
   return false;
 }
-*/
 
 bool
 FreeNet::fastNullNet(DagNode* subject, RewritingContext& context)
