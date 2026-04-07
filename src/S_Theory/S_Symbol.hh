@@ -55,6 +55,7 @@ public:
   void finalizeSortInfo();
   bool isConstructor(DagNode* subject);
   void fillInSortInfo(Term* subject);
+  void compileEquations();
   //
   //	Unification stuff.
   //
@@ -93,7 +94,8 @@ private:
     //
     int nonCtorBound;
   };
-  
+
+  static bool eqRewriteCtor(Symbol* symbol, DagNode* subject, RewritingContext& context);
   static bool eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context);
   static bool eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context);
 

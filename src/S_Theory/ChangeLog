@@ -1,3 +1,17 @@
+2026-04-06  Saruman the White  <eker@eker10>
+
+	* S_DagNode.hh (S_DagNode::normalizeAtTop): moved here and made
+	inline
+
+	* S_Symbol.hh (class S_Symbol): adde decls for compileEquations()
+	and eqRewriteCtor()
+
+	* S_Symbol.cc (S_Symbol::compileEquations): added
+	(S_Symbol::eqRewriteCtor): added
+	(S_Symbol::eqRewriteStandardStrategy): simplified now we know we
+	have equations
+	(S_Symbol::S_Symbol): don't call setEqRewrite() function here
+
 2026-03-06  Saruman the White  <eker@eker10>
 
 	* S_Symbol.hh (class S_Symbol): delete decl for eqRewrite()
