@@ -75,7 +75,6 @@ AU_Symbol::AU_Symbol(int id,
   //	matching algorithm that works with extension.
   //
   useDequeFlag = !oneSidedIdFlag && standardStrategy();
-  setEqRewrite(standardStrategy() ? &eqRewriteStandardStrategy : &eqRewriteComplexStrategy);
 }
 
 void
@@ -94,6 +93,9 @@ AU_Symbol::compileEquations()
   AssociativeSymbol::compileEquations();
   if (!equationFree())
     useDequeFlag = false;
+  setEqRewrite(standardStrategy() ?
+	       (equationFree() ? &eqRewriteCtor : &eqRewriteStandardStrategy) :
+	       &eqRewriteComplexStrategy);
 }
 
 DagNode*
@@ -143,15 +145,41 @@ AU_Symbol::rewriteAtTopNoOwise(AU_DagNode* subject, RewritingContext& context)
 }
 
 bool
+AU_Symbol::eqRewriteCtor(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  //
+  //	We normally expect to be called because we have a fresh node.
+  //	Nodes produced by assignment will normally have their reduced flag set
+  //	and we won't be called. But there are exceptions, if the assignment
+  //	was produce by matching below a lazy symbol, or if the matcher couldn't
+  //	compute the correct sort for the node because of membership axioms.
+  //
+  if (static_cast<AU_BaseDagNode*>(subject)->isFresh())
+    {
+      AU_DagNode* d = static_cast<AU_DagNode*>(subject);
+      //
+      //	Not safe to use iterator because reduce() can
+      //	call garbage collector which can relocate argArray.
+      //
+      Index nrArgs = d->argArray.size();
+      for (Index i = 0; i < nrArgs; ++i)
+	d->argArray[i]->reduce(context);
+      //
+      //	We always need to renormalize at the top because
+      //	shared subterms may have rewritten.
+      //
+      (void) d->normalizeAtTop();
+    }
+  return false;
+}
+
+bool
 AU_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   Assert(symbol == subject->symbol(), "bad symbol");
-  AU_Symbol* s = safeCastNonNull<AU_Symbol*>(symbol);
-  if (static_cast<AU_BaseDagNode*>(subject)->isDeque())
-    {
-      Assert(s->equationFree(), "deque with equations");
-      return false;
-    }
+  Assert(!static_cast<AU_BaseDagNode*>(subject)->isDeque(), "deque with equations");
+
   AU_DagNode* d = static_cast<AU_DagNode*>(subject);
   if (d->isFresh())
     {
@@ -159,38 +187,21 @@ AU_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, Rewriting
       //	Not safe to use iterator because reduce() can
       //	call garbage collector which can relocate argArray.
       //
-      int nrArgs = d->argArray.length();
-      for (int i = 0; i < nrArgs; ++i)
+      Index nrArgs = d->argArray.size();
+      for (Index i = 0; i < nrArgs; ++i)
 	d->argArray[i]->reduce(context);
       //
       //	We always need to renormalize at the top because
       //	shared subterms may have rewritten.
       //
       if (d->normalizeAtTop() <= AU_DagNode::DEQUED)
-	return false;  // COLLAPSED or DEQUED
+	return false;  // COLLAPSED (can't be DEQUED because we have equations)
     }
   //
-  //	Even we were created by an assignment we could
-  //	be equation-free and not reduced because our true
-  //	sort was not known because of a membership axiom.
+  //	Even if the node was produced by an assignment, we might need to rewrite
+  //	if matching took place below a lazy symbol.
   //
-  if (s->equationFree())
-    return false;
-
-#ifndef NO_ASSERT
-  //
-  //	Look for Riesco 1/18/10 bug.
-  //
-  for (int i = 0; i < d->argArray.length(); i++)
-    {
-      DagNode* d2 = d->argArray[i];
-      Assert(d2->getSortIndex() != Sort::SORT_UNKNOWN,
-	     "AU_Symbol::eqRewriteStandardStrategy(): unknown sort for AU argument " << d2 <<
-	     " at index " << i << " in subject " << subject <<
-	     " d->getNormalizationStatus() = " << d->getNormalizationStatus());
-    }
-#endif
-  return s->rewriteAtTop(d, context);
+  return safeCastNonNull<AU_Symbol*>(symbol)->rewriteAtTop(d, context);
 }
 
 bool
