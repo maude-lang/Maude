@@ -135,18 +135,37 @@ S_Symbol::makeDagNode(const Vector<DagNode*>& args)
   return new S_DagNode(this, 1, args[0]);
 }
 
+void
+S_Symbol::compileEquations()
+{
+  Symbol::compileEquations();
+  //
+  //	We split on strategy and the existence of equations.
+  //
+  setEqRewrite(standardStrategy() ?
+	       (equationFree() ? &eqRewriteCtor : &eqRewriteStandardStrategy) :
+	       &eqRewriteComplexStrategy);
+}
+
+bool
+S_Symbol::eqRewriteCtor(Symbol* symbol, DagNode* subject, RewritingContext& context)
+{
+  Assert(symbol == subject->symbol(), "bad symbol");
+  S_DagNode* d = static_cast<S_DagNode*>(subject);
+  d->arg->reduce(context);
+  d->normalizeAtTop();  // always needed because shared node may have rewritten
+  return false;
+}
+
 bool
 S_Symbol::eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context)
 {
   Assert(symbol == subject->symbol(), "bad symbol");
   S_DagNode* d = static_cast<S_DagNode*>(subject);
-  S_Symbol* s = safeCastNonNull<S_Symbol*>(symbol);
   d->arg->reduce(context);
   d->normalizeAtTop();  // always needed because shared node may have rewritten
-  if (s->equationFree())
-    return false;
   S_ExtensionInfo extensionInfo(d);
-  return s->applyReplace(subject, context, &extensionInfo);
+  return safeCastNonNull<S_Symbol*>(symbol)->applyReplace(subject, context, &extensionInfo);
 }
 
 bool
