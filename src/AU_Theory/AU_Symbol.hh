@@ -92,6 +92,7 @@ public:
   DagNode* makeCanonicalCopy(DagNode* original, HashConsSet* hcs);
 
 private:
+  static bool eqRewriteCtor(Symbol* symbol, DagNode* subject, RewritingContext& context);
   static bool eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context);
   static bool eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
