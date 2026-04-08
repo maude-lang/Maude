@@ -62,6 +62,7 @@ public:
   //
   void compileOpDeclarations();
   void postOpDeclarationPass();
+  void compileEquations();
   //
   //	Unification stuff.
   //
@@ -106,6 +107,8 @@ protected:
 private:
   static bool normalize(DagNode* subject, RewritingContext& context);
   static bool copyReduceSubtermsAndNormalize(DagNode* subject, RewritingContext& context);
+
+  static bool eqRewriteCtor(Symbol* symbol, DagNode* subject, RewritingContext& context);
   static bool eqRewriteStandardStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context);
   static bool eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, RewritingContext& context);
 

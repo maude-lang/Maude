@@ -1,3 +1,13 @@
+2026-04-07  Saruman the White  <eker@eker10>
+
+	* ACU_Symbol.hh (class ACU_Symbol): added decls for
+	eqRewriteCtor() and compileEquations()
+
+	* ACU_Symbol.cc (ACU_Symbol::eqRewriteCtor): added
+	(ACU_Symbol::eqRewriteStandardStrategy): optimized
+	(ACU_Symbol::compileEquations): added
+	(ACU_Symbol::ACU_Symbol): don't call setEqRewrite() here
+
 2026-03-06  Saruman the White  <eker@eker10>
 
 	* ACU_Symbol.hh (class ACU_Symbol): deleted decl for eqRewrite()
