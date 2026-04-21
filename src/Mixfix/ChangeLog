@@ -1,3 +1,42 @@
+2026-04-20  Saruman the White  <eker@eker10>
+
+	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateBanner): updated
+	copyright year
+
+	* banner.cc (printBanner): updated copyright year
+
+	* latexPreModulePrint.cc (SyntacticPreModule::latexShowModule):
+	handle make statements
+
+	* preModule.cc (PreModule::addParameter): turned cout << into
+	DebugInfo(); fixed spelling typo
+
+	* importModule.cc (ImportModule::addImport): transform make
+	statements into a module of the type they import
+
+	* mixfixModule.hh (MixfixModule::setModuleType): added
+
+	* mixfixModule.cc (MixfixModule::moduleTypeString): handle
+	MAKE_STATEMENT
+	(MixfixModule::moduleEndString): handle MAKE_STATEMENT
+
+	* mixfixModule.hh (enum Bits): added MADE bit
+
+	* syntacticPreModule.cc (SyntacticPreModule::SyntacticPreModule):
+	support make startToken
+	(SyntacticPreModule::compatible): support make startToken
+
+	* specialTokens.cc: added make
+
+	* mixfixModule.hh (enum ModuleType): added MAKE_STATEMENT
+	ModuleType
+
+	* modules.yy (module): added syntax for make command
+
+	* lexer.ll: added make keyword
+
+	* top.yy: added KW_MAKE
+
 2026-02-19  Rubén Rubio  <rubenrub@ucm.es>
 
 	* yices2_Bindings.cc: added YICES_ prefix no STATUS constants for

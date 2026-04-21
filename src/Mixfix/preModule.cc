@@ -95,9 +95,9 @@ PreModule::addParameter(Token name, ModuleExpression* theory)
   if (isTheory())
     {
       IssueWarning(LineNumber(name.lineNumber()) <<
-		   ": parmaeterized theories are not supported; recovering by ignoring parameter " <<
+		   ": parameterized theories are not supported; recovering by ignoring parameter " <<
 		   QUOTE(name) << '.');
-      cout << "preModule = " << this << "  theory = " << theory << endl;
+      DebugInfo("preModule = " << this << "  theory = " << theory);
       delete theory;
       return;
     }

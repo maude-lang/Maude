@@ -287,6 +287,8 @@ MixfixModule::moduleTypeString(ModuleType type)
 {
   static const char* const typeStrings[] = {"fmod", "mod", "fth", "th"};
 
+  if (type == MAKE_STATEMENT)
+    return "make";
   if (type & STRATEGY)
     return type & THEORY ? "sth" : "smod";
   if (type & OBJECT_ORIENTED)
@@ -300,6 +302,8 @@ MixfixModule::moduleEndString(ModuleType type)
 {
   static const char* const typeStrings[] = {"endfm", "endm", "endfth", "endth"};
 
+  if (type == MAKE_STATEMENT)
+    return "endm";
   if (type & STRATEGY)
     return type & THEORY ? "endsth" : "endsm";
   if (type & OBJECT_ORIENTED)

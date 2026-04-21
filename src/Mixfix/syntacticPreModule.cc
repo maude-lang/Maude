@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -120,6 +120,8 @@ SyntacticPreModule::SyntacticPreModule(Token startToken, Token moduleName, Inter
     moduleType = MixfixModule::STRATEGY_MODULE;
   else if (startTokenCode == omod)
     moduleType = MixfixModule::OBJECT_ORIENTED_MODULE;
+  else if (startTokenCode == make)
+    moduleType = MixfixModule::MAKE_STATEMENT;
   setModuleType(moduleType);
 
   lastSawOpDecl = false;
@@ -210,6 +212,8 @@ SyntacticPreModule::compatible(int endTokenCode)
     return endTokenCode == endsm;
   if (startTokenCode == omod)
     return endTokenCode == endom;
+  if (startTokenCode == make)
+    return endTokenCode == endm;
   //
   //	OBJ backward compatibility.
   //
@@ -225,7 +229,10 @@ SyntacticPreModule::finishModule(Token endToken)
 		   QUOTE(Token::name(startTokenCode)) << " ends with "
 		   << QUOTE(endToken) << '.');
     }
-  if (!isTheory())
+  //
+  //	Theories and make statements don't get automatic imports.
+  //
+  if (!isTheory() && getModuleType() != MixfixModule::MAKE_STATEMENT)
     autoImports = getOwner()->getAutoImports(); // deep copy
   if (MixfixModule::isObjectOriented(getModuleType()))
     {

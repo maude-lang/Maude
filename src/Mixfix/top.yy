@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Inert keywords: these are only recognized by lexer when in initial mode.
  */
-%token <yyToken> KW_MOD KW_VIEW
+%token <yyToken> KW_MOD KW_MAKE KW_VIEW
 %token KW_PARSE KW_NORMALIZE KW_REDUCE KW_REWRITE KW_OO
 %token KW_LOOP KW_NARROW KW_XG_NARROW KW_MATCH KW_XMATCH KW_UNIFY KW_CHECK
 %token KW_GET KW_VARIANTS KW_VARIANT

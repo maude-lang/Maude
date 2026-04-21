@@ -163,7 +163,15 @@ ImportModule::addImport(ImportModule* importedModule,
 		   " importation mode. Recovering by treating mode as including.");
       mode = INCLUDING;
     }
-  if (!canImport(getModuleType(), t))
+  MixfixModule::ModuleType type = getModuleType();
+  if (type == MixfixModule::MAKE_STATEMENT)
+    {
+      //
+      //	We transform the make statement into a module of type it imports.
+      //
+      setModuleType(t);
+    }
+  else if (!canImport(type, t))
     {
       //
       //	Allowing modules to import theories would allow inconsistancies

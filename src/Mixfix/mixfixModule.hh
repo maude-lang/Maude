@@ -52,7 +52,8 @@ class MixfixModule : public ProfileModule, public MetadataStore, protected Share
     SYSTEM = 1,
     THEORY = 2,
     STRATEGY = 4,
-    OBJECT_ORIENTED = 8  // a fiction for SyntacticPreModule and for us during construction
+    OBJECT_ORIENTED = 8,  // a fiction for SyntacticPreModule and for us during construction
+    MADE = 16  // another fiction for SyntacticPreModule
   };
 
 public:
@@ -69,7 +70,12 @@ public:
     //	the object oriented flag has to be removed.
     //
     OBJECT_ORIENTED_MODULE = SYSTEM | OBJECT_ORIENTED,
-    OBJECT_ORIENTED_THEORY = SYSTEM | OBJECT_ORIENTED | THEORY
+    OBJECT_ORIENTED_THEORY = SYSTEM | OBJECT_ORIENTED | THEORY,
+    //
+    //	This is to allow SyntacticPreModule to record make statements as pre-modules.
+    //	No actual MixfixModule will ever have this type.
+    //
+    MAKE_STATEMENT = MADE,
   };
 
   enum GatherSymbols
@@ -360,6 +366,7 @@ public:
   
 protected:
   static int findMatchingParen(const Vector<Token>& tokens, int pos);
+  void setModuleType(ModuleType type);
 
   // We need to account rule labels here (before importing statements) because
   // strategy statements can use them
@@ -1339,6 +1346,16 @@ MixfixModule::processingComplete()
   //	Desugaring complete - ditch the OBJECT_ORIENTED fiction.
   //
   moduleType = static_cast<ModuleType>(moduleType &~OBJECT_ORIENTED);
+}
+
+inline void
+MixfixModule::setModuleType(ModuleType type)
+{
+  //
+  //	This is used to turn a make statement into a regular module, once
+  //	we know its single import.
+  //
+  moduleType = type;
 }
 
 inline void

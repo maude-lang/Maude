@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,7 +56,8 @@ SyntacticPreModule::printSortTokenVector(ostream& s, const Vector<Token>& sorts)
 void
 SyntacticPreModule::showModule(ostream& s)
 {
-  s << MixfixModule::moduleTypeString(getModuleType()) << ' ' << this;
+  MixfixModule::ModuleType type = getModuleType();
+  s << MixfixModule::moduleTypeString(type) << ' ' << this;
   int nrParameters = getNrParameters();
   if (nrParameters > 0)
     {
@@ -72,8 +73,13 @@ SyntacticPreModule::showModule(ostream& s)
     {
       if (UserLevelRewritingContext::interrupted())
 	return;
-      s << "  " << ImportModule::importModeString(getImportMode(i)) <<
-	' ' << getImport(i) << " .\n";
+      if (type == MixfixModule::MAKE_STATEMENT)
+	s << "  " << getImport(i) << '\n';
+      else
+	{
+	  s << "  " << ImportModule::importModeString(getImportMode(i)) <<
+	    ' ' << getImport(i) << " .\n";
+	}
     }
 
   for (const Vector<Token>& sorts : sortDecls)
@@ -171,7 +177,7 @@ SyntacticPreModule::showModule(ostream& s)
       s << "  " << statements[i] << " .\n";
     }
 
-  s << MixfixModule::moduleEndString(getModuleType()) << '\n';
+  s << MixfixModule::moduleEndString(type) << '\n';
 }
 
 void

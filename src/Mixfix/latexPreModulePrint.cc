@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,7 +58,8 @@ SyntacticPreModule::latexType(ostream& s, const Type& type)
 void
 SyntacticPreModule::latexShowModule(ostream& s)
 {
-  s << "\\par\\maudeKeyword{" << MixfixModule::moduleTypeString(getModuleType()) << "}\\maudeSpace";
+  MixfixModule::ModuleType type = getModuleType();
+  s << "\\par\\maudeKeyword{" << MixfixModule::moduleTypeString(type) << "}\\maudeSpace";
   s << "\\maudeModule{" << Token::latexName(id()) << "}";
   Index nrParameters = getNrParameters();
   if (nrParameters > 0)
@@ -77,9 +78,11 @@ SyntacticPreModule::latexShowModule(ostream& s)
   Index nrImports = getNrImports();
   for (Index i = 0; i < nrImports; ++i)
     {
-      s << "\\par$\\maudeIndent\\maudeKeyword{" << ImportModule::importModeString(getImportMode(i)) << "}\\maudeSpace";
+      s << "\\par$\\maudeIndent";
+      if (type != MixfixModule::MAKE_STATEMENT)
+	s << "\\maudeKeyword{" << ImportModule::importModeString(getImportMode(i)) << "}\\maudeSpace";
       getImport(i)->latexPrint(s, flatModule);
-      s << "$\\maudeEndStatement\n";
+      s << ((type == MixfixModule::MAKE_STATEMENT) ? "$\n" : "$\\maudeEndStatement\n");
     }
 
   for (const Vector<Token>& sorts : sortDecls)
@@ -196,7 +199,7 @@ SyntacticPreModule::latexShowModule(ostream& s)
 	MixfixModule::latexTokenVector(tokens, 1, tokens.size() - 1) << "$\\maudeEndStatement\n";
     }
 
-  s << "\\par\\maudeKeyword{" << MixfixModule::moduleEndString(getModuleType()) << "}\n";
+  s << "\\par\\maudeKeyword{" << MixfixModule::moduleEndString(type) << "}\n";
 }
 
 void

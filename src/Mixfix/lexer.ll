@@ -3,7 +3,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -147,6 +147,7 @@ in					RETURN(KW_IN)
 
 <INITIAL>{
 th|fth|sth|oth|mod|fmod|smod|omod|obj	RETURN(KW_MOD)  // need to know which one we saw
+make					RETURN(KW_MAKE)  // needed for line number handling
 view					RETURN(KW_VIEW)  // needed for line number handling
 oo					return KW_OO;
 load					return KW_LOAD;

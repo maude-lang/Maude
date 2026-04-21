@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -491,6 +491,26 @@ module		:	KW_MOD		{ lexerIdMode(); }
 			{
 			  lexerInitialMode();
 			  fileTable.endModule(lineNumber);
+			  CM->finishModule($8);
+			}
+		|	KW_MAKE		{ lexerIdMode(); }
+			token
+			{
+			  interpreter.setCurrentModule(new SyntacticPreModule($1, $3, &interpreter));
+			  currentSyntaxContainer = CM;
+			  fileTable.beginModule($1, $3);
+			}
+			/*
+			 *	Can't overparse with expectingIs here because module
+			 *	expression could start with "is".
+			 */
+			parameters KW_IS moduleExpr KW_ENDM
+			{
+			  lexerInitialMode();
+			  fileTable.endModule(lineNumber);
+			  Token importMode;
+			  importMode.tokenize("including", lineNumber);
+			  CM->addImport(importMode, $7);
 			  CM->finishModule($8);
 			}
 		;
