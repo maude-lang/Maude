@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -497,7 +497,21 @@ SyntacticPreModule::processImports()
   for (const auto& i : autoImports)
     {
       if (ImportModule* fm = getOwner()->getModuleOrIssueWarning(i.first, *this))
-	flatModule->addImport(fm, i.second, *this);
+	{
+	  if (fm->hasFreeParameters())
+	    {
+	      IssueWarning(*this << ": cannot automatically import module " << fm <<
+			   " because it has free parameters.");
+	      //
+	      //	Mark the module as bad to avoid cascading warnings and potential
+	      //	internal errors. But press ahead with remaining imports since
+	      //	they should be independent and we might find other errors.
+	      //
+	      flatModule->markAsBad();
+	    }
+	  else
+	    flatModule->addImport(fm, i.second, *this);
+	}
       else
 	{
 	  //

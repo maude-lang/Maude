@@ -1,0 +1,11 @@
+***
+***	Importing modules with free parameters breaks the module system
+***	but we used to let the user do this using an automatic import.
+***
+
+set include SET on .
+
+fmod FOO is
+endfm
+
+show all .

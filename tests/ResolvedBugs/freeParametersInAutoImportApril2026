@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/freeParametersInAutoImportApril2026.maude -no-banner -no-advise \
+  > freeParametersInAutoImportApril2026.out 2>&1
+
+diff $srcdir/freeParametersInAutoImportApril2026.expected freeParametersInAutoImportApril2026.out > /dev/null 2>&1

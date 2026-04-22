@@ -1,5 +1,8 @@
 2026-04-21  Saruman the White  <eker@eker10>
 
+	* process.cc (SyntacticPreModule::processImports): fix bug by not
+	allowing automatic imports with free parameters
+
 	* importModule.hh (class ImportModule): added decl for
 	deleteParameters()
 
