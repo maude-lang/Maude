@@ -1,3 +1,12 @@
+2026-04-21  Saruman the White  <eker@eker10>
+
+	* importModule.hh (class ImportModule): added decl for
+	deleteParameters()
+
+	* importModule.cc (ImportModule::addImport): handle attempt to
+	make a parameterized theory
+	(ImportModule::deleteParameters): added
+
 2026-04-20  Saruman the White  <eker@eker10>
 
 	* maudeLatexBuffer.cc (MaudeLatexBuffer::generateBanner): updated

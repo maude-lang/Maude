@@ -1,0 +1,65 @@
+***
+***	Tests for make statement.
+***
+
+*** Expected uses.
+
+make NatSet is SET{Nat} endm
+
+show mod .
+show desugared .
+
+make MySet{X :: TRIV} is SET{X} endm
+
+show mod .
+show desugared .
+
+*** Check that we handle attempt to make a parameterized theory gracefully.
+
+set include BOOL off .
+
+fth T is
+  sort Elt .
+endfth
+
+make T2{X :: TRIV} is T endm
+
+show mod .
+show desugared .
+show all .
+
+*** Make sure T2 behaves like a regular theory after fix-up.
+
+fmod M{Y :: T2} is
+  op a : -> Y$Elt .
+endfm
+
+view Nat2 from T2 to NAT is
+  sort Elt to Nat .
+endv
+
+make M2 is M{Nat2} endm
+
+show mod .
+show desugared .
+show all .
+
+*** And that it still behaves when re-evalutated after T changes.
+
+fth T is
+  sort Elt2 .
+endfth
+
+show mod T2 .
+show desugared .
+show all .
+
+fmod T is
+  sort Elt3 .
+endfm
+
+show mod T2 .
+show desugared .
+show all .
+
+show mod M2 .

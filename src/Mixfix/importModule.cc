@@ -151,6 +151,18 @@ ImportModule::importModeString(ImportMode mode)
 }
 
 void
+ImportModule::deleteParameters()
+{
+  //
+  //	For recovering from an error in a clean way.
+  //
+  for (ImportModule* m : parameterTheories)
+    m->removeUser(this);
+  parameterNames.clear();
+  parameterTheories.clear();
+}
+
+void
 ImportModule::addImport(ImportModule* importedModule,
 			ImportMode mode,
 			LineNumber lineNumber)
@@ -166,6 +178,12 @@ ImportModule::addImport(ImportModule* importedModule,
   MixfixModule::ModuleType type = getModuleType();
   if (type == MixfixModule::MAKE_STATEMENT)
     {
+      if (isTheory(t) && !parameterNames.empty())
+	{
+	  IssueWarning(lineNumber << ": cannot make a parameterized theory " <<
+		       QUOTE(this) << ". Recovering by deleting parameters.");
+	  deleteParameters();
+	}
       //
       //	We transform the make statement into a module of type it imports.
       //
@@ -182,7 +200,7 @@ ImportModule::addImport(ImportModule* importedModule,
 		   QUOTE(moduleTypeString(t)) << " " <<
 		   QUOTE(importedModule) << " by " <<
 		   QUOTE(moduleTypeString(getModuleType())) << " " <<
-		   QUOTE(this) << " not allowed.  Recovering by ignoring import.");
+		   QUOTE(this) << " not allowed. Recovering by ignoring import.");
       return;
     }
   if (!parameterNames.empty())
