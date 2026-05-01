@@ -1,3 +1,7 @@
+2026-04-30  Saruman the White  <eker@eker10>
+
+	* dagNode.hh (DagNode::reduce): unroll 2 copies
+
 2026-02-11  Saruman the White  <eker@eker10>
 
 	* dagNode.hh (DagNode::reduce): deleted old version that uses
