@@ -1,3 +1,26 @@
+2026-06-02  Saruman the White  <eker@eker10>
+
+	* userLevelRewritingContext.cc
+	(UserLevelRewritingContext::checkForPrintAttribute): added check
+	for PRINT_ATTRIBUTE_SELECT
+
+	* interpreter.hh (Interpreter::printAttributeSelect): added
+	(class Interpreter): added data member printAttributeIds
+	(Interpreter::printAttributeId): added
+
+	* commands.yy (command): added syntax for print attribute
+	select/deselect
+
+	* interpreter.cc (Interpreter::updateSet): use IdSet
+
+	* interpreter.hh (class Interpreter): added and use IdSet
+
+	* commands.yy: added syntax for set print attribute select
+
+	* interpreter.hh (enum Flags): added PRINT_ATTRIBUTE_SELECT
+	(enum Flags): deleted commented out PRINT_ATTRIBUTE_MB,
+	PRINT_ATTRIBUTE_EQ, PRINT_ATTRIBUTE_RL
+
 2026-04-21  Saruman the White  <eker@eker10>
 
 	* process.cc (SyntacticPreModule::processImports): fix bug by not

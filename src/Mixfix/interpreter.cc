@@ -335,7 +335,7 @@ Interpreter::addSelected(const Vector<Token>& opName)
 }
 
 void
-Interpreter::updateSet(set<int>& target, bool add)
+Interpreter::updateSet(IdSet& target, bool add)
 {
   if (add)
     target.insert(selected.begin(), selected.end());

@@ -318,6 +318,12 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			  lexerInitialMode();
 			  interpreter.printConceal($2);
 			}
+		|	KW_PRINT KW_ATTRIBUTE select	{ lexerCmdMode(); }
+			opSelect
+			{
+			  lexerInitialMode();
+			  interpreter.printAttributeSelect($3);
+			}
 		|	KW_DO KW_CLEAR KW_MEMO	{ lexBubble(END_COMMAND, 0); }
 			endBubble
 			{
@@ -507,6 +513,11 @@ command		:	KW_SELECT		{ lexBubble(END_COMMAND, 1); }
 			{
 			  // a general flag, not a print flag, to print a newline after print attribute message
 			  interpreter.setFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE, $5);
+			}
+		|	KW_SET KW_PRINT KW_ATTRIBUTE KW_SELECT polarityDot
+			{
+			  // a general flag, not a print flag, to print a newline after print attribute message
+			  interpreter.setFlag(Interpreter::PRINT_ATTRIBUTE_SELECT, $5);
 			}
 		|	KW_SET KW_TRACE traceOption polarityDot
 			{

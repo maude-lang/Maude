@@ -124,7 +124,9 @@ UserLevelRewritingContext::checkForPrintAttribute(MixfixModule::ItemType itemTyp
     {
       MixfixModule* m = safeCast(MixfixModule*, item->getModule());
       const PrintAttribute* pa = m->getPrintAttribute(itemType, item);
-      if (pa != 0)
+      if (pa != 0 &&
+	  (!interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE_SELECT) ||
+	   interpreter.printAttributeId(item->getLabel().id())))
 	{
 	  pa->print(*printAttrStream, *this);
 	  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE))

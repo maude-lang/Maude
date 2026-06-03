@@ -110,11 +110,7 @@ public:
     //
     PRINT_ATTRIBUTE = 0x1000000,
     PRINT_ATTRIBUTE_NEWLINE = 0x2000000,
-    /*
-    PRINT_ATTRIBUTE_MB = 0x2000000,
-    PRINT_ATTRIBUTE_EQ = 0x4000000,
-    PRINT_ATTRIBUTE_RL = 0x8000000,
-    */
+    PRINT_ATTRIBUTE_SELECT = 0x4000000,
     //
     //	Cache flags.
     //
@@ -204,11 +200,13 @@ public:
   void addSelected(const Vector<Token>& opName);
   void traceSelect(bool add);
   void breakSelect(bool add);
+  void printAttributeSelect(bool add);
   void traceExclude(bool add);
   void printConceal(bool add);
 
   bool traceId(int id);
   bool breakId(int id);
+  bool printAttributeId(int id);
   bool excludedModule(int id);
 
   void showProfile() const;
@@ -234,6 +232,7 @@ public:
 
 private:
   typedef void (Interpreter::*ContinueFuncPtr)(Int64 limit, bool debug);
+  typedef set<int> IdSet;
 
   static DagNode* makeDag(Term* subjectTerm);
   static void printTiming(Int64 nrRewrites, Int64 cpu, Int64 real);
@@ -334,7 +333,7 @@ private:
 		     int solutionCount,
 		     int limit);
   void unifyCont(Int64 limit, bool debug);
-  void updateSet(set<int>& target, bool add);
+  void updateSet(IdSet& target, bool add);
   bool checkSearchRestrictions(SearchKind searchKind,
 			       int searchType,
 			       Term* target,				     
@@ -358,10 +357,11 @@ private:
   ContinueFuncPtr continueFunc;
   Vector<Token> savedLoopSubject;
 
-  set<int> selected;		// temporary for building set of identifiers
-  set<int> traceIds;		// names of symbols/labels selected for tracing
-  set<int> breakIds;		// names of symbols/labels selected as break points
-  set<int> excludedModules;	// names of modules to be excluded from tracing
+  IdSet selected;		// temporary for building set of identifiers
+  IdSet traceIds;		// names of symbols/labels selected for tracing
+  IdSet breakIds;		// names of symbols/labels selected as break points
+  IdSet printAttributeIds;	// names of labels selected to execute print attribute
+  IdSet excludedModules;	// names of modules to be excluded from tracing
 };
 
 inline void
@@ -374,6 +374,12 @@ inline void
 Interpreter::breakSelect(bool add)
 {
   updateSet(breakIds, add);
+}
+
+inline void
+Interpreter::printAttributeSelect(bool add)
+{
+  updateSet(printAttributeIds, add);
 }
 
 inline void
@@ -392,6 +398,12 @@ inline bool
 Interpreter::breakId(int id)
 {
   return breakIds.find(id) != breakIds.end();
+}
+
+inline bool
+Interpreter::printAttributeId(int id)
+{
+  return printAttributeIds.find(id) != printAttributeIds.end();
 }
 
 inline bool
