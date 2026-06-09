@@ -44,7 +44,8 @@ TESTS = \
 	initialEqualityPredicate \
 	rpo \
 	attributeConsistency \
-	makeCommand
+	makeCommand \
+	printAttributeSelect
 
 MAUDE_FILES = \
 	directoryTest.maude \
@@ -92,7 +93,8 @@ MAUDE_FILES = \
 	initialEqualityPredicate.maude \
 	rpo.maude \
 	attributeConsistency.maude \
-	makeCommand.maude
+	makeCommand.maude \
+	printAttributeSelect.maude
 
 RESULT_FILES = \
 	directoryTest.expected \
@@ -140,6 +142,7 @@ RESULT_FILES = \
 	initialEqualityPredicate.expected \
 	rpo.expected \
 	attributeConsistency.expected \
-	makeCommand.expected
+	makeCommand.expected \
+	printAttributeSelect.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

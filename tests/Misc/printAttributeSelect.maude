@@ -1,0 +1,29 @@
+set show timing off .
+
+fmod FOO is
+  pr NAT .
+  ops f g : Nat -> Nat .
+  var N : Nat .
+  eq f(s N) = g(N) [label 1 print "rewrote f " N] .
+  eq [2] : g(s N) = f(N) [print "rewrote d " N] .
+endfm
+
+set print attr on .
+
+red f(10) .
+
+set print attr select on .
+
+red f(10) .
+
+print attr select 1 .
+
+red f(10) .
+
+print attr select 2 .
+
+red f(10) .
+
+print attr deselect 1 .
+
+red f(10) .

@@ -1,0 +1,51 @@
+==========================================
+reduce in FOO : f(10) .
+rewrote f 9
+rewrote d 8
+rewrote f 7
+rewrote d 6
+rewrote f 5
+rewrote d 4
+rewrote f 3
+rewrote d 2
+rewrote f 1
+rewrote d 0
+rewrites: 10
+result Nat: f(0)
+==========================================
+reduce in FOO : f(10) .
+rewrites: 10
+result Nat: f(0)
+==========================================
+reduce in FOO : f(10) .
+rewrote f 9
+rewrote f 7
+rewrote f 5
+rewrote f 3
+rewrote f 1
+rewrites: 10
+result Nat: f(0)
+==========================================
+reduce in FOO : f(10) .
+rewrote f 9
+rewrote d 8
+rewrote f 7
+rewrote d 6
+rewrote f 5
+rewrote d 4
+rewrote f 3
+rewrote d 2
+rewrote f 1
+rewrote d 0
+rewrites: 10
+result Nat: f(0)
+==========================================
+reduce in FOO : f(10) .
+rewrote d 8
+rewrote d 6
+rewrote d 4
+rewrote d 2
+rewrote d 0
+rewrites: 10
+result Nat: f(0)
+Bye.
