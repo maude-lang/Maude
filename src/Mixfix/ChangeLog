@@ -1,3 +1,48 @@
+2026-06-09  Saruman the White  <eker@eker10>
+
+	* interpreter.cc (Interpreter::makeModule): dummy code for
+	TRANSFORM case
+
+	* moduleExpression.hh (class ModuleExpression): updated decl for
+	transform ctor
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression): take
+	op name
+
+	* modules.yy (moduleExprDot): added transformExpr case
+
+	* moduleExpression.cc (ModuleExpression::latexPrint): handle
+	TRANSFORM case
+
+	* moduleExpression.hh (ModuleExpression::getTransformArguments):
+	added
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression): fill
+	out transform arguments
+	(<<): handle TRANSFORM case
+
+	* moduleExpression.hh (class ModuleExpression): added
+	transformArguments data member
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression): added
+	transform ctor
+	(ModuleExpression::deepSelfDestruct): handle transform case
+
+	* moduleExpression.hh (enum Type): added TRANSFORM
+
+	* top.yy: added transformExpr type
+
+	* modules.yy (optToken): added
+	(optList): added
+	(transformOptions): added
+	(transformExpr): added
+	(moduleExpr3): support transformExpr
+
+	* top.yy: added optToken type
+
+	* moduleExpression.hh (ModuleExpression): added ctor for module
+	transformations
+
 2026-06-02  Saruman the White  <eker@eker10>
 
 	* userLevelRewritingContext.cc

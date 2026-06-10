@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -907,6 +907,22 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	    return makeModuleInstantiation(fm, arguments);  // may return null but never has bad flag set
 	  }
 	break;
+      }
+    case ModuleExpression::TRANSFORM:
+      {
+	//
+	//	Dummy identity transformation.
+	//
+	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
+	  {
+	    if (fm->hasFreeParameters())
+	      {
+		IssueWarning("transform module " << fm << " has free parameters.");
+		return 0;
+	      }
+	    return fm;
+	  }
+	return nullptr;
       }
     default:
       CantHappen("bad module expression");

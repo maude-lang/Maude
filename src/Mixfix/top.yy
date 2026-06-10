@@ -228,7 +228,7 @@ int yylex(YYSTYPE* lvalp);
  *	Nonterminals that return tokens.
  */
 %type <yyToken> stratName attributeName
-%type <yyToken> token endsInDot badType
+%type <yyToken> token optToken endsInDot badType
 %type <yyToken> tokenBarColon
 %type <yyToken> tokenBarDot
 %type <yyToken> cTokenBarIn
@@ -266,7 +266,7 @@ int yylex(YYSTYPE* lvalp);
  *	Nonterminals that return ModuleExpression*.
  */
 %type <yyModuleExpression> moduleExprDot moduleExpr moduleExpr2 moduleExpr3
-%type <yyModuleExpression> renameExpr instantExpr parenExpr
+%type <yyModuleExpression> renameExpr instantExpr parenExpr transformExpr
 /*
  *	Nonterminals that return ViewExpression*.
  */

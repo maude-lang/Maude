@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,20 +36,26 @@ public:
     MODULE,
     SUMMATION,
     RENAMING,
-    INSTANTIATION
+    INSTANTIATION,
+    TRANSFORM
   };
 
   ModuleExpression(Token moduleName);
   ModuleExpression(ModuleExpression* left, ModuleExpression* right);
   ModuleExpression(ModuleExpression* module, Renaming* renaming);
   ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments);
-  
+  ModuleExpression(Token moduleName,
+		   const Vector<Token>& opName,
+		   const Vector<Token>& arguments,
+		   ModuleExpression* module);
+
   Type getType() const;
   Token getModuleName() const;
   const list<ModuleExpression*>& getModules() const;
   ModuleExpression* getModule() const;
   Renaming* getRenaming() const;
   const Vector<ViewExpression*>& getArguments() const;
+  const Vector<Token>& getTransformArguments() const;
   void deepSelfDestruct();
 
   void latexPrint(ostream& s, const Module* enclosingModule = nullptr) const;
@@ -65,7 +71,7 @@ private:
   //
   list<ModuleExpression*> modules;
   //
-  //	For renaming and instantiation.
+  //	For renaming, instantiation and transform.
   //
   ModuleExpression* module;
   //
@@ -76,6 +82,10 @@ private:
   //	For instantiation.
   //
   Vector<ViewExpression*> arguments;
+  //
+  //	For transform.
+  //
+  Vector<Token> transformArguments;
 };
 
 ostream& operator<<(ostream& s, const ModuleExpression* expr);
@@ -119,6 +129,12 @@ ModuleExpression::getArguments() const
 {
   Assert(type == INSTANTIATION, "not instantiation");
   return arguments;
+}
+inline const Vector<Token>&
+ModuleExpression::getTransformArguments() const
+{
+  Assert(type == TRANSFORM, "not a transform");
+  return transformArguments;
 }
 
 #endif

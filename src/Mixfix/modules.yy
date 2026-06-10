@@ -34,6 +34,7 @@ moduleExprDot	:	tokenBarDot expectedDot
 		|	parenExpr expectedDot
 		|	renameExpr expectedDot
 		|	instantExpr expectedDot
+		|	transformExpr expectedDot
 		|	moduleExpr '+' moduleExprDot
 			{
 			  if ($3)
@@ -67,11 +68,11 @@ moduleExpr2	:	moduleExpr3
 
 moduleExpr3	:	parenExpr
 		|	instantExpr
+		|	transformExpr
 		|	token
 		        {
                           $$ = new ModuleExpression($1);
-                        }
-
+                        }	
 		;
 		
 renameExpr	:	moduleExpr2 '*' renaming
@@ -87,6 +88,29 @@ instantExpr	:	moduleExpr3 '{' instantArgs '}'
 			  delete $3;
 			}
 		;
+
+transformExpr	:	'[' token 
+			{
+			  tokensClear();
+			  lexerBubble.clear();
+			}
+			transformOp ']' transformOptions '(' moduleExpr ')'
+			{
+			  $$ = new ModuleExpression($2, lexerBubble, tokenSequence, $8);
+			}
+		;
+
+transformOp	:	','
+			{
+			  lexBubble(BAR_RIGHT_BRACKET, 1);
+			  Token::peelParens(lexerBubble);
+			}
+		|
+		;
+
+transformOptions :	'[' optList ']'
+		 |
+		 ;
 
 parenExpr	:	'(' moduleExpr ')'
 			{
@@ -955,6 +979,9 @@ identity	:	FORCE_LOOKAHEAD
 idList		:	idList IDENTIFIER	{ tokensStore($2); }
 		|	IDENTIFIER		{ tokensStore($1); }
 		;
+optList		:	optList optToken	{ tokensStore($2); }
+		|	optToken		{ tokensStore($1); }
+		;
 
 hookList	:	hookList hook		{}
 		|	hook	 		{}
@@ -1100,6 +1127,13 @@ innerToken	:	sortToken | ENDS_IN_DOT | KW_ID
  */
 token		:	sortToken | ENDS_IN_DOT | KW_ID 
 		|	':' | '@' | '<' | ',' | '.' | '[' | ']' | '{' | '}'
+		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
+		;
+/*
+ *	An unrestricted token adds back these excluded tokens except  '[' ']'
+ */
+optToken	:	sortToken | ENDS_IN_DOT | KW_ID 
+		|	':' | '@' | '<' | ',' | '.' | '(' | ')' | '{' | '}'
 		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
 		;
 

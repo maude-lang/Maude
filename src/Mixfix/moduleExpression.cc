@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -79,11 +79,28 @@ ModuleExpression::ModuleExpression(ModuleExpression* module, const Vector<ViewEx
 {
 }
 
+ModuleExpression::ModuleExpression(Token moduleName,
+				   const Vector<Token>& opName,
+				   const Vector<Token>& arguments,
+				   ModuleExpression* module)
+  : type(TRANSFORM),
+    moduleName(moduleName),
+    module(module),
+    transformArguments(arguments)
+{
+}
+
 void
 ModuleExpression::deepSelfDestruct()
 {
   switch (type)
     {
+    case SUMMATION:
+      {
+	for (ModuleExpression* m : modules)
+	  m->deepSelfDestruct();
+	break;
+      }
     case RENAMING:
       {
 	module->deepSelfDestruct();
@@ -97,10 +114,9 @@ ModuleExpression::deepSelfDestruct()
 	  v->deepSelfDestruct();
 	break;
       }
-    case SUMMATION:
+    case TRANSFORM:
       {
-	for (ModuleExpression* m : modules)
-	  m->deepSelfDestruct();
+	module->deepSelfDestruct();
 	break;
       }
     case MODULE:
@@ -161,6 +177,23 @@ operator<<(ostream& s, const ModuleExpression* expr)
 	s << '}';
 	break;
       }
+    case ModuleExpression::TRANSFORM:
+      {
+	s << '[' << expr->getModuleName() << ']';
+	const Vector<Token>& transformArguments = expr->getTransformArguments();
+	if (!transformArguments.empty())
+	  {
+	    const char* sep = "[";
+	    for (const Token& t : transformArguments)
+	      {
+		s << sep << t;
+		sep = " ";
+	      }
+	    s << "]";
+	  }
+	s << '(' << expr->getModule() << ')';
+	break;
+      }
     default:
       CantHappen("not implemented");
     }
@@ -207,7 +240,7 @@ ModuleExpression::latexPrint(ostream& s, const Module* enclosingModule) const
 	  s << "\\maudeLeftParen";
 	module->latexPrint(s, enclosingModule);
 	if (parensNeeded)
-	    s << "\\maudeRightParen";
+	  s << "\\maudeRightParen";
 	s << "\\maudeLeftBrace";
 	const char* sep = "";
 	for (const ViewExpression* ve : arguments)
@@ -217,6 +250,28 @@ ModuleExpression::latexPrint(ostream& s, const Module* enclosingModule) const
 	    ve->latexPrint(s, enclosingModule);
 	  }
 	s << "\\maudeRightBrace";
+	break;
+      }
+    case TRANSFORM:
+      {
+	s << "\\maudeLeftBrace" <<
+	  "\\maudeModule{" << Token::latexName(moduleName.code()) << "}" <<
+	  "\\maudeRightBrace";
+
+	if (!transformArguments.empty())
+	  {
+	    const char* sep = "\\maudeLeftParen";
+	    for (const Token& t : transformArguments)
+	      {
+		s << sep << "\\maudeModule{" << Token::latexName(t.code()) << "}";
+		sep = "\\maudeSpace";
+	      }
+	    s << "\\maudeRightParen";
+	  }
+
+	s << "\\maudeLeftParen";
+	module->latexPrint(s);
+	s << "\\maudeRightParen";
 	break;
       }
     default:
