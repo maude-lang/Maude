@@ -44,10 +44,10 @@ public:
   ModuleExpression(ModuleExpression* left, ModuleExpression* right);
   ModuleExpression(ModuleExpression* module, Renaming* renaming);
   ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments);
-  ModuleExpression(Token moduleName,
+  ModuleExpression(ModuleExpression* transformer,
 		   const Vector<Token>& opName,
-		   const Vector<Token>& arguments,
-		   ModuleExpression* module);
+		   ModuleExpression* transformed,
+		   const Vector<Token>& arguments);
 
   Type getType() const;
   Token getModuleName() const;

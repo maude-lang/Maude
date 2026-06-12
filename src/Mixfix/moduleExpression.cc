@@ -79,15 +79,16 @@ ModuleExpression::ModuleExpression(ModuleExpression* module, const Vector<ViewEx
 {
 }
 
-ModuleExpression::ModuleExpression(Token moduleName,
+ModuleExpression::ModuleExpression(ModuleExpression* transformer,
 				   const Vector<Token>& opName,
-				   const Vector<Token>& arguments,
-				   ModuleExpression* module)
-  : type(TRANSFORM),
-    moduleName(moduleName),
-    module(module),
-    transformArguments(arguments)
+				   ModuleExpression* transformed,
+				   const Vector<Token>& arguments)
+: type(TRANSFORM)//,
+    //moduleName(moduleName),
+    //module(module),
+    //transformArguments(arguments)
 {
+  
 }
 
 void

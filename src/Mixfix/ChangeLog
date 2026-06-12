@@ -1,3 +1,34 @@
+2026-06-11  Saruman the White  <eker@eker10>
+
+	* moduleExpression.hh (class ModuleExpression): updated decl for
+	transform ctor
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression):
+	updated transform ctor
+
+	* modules.yy (moduleExpr4): added
+	(transformer): added
+	(transInput): added
+	(optTransOptions): added
+	(transOptions): added
+	(transformOp): deleted
+	(optModuleExpr): deleted
+	(optArguments): deleted
+
+	* top.yy: added moduleExpr4, deleted optModuleExpr
+
+2026-06-10  Saruman the White  <eker@eker10>
+
+	* top.yy: deleted optToken
+
+	* modules.yy (transformOptions): deleted
+	(optArguments): added
+	(optModuleExpr): added
+	(optList): deleted
+	(optToken): deleted
+
+	* top.yy: added type for optModuleExpr
+
 2026-06-09  Saruman the White  <eker@eker10>
 
 	* interpreter.cc (Interpreter::makeModule): dummy code for

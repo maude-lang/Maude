@@ -66,9 +66,12 @@ moduleExpr2	:	moduleExpr3
 		|	renameExpr
 		;
 
-moduleExpr3	:	parenExpr
+moduleExpr3	:	moduleExpr4
 		|	instantExpr
-		|	transformExpr
+		|	transformExpr	
+		;
+
+moduleExpr4	:	parenExpr
 		|	token
 		        {
                           $$ = new ModuleExpression($1);
@@ -88,34 +91,46 @@ instantExpr	:	moduleExpr3 '{' instantArgs '}'
 			  delete $3;
 			}
 		;
-
-transformExpr	:	'[' token 
-			{
-			  tokensClear();
-			  lexerBubble.clear();
-			}
-			transformOp ']' transformOptions '(' moduleExpr ')'
-			{
-			  $$ = new ModuleExpression($2, lexerBubble, tokenSequence, $8);
-			}
-		;
-
-transformOp	:	','
-			{
-			  lexBubble(BAR_RIGHT_BRACKET, 1);
-			  Token::peelParens(lexerBubble);
-			}
-		|
-		;
-
-transformOptions :	'[' optList ']'
-		 |
-		 ;
-
+		
 parenExpr	:	'(' moduleExpr ')'
 			{
 			  $$ = $2;
 			}
+		;
+
+/*
+ *	User-defined module transformations.
+ */
+transformExpr	:	transformer transInput optTransOptions
+			{
+			  $$ = nullptr;
+			}
+		|	transformer transOptions
+			{
+			  $$ = nullptr;
+			}
+		;
+
+transformer	:	moduleExpr4
+		|	'(' moduleExpr ','
+			{
+			  lexBubble(BAR_RIGHT_PAREN, 1);
+			}
+			')'
+		;
+
+transInput	:	'[' moduleExpr ']'
+		;
+
+optTransOptions	:	transOptions
+		|
+		;
+
+transOptions	:	'('
+			{
+			  lexBubble(BAR_RIGHT_PAREN, 1);
+			}
+			')'
 		;
 
 /*
@@ -979,9 +994,6 @@ identity	:	FORCE_LOOKAHEAD
 idList		:	idList IDENTIFIER	{ tokensStore($2); }
 		|	IDENTIFIER		{ tokensStore($1); }
 		;
-optList		:	optList optToken	{ tokensStore($2); }
-		|	optToken		{ tokensStore($1); }
-		;
 
 hookList	:	hookList hook		{}
 		|	hook	 		{}
@@ -1127,13 +1139,6 @@ innerToken	:	sortToken | ENDS_IN_DOT | KW_ID
  */
 token		:	sortToken | ENDS_IN_DOT | KW_ID 
 		|	':' | '@' | '<' | ',' | '.' | '[' | ']' | '{' | '}'
-		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
-		;
-/*
- *	An unrestricted token adds back these excluded tokens except  '[' ']'
- */
-optToken	:	sortToken | ENDS_IN_DOT | KW_ID 
-		|	':' | '@' | '<' | ',' | '.' | '(' | ')' | '{' | '}'
 		|	KW_ARROW | KW_PARTIAL | KW_COLON2 | KW_ASSIGN
 		;
 
