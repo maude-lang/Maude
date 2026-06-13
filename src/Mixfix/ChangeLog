@@ -1,3 +1,34 @@
+2026-06-12  Saruman the White  <eker@eker10>
+
+	* moduleExpression.cc (ModuleExpression::deepSelfDestruct):
+	deepSelfDestruct() inputModules
+
+	* moduleExpression.hh (ModuleExpression::getModule): allow
+	TRANSFORM
+
+	* modules.yy (transformer): make Transformer pairs
+	(transformExpr): use new ModuleExpression ctor
+
+	* top.yy: added %destructor for yyTransformer
+
+	* lexerAux.hh (struct Transformer): added struct Transformer
+
+	* moduleExpression.hh (class ModuleExpression): updated decl fro
+	TRANSFORM ctor
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression):
+	updated arguments
+
+	* top.yy: added %destructor for yyModuleExpressionVector; added
+	type for transInput
+
+	* modules.yy (transInput): use moduleExprList
+
+	* top.yy: added decl for deepSelfDestructModuleExpressionVector();
+	added yyModuleExpressionVector to %union
+
+	* bottom.yy: added deepSelfDestructModuleExpressionVector()
+
 2026-06-11  Saruman the White  <eker@eker10>
 
 	* moduleExpression.hh (class ModuleExpression): updated decl for

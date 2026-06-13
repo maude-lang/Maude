@@ -109,10 +109,12 @@ Int64 number;
 Int64 number2;
 int variantOptions;
 
+
 static void yyerror(UserLevelRewritingContext::ParseResult* parseResult, const char *s);
 
 void cleanUpModuleExpression();
 void cleanUpParser();
+void deepSelfDestructModuleExpressionVector(Vector<ModuleExpression*>* moduleExpressions);
 void deepSelfDestructViewExpressionVector(Vector<ViewExpression*>* viewExpressions);
 void missingSpace(const Token& token);
 %}
@@ -130,12 +132,17 @@ void missingSpace(const Token& token);
   Interpreter::PrintFlags yyPrintFlags;
   Interpreter::SearchKind yySearchKind;
   ModuleExpression* yyModuleExpression;
+  Vector<ModuleExpression*>* yyModuleExpressionVector;
   ViewExpression* yyViewExpression;
   Vector<ViewExpression*>* yyViewExpressionVector;
+  Transformer* yyTransformer;
 }
 
 %destructor { $$->deepSelfDestruct(); } <yyModuleExpression> <yyViewExpression>
+%destructor { deepSelfDestructModuleExpressionVector($$); } <yyModuleExpressionVector>
 %destructor { deepSelfDestructViewExpressionVector($$); } <yyViewExpressionVector>
+%destructor { $$->first->deepSelfDestruct(); delete $$; } <yyTransformer>
+
 %{
 int yylex(YYSTYPE* lvalp);
 %}
@@ -272,9 +279,17 @@ int yylex(YYSTYPE* lvalp);
  */
 %type <yyViewExpression> viewExpr
 /*
+ *	Nonterminals that return Vector<ModuleExpression*>*.
+ */
+%type <yyModuleExpressionVector> moduleExprList transInput
+/*
  *	Nonterminals that return Vector<ViewExpression*>*.
  */
 %type <yyViewExpressionVector> instantArgs
+/*
+ *	Nonterminals that return Transformer*
+ */
+%type <yyTransformer> transformer
 
 %start top
 

@@ -913,6 +913,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	//
 	//	Dummy identity transformation.
 	//
+	/*
 	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
 	  {
 	    if (fm->hasFreeParameters())
@@ -922,6 +923,8 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	      }
 	    return fm;
 	  }
+	*/
+	IssueWarning("Theory tranformations not implemented.");
 	return nullptr;
       }
     default:

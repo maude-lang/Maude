@@ -66,29 +66,29 @@ ModuleExpression::ModuleExpression(ModuleExpression* left, ModuleExpression* rig
 }
 
 ModuleExpression::ModuleExpression(ModuleExpression* module, Renaming* renaming)
- : type(RENAMING),
-   module(module),
-   renaming(renaming)
+  : type(RENAMING),
+    module(module),
+    renaming(renaming)
 {
 }
 
 ModuleExpression::ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments)
- : type(INSTANTIATION),
-   module(module),
-   arguments(arguments)
+  : type(INSTANTIATION),
+    module(module),
+    arguments(arguments)
 {
 }
 
 ModuleExpression::ModuleExpression(ModuleExpression* transformer,
-				   const Vector<Token>& opName,
-				   ModuleExpression* transformed,
+				   int opName,
+				   const Vector<ModuleExpression*>& inputModules,
 				   const Vector<Token>& arguments)
-: type(TRANSFORM)//,
-    //moduleName(moduleName),
-    //module(module),
-    //transformArguments(arguments)
+  : type(TRANSFORM),
+    module(transformer),
+    opName(opName),
+    inputModules(inputModules),
+    transformArguments(arguments)
 {
-  
 }
 
 void
@@ -118,6 +118,9 @@ ModuleExpression::deepSelfDestruct()
     case TRANSFORM:
       {
 	module->deepSelfDestruct();
+	for (ModuleExpression* m : inputModules)
+	  m->deepSelfDestruct();
+
 	break;
       }
     case MODULE:

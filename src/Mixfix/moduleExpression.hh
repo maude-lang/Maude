@@ -45,8 +45,8 @@ public:
   ModuleExpression(ModuleExpression* module, Renaming* renaming);
   ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments);
   ModuleExpression(ModuleExpression* transformer,
-		   const Vector<Token>& opName,
-		   ModuleExpression* transformed,
+		   const int opName,
+		   const Vector<ModuleExpression*>& inputModules,
 		   const Vector<Token>& arguments);
 
   Type getType() const;
@@ -85,6 +85,8 @@ private:
   //
   //	For transform.
   //
+  int opName;
+  Vector<ModuleExpression*> inputModules;
   Vector<Token> transformArguments;
 };
 
@@ -113,7 +115,8 @@ ModuleExpression::getModules() const
 inline ModuleExpression*
 ModuleExpression::getModule() const
 {
-  Assert(type == RENAMING || type == INSTANTIATION, "not a renaming or instantiation");
+  Assert(type == RENAMING || type == INSTANTIATION || type == TRANSFORM,
+	 "not a renaming, instantiation or transform");
   return module;
 }
 

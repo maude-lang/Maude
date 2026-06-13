@@ -103,27 +103,43 @@ parenExpr	:	'(' moduleExpr ')'
  */
 transformExpr	:	transformer transInput optTransOptions
 			{
-			  $$ = nullptr;
+			  $$ = new ModuleExpression($1->first, $1->second, *$2, lexerBubble);
+			  delete $1;
+			  delete $2;
 			}
 		|	transformer transOptions
 			{
-			  $$ = nullptr;
+			  Vector<ModuleExpression*> empty;
+			  $$ = new ModuleExpression($1->first, $1->second, empty, lexerBubble);
+			  delete $1;
 			}
 		;
 
 transformer	:	moduleExpr4
+			{
+			  $$ = new Transformer($1, NONE);
+			}
 		|	'(' moduleExpr ','
 			{
 			  lexBubble(BAR_RIGHT_PAREN, 1);
 			}
 			')'
+			{
+			  $$ = new Transformer($2, Token::bubbleToPrefixNameCode(lexerBubble));
+			}
 		;
 
-transInput	:	'[' moduleExpr ']'
+transInput	:	'[' moduleExprList ']'
+			{
+			  $$ = $2;
+			}
 		;
 
 optTransOptions	:	transOptions
 		|
+			{
+			  lexerBubble.clear();
+			}
 		;
 
 transOptions	:	'('
@@ -131,6 +147,19 @@ transOptions	:	'('
 			  lexBubble(BAR_RIGHT_PAREN, 1);
 			}
 			')'
+		;
+
+moduleExprList	:	moduleExprList ',' moduleExpr
+			{
+			  $1->append($3);
+			  $$ = $1;
+			}
+		|	moduleExpr
+			{
+			  Vector<ModuleExpression*>* l =  new Vector<ModuleExpression*>;
+			  l->append($1);
+			  $$ = l;
+			}
 		;
 
 /*
@@ -154,7 +183,7 @@ instantArgs	:	instantArgs ',' viewExpr
 			}
 		|	viewExpr
 			{
-			  Vector<ViewExpression*>* t =  new Vector<ViewExpression*>();
+			  Vector<ViewExpression*>* t =  new Vector<ViewExpression*>;
 			  t->append($1);
 			  $$ = t;
 			}
