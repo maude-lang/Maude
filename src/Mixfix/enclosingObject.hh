@@ -36,7 +36,7 @@ public:
   bool hasBoundParameters() const;
   //
   //	This is needed for renaming modules - parameters both free and
-  //	bound are unchangedby a renaming.
+  //	bound are unchanged by a renaming.
   //
   void copyBoundParameters(const EnclosingObject* other);
   //

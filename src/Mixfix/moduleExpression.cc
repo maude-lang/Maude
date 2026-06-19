@@ -87,7 +87,7 @@ ModuleExpression::ModuleExpression(ModuleExpression* transformer,
     module(transformer),
     opName(opName),
     inputModules(inputModules),
-    transformArguments(arguments)
+    options(arguments)
 {
 }
 
@@ -183,19 +183,48 @@ operator<<(ostream& s, const ModuleExpression* expr)
       }
     case ModuleExpression::TRANSFORM:
       {
-	s << '[' << expr->getModuleName() << ']';
-	const Vector<Token>& transformArguments = expr->getTransformArguments();
-	if (!transformArguments.empty())
+	const ModuleExpression* module = expr->getModule();
+	int opName = expr->getOpName();
+	const Vector<ModuleExpression*>& inputModules = expr->getInputModules();
+	const Vector<Token>& options = expr->getOptions();
+	//
+	//	Transformer specification.
+	//
+	bool needParens = module->getType() != ModuleExpression::MODULE || opName != NONE;
+	if (needParens)
+	  s << '(';
+	s << module;
+	if (opName != NONE)
+	  s << ", " << MixfixModule::prettyOpName(opName, Token::NO_CONCERNS);
+	if (needParens)
+	  s << ')';
+	//
+	//	Input modules.
+	//
+	if (!inputModules.empty())
 	  {
 	    const char* sep = "[";
-	    for (const Token& t : transformArguments)
+	    for (ModuleExpression* m :  inputModules)
+	      {
+		s << sep << m;
+		sep = ", ";
+	      }
+	    s << ']';
+	  }
+	//
+	//	Options.
+	//
+	if (!options.empty() || inputModules.empty())
+	  {
+	    s << '(';
+	    const char* sep = "";
+	    for (const Token& t : options)
 	      {
 		s << sep << t;
 		sep = " ";
 	      }
-	    s << "]";
+	    s << ')';
 	  }
-	s << '(' << expr->getModule() << ')';
 	break;
       }
     default:
@@ -262,10 +291,10 @@ ModuleExpression::latexPrint(ostream& s, const Module* enclosingModule) const
 	  "\\maudeModule{" << Token::latexName(moduleName.code()) << "}" <<
 	  "\\maudeRightBrace";
 
-	if (!transformArguments.empty())
+	if (!options.empty())
 	  {
 	    const char* sep = "\\maudeLeftParen";
-	    for (const Token& t : transformArguments)
+	    for (const Token& t : options)
 	      {
 		s << sep << "\\maudeModule{" << Token::latexName(t.code()) << "}";
 		sep = "\\maudeSpace";

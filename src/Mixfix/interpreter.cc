@@ -913,18 +913,16 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	//
 	//	Dummy identity transformation.
 	//
-	/*
+	IssueWarning("Theory tranformations not implemented.");
 	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
 	  {
 	    if (fm->hasFreeParameters())
 	      {
 		IssueWarning("transform module " << fm << " has free parameters.");
-		return 0;
+		return nullptr;
 	      }
 	    return fm;
 	  }
-	*/
-	IssueWarning("Theory tranformations not implemented.");
 	return nullptr;
       }
     default:

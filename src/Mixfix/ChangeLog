@@ -1,3 +1,35 @@
+2026-06-19  Saruman the White  <eker@eker10>
+
+	* enclosingObject.hh (class EnclosingObject): fixed typo in
+	comment
+
+	* moduleExpression.cc (<<): pass NO_CONCERNS to
+	MixfixModule::prettyOpName()
+
+	* token.hh (enum ProblemSituations): added NO_CONCERNS
+
+	* moduleExpression.cc (<<): use MixfixModule::prettyOpName() for
+	opName
+
+	* modules.yy (transOptions): allow empty options bubble
+
+	* interpreter.cc (Interpreter::makeModule): dummy handling for
+	TRANSFORM case
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression):
+	transformArguments -> options
+	(<<): getTransformArguments() -> getOptions()
+	(ModuleExpression::latexPrint): transformArguments -> options
+
+	* moduleExpression.hh (class ModuleExpression): data member
+	transformArguments -> options
+	(ModuleExpression::getTransformArguments): becomes getOptions()
+
+	* moduleExpression.cc (<<): handle new transform syntax
+
+	* moduleExpression.hh (ModuleExpression::getOpName): added
+	(ModuleExpression::getInputModules): added
+
 2026-06-12  Saruman the White  <eker@eker10>
 
 	* moduleExpression.cc (ModuleExpression::deepSelfDestruct):

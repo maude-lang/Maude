@@ -144,7 +144,7 @@ optTransOptions	:	transOptions
 
 transOptions	:	'('
 			{
-			  lexBubble(BAR_RIGHT_PAREN, 1);
+			  lexBubble(BAR_RIGHT_PAREN, 0);
 			}
 			')'
 		;

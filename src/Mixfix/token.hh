@@ -67,6 +67,7 @@ public:
   //
   enum ProblemSituations
     {
+     NO_CONCERNS = 0,
      //
      //	Producing multiple tokens is a problem for ops/msgs declarations.
      //

@@ -55,7 +55,11 @@ public:
   ModuleExpression* getModule() const;
   Renaming* getRenaming() const;
   const Vector<ViewExpression*>& getArguments() const;
-  const Vector<Token>& getTransformArguments() const;
+
+  int getOpName() const;
+  const Vector<ModuleExpression*>& getInputModules() const;
+  const Vector<Token>& getOptions() const;
+
   void deepSelfDestruct();
 
   void latexPrint(ostream& s, const Module* enclosingModule = nullptr) const;
@@ -87,7 +91,7 @@ private:
   //
   int opName;
   Vector<ModuleExpression*> inputModules;
-  Vector<Token> transformArguments;
+  Vector<Token> options;
 };
 
 ostream& operator<<(ostream& s, const ModuleExpression* expr);
@@ -104,6 +108,7 @@ ModuleExpression::getModuleName() const
   Assert(type == MODULE, "not a named module");
   return moduleName;
 }
+
 
 inline const list<ModuleExpression*>&
 ModuleExpression::getModules() const
@@ -133,11 +138,26 @@ ModuleExpression::getArguments() const
   Assert(type == INSTANTIATION, "not instantiation");
   return arguments;
 }
-inline const Vector<Token>&
-ModuleExpression::getTransformArguments() const
+
+inline int
+ModuleExpression::getOpName() const
 {
   Assert(type == TRANSFORM, "not a transform");
-  return transformArguments;
+  return opName;
+}
+
+inline const Vector<ModuleExpression*>&
+ModuleExpression::getInputModules() const
+{
+  Assert(type == TRANSFORM, "not a transform");
+  return inputModules;
+}
+
+inline const Vector<Token>&
+ModuleExpression::getOptions() const
+{
+  Assert(type == TRANSFORM, "not a transform");
+  return options;
 }
 
 #endif
