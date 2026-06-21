@@ -3168,6 +3168,39 @@ fmod META-LEVEL is
 endfm
 
 ***
+***	Module transformations.
+***
+
+fmod MODULE-TRANSFORMER is
+  protecting META-LEVEL .
+  subsort Module < ModuleList .
+  op nil : -> ModuleList [ctor] .
+  op _,_ : ModuleList ModuleList -> ModuleList [ctor assoc id: nil] .
+
+  subsort TransformMessage < TransformMessageList .
+  op nil : -> TransformMessageList [ctor] .
+  op __ : TransformMessageList TransformMessageList -> TransformMessageList [ctor assoc id: nil] .
+  op advisory : String -> TransformMessage [ctor] .
+  op warning : String -> TransformMessage [ctor] .
+  op verbose : String -> TransformMessage [ctor] .
+
+  sort TransformResult .
+  op transformResult : Module TransformMessageList -> TransformResult
+    [special (
+      id-hook TransformResultSymbol
+      op-hook nilModuleListSymbol	(nil : ~> ModuleList)
+      op-hook moduleListSymbol		(_,_ : ModuleList ModuleList ~> ModuleList)
+      op-hook nilTransformMessageListSymbol	(nil : ~> TransformMessageList)
+      op-hook transformMessageListSymbol
+        (__ : TransformMessageList TransformMessageList ~> TransformMessageList)
+      op-hook advisorySymbol		(advisory : String ~> TransformMessage)
+      op-hook warningSymbol		(warning : String ~> TransformMessage)
+      op-hook verboseSymbol		(verbose : String ~> TransformMessage)
+      op-hook shareWith			(metaReduce : Module Term ~> ResultPair))
+     ctor] .
+endfm
+
+***
 ***	Lexical module.
 ***
 

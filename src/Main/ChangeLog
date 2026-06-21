@@ -1,3 +1,7 @@
+2026-06-21  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added fmod MODULE-TRANSFORMER
+
 2025-07-29  Rubén Rubio  <rubenrub@ucm.es>
 
 	* prelude.maude: added rpo attribute

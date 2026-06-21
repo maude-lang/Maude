@@ -80,6 +80,7 @@ libmixfix_a_SOURCES = \
 	variableGenerator.cc \
 	objectConstructorSymbol.cc \
 	maudeLatexBuffer.cc \
+	transformResultSymbol.cc \
 	$(COMPILER_SRC)
 
 EXTRA_libmixfix_a_SOURCES = \
@@ -247,4 +248,5 @@ noinst_HEADERS = \
 	objectConstructorSymbol.hh \
 	statementTransformer.hh \
 	maudeLatexBuffer.hh \
-	printSettings.hh
+	printSettings.hh \
+	transformResultSymbol.hh

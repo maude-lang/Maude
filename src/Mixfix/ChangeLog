@@ -1,3 +1,19 @@
+2026-06-21  Saruman the White  <eker@eker10>
+
+	* transformResultSymbol.hh (class TransformResultSymbol): added
+	decls for attachData(), getDataAttachments()
+
+	* transformResultSymbol.cc (TransformResultOpSymbol::attachData):
+	added
+	(TransformResultOpSymbol::getDataAttachments): added
+
+	* symbolType.hh (enum BasicTypes): added TRANSFORM_RESULT_SYMBOL
+
+	* specialSymbolTypes.cc: added TransformResultSymbol
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): added
+	TransformResultSymbol
+
 2026-06-20  Saruman the White  <eker@eker10>
 
 	* transformResultSymbol.cc: added

@@ -35,17 +35,35 @@
 #include "freeTheory.hh"
 #include "AU_Theory.hh"
 #include "mixfix.hh"
+#include "higher.hh"
+#include "SMT.hh"
+#include "meta.hh"
 
 //      interface class definitions
 #include "symbol.hh"
 #include "dagNode.hh"
+
+//	core class definitions
+#include "symbolMap.hh"
+
+//      AU class definitions
+#include "AU_Symbol.hh"
+
+//	built-in macros
+#include "bindingMacros.hh"
+
+//      MetaLevel class definitions
+#include "metaLevelOpSymbol.hh"
+
+//	mixfix class definitions
+#include "transformResultSymbol.hh"
 
 TransformResultSymbol::TransformResultSymbol(int id)
   : FreeSymbol(id, 2)
 {
 #define MACRO(SymbolName, SymbolClass) \
   SymbolName = nullptr;
-#include "quotedIdentifierOpSignature.cc"
+#include "transformResultSignature.cc"
 #undef MACRO
 
   metaLevel = nullptr;
@@ -54,6 +72,26 @@ TransformResultSymbol::TransformResultSymbol(int id)
 
 TransformResultSymbol::~TransformResultSymbol()
 {  // maybe we don't need this
+}
+
+bool
+TransformResultSymbol::attachData(const Vector<Sort*>& opDeclaration,
+				  const char* purpose,
+				  const Vector<const char*>& data)
+{
+  if (strcmp(purpose, "TransformResultSymbol") == 0)
+    return true;
+  return FreeSymbol::attachData(opDeclaration, purpose, data);
+}
+
+void
+TransformResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
+					    Vector<const char*>& purposes,
+					    Vector<Vector<const char*>>& data)
+{
+  purposes.push_back("TransformResultOpSymbol");
+  data.resize(data.size() + 1);
+  FreeSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
 
 bool
@@ -68,17 +106,6 @@ TransformResultSymbol::attachSymbol(const char* purpose, Symbol* symbol)
 }
 
 void
-TransformResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
-{
-  TransformResultSymbol* orig = safeCastNonNull<TransformResultSymbol*>(original);
-#define MACRO(SymbolName, SymbolClass) \
-  COPY_SYMBOL(orig, SymbolName, map, SymbolClass*)
-#include "transformResultSignature.cc"
-#undef MACRO
-  FreeSymbol::copyAttachments(original, map);
-}
-
-void
 TransformResultSymbol::getSymbolAttachments(Vector<const char*>& purposes,
 					    Vector<Symbol*>& symbols)
 {
@@ -87,4 +114,15 @@ TransformResultSymbol::getSymbolAttachments(Vector<const char*>& purposes,
 #include "transformResultSignature.cc"
 #undef MACRO
   FreeSymbol::getSymbolAttachments(purposes, symbols);
+}
+
+void
+TransformResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
+{
+  TransformResultSymbol* orig = safeCastNonNull<TransformResultSymbol*>(original);
+#define MACRO(SymbolName, SymbolClass) \
+  COPY_SYMBOL(orig, SymbolName, map, SymbolClass*)
+#include "transformResultSignature.cc"
+#undef MACRO
+  FreeSymbol::copyAttachments(original, map);
 }

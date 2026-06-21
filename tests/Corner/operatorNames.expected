@@ -94,6 +94,7 @@ fth T
 fmod META-VIEW
 fmod META-LEVEL
 fth T2
+fmod MODULE-TRANSFORMER
 fmod LEXICAL
 mod COUNTER
 mod LOOP-MODE
