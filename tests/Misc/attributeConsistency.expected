@@ -72,7 +72,8 @@ Warning: <standard input>, line 167 (fmod FOO13): this module contains one or
 Warning: <standard input>, line 178 (fmod FOO14): multiple identity
     declarations.
 Warning: <standard input>, line 184 (fmod FOO15): duplicate attributes.
-Warning: 3439: multiple metadata attributes.
+Warning: <standard input>, line 203 (fmod FOO16'): multiple metadata
+    attributes.
 Warning: <standard input>, line 210 (fmod FOO17): declaration for _+_ combines
     ditto with attributes other than ctor or metadata.
 Warning: <standard input>, line 228 (fmod FOO17'''): declaration for _+_ uses

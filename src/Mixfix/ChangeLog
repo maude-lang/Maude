@@ -1,5 +1,8 @@
 2026-06-21  Saruman the White  <eker@eker10>
 
+	* ops.cc (SyntacticPreModule::setMetadata): fix bug where we
+	printing out a raw line number
+
 	* transformResultSymbol.hh (class TransformResultSymbol): added
 	decls for attachData(), getDataAttachments()
 

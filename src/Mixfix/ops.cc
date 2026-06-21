@@ -238,7 +238,8 @@ SyntacticPreModule::setMetadata(Token metaDataTok)
 	  const Type& anchor = isStrategy ? stratDecls[stratDecls.length() - 1].types[0]
 					  : opDefs[opDefs.length() - 1].types[0];
 
-	  IssueWarning(anchor.tokens[0].lineNumber() << ": multiple metadata attributes.");
+	  IssueWarning(LineNumber(anchor.tokens[0].lineNumber()) <<
+		       ": multiple metadata attributes.");
 	}
     }
   else
