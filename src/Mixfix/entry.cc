@@ -412,6 +412,21 @@ MixfixModule::addOpDeclaration(Token prefixName,
 					 symbolType.hasFlag(SymbolType::MEMO));
       symbolType.clearFlags(SymbolType::AXIOMS | SymbolType::ITER);
     }
+  else
+    {
+      if (symbolType.getBasicType() == SymbolType::TRANSFORM_RESULT_SYMBOL)
+	{
+	  if (transformResultSymbol == nullptr)
+	    transformResultSymbol = safeCastNonNull<TransformResultSymbol*>(symbol);
+	  else
+	    {
+	      IssueWarning(LineNumber(prefixName.lineNumber()) <<
+			   ": cannot have both " << QUOTE(transformResultSymbol) <<
+			   " and " << QUOTE(symbol) <<
+			   " with the TransformResultSymbol special attribute.");
+	    }
+	}
+    }
   if (symbolType.hasFlag(SymbolType::FROZEN))
     symbol->setFrozen(frozen);
   symbol->setLineNumber(prefixName.lineNumber());

@@ -1,5 +1,15 @@
 2026-06-21  Saruman the White  <eker@eker10>
 
+	* mixfixModule.hh (MixfixModule::getTransformResultSymbol): added
+
+	* entry.cc (MixfixModule::addOpDeclaration): set
+	transformResultSymbol
+
+	* mixfixModule.hh (class MixfixModule): added data member
+	transformResultSymbol
+
+	* mixfix.hh: added class TransformResult
+
 	* ops.cc (SyntacticPreModule::setMetadata): fix bug where we
 	printing out a raw line number
 

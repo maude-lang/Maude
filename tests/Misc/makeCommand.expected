@@ -166,8 +166,8 @@ fmod M2 is
   eq A:Bool or B:Bool = A:Bool and B:Bool xor A:Bool xor B:Bool .
   eq A:Bool implies B:Bool = not (A:Bool xor A:Bool and B:Bool) .
 endfm
-Warning: <standard input>, line 25: cannot make a parameterized theory T2.
-    Recovering by deleting parameters.
+Warning: <standard input>, line 25 (make T2): cannot make a parameterized
+    theory T2. Recovering by deleting parameters.
 make T2{X :: TRIV} is
   T
 endm
