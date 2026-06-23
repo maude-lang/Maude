@@ -1,3 +1,35 @@
+2026-06-22  Saruman the White  <eker@eker10>
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): implemented
+
+	* importModule.hh (enum Origin): added TRANSFORMATION
+
+	* transformResultSymbol.hh (class TransformResultSymbol): added
+	decl for makeTransformation()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): added stub
+
+	* moduleCache.hh (class ModuleCache): added decl for
+	makeModuleTransformation()
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): added
+	stub
+
+	* interpreter.cc (Interpreter::makeModule): call
+	makeModuleTransformation()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::TransformResultSymbol): don't init
+	pointers here
+
+	* transformResultSymbol.hh (class TransformResultSymbol): data
+	member cachedImplicitTransformer renamed to cachedTransformOp
+	(MACRO): initialize symbol pointers here
+
+	* interpreter.cc (Interpreter::makeModule): check for free
+	parameters in transformer module
+
 2026-06-21  Saruman the White  <eker@eker10>
 
 	* mixfixModule.hh (MixfixModule::getTransformResultSymbol): added
@@ -29,7 +61,7 @@
 
 2026-06-20  Saruman the White  <eker@eker10>
 
-	* transformResultSymbol.cc: added
+	* transformResultSymbol.cc: created
 
 	* transformResultSymbol.hh (class TransformResultSymbol): created
 

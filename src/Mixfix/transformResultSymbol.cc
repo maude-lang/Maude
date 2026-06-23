@@ -54,20 +54,15 @@
 
 //      MetaLevel class definitions
 #include "metaLevelOpSymbol.hh"
+#include "metaLevel.hh"
 
 //	mixfix class definitions
 #include "transformResultSymbol.hh"
+//#include "quotedIdentifierSymbol.hh"
 
 TransformResultSymbol::TransformResultSymbol(int id)
   : FreeSymbol(id, 2)
 {
-#define MACRO(SymbolName, SymbolClass) \
-  SymbolName = nullptr;
-#include "transformResultSignature.cc"
-#undef MACRO
-
-  metaLevel = nullptr;
-  cachedImplicitTransformer = nullptr;
 }
 
 TransformResultSymbol::~TransformResultSymbol()
@@ -125,4 +120,13 @@ TransformResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
 #include "transformResultSignature.cc"
 #undef MACRO
   FreeSymbol::copyAttachments(original, map);
+}
+
+ImportModule*
+TransformResultSymbol::makeTransformation(int newModuleName,
+					  int opName,
+					  const Vector<ImportModule*>& inputModules,
+					  const Vector<int> optionVec)
+{
+  return nullptr;
 }

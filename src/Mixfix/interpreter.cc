@@ -38,7 +38,7 @@
 #include "strategyLanguage.hh"
 #include "mixfix.hh"
 #include "SMT.hh"
-
+ 
 //      interface class definitions
 #include "term.hh"
 #include "extensionInfo.hh"
@@ -916,17 +916,36 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	IssueWarning("Theory tranformations not implemented.");
 	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
 	  {
-	    if (fm->hasFreeParameters())
+	    if (fm->hasBoundParameters())
 	      {
-		IssueWarning("transform module " << fm << " has free parameters.");
+		IssueWarning("Transformer module " << fm << " has bound parameters.");
 		return nullptr;
 	      }
-	    return fm;
+	    if (fm->hasFreeParameters())
+	      {
+		IssueWarning("Transformer module " << fm << " has free parameters.");
+		return nullptr;
+	      }
+	    Vector<ImportModule*> inputModules;
+	    for (ModuleExpression* m : expr->getModules())
+	      {
+		if (ImportModule* fm = makeModule(m, enclosingObject))
+		  {
+		    if (fm->hasBoundParameters())
+		      {
+			IssueWarning("Input module to transformation " << fm <<
+				     " has bound parameters.");
+			return nullptr;
+		      }
+		    inputModules.append(fm);
+		  }
+	      }
+	    return makeModuleTransformation(fm, expr->getOpName(), inputModules, expr->getOptions());
 	  }
 	return nullptr;
       }
     default:
       CantHappen("bad module expression");
     }
-  return 0;
+  return nullptr;
 }

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,9 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "AU_Theory.hh"
 #include "strategyLanguage.hh"
+#include "meta.hh"
 #include "mixfix.hh"
 
 //	front end class definitions
@@ -40,6 +42,7 @@
 #include "fileTable.hh"
 #include "parameter.hh"
 #include "moduleCache.hh"
+#include "transformResultSymbol.hh"
 
 ModuleCache::ModuleCache()
 {
@@ -298,6 +301,82 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
     }
   moduleMap[t] = sum;
   return sum;
+}
+
+ImportModule*
+ModuleCache::makeModuleTransformation(ImportModule* transformer,
+				      int opName,
+				      const Vector<ImportModule*>& inputModules,
+				      const Vector<Token>& options)
+{
+  TransformResultSymbol* ts = transformer->getTransformResultSymbol();
+  if (ts == nullptr)
+    {
+      IssueWarning("transformer module " << transformer <<
+		   " does not have a symbol with the TransformerResultSymbol specials attribute.");
+      return nullptr;
+    }
+  //
+  //	Make name.
+  //
+  Rope name;
+  Vector<int> optionVec;
+  
+  if (transformer->getOrigin() != ImportModule::TEXT || opName != NONE)
+    {
+      name += "(";
+      name += Token::name(transformer->id());
+      if (opName != NONE)
+	{
+	  name += ", ";
+	  name += Token::name(opName);
+	}
+      name += ")";
+    }
+  else
+    name += Token::name(transformer->id());
+  if (!inputModules.empty())
+    {
+      const char* sep = "[";
+      for (ImportModule* im : inputModules)
+	{
+	  name += sep;
+	  name += Token::name(im->id());
+	  sep = ", ";
+	}
+      name += "]";
+    }
+  if (inputModules.empty() || !options.empty())
+    {
+      name += "(";
+      const char* sep = "";
+      for (const Token& t : options)
+	{
+	  name += sep;
+	  name += t.name();
+	  sep = " ";
+	  optionVec.push_back(t.code());
+	}
+      name += ")";
+    }
+  int t = Token::ropeToCode(name);
+  //
+  //	Check if it is already in cache.
+  //
+  ModuleMap::const_iterator c = moduleMap.find(t);
+  if (c != moduleMap.end())
+    {
+      DebugAdvisory("using existing copy of " << name);
+      return c->second;
+    }
+
+  ImportModule* transformed = ts->makeTransformation(t, opName, inputModules, optionVec);
+  if (transformed != nullptr)
+    {
+      moduleMap[t] = transformed;
+      transformed->addUser(this);
+    }
+  return transformed;
 }
 
 int

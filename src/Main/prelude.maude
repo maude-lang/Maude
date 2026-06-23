@@ -3185,7 +3185,7 @@ fmod MODULE-TRANSFORMER is
   op verbose : String -> TransformMessage [ctor] .
 
   sort TransformResult .
-  op transformResult : Module TransformMessageList -> TransformResult
+  op transformResult : ModuleList TransformMessageList -> TransformResult
     [special (
       id-hook TransformResultSymbol
       op-hook nilModuleListSymbol	(nil : ~> ModuleList)

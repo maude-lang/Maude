@@ -1,3 +1,7 @@
+2026-06-22  Saruman the White  <eker@eker10>
+
+	* prelude.maude: transformResult takes a ModuleList
+
 2026-06-21  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added fmod MODULE-TRANSFORMER

@@ -57,7 +57,8 @@ public:
     SUMMATION,
     RENAMING,
     PARAMETER,
-    INSTANTIATION
+    INSTANTIATION,
+    TRANSFORMATION
   };
 
   ImportModule(int name, ModuleType moduleType);
