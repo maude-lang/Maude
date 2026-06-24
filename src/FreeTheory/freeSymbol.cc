@@ -600,7 +600,7 @@ FreeSymbol::computeBaseSort(DagNode* subject)
 		    " at " << ((void*) args[i]) <<
 		    " with sort index " << t);
 #endif
-      Assert(t != Sort::SORT_UNKNOWN, "unknown sort encounter for arg " << i
+      Assert(t != Sort::SORT_UNKNOWN, "unknown sort encountered for arg " << i
 	     << " subject = " << subject);
       state = traverse(state, t);
     }

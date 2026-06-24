@@ -1,3 +1,22 @@
+2026-06-23  Saruman the White  <eker@eker10>
+
+	* transformResultSignature.cc: made advisory, warning and verbose
+	symbols FreeSymbols
+
+	* transformResultSymbol.hh (class TransformResultSymbol): added
+	decl for handleMessage()
+
+	* transformResultSymbol.cc (TransformResultSymbol::handleMessage):
+	added
+
+	* interpreter.cc (Interpreter::makeModule): removed unimplmented
+	warning
+	(Interpreter::makeModule): need to use getInputModules(), not
+	getModules()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): partly implmented
+
 2026-06-22  Saruman the White  <eker@eker10>
 
 	* moduleCache.cc (ModuleCache::makeModuleTransformation): implemented

@@ -74,6 +74,8 @@ public:
 				 Vector<DagRoot*>& dags,
 				 RewritingContext& context);
 
+  DagNode* upModule(bool flat, ImportModule* m, PointerMap& qidMap, int replacementName);
+
   DagNode* upNat(const mpz_class& nat);
   DagNode* upString(const string& str);
   DagNode* upNoParent() const;

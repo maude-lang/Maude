@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,36 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 
 */
+
+DagNode*
+MetaLevel::upModule(bool flat, ImportModule* m, PointerMap& qidMap, int replacementName)
+{
+  //
+  //	For the moment we only deal with flattened modules without parameters.
+  //
+  Vector<DagNode*> args;
+  args.push_back(upQid(replacementName, qidMap));
+  args.push_back(nilImportListSymbol->makeDagNode());
+  args.push_back(upSorts(flat, m, qidMap));
+  args.push_back(upSubsortDecls(flat, m, qidMap));
+  args.push_back(upOpDecls(flat, m, qidMap));
+  args.push_back(upMbs(flat, m, qidMap));
+  args.push_back(upEqs(flat, m, qidMap));
+
+  MixfixModule::ModuleType mt = m->getModuleType();
+  if (mt == MixfixModule::FUNCTIONAL_MODULE)
+    return fmodSymbol->makeDagNode(args);
+  else if (mt == MixfixModule::FUNCTIONAL_THEORY)
+    return fthSymbol->makeDagNode(args);
+  args.push_back(upRls(flat, m, qidMap));
+  if (mt == MixfixModule::SYSTEM_MODULE)
+    return modSymbol->makeDagNode(args);
+  else if (mt == MixfixModule::SYSTEM_THEORY)
+    return thSymbol->makeDagNode(args);
+  args.push_back(upStratDecls(flat, m, qidMap));
+  args.push_back(upSds(flat, m, qidMap));
+  return ((mt == MixfixModule::STRATEGY_MODULE) ? smodSymbol : sthSymbol)->makeDagNode(args);
+}
 
 DagNode*
 MetaLevel::upModule(bool flat, PreModule* pm, PointerMap& qidMap)

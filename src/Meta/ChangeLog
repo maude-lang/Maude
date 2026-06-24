@@ -1,3 +1,7 @@
+2026-06-23  Saruman the White  <eker@eker10>
+
+	* metaUpModule.cc (MetaLevel::upModule): added Module* version
+
 2026-03-26  Saruman the White  <eker@eker10>
 
 	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): eqRewrite() ->

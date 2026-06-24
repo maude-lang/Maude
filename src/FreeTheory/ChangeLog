@@ -1,3 +1,8 @@
+2026-06-23  Saruman the White  <eker@eker10>
+
+	* freeSymbol.cc (FreeSymbol::computeBaseSort): fix typo in
+	Assert()
+
 2026-03-31  Saruman the White  <eker@eker10>
 
 	* freeNet.cc (FreeNet::moreImportant): changed heuristic to favor

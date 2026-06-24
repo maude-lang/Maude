@@ -913,7 +913,6 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	//
 	//	Dummy identity transformation.
 	//
-	IssueWarning("Theory tranformations not implemented.");
 	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
 	  {
 	    if (fm->hasBoundParameters())
@@ -927,7 +926,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		return nullptr;
 	      }
 	    Vector<ImportModule*> inputModules;
-	    for (ModuleExpression* m : expr->getModules())
+	    for (ModuleExpression* m : expr->getInputModules())
 	      {
 		if (ImportModule* fm = makeModule(m, enclosingObject))
 		  {
