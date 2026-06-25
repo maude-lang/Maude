@@ -1,3 +1,27 @@
+2026-06-24  Saruman the White  <eker@eker10>
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::~TransformResultSymbol): deleted
+	(TransformResultSymbol::handleMessage): be smarter about printing
+	messages; use downString()
+
+	* transformResultSymbol.hh (class TransformResultSymbol):
+	prepareForRewriting() -> flattenModule()
+	(class TransformResultSymbol): deleted decl for
+	~TransformResultSymbol()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::prepareForRewriting): becomes
+	flattenModule()
+	(TransformResultSymbol::makeTransformation): use flattenModule()
+	instead of prepareForRewriting(); flatten input modules
+
+	* transformResultSymbol.hh (class TransformResultSymbol): added
+	decl for prepareForRewriting()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::prepareForRewriting): added
+
 2026-06-23  Saruman the White  <eker@eker10>
 
 	* transformResultSignature.cc: made advisory, warning and verbose

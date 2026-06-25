@@ -245,3 +245,15 @@ MetaLevel::reset()
   falseTerm.reset();  // so false dag can be garbage collected
   cache.flush();
 }
+
+bool
+MetaLevel::downString(DagNode* arg, Rope& text)
+{
+  if (arg->symbol() == stringSymbol)
+    {
+      text = safeCast(StringDagNode*, arg)->getValue();
+      return true;
+    }
+  return false;
+}
+      

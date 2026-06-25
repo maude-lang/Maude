@@ -62,15 +62,10 @@
 
 //	mixfix class definitions
 #include "transformResultSymbol.hh"
-//#include "quotedIdentifierSymbol.hh"
 
 TransformResultSymbol::TransformResultSymbol(int id)
   : FreeSymbol(id, 2)
 {
-}
-
-TransformResultSymbol::~TransformResultSymbol()
-{  // maybe we don't need this
 }
 
 bool
@@ -126,6 +121,45 @@ TransformResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
   FreeSymbol::copyAttachments(original, map);
 }
 
+void
+TransformResultSymbol::flattenModule(ImportModule* m)
+{
+  //
+  //	Both transform module and input modules maybe be generated
+  //	from a module expression rather than a PreModule, so we have
+  //	to do the flattening here.
+  //
+  //	We don't need to compile input modules, but we don't have
+  //	a way of flagging that statements have been imported but not
+  //	compiled so we do the full thing. If we imported the statements
+  //	but didn't close the theory, we might import them a second time,
+  //	if the module corresponds to a text module, or is used as an
+  //	input module another time.
+  //
+  //	We know that all modules will have come via the module expression
+  //	evaluation mechanism so signatures will already have been flattened.
+  //
+  if (m->getStatus() < Module::THEORY_CLOSED)
+    {
+      //
+      //	Need to flatten in statements and compile.
+      //
+      m->importStatements();
+      Assert(!(m->isBad()), "importStatements() unexpectedly set bad flag in " << *m);
+      m->resetImports();
+      //
+      //	Compile  module.
+      //
+      m->closeTheory();
+      //
+      //	We don't allow reserved fresh variable names in variant
+      //	equations or narrowing rules. We can't do this until statements
+      //	have been compiled since it relied on VariableInfo being filled out.
+      //
+      m->checkFreshVariableNames();
+    }
+}
+
 ImportModule*
 TransformResultSymbol::makeTransformation(int newModuleName,
 					  int opName,
@@ -138,6 +172,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 		   " has no metalevel attached.");
       return nullptr;
     }
+  ImportModule* transformModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = shareWith->getMetaLevel();
   DagNode* metaOptions = metaLevel->upQidList(optionVec);
   Symbol* transformOp = nullptr;
@@ -151,10 +186,9 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       const ConnectedComponent* moduleKind = domainComponent(0);
       ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
       ConnectedComponent* transformResultKind = rangeComponent();
-      MixfixModule* m = safeCastNonNull<MixfixModule*>(getModule());
       if (opName == NONE)
 	{
-	  for (Symbol* s : m->getSymbols())
+	  for (Symbol* s : transformModule->getSymbols())
 	    {
 	      if (s->arity() == 2 &&
 		  s->domainComponent(0) == moduleKind &&
@@ -167,7 +201,8 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 		    {
 		      IssueWarning("multiple transform operators " <<
 				   QUOTE(cachedTransformOp) << " and " <<
-				   QUOTE(s) << ". Using " << QUOTE(cachedTransformOp));
+				   QUOTE(s) << "in module " << QUOTE(transformModule) <<
+				   ". Using " << QUOTE(cachedTransformOp));
 		      break;
 		    }
 		}
@@ -175,7 +210,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  if (transformOp == nullptr)
 	    {
 	      IssueWarning("didn't find suitable implicit transform operator in module " <<
-			   QUOTE(m) << ".");
+			   QUOTE(transformModule) << ".");
 	      return nullptr;
 	    }
 	}
@@ -185,17 +220,19 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  domainComponents[0] = const_cast<ConnectedComponent*>(moduleKind);
 	  domainComponents[1] = qidKind;
 	  
-	  transformOp = m->findSymbol(opName, domainComponents, transformResultKind);
+	  transformOp = transformModule->findSymbol(opName, domainComponents, transformResultKind);
 	  if (transformOp == nullptr)
 	    {
 	      IssueWarning("didn't find transform operator " <<
 			   QUOTE(Token::name(opName)) << " in module " <<
-			   QUOTE(m) << ".");
+			   QUOTE(transformModule) << ".");
 	      return nullptr;
 	    }
 	}
     }
-
+  //
+  //	Make dag to be reduced.
+  //
   Vector<DagNode*> args(2);
   if (inputModules.empty())
     args[0] = nilModuleListSymbol->makeDagNode();
@@ -209,6 +246,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  Rope name("I");
 	  name += int64ToString(index + 1);
 	  int newName = Token::ropeToCode(name);
+	  flattenModule(m);
 	  metaModules[index] = metaLevel->upModule(true, m, qidMap, newName);
 	}
       args[0] = (inputModules.size() == 1) ? metaModules[0] :
@@ -217,12 +255,23 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   args[1] = metaOptions;
   DagNode* startDag = transformOp->makeDagNode(args);
   IssueWarning("Start dag = " << startDag);
+  //
+  //	Reduce it using user's code.
+  //
+  flattenModule(transformModule);
   UserLevelRewritingContext context(startDag);
+  transformModule->protect();  // in case it gets replaced in debugger
   context.reduce();
   if (UserLevelRewritingContext::aborted())
-    return nullptr;
+    {
+      (void) transformModule->unprotect();
+      return nullptr;
+    }
   DagNode* result = context.root();
   IssueWarning("result dag = " << result);
+  //
+  //	Process result.
+  //
   if (result->symbol() == this)
     {
       FreeDagNode* r = safeCastNonNull<FreeDagNode*>(result);
@@ -242,34 +291,49 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       //
       DagNode* modules = r->getArgument(0);
       if (modules->symbol() == moduleListSymbol)
+	IssueWarning("only expected one module returned");
+      else if (modules->symbol() != nilModuleListSymbol)
 	{
-	  IssueWarning("only expected one module returned");
-	  return nullptr;
+	  // maybe we need to pass Interpreter as an arg
+	  //MetaModule* metaLevel->downSignature(modules, Interpreter* owner)
+
+	  //ImportModule* resultModule = makeModule(newModuleName, modules);
+	  //(void) transformModule->unprotect();
+	  //return resultModule;
 	}
-      else if (modules->symbol() == nilModuleListSymbol)
-	return nullptr;  // normal failure
-      
     }
+  (void) transformModule->unprotect();
   return nullptr;
 }
+
 
 void
 TransformResultSymbol::handleMessage(DagNode* message)
 {
   Symbol* s = message->symbol();
-  if (s == advisorySymbol)
+  DagArgumentIterator i(message);
+  if (i.valid())
     {
-      DagNode* m = safeCastNonNull<FreeDagNode*>(message)->getArgument(0);
-      IssueAdvisory(m);
+      Rope text;
+      if (shareWith->getMetaLevel()->downString(i.argument(), text))
+	{
+	  if (s == advisorySymbol)
+	    {
+	      IssueAdvisory(text);
+	      return;
+	    }
+	  else if (s == warningSymbol)
+	    {
+	      IssueWarning(text);
+	      return;
+	    }
+	  else if (s == verboseSymbol)
+	    {
+	      Verbose(text);
+	      return;
+	    }
+	}
     }
-  else if (s == warningSymbol)
-    {
-      DagNode* m = safeCastNonNull<FreeDagNode*>(message)->getArgument(0);
-      IssueWarning(m);
-    }
-  else if (s == verboseSymbol)
-    {
-      DagNode* m = safeCastNonNull<FreeDagNode*>(message)->getArgument(0);
-      Verbose(m);
-    }
+  IssueWarning("Unexpected message value returned from module transformation: " <<
+	       QUOTE(message));
 }

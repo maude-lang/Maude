@@ -270,7 +270,8 @@ public:
 				 PointerMap& dagNodeMap);
 
   DagNode* upNarrowingSearchPath(const Vector<DagNode*>& narrowingTrace);
-
+  
+  bool downString(DagNode* arg, Rope& text);
   bool downSignedInt(DagNode* dag, int& number) const;
   bool downBound(DagNode* metaBound, int& bound) const;
   bool downSaturate(DagNode* metaBound, int& bound) const;
