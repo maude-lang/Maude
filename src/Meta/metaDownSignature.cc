@@ -21,7 +21,7 @@
 */
 
 MetaModule*
-MetaLevel::downSignature(DagNode* metaModule, Interpreter* owner)
+MetaLevel::downSignature(DagNode* metaModule, Interpreter* owner, int replacementName)
 {
   //
   //	This functionality is intended for use by the meta-interpreter rather
@@ -56,6 +56,8 @@ MetaLevel::downSignature(DagNode* metaModule, Interpreter* owner)
   DagNode* metaParameterDeclList;
   if (downHeader(f->getArgument(0), id, metaParameterDeclList))
     {
+      if (replacementName != NONE)
+	id = replacementName;
       MetaModule* m = new MetaModule(id, mt, owner);
       if (downParameterDeclList(metaParameterDeclList, m) &&
 	  downImports(f->getArgument(1), m))

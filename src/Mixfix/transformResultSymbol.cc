@@ -164,7 +164,8 @@ ImportModule*
 TransformResultSymbol::makeTransformation(int newModuleName,
 					  int opName,
 					  const Vector<ImportModule*>& inputModules,
-					  const Vector<int>& optionVec)
+					  const Vector<int>& optionVec,
+					  Interpreter* owner)
 {
   if (shareWith == nullptr)
     {
@@ -294,12 +295,9 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	IssueWarning("only expected one module returned");
       else if (modules->symbol() != nilModuleListSymbol)
 	{
-	  // maybe we need to pass Interpreter as an arg
-	  //MetaModule* metaLevel->downSignature(modules, Interpreter* owner)
-
-	  //ImportModule* resultModule = makeModule(newModuleName, modules);
-	  //(void) transformModule->unprotect();
-	  //return resultModule;
+	  ImportModule* resultModule = metaLevel->downSignature(modules, owner, newModuleName);
+	  (void) transformModule->unprotect();
+	  return resultModule;
 	}
     }
   (void) transformModule->unprotect();

@@ -1,3 +1,22 @@
+2026-06-25  Saruman the White  <eker@eker10>
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): call downSignature()
+	(TransformResultSymbol::makeTransformation): pass newModuleName to
+	downSignature()
+
+	* moduleCache.hh (class ModuleCache): updated decl for
+	makeModuleTransformation()
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): take and
+	pass owner argument
+
+	* transformResultSymbol.hh (class TransformResultSymbol): updated
+	decl for makeTransformation()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): added owner argument
+
 2026-06-24  Saruman the White  <eker@eker10>
 
 	* transformResultSymbol.cc

@@ -939,7 +939,11 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		    inputModules.append(fm);
 		  }
 	      }
-	    return makeModuleTransformation(fm, expr->getOpName(), inputModules, expr->getOptions());
+	    return makeModuleTransformation(fm,
+					    expr->getOpName(),
+					    inputModules,
+					    expr->getOptions(),
+					    this);
 	  }
 	return nullptr;
       }

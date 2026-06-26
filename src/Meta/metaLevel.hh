@@ -288,7 +288,7 @@ public:
   View* downView(DagNode* metaView, Interpreter* owner);
   bool downParameterDeclList(DagNode* metaParameterDeclList, MetaView* v);
   bool downParameterDecl(DagNode* metaParameterDecl, MetaView* v);
-  MetaModule* downSignature(DagNode* metaModule, Interpreter* owner);
+  MetaModule* downSignature(DagNode* metaModule, Interpreter* owner, int replacementName = NONE);
   bool downHeader(DagNode* metaHeader, int& id, DagNode*& metaParameterDeclList);
   bool downParameterDeclList2(DagNode* metaParameterDeclList, MetaPreModule* pm);
   bool downParameterDecl2(DagNode* metaParameterDecl, MetaPreModule* pm);

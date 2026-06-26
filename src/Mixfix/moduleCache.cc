@@ -307,7 +307,8 @@ ImportModule*
 ModuleCache::makeModuleTransformation(ImportModule* transformer,
 				      int opName,
 				      const Vector<ImportModule*>& inputModules,
-				      const Vector<Token>& options)
+				      const Vector<Token>& options,
+				      Interpreter* owner)
 {
   TransformResultSymbol* ts = transformer->getTransformResultSymbol();
   if (ts == nullptr)
@@ -370,7 +371,7 @@ ModuleCache::makeModuleTransformation(ImportModule* transformer,
       return c->second;
     }
 
-  ImportModule* transformed = ts->makeTransformation(t, opName, inputModules, optionVec);
+  ImportModule* transformed = ts->makeTransformation(t, opName, inputModules, optionVec, owner);
   if (transformed != nullptr)
     {
       moduleMap[t] = transformed;

@@ -1,3 +1,10 @@
+2026-06-25  Saruman the White  <eker@eker10>
+
+	* metaLevel.hh (class MetaLevel): updated decl for downSignature()
+
+	* metaDownSignature.cc (MetaLevel::downSignature): take
+	replacementName argument
+
 2026-06-24  Saruman the White  <eker@eker10>
 
 	* metaLevel.cc (MetaLevel::downString): moved here
@@ -5,6 +12,8 @@
 	* metaLevel.hh (MetaLevel::downString): added
 
 2026-06-23  Saruman the White  <eker@eker10>
+
+	* metaLevel.hh (class MetaLevel): decl for new upModule()
 
 	* metaUpModule.cc (MetaLevel::upModule): added Module* version
 
