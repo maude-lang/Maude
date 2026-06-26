@@ -30,8 +30,8 @@
 //
   MACRO(nilModuleListSymbol, Symbol)
   MACRO(moduleListSymbol, AU_Symbol)
-  MACRO(nilTransformMessageListSymbol, Symbol)
-  MACRO(transformMessageListSymbol, AU_Symbol)
+  MACRO(nilSystemMsgListSymbol, Symbol)
+  MACRO(systemMsgListSymbol, AU_Symbol)
   MACRO(advisorySymbol, FreeSymbol)
   MACRO(warningSymbol, FreeSymbol)
   MACRO(verboseSymbol, FreeSymbol)

@@ -38,6 +38,8 @@
 #include "importModule.hh"
 #include "syntacticPreModule.hh"
 #include "view.hh"
+#include "moduleCache.hh"
+#include "viewCache.hh"
 #include "entity.hh"
 
 #ifndef NO_ASSERT
@@ -62,6 +64,10 @@ operator<<(ostream& s, const Entity::User* u)
     s << "module " << m;
   else if (const View* v = dynamic_cast<const View*>(u))
     s << "view " << v;
+  else if (dynamic_cast<const ModuleCache*>(u))
+    s << "ModuleCache";
+  else if (dynamic_cast<const ViewCache*>(u))
+    s << "ViewCache";
   else
     s << "unknown user";
   return s;
@@ -73,11 +79,11 @@ Entity::addUser(User* user)
 {
   if (users.insert(user).second)
     {
-      //DebugAdvisory("added " <<  user << " to user set for " << this);
+      DebugAdvisory("added " <<  user << " to user set for " << this);
     }
   else
     {
-      //DebugAdvisory(user << " is already in user set for " << this);
+      DebugAdvisory(user << " is already in user set for " << this);
     }
 }
 
@@ -86,18 +92,18 @@ Entity::removeUser(User* user)
 {
   if (users.erase(user) == 1)
     {
-      //DebugAdvisory("removed " << user << " from user set for " << this);
+      DebugAdvisory("removed " << user << " from user set for " << this);
     }
   else
     {
-      //DebugAdvisory("missing " << user << " in user set for " << this);
+      DebugAdvisory("missing " << user << " in user set for " << this);
     }
 }
 
 void
 Entity::informUsers()
 {
-  //DebugAdvisory(this << " informs users");
+  DebugAdvisory(this << " informs users");
   //
   //	We need to be careful since informing a user will often cause the user
   //	and/or other users to be removed, invalidating iterators.
@@ -111,7 +117,10 @@ Entity::informUsers()
 	break;  // no more users
       User* user = *i;
       if (user == last)
-	users.erase(i);  // remove user from set - we normally expect a user to remove itself
+	{
+	  DebugAdvisory(user << " did not remove itself as a user of " << this);
+	  users.erase(i);  // remove user from set - we normally expect a user to remove itself
+	}
       else
 	{
 	  user->regretToInform(this);  // invalidates i since user may remove itself from set

@@ -1,3 +1,41 @@
+2026-06-26  Saruman the White  <eker@eker10>
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): make resultModule a
+	user of transformModule and inputModules; add transformModule and
+	inputModules to resultModule as used modules
+
+	* importModule.cc (ImportModule::deepSelfDestruct): remove ourself
+	as user of otherUsedModules
+
+	* importModule.hh (class ImportModule): added data member
+	otherUsedModules
+	(ImportModule::addUsedModule): added
+
+	* importModule.cc (ImportModule::deepSelfDestruct): added
+	DebugEnter()
+
+	* entity.cc (<<): handle ModuleCache and ViewCache cases
+
+	* viewCache.cc (ViewCache::regretToInform): updated
+	DebugAdvisory()
+
+	* moduleCache.cc (ModuleCache::regretToInform): updated
+	DebugAdvisory()
+
+	* entity.cc: uncomment all DebugAdvisory()s
+	(Entity::informUsers): add DebugAdvisory() for users that don't
+	removed themselves
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation):
+	nilTransformMessageListSymbol -> nilSystemMsgListSymbol,
+	transformMessageListSymbol -> systemMsgListSymbol
+
+	* transformResultSignature.cc: nilTransformMessageListSymbol ->
+	nilSystemMsgListSymbol, transformMessageListSymbol ->
+	systemMsgListSymbol
+
 2026-06-25  Saruman the White  <eker@eker10>
 
 	* transformResultSymbol.cc

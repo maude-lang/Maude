@@ -55,6 +55,8 @@ ModuleCache::~ModuleCache()
   //	modules they depend on are destructed - ahead of the deletion of the
   //	ModuleCache object. We check this in debug mode.
   //
+  for (auto p : moduleMap)
+    cerr << Token::name(p.first) << endl;
   Assert(moduleMap.empty(), "moduleMap not empty");
 }
 
@@ -65,7 +67,7 @@ ModuleCache::regretToInform(Entity* doomedEntity)
   ModuleMap::iterator pos = moduleMap.find(doomedModule->id());
   Assert(pos != moduleMap.end(), "couldn't find self-destructing module " << doomedModule);
   Assert(pos->second == doomedEntity, "found the wrong self-destructing module " << doomedModule);
-  DebugAdvisory("removing module " << doomedModule << " from cache");
+  DebugAdvisory("removing module " << doomedModule << " from ModuleCache");
   moduleMap.erase(pos);
 }
 

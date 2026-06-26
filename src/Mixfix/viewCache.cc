@@ -61,7 +61,7 @@ ViewCache::regretToInform(Entity* doomedEntity)
   View* doomedView = safeCastNonNull<View*>(doomedEntity);
   ViewMap::iterator pos = viewMap.find(doomedView->id());
   Assert(pos != viewMap.end(), "could find self-destructing view " << doomedView);
-  DebugAdvisory("removing view " << doomedView << " from cache");
+  DebugAdvisory("removing view " << doomedView << " from ViewCache");
   viewMap.erase(pos);
 }
 

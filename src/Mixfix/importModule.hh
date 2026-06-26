@@ -72,6 +72,7 @@ public:
 		 LineNumber lineNumber);
   void addParameter(const Token parameterName,
 		    ImportModule* parameterTheory);
+  void addUsedModule(ImportModule* importedModule);
   void closeSortSet();
   void closeSignature();
   void deepSelfDestruct();
@@ -314,6 +315,11 @@ private:
   //
   Vector<ImportModule*> importedModules;
   Vector<ImportMode> importModes;
+  //
+  //	If we were produced by a user transformation, we will have other
+  //	dependancies that we need to track.
+  //
+  Vector<ImportModule*> otherUsedModules;
   //
   //	Because for sorts, symbols, and polymorphs, stuff from parameter
   //	theories is inserted first we can keep track of what came from
@@ -668,6 +674,12 @@ ImportModule::getParameterTheoryCopy(int index) const
 {
   Assert(index < getNrParameters(), "bad parameter index " << index << " in module " << (const MixfixModule*) this);
   return parameterTheories[index];
+}
+
+inline void
+ImportModule::addUsedModule(ImportModule* usedModule)
+{
+  otherUsedModules.push_back(usedModule);
 }
 
 #endif

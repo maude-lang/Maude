@@ -351,14 +351,17 @@ ImportModule::regretToInform(Entity* /* doomedEntity */)
 void
 ImportModule::deepSelfDestruct()
 {
+  DebugEnter("module " << this);
   //
-  //	First remove ourself from the list of users of each of our imports, parameters,
-  // 	view arguments and base module. This is so we will not receive a regretToInform()
-  //	message after we delete ourself.
+  //	First remove ourself from the list of users of each of our parameters, imports,
+  //	other used modules, view arguments and base module.
+  //	This is so we will not receive a regretToInform() message after we delete ourself.
   //
   for (ImportModule* m : parameterTheories)
     m->removeUser(this);
   for (ImportModule* m : importedModules)
+    m->removeUser(this);
+  for (ImportModule* m : otherUsedModules)
     m->removeUser(this);
   for (Argument* arg : savedArguments)
     {

@@ -1,3 +1,13 @@
+2026-06-26  Saruman the White  <eker@eker10>
+
+	* prelude.maude: refactor fmod MODULE-TRANSFORMER, split off fmod
+	SYSTEM-MESSAGE
+
+2026-06-25  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added sort NeModuleList to fmod
+	MODULE-TRANSFORMER
+
 2026-06-22  Saruman the White  <eker@eker10>
 
 	* prelude.maude: transformResult takes a ModuleList

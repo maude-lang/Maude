@@ -280,12 +280,12 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       //	Deal with message list.
       //
       DagNode* messages = r->getArgument(1);
-      if (messages->symbol() == transformMessageListSymbol)
+      if (messages->symbol() == systemMsgListSymbol)
 	{
 	  for (DagArgumentIterator i(messages); i.valid(); i.next())
 	    handleMessage(i.argument());
 	}
-      else if (messages->symbol() != nilTransformMessageListSymbol)
+      else if (messages->symbol() != nilSystemMsgListSymbol)
 	handleMessage(messages);
       //
       //	Deal with module list.
@@ -296,6 +296,23 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       else if (modules->symbol() != nilModuleListSymbol)
 	{
 	  ImportModule* resultModule = metaLevel->downSignature(modules, owner, newModuleName);
+	  if (resultModule != nullptr)
+	    {
+	      //
+	      //	Our result module becomes a user of all the input modules and
+	      //	the transform module. If any of these change, it becomes stale.
+	      //	We must also add these modules to our used modules so we can
+	      //	removed ourselves if we deepSelfDestruct() to avoid getting
+	      //	a regretToInform() message sent to a deleted object.
+	      //
+	      for (ImportModule* m : inputModules)
+		{
+		  m->addUser(resultModule);
+		  resultModule->addUsedModule(m);
+		}
+	      transformModule->addUser(resultModule);
+	      resultModule->addUsedModule(transformModule);
+	    }
 	  (void) transformModule->unprotect();
 	  return resultModule;
 	}
@@ -303,7 +320,6 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   (void) transformModule->unprotect();
   return nullptr;
 }
-
 
 void
 TransformResultSymbol::handleMessage(DagNode* message)
