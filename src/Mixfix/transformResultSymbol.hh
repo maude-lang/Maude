@@ -39,7 +39,6 @@ public:
   TransformResultSymbol(int id);
   
   ImportModule* makeTransformation(int newModuleName,
-				   int opName,
 				   const Vector<ImportModule*>& inputModules,
 				   const Vector<int>& optionVec,
 				   Interpreter* owner);

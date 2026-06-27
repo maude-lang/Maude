@@ -913,7 +913,8 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	//
 	//	Dummy identity transformation.
 	//
-	if (ImportModule* fm = makeModule(expr->getModule(), enclosingObject))
+	Token name = expr->getModuleName();
+	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
 	  {
 	    if (fm->hasBoundParameters())
 	      {
@@ -939,11 +940,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		    inputModules.append(fm);
 		  }
 	      }
-	    return makeModuleTransformation(fm,
-					    expr->getOpName(),
-					    inputModules,
-					    expr->getOptions(),
-					    this);
+	    return makeModuleTransformation(fm, inputModules, expr->getOptions(), this);
 	  }
 	return nullptr;
       }

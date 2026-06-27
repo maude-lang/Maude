@@ -162,7 +162,6 @@ TransformResultSymbol::flattenModule(ImportModule* m)
 
 ImportModule*
 TransformResultSymbol::makeTransformation(int newModuleName,
-					  int opName,
 					  const Vector<ImportModule*>& inputModules,
 					  const Vector<int>& optionVec,
 					  Interpreter* owner)
@@ -177,7 +176,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   MetaLevel* metaLevel = shareWith->getMetaLevel();
   DagNode* metaOptions = metaLevel->upQidList(optionVec);
   Symbol* transformOp = nullptr;
-  if (opName == NONE &&  cachedTransformOp != nullptr)
+  if (cachedTransformOp != nullptr)
     transformOp = cachedTransformOp;
   else
     {
@@ -187,48 +186,30 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       const ConnectedComponent* moduleKind = domainComponent(0);
       ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
       ConnectedComponent* transformResultKind = rangeComponent();
-      if (opName == NONE)
+      for (Symbol* s : transformModule->getSymbols())
 	{
-	  for (Symbol* s : transformModule->getSymbols())
+	  if (s->arity() == 2 &&
+	      s->domainComponent(0) == moduleKind &&
+	      s->domainComponent(1) == qidKind &&
+	      s->rangeComponent() == transformResultKind)
 	    {
-	      if (s->arity() == 2 &&
-		  s->domainComponent(0) == moduleKind &&
-		  s->domainComponent(1) == qidKind &&
-		  s->rangeComponent() == transformResultKind)
+	      if (transformOp == nullptr)
+		transformOp = cachedTransformOp = s;
+	      else
 		{
-		  if (transformOp == nullptr)
-		    transformOp = cachedTransformOp = s;
-		  else
-		    {
-		      IssueWarning("multiple transform operators " <<
-				   QUOTE(cachedTransformOp) << " and " <<
-				   QUOTE(s) << "in module " << QUOTE(transformModule) <<
-				   ". Using " << QUOTE(cachedTransformOp));
-		      break;
-		    }
+		  IssueWarning("multiple transform operators " <<
+			       QUOTE(cachedTransformOp) << " and " <<
+			       QUOTE(s) << "in module " << QUOTE(transformModule) <<
+			       ". Using " << QUOTE(cachedTransformOp));
+		  break;
 		}
 	    }
-	  if (transformOp == nullptr)
-	    {
-	      IssueWarning("didn't find suitable implicit transform operator in module " <<
-			   QUOTE(transformModule) << ".");
-	      return nullptr;
-	    }
 	}
-      else
+      if (transformOp == nullptr)
 	{
-	  Vector<ConnectedComponent*> domainComponents(2);
-	  domainComponents[0] = const_cast<ConnectedComponent*>(moduleKind);
-	  domainComponents[1] = qidKind;
-	  
-	  transformOp = transformModule->findSymbol(opName, domainComponents, transformResultKind);
-	  if (transformOp == nullptr)
-	    {
-	      IssueWarning("didn't find transform operator " <<
-			   QUOTE(Token::name(opName)) << " in module " <<
-			   QUOTE(transformModule) << ".");
-	      return nullptr;
-	    }
+	  IssueWarning("didn't find suitable implicit transform operator in module " <<
+		       QUOTE(transformModule) << ".");
+	  return nullptr;
 	}
     }
   //

@@ -101,31 +101,15 @@ parenExpr	:	'(' moduleExpr ')'
 /*
  *	User-defined module transformations.
  */
-transformExpr	:	transformer transInput optTransOptions
+transformExpr	:	token transInput optTransOptions
 			{
-			  $$ = new ModuleExpression($1->first, $1->second, *$2, lexerBubble);
-			  delete $1;
+			  $$ = new ModuleExpression($1, *$2, lexerBubble);
 			  delete $2;
 			}
-		|	transformer transOptions
+		|	token transOptions
 			{
 			  Vector<ModuleExpression*> empty;
-			  $$ = new ModuleExpression($1->first, $1->second, empty, lexerBubble);
-			  delete $1;
-			}
-		;
-
-transformer	:	moduleExpr4
-			{
-			  $$ = new Transformer($1, NONE);
-			}
-		|	'(' moduleExpr ','
-			{
-			  lexBubble(BAR_RIGHT_PAREN, 1);
-			}
-			')'
-			{
-			  $$ = new Transformer($2, Token::bubbleToPrefixNameCode(lexerBubble));
+			  $$ = new ModuleExpression($1, empty, lexerBubble);
 			}
 		;
 

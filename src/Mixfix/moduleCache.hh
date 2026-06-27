@@ -41,7 +41,6 @@ public:
   ImportModule* makeParameterCopy(int parameterName, ImportModule* module);
   ImportModule* makeModuleInstantiation(ImportModule* module, const Vector<Argument*>& arguments);
   ImportModule* makeModuleTransformation(ImportModule* transformer,
-					 int opName,
 					 const Vector<ImportModule*>& modules,
 					 const Vector<Token>& options,
 					 Interpreter* owner);

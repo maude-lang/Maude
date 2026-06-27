@@ -1,5 +1,40 @@
 2026-06-26  Saruman the White  <eker@eker10>
 
+	* moduleExpression.cc (ModuleExpression::latexPrint): handle new
+	transform syntax
+
+	* transformResultSymbol.hh (class TransformResultSymbol): updated
+	decl for makeTransformation()
+
+	* moduleCache.hh (class ModuleCache): updated decl for
+	makeModuleTransformation()
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): don't
+	pass opName to makeTransformation()
+
+	* interpreter.cc (Interpreter::makeModule): don't pass op name to
+	makeModuleTransformation()
+
+	* lexerAux.hh: deleted typedef Transformer
+
+	* top.yy: deleted yyTransformer; deleted its %destructor; deleted
+	decl for transformer
+
+	* modules.yy (transformExpr): use new convention
+	(transformer): deleted
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression): use
+	new convention
+	(ModuleExpression::deepSelfDestruct): don't deepSelfDestruct()
+	module
+	(<<): use new convention
+
+	* moduleExpression.hh (class ModuleExpression): deleted opName;
+	updated transform ctor
+	(ModuleExpression::getModuleName): allow TRANSFORM
+	(ModuleExpression::getModule): disallow TRANSFORM
+	(ModuleExpression::getOpName): deleted
+
 	* transformResultSymbol.cc
 	(TransformResultSymbol::makeTransformation): make resultModule a
 	user of transformModule and inputModules; add transformModule and

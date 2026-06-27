@@ -135,13 +135,11 @@ void missingSpace(const Token& token);
   Vector<ModuleExpression*>* yyModuleExpressionVector;
   ViewExpression* yyViewExpression;
   Vector<ViewExpression*>* yyViewExpressionVector;
-  Transformer* yyTransformer;
 }
 
 %destructor { $$->deepSelfDestruct(); } <yyModuleExpression> <yyViewExpression>
 %destructor { deepSelfDestructModuleExpressionVector($$); } <yyModuleExpressionVector>
 %destructor { deepSelfDestructViewExpressionVector($$); } <yyViewExpressionVector>
-%destructor { $$->first->deepSelfDestruct(); delete $$; } <yyTransformer>
 
 %{
 int yylex(YYSTYPE* lvalp);
@@ -286,10 +284,6 @@ int yylex(YYSTYPE* lvalp);
  *	Nonterminals that return Vector<ViewExpression*>*.
  */
 %type <yyViewExpressionVector> instantArgs
-/*
- *	Nonterminals that return Transformer*
- */
-%type <yyTransformer> transformer
 
 %start top
 

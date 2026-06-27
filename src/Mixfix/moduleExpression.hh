@@ -44,8 +44,7 @@ public:
   ModuleExpression(ModuleExpression* left, ModuleExpression* right);
   ModuleExpression(ModuleExpression* module, Renaming* renaming);
   ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments);
-  ModuleExpression(ModuleExpression* transformer,
-		   const int opName,
+  ModuleExpression(Token moduleName,
 		   const Vector<ModuleExpression*>& inputModules,
 		   const Vector<Token>& arguments);
 
@@ -55,8 +54,6 @@ public:
   ModuleExpression* getModule() const;
   Renaming* getRenaming() const;
   const Vector<ViewExpression*>& getArguments() const;
-
-  int getOpName() const;
   const Vector<ModuleExpression*>& getInputModules() const;
   const Vector<Token>& getOptions() const;
 
@@ -67,7 +64,7 @@ public:
 private:
   const Type type;
   //
-  //	For named module.
+  //	For named module and transform.
   //
   Token moduleName;
   //
@@ -75,7 +72,7 @@ private:
   //
   list<ModuleExpression*> modules;
   //
-  //	For renaming, instantiation and transform.
+  //	For renaming, instantiation.
   //
   ModuleExpression* module;
   //
@@ -89,7 +86,6 @@ private:
   //
   //	For transform.
   //
-  int opName;
   Vector<ModuleExpression*> inputModules;
   Vector<Token> options;
 };
@@ -105,7 +101,7 @@ ModuleExpression::getType() const
 inline Token
 ModuleExpression::getModuleName() const
 {
-  Assert(type == MODULE, "not a named module");
+  Assert(type == MODULE || type == TRANSFORM, "not a named module");
   return moduleName;
 }
 
@@ -120,7 +116,7 @@ ModuleExpression::getModules() const
 inline ModuleExpression*
 ModuleExpression::getModule() const
 {
-  Assert(type == RENAMING || type == INSTANTIATION || type == TRANSFORM,
+  Assert(type == RENAMING || type == INSTANTIATION,
 	 "not a renaming, instantiation or transform");
   return module;
 }
@@ -137,13 +133,6 @@ ModuleExpression::getArguments() const
 {
   Assert(type == INSTANTIATION, "not instantiation");
   return arguments;
-}
-
-inline int
-ModuleExpression::getOpName() const
-{
-  Assert(type == TRANSFORM, "not a transform");
-  return opName;
 }
 
 inline const Vector<ModuleExpression*>&

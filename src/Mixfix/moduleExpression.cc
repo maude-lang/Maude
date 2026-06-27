@@ -79,13 +79,11 @@ ModuleExpression::ModuleExpression(ModuleExpression* module, const Vector<ViewEx
 {
 }
 
-ModuleExpression::ModuleExpression(ModuleExpression* transformer,
-				   int opName,
+ModuleExpression::ModuleExpression(Token moduleName,
 				   const Vector<ModuleExpression*>& inputModules,
 				   const Vector<Token>& arguments)
   : type(TRANSFORM),
-    module(transformer),
-    opName(opName),
+    moduleName(moduleName),
     inputModules(inputModules),
     options(arguments)
 {
@@ -117,10 +115,8 @@ ModuleExpression::deepSelfDestruct()
       }
     case TRANSFORM:
       {
-	module->deepSelfDestruct();
 	for (ModuleExpression* m : inputModules)
 	  m->deepSelfDestruct();
-
 	break;
       }
     case MODULE:
@@ -183,21 +179,12 @@ operator<<(ostream& s, const ModuleExpression* expr)
       }
     case ModuleExpression::TRANSFORM:
       {
-	const ModuleExpression* module = expr->getModule();
-	int opName = expr->getOpName();
 	const Vector<ModuleExpression*>& inputModules = expr->getInputModules();
 	const Vector<Token>& options = expr->getOptions();
 	//
 	//	Transformer specification.
 	//
-	bool needParens = module->getType() != ModuleExpression::MODULE || opName != NONE;
-	if (needParens)
-	  s << '(';
-	s << module;
-	if (opName != NONE)
-	  s << ", " << MixfixModule::prettyOpName(opName, Token::NO_CONCERNS);
-	if (needParens)
-	  s << ')';
+	s << expr->getModuleName();
 	//
 	//	Input modules.
 	//
@@ -287,24 +274,38 @@ ModuleExpression::latexPrint(ostream& s, const Module* enclosingModule) const
       }
     case TRANSFORM:
       {
-	s << "\\maudeLeftBrace" <<
-	  "\\maudeModule{" << Token::latexName(moduleName.code()) << "}" <<
-	  "\\maudeRightBrace";
-
-	if (!options.empty())
+	//
+	//	Transformer specification.
+	//
+	s << "\\maudeModule{" << Token::latexName(moduleName.code()) << "}";
+	//
+	//	Input modules.
+	//
+	if (!inputModules.empty())
 	  {
-	    const char* sep = "\\maudeLeftParen";
+	    const char* sep = "\\maudeLeftBracket ";
+	    for (ModuleExpression* m : inputModules)
+	      {
+		s << sep;
+		m->latexPrint(s, enclosingModule);
+		sep = "\\maudeComma ";
+	      }
+	    s << "\\maudeRightBracket";
+	  }
+	//
+	//	Options.
+	//
+	if (!options.empty() || inputModules.empty())
+	  {
+	    s << "\\maudeLeftParen";
+	    const char* sep = "";
 	    for (const Token& t : options)
 	      {
-		s << sep << "\\maudeModule{" << Token::latexName(t.code()) << "}";
+		s << sep << "\\maudeQid{" << Token::latexName(t.code()) << "}";
 		sep = "\\maudeSpace";
 	      }
 	    s << "\\maudeRightParen";
 	  }
-
-	s << "\\maudeLeftParen";
-	module->latexPrint(s);
-	s << "\\maudeRightParen";
 	break;
       }
     default:
