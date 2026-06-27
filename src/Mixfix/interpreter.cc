@@ -916,11 +916,8 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	Token name = expr->getModuleName();
 	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
 	  {
-	    if (fm->hasBoundParameters())
-	      {
-		IssueWarning("Transformer module " << fm << " has bound parameters.");
-		return nullptr;
-	      }
+	    Assert(!(m->hasBoundParameters()),
+		   "Transformer module " << fm << " has bound parameters.");
 	    if (fm->hasFreeParameters())
 	      {
 		IssueWarning("Transformer module " << fm << " has free parameters.");
@@ -935,6 +932,12 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		      {
 			IssueWarning("Input module to transformation " << fm <<
 				     " has bound parameters.");
+			return nullptr;
+		      }
+		    if (fm->hasFreeParameters())
+		      {
+			IssueWarning("Input module to transformation " << fm <<
+				     " has free parameters.");
 			return nullptr;
 		      }
 		    inputModules.append(fm);

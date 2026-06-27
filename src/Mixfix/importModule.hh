@@ -53,12 +53,16 @@ public:
 
   enum Origin
   {
+    //
+    //	TEXT can be actual text, or meta-syntax (in which case we're really a MetaModule);
+    //  and the meta-syntax may have been produced by a user module transformation.
+    //	We're not going to pick apart this case, except for latex pretty printing.
+    //
     TEXT,
     SUMMATION,
     RENAMING,
     PARAMETER,
-    INSTANTIATION,
-    TRANSFORMATION
+    INSTANTIATION
   };
 
   ImportModule(int name, ModuleType moduleType);

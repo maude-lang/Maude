@@ -1,5 +1,11 @@
 2026-06-26  Saruman the White  <eker@eker10>
 
+	* interpreter.cc (Interpreter::makeModule): change test for bound
+	parameters in a transformer module to an Assert() as there should
+	be no way of writing such in the new restricted syntax
+
+	* importModule.hh (enum Origin): deleted TRANSFORMATION
+
 	* moduleExpression.cc (ModuleExpression::latexPrint): handle new
 	transform syntax
 

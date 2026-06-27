@@ -175,37 +175,37 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   ImportModule* transformModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = shareWith->getMetaLevel();
   DagNode* metaOptions = metaLevel->upQidList(optionVec);
-  Symbol* transformOp = nullptr;
-  if (cachedTransformOp != nullptr)
-    transformOp = cachedTransformOp;
-  else
+  ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
+  if (cachedTransformOp == nullptr)
     {
       //
       //	Need to find suitable operator.
       //
       const ConnectedComponent* moduleKind = domainComponent(0);
-      ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
       ConnectedComponent* transformResultKind = rangeComponent();
       for (Symbol* s : transformModule->getSymbols())
 	{
-	  if (s->arity() == 2 &&
-	      s->domainComponent(0) == moduleKind &&
-	      s->domainComponent(1) == qidKind &&
-	      s->rangeComponent() == transformResultKind)
+	  if (s->arity() == 2 && s->rangeComponent() == transformResultKind)
 	    {
-	      if (transformOp == nullptr)
-		transformOp = cachedTransformOp = s;
-	      else
+	      if ((s->domainComponent(0) == moduleKind &&
+		  s->domainComponent(1) == qidKind) ||
+		  (s->domainComponent(0) == qidKind &&
+		   s->domainComponent(1) == moduleKind))
 		{
-		  IssueWarning("multiple transform operators " <<
-			       QUOTE(cachedTransformOp) << " and " <<
-			       QUOTE(s) << "in module " << QUOTE(transformModule) <<
-			       ". Using " << QUOTE(cachedTransformOp));
-		  break;
+		  if (cachedTransformOp == nullptr)
+		    cachedTransformOp = s;
+		  else
+		    {
+		      IssueWarning("multiple transform operators " <<
+				   QUOTE(cachedTransformOp) << " and " <<
+				   QUOTE(s) << "in module " << QUOTE(transformModule) <<
+				   ". Using " << QUOTE(cachedTransformOp));
+		      break;
+		    }
 		}
 	    }
 	}
-      if (transformOp == nullptr)
+      if (cachedTransformOp == nullptr)
 	{
 	  IssueWarning("didn't find suitable implicit transform operator in module " <<
 		       QUOTE(transformModule) << ".");
@@ -215,9 +215,12 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   //
   //	Make dag to be reduced.
   //
+  //	Put options first to use flattened modules.
+  //
+  bool flat = cachedTransformOp->domainComponent(0) == qidKind;
   Vector<DagNode*> args(2);
   if (inputModules.empty())
-    args[0] = nilModuleListSymbol->makeDagNode();
+     args[0] = nilModuleListSymbol->makeDagNode();
   else
     {
       PointerMap qidMap;
@@ -229,13 +232,15 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  name += int64ToString(index + 1);
 	  int newName = Token::ropeToCode(name);
 	  flattenModule(m);
-	  metaModules[index] = metaLevel->upModule(true, m, qidMap, newName);
+	  metaModules[index] = metaLevel->upModule(flat, m, qidMap, newName);
 	}
       args[0] = (inputModules.size() == 1) ? metaModules[0] :
 	moduleListSymbol->makeDagNode(metaModules);
     }
   args[1] = metaOptions;
-  DagNode* startDag = transformOp->makeDagNode(args);
+  if (flat)
+    swap(args[0], args[1]);
+  DagNode* startDag = cachedTransformOp->makeDagNode(args);
   IssueWarning("Start dag = " << startDag);
   //
   //	Reduce it using user's code.
