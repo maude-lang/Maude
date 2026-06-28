@@ -506,6 +506,8 @@ private:
 		     MixfixModule* m,
 		     PointerMap& qidMap);
   DagNode* upModuleExpression(const ModuleExpression* e, PointerMap& qidMap);
+  DagNode* upModuleExpressionList(const Vector<ModuleExpression*>& modExprList,
+				  PointerMap& qidMap);
   DagNode* upArguments(const Vector<ViewExpression*>& arguments, PointerMap& qidMap);
   DagNode* upArgument(const ViewExpression* argument, PointerMap& qidMap);
   DagNode* upRenaming(const Renaming* r, PointerMap& qidMap);
@@ -550,6 +552,7 @@ private:
   bool downRenamingAttribute(DagNode* metaRenamingAttribute, Renaming* renaming);
 
   ModuleExpression* downModuleExpression(DagNode* metaExpr);
+  bool downModuleExpressionList(DagNode* metaModExprList, Vector<ModuleExpression*>& modExprList);
   bool downInstantiationArguments(DagNode* metaArguments, Vector<ViewExpression*>& arguments);
   ViewExpression* downViewExpression(DagNode* metaViewExpr);
   bool downInstantiationArgument(DagNode* metaArgument, ViewExpression*& argument);

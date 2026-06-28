@@ -410,7 +410,65 @@ MetaLevel::downModuleExpression(DagNode* metaExpr)
 	  instantiated->deepSelfDestruct();
 	}
     }
-  return 0;
+  if (me == transformationSymbol)
+    {
+      //
+      //	Module transformation.
+      //
+      FreeDagNode* f = safeCastNonNull<FreeDagNode*>(metaExpr);
+      Token moduleName;
+      if (downToken(f->getArgument(0), moduleName))
+	{
+	  Vector<int> arguments;
+	  if (downQidList(f->getArgument(2), arguments))
+	    {
+	      //
+	      //	Maybe in future ModuleExpression() will take 
+	      //	const Vector<int>& or we will have downTokenList().
+	      //	For the moment we just do a conversion.
+	      //
+	      Index nrArguments = arguments.size();
+	      Vector<Token> options(nrArguments);
+	      for (Index i = 0; i < nrArguments; ++i)
+		options[i].tokenize(arguments[i], FileTable::META_LEVEL_CREATED);
+	      
+	      Vector<ModuleExpression*> inputModules;
+	      if (downModuleExpressionList(f->getArgument(2), inputModules))
+		return new ModuleExpression(moduleName, inputModules, options);
+	    }
+	}
+    }
+  return nullptr;
+}
+
+bool
+MetaLevel::downModuleExpressionList(DagNode* metaModExprList,
+				    Vector<ModuleExpression*>& modExprList)
+{
+  Assert(modExprList.empty(), "nonempty arg list");
+  if (metaModExprList->symbol() == metaArgSymbol)  // shared kind with TermList
+    {
+      for (DagArgumentIterator i(metaModExprList); i.valid(); i.next())
+	{
+	  if (ModuleExpression* modExpr = downModuleExpression(i.argument()))
+	    modExprList.push_back(modExpr);
+	  else
+	    {
+	      for (ModuleExpression* me : modExprList)
+		me->deepSelfDestruct();
+	      return false;
+	    }
+	}
+      return true;
+    }
+  else if (metaModExprList->symbol() == emptyTermListSymbol)  // shared kind with TermList
+    return true;
+  else if (ModuleExpression* modExpr = downModuleExpression(metaModExprList))
+    {
+      modExprList.push_back(modExpr);
+      return true;
+    }
+  return false;
 }
 
 bool

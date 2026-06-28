@@ -1,3 +1,25 @@
+2026-06-27  Saruman the White  <eker@eker10>
+
+	* metaDownView.cc (MetaLevel::downModuleExpressionList): handle
+	empty case
+
+	* metaLevel.hh (class MetaLevel): added decl for
+	upModuleExpressionList()
+
+	* metaUpModule.cc (MetaLevel::upModuleExpression): implement
+	TRANSFORM case
+	(MetaLevel::upModuleExpressionList): added
+
+	* metaLevel.hh (class MetaLevel): added decl for
+	downModuleExpressionList()
+
+	* metaDownView.cc (MetaLevel::downModuleExpressionList): added
+
+	* metaLevelSignature.cc: added transformationSymbol
+
+	* metaDownView.cc (MetaLevel::downModuleExpression): added
+	tranformation semantics
+
 2026-06-25  Saruman the White  <eker@eker10>
 
 	* metaLevel.hh (class MetaLevel): updated decl for downSignature()

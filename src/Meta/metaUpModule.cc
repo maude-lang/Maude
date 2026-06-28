@@ -211,10 +211,39 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
 	args[1] = upArguments(e->getArguments(), qidMap);
 	return instantiationSymbol->makeDagNode(args);
       }
+    case ModuleExpression::TRANSFORM:
+      {
+	Vector<DagNode*> args(3);
+	args[0] = upQid(e->getModuleName().code(), qidMap);
+	args[1] = upModuleExpressionList(e->getInputModules(), qidMap);
+	//
+	//	Need to convert Tokens to ints.
+	//
+	Vector<int> ids;
+	for (const Token& t : e->getOptions())
+	  ids.push_back(t.code());
+	args[2] = upQidList(ids, qidMap);
+	return transformationSymbol->makeDagNode(args);
+      }
     default:
       CantHappen("bad module expression");
     }
   return 0;
+}
+
+DagNode*
+MetaLevel::upModuleExpressionList(const Vector<ModuleExpression*>& modExprList,
+				  PointerMap& qidMap)
+{
+  int nrModExprs = modExprList.size();
+  if (nrModExprs == 0)
+    return emptyTermListSymbol->makeDagNode();  // because we share a kind with TermList
+  if (nrModExprs == 1)
+    return upModuleExpression(modExprList[0], qidMap);
+  Vector<DagNode*> args(nrModExprs);
+  for (int i = 0; i < nrModExprs; ++i)
+    args[i] = upModuleExpression(modExprList[i], qidMap);
+  return metaArgSymbol->makeDagNode(args);  // because we share a kind with TermList
 }
 
 DagNode*

@@ -916,7 +916,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	Token name = expr->getModuleName();
 	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
 	  {
-	    Assert(!(m->hasBoundParameters()),
+	    Assert(!(fm->hasBoundParameters()),
 		   "Transformer module " << fm << " has bound parameters.");
 	    if (fm->hasFreeParameters())
 	      {
