@@ -62,10 +62,11 @@ public:
     SUMMATION,
     RENAMING,
     PARAMETER,
-    INSTANTIATION
+    INSTANTIATION,
+    TRANSFORMATION
   };
 
-  ImportModule(int name, ModuleType moduleType);
+  ImportModule(int name, ModuleType moduleType, Origin origin);
   ImportModule(int name, ModuleType moduleType, Origin origin, Entity::User* parent);
   ~ImportModule();
 

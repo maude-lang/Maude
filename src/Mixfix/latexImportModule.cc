@@ -30,6 +30,7 @@ ImportModule::latexModuleExpression(bool parameterBrackets) const
   switch (origin)
     {
     case TEXT:
+    case TRANSFORMATION: // FIXME: should latex structure of name
       {
 	return "\\maudeModule{" + Token::latexName(id()) + "}";
       }

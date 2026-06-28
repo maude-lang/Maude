@@ -23,6 +23,10 @@
 //
 //      Class for modules that can be printed out.
 //
+//	We provide two additions to ImportModule:
+//	* a record of the owning interperter
+//	* a collection of print and latex print functions
+//
 #ifndef _visibleModule_hh_
 #define _visibleModule_hh_
 #include "importModule.hh"
@@ -33,7 +37,7 @@ class VisibleModule : public ImportModule
   NO_COPYING(VisibleModule);
 
 public:
-  VisibleModule(int name, ModuleType moduleType, Interpreter* owner);
+  VisibleModule(int name, ModuleType moduleType, Origin origin, Interpreter* owner);
 
   Interpreter* getOwner() const;
 

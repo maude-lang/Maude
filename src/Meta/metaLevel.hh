@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -288,7 +288,10 @@ public:
   View* downView(DagNode* metaView, Interpreter* owner);
   bool downParameterDeclList(DagNode* metaParameterDeclList, MetaView* v);
   bool downParameterDecl(DagNode* metaParameterDecl, MetaView* v);
-  MetaModule* downSignature(DagNode* metaModule, Interpreter* owner, int replacementName = NONE);
+  MetaModule* downSignature(DagNode* metaModule,
+			    Interpreter* owner,
+			    ImportModule::Origin origin = ImportModule::TEXT,
+			    int replacementName = NONE);
   bool downHeader(DagNode* metaHeader, int& id, DagNode*& metaParameterDeclList);
   bool downParameterDeclList2(DagNode* metaParameterDeclList, MetaPreModule* pm);
   bool downParameterDecl2(DagNode* metaParameterDecl, MetaPreModule* pm);

@@ -76,8 +76,8 @@
 #include "latexModulePrint.cc"
 #include "latexStrategyPrint.cc"
 
-VisibleModule::VisibleModule(int name, ModuleType moduleType, Interpreter* owner)
-  : ImportModule(name, moduleType),
+VisibleModule::VisibleModule(int name, ModuleType moduleType, Origin origin, Interpreter* owner)
+  : ImportModule(name, moduleType, origin),
     owner(owner)
 {
 }

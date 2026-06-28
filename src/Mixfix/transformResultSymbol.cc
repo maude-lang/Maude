@@ -125,9 +125,8 @@ void
 TransformResultSymbol::flattenModule(ImportModule* m)
 {
   //
-  //	Both transform module and input modules maybe be generated
-  //	from a module expression rather than a PreModule, so we have
-  //	to do the flattening here.
+  //	Both transform module and input modules not have had their
+  //	statements imported and we don't have access to a PreModule.
   //
   //	We don't need to compile input modules, but we don't have
   //	a way of flagging that statements have been imported but not
@@ -281,7 +280,11 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	IssueWarning("only expected one module returned");
       else if (modules->symbol() != nilModuleListSymbol)
 	{
-	  ImportModule* resultModule = metaLevel->downSignature(modules, owner, newModuleName);
+	  ImportModule* resultModule =
+	    metaLevel->downSignature(modules,
+				     owner,
+				     ImportModule::TRANSFORMATION,
+				     newModuleName);
 	  if (resultModule != nullptr)
 	    {
 	      //

@@ -1,3 +1,27 @@
+2026-06-28  Saruman the White  <eker@eker10>
+
+	* process.cc (SyntacticPreModule::process): pass origin as TEXT to
+	VisibleModule()
+
+	* visibleModule.hh (class VisibleModule): updated decl for ctor
+
+	* visibleModule.cc (VisibleModule::VisibleModule): take and pass origin
+
+	* importModule.hh (class ImportModule): updated decl for ctor
+
+	* importModule.cc (ImportModule::ImportModule): take origin in
+	both ctors
+
+	* visibleModule.hh: added explanation of why it exists
+
+	* latexImportModule.cc (ImportModule::latexModuleExpression):
+	added quick hack for TRANSFORMATION case
+
+	* importModule.cc (ImportModule::printModuleExpression): handle
+	TRANSFORMATION case
+
+	* importModule.hh (enum Origin): added back TRANSFORMATION
+
 2026-06-26  Saruman the White  <eker@eker10>
 
 	* interpreter.cc (Interpreter::makeModule): change test for bound

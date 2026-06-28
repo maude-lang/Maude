@@ -76,9 +76,9 @@
 #include "instantiateModuleWithBoundParameters.cc"
 #include "latexImportModule.cc"
 
-ImportModule::ImportModule(int name, ModuleType moduleType)
+ImportModule::ImportModule(int name, ModuleType moduleType, Origin origin)
   : MixfixModule(name, moduleType),
-    origin(TEXT)
+    origin(origin)
 {
   //
   //	This version is for modules created as subclass VisibleModule, either from
@@ -962,6 +962,7 @@ ImportModule::printModuleExpression(ostream& s, bool parameterBrackets) const
   switch (origin)
     {
     case TEXT:
+    case TRANSFORMATION:  // ModuleCache name is OK because we can't have parameter brackets
       {
 	s << Token::name(id());
 	break;

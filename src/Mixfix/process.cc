@@ -27,7 +27,7 @@
 void
 SyntacticPreModule::process()
 {
-  flatModule = new VisibleModule(id(), getModuleType(), getOwner());
+  flatModule = new VisibleModule(id(), getModuleType(), ImportModule::TEXT, getOwner());
   flatModule->addUser(this);
   flatModule->setLineNumber(getLineNumber());
 #ifdef QUANTIFY_PROCESSING

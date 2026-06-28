@@ -1,3 +1,17 @@
+2026-06-28  Saruman the White  <eker@eker10>
+
+	* metaLevel.hh (class MetaLevel): updated decl for downSignature()
+
+	* metaDownSignature.cc (MetaLevel::downSignature): take and pass
+	origin
+
+	* metaDown.cc (MetaLevel::downModule): pass origin as TEXT to
+	MetaModule()
+
+	* metaModule.hh (class MetaModule): updated decl for ctor
+
+	* metaModule.cc (MetaModule::MetaModule): take and pass origin
+
 2026-06-27  Saruman the White  <eker@eker10>
 
 	* metaDownView.cc (MetaLevel::downModuleExpressionList): handle

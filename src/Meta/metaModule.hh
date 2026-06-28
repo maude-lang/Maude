@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class MetaModule : public VisibleModule, public MetaOpCache
   NO_COPYING(MetaModule);
 
 public:
-  MetaModule(int name, ModuleType moduleType, Interpreter* owner);
+  MetaModule(int name, ModuleType moduleType, Origin origin, Interpreter* owner);
 
   void addComplexSymbol(int type, int index, DagNode* identity, DagNode* fixUpInfo);
   void addComplexSymbol(int type,

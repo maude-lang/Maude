@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2018-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2018-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,10 @@
 */
 
 MetaModule*
-MetaLevel::downSignature(DagNode* metaModule, Interpreter* owner, int replacementName)
+MetaLevel::downSignature(DagNode* metaModule,
+			 Interpreter* owner,
+			 ImportModule::Origin origin,
+			 int replacementName)
 {
   //
   //	This functionality is intended for use by the meta-interpreter rather
@@ -58,7 +61,7 @@ MetaLevel::downSignature(DagNode* metaModule, Interpreter* owner, int replacemen
     {
       if (replacementName != NONE)
 	id = replacementName;
-      MetaModule* m = new MetaModule(id, mt, owner);
+      MetaModule* m = new MetaModule(id, mt, origin, owner);
       if (downParameterDeclList(metaParameterDeclList, m) &&
 	  downImports(f->getArgument(1), m))
 	{
