@@ -111,7 +111,7 @@ result Configuration: <> < me : User | none > gotKinds(me, interpreter(0),
     '`[MatchingProblem`] ; '`[MembAxSet`] ; '`[Module`] ;
     '`[NarrowingApplyResult?`] ; '`[NarrowingSearchPathResult?`] ;
     '`[NarrowingSearchResult?`] ; '`[NarrowingTrace`] ; '`[OpDeclSet`] ;
-    '`[OpMappingSet`] ; '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpression`,ParameterList`] ; '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
+    '`[OpMappingSet`] ; '`[ParameterDeclList`] ; '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpressionList`,ParameterList`] ; '`[RenamingSet`] ; '`[Result4Tuple?`] ; '`[ResultPair?`] ;
     '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SmtResult?`] ; '`[SortMappingSet`] ;
     '`[SrewriteOption`] ; '`[StratDeclSet`] ; '`[StratDefSet`] ;
     '`[StratMappingSet`] ; '`[Strategy?`,StrategyList`] ; '`[String`] ;
@@ -132,13 +132,14 @@ result Configuration: <> < me : User | none > gotKinds(me, interpreter(0),
     '`[NarrowingApplyResult?`] ; '`[NarrowingSearchPathResult?`] ;
     '`[NarrowingSearchResult?`] ; '`[NarrowingTrace`] ; '`[Oid`] ;
     '`[OpDeclSet`] ; '`[OpMappingSet`] ; '`[ParameterDeclList`] ;
-    '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpression`,ParameterList`] ; '`[RenamingSet`] ; '`[Result4Tuple?`]
-    ; '`[ResultPair?`] ; '`[ResultTriple?`] ; '`[RuleSet`] ; '`[SmtResult?`] ;
-    '`[SortMappingSet`] ; '`[SrewriteOption`] ; '`[StratDeclSet`] ;
-    '`[StratDefSet`] ; '`[StratMappingSet`] ; '`[Strategy?`,StrategyList`] ;
-    '`[String`] ; '`[SubsortDeclSet`] ; '`[Substitution?`] ; '`[Trace?`] ;
-    '`[UnificationProblem`] ; '`[UnificationTriple?`] ; '`[UsingPairSet`] ;
-    '`[Variant?`] ; '`[VariantOptionSet`] ; '`[View`])
+    '`[PrintOptionSet`] ; '`[QidList`,TypeListSet`,QidSet`,GTermList`,Header`,Type?`,ModuleExpressionList`,ParameterList`] ; '`[RenamingSet`] ;
+    '`[Result4Tuple?`] ; '`[ResultPair?`] ; '`[ResultTriple?`] ; '`[RuleSet`] ;
+    '`[SmtResult?`] ; '`[SortMappingSet`] ; '`[SrewriteOption`] ;
+    '`[StratDeclSet`] ; '`[StratDefSet`] ; '`[StratMappingSet`] ;
+    '`[Strategy?`,StrategyList`] ; '`[String`] ; '`[SubsortDeclSet`] ;
+    '`[Substitution?`] ; '`[Trace?`] ; '`[UnificationProblem`] ;
+    '`[UnificationTriple?`] ; '`[UsingPairSet`] ; '`[Variant?`] ;
+    '`[VariantOptionSet`] ; '`[View`])
 ==========================================
 erewrite in SORT-TEST7 : <> < me : User | types: ('Nat ; 'NzRat) >
     createInterpreter(interpreterManager, me, newProcess) .

@@ -238,7 +238,7 @@ endfm) .
 rewrites: 1
 result NeKindSet: '`[AttrSet`] ; '`[Bool`] ; '`[Condition`] ; '`[EquationSet`]
     ; '`[FindResult`,NatList`,Bound`,Parent`] ; '`[HookList`] ; '`[ImportList`]
-    ; '`[MatchingProblem`] ; '`[MembAxSet`] ; '`[ModuleExpression`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] ; '`[Module`] ;
+    ; '`[MatchingProblem`] ; '`[MembAxSet`] ; '`[ModuleExpressionList`,ParameterList`,GTermList`,QidSet`,QidList`,TypeListSet`,Type?`,Header`] ; '`[Module`] ;
     '`[NarrowingApplyResult?`] ; '`[NarrowingSearchPathResult?`] ;
     '`[NarrowingSearchResult?`] ; '`[NarrowingTrace`] ; '`[OpDeclSet`] ;
     '`[OpMappingSet`] ; '`[ParameterDeclList`] ; '`[PrintOptionSet`] ;
@@ -260,8 +260,8 @@ reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   none
 endfm, '`[Qid`]) .
 rewrites: 1
-result NeSortSet: 'GTermList ; 'Header ; 'ModuleExpression ; 'ParameterList ;
-    'QidList ; 'QidSet ; 'Type? ; 'TypeListSet
+result NeSortSet: 'GTermList ; 'Header ; 'ModuleExpressionList ; 'ParameterList
+    ; 'QidList ; 'QidSet ; 'Type? ; 'TypeListSet
 ==========================================
 reduce in META-LEVEL : minimalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
@@ -284,8 +284,8 @@ reduce in META-LEVEL : maximalSorts(fmod 'FOO is
   none
 endfm, 'Qid) .
 rewrites: 0
-result [ModuleExpression,ParameterList,GTermList,QidSet,QidList,TypeListSet,
-    Type?,Header]: maximalSorts(fmod 'FOO is
+result [ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,
+    TypeListSet,Type?,Header]: maximalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
   sorts none .
   none
@@ -303,8 +303,8 @@ reduce in META-LEVEL : minimalSorts(fmod 'FOO is
   none
 endfm, 'Qid) .
 rewrites: 0
-result [ModuleExpression,ParameterList,GTermList,QidSet,QidList,TypeListSet,
-    Type?,Header]: minimalSorts(fmod 'FOO is
+result [ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,
+    TypeListSet,Type?,Header]: minimalSorts(fmod 'FOO is
   protecting 'META-LEVEL .
   sorts none .
   none

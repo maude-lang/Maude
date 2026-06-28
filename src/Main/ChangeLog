@@ -1,3 +1,8 @@
+2026-06-27  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added ModuleExpressionList; added _[_](_) for
+	meta-transformations
+
 2026-06-26  Saruman the White  <eker@eker10>
 
 	* prelude.maude: refactor fmod MODULE-TRANSFORMER, split off fmod
