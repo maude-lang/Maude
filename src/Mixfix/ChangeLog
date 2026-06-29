@@ -1,3 +1,12 @@
+2026-06-29  Saruman the White  <eker@eker10>
+
+	* importModule.hh (ImportModule::setTransformInfo)
+	(ImportModule::getBaseModule, ImportModule::getArguments)
+	(ImportModule::getTransformModule)
+	(ImportModule::getInputModules)
+	(ImportModule::getTransformOptions): output the module name in
+	Assert()
+
 2026-06-28  Saruman the White  <eker@eker10>
 
 	* transformResultSymbol.cc

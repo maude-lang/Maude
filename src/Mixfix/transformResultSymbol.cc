@@ -211,6 +211,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  return nullptr;
 	}
     }
+  Verbose("Attempting to make transformed module " << Token::name(newModuleName));
   //
   //	Make dag to be reduced.
   //
@@ -240,7 +241,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   if (flat)
     swap(args[0], args[1]);
   DagNode* startDag = cachedTransformOp->makeDagNode(args);
-  Verbose("Start dag = " << startDag);
+  DebugAdvisory("Start dag = " << startDag);
   //
   //	Reduce it using user's code.
   //
@@ -254,7 +255,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       return nullptr;
     }
   DagNode* result = context.root();
-  Verbose("result dag = " << result);
+  DebugAdvisory("result dag = " << result);
   //
   //	Process result.
   //
@@ -280,6 +281,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	IssueWarning("only expected one module returned");
       else if (modules->symbol() != nilModuleListSymbol)
 	{
+	  Verbose("Made transformed module " << Token::name(newModuleName));
 	  ImportModule* resultModule =
 	    metaLevel->downSignature(modules,
 				     owner,
@@ -305,6 +307,8 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  (void) transformModule->unprotect();
 	  return resultModule;
 	}
+      else
+	Verbose("Failed to make transformed module " << Token::name(newModuleName));
     }
   (void) transformModule->unprotect();
   return nullptr;

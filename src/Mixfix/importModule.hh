@@ -696,7 +696,7 @@ ImportModule::setTransformInfo(ImportModule* transModule,
 			       const Vector<ImportModule*>& inModules,
 			       const Vector<int>& transOptions)
 {
-  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin << " for " << this);
   transformModule = transModule;
   inputModules = inModules;
   transformOptions = transOptions;
@@ -706,35 +706,35 @@ inline ImportModule*
 ImportModule::getBaseModule() const
 {
   Assert(origin == RENAMING || origin == PARAMETER || origin == INSTANTIATION,
-	 "called on origin = " << origin);
+	 "called on origin = " << origin << " for " << this);
   return baseModule;
 }
 
 inline const Vector<Argument*>&
 ImportModule::getArguments() const
 {
-  Assert(origin == INSTANTIATION, "called on origin = " << origin);
+  Assert(origin == INSTANTIATION, "called on origin = " << origin << " for " << this);
   return savedArguments;
 }
 
 inline ImportModule*
 ImportModule::getTransformModule() const
 {
-  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin << " for " << this);
   return transformModule;
 }
 
 inline const Vector<ImportModule*>&
 ImportModule::getInputModules() const
 {
-  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin << " for " << this);
   return inputModules;
 }
 
 inline const Vector<int>&
 ImportModule::getTransformOptions() const
 {
-  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin << " for " << this);
   return transformOptions;
 }
 

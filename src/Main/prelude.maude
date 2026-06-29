@@ -3217,6 +3217,17 @@ fmod MODULE-TRANSFORMER is
       op-hook verboseSymbol		(verbose : String ~> SystemMsg)
       op-hook shareWith			(metaReduce : Module Term ~> ResultPair))
      ctor] .
+
+  op _(_)[_] : Qid QidList ImportList -> ImportList .
+  var T : Qid .
+  var OPT : QidList .
+  var ME : ModuleExpression .
+  var IL : ImportList .
+  eq T(OPT)[protecting(ME) . IL] = protecting(T[ME](OPT)) . T(OPT)[IL] .
+  eq T(OPT)[extending(ME) . IL] = extending(T[ME](OPT)) . T(OPT)[IL] .
+  eq T(OPT)[generated-by(ME) . IL] = generated-by(T[ME](OPT)) . T(OPT)[IL] .
+  eq T(OPT)[including(ME) . IL] = including(T[ME](OPT)) . T(OPT)[IL] .
+  eq T(OPT)[(nil).ImportList] = nil .
 endfm
 
 fmod VIEW-GENERATOR is

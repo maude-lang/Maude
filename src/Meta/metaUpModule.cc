@@ -1275,7 +1275,7 @@ MetaLevel::upModuleExpression(ImportModule* m, PointerMap& qidMap)
       {
 	return upQid(m->id(), qidMap);
       }
-    case ModuleExpression::SUMMATION:
+    case ImportModule::SUMMATION:
       {
 	Index nrModules = m->getNrImports();
 	Vector<DagNode*> args(nrModules);
@@ -1283,21 +1283,21 @@ MetaLevel::upModuleExpression(ImportModule* m, PointerMap& qidMap)
 	  args[i] = upModuleExpression(m->getImportedModule(i), qidMap);
 	return sumSymbol->makeDagNode(args);
       }
-    case ModuleExpression::RENAMING:
+    case ImportModule::RENAMING:
       {
 	Vector<DagNode*> args(2);
 	args[0] = upModuleExpression(m->getBaseModule(), qidMap);
 	args[1] = upRenaming(m->getCanonicalRenaming(), qidMap);
 	return renamingSymbol->makeDagNode(args);
       }
-    case ModuleExpression::INSTANTIATION:
+    case ImportModule::INSTANTIATION:
       {
 	Vector<DagNode*> args(2);
 	args[0] = upModuleExpression(m->getBaseModule(), qidMap);
 	args[1] = upArguments(m->getArguments(), qidMap);
 	return instantiationSymbol->makeDagNode(args);
       }
-    case ModuleExpression::TRANSFORM:
+    case ImportModule::TRANSFORMATION:
       {
 	Vector<DagNode*> args(3);
 	args[0] = upModuleExpression(m->getTransformModule(), qidMap);  // should be a Qid
