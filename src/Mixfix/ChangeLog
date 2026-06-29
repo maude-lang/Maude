@@ -1,5 +1,13 @@
 2026-06-28  Saruman the White  <eker@eker10>
 
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): use Verbose() for
+	start and result dags
+
+	* instantiateModuleWithFreeParameters.cc
+	(ImportModule::handleRegularImports): fix known bug with
+	importation mode
+
 	* view.hh (View::getBaseView): added
 	(View::getArguments): added
 

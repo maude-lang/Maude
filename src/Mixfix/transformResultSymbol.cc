@@ -240,7 +240,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   if (flat)
     swap(args[0], args[1]);
   DagNode* startDag = cachedTransformOp->makeDagNode(args);
-  IssueWarning("Start dag = " << startDag);
+  Verbose("Start dag = " << startDag);
   //
   //	Reduce it using user's code.
   //
@@ -254,7 +254,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       return nullptr;
     }
   DagNode* result = context.root();
-  IssueWarning("result dag = " << result);
+  Verbose("result dag = " << result);
   //
   //	Process result.
   //

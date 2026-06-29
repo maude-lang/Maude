@@ -568,13 +568,15 @@ ImportModule::handleRegularImports(ImportModule* copy,
   //	Now handle our regular imports.
   //
   LineNumber lineNumber(FileTable::AUTOMATIC);
+  Index i = 0;
   for (ImportModule* import : importedModules)
     {
+      ImportMode mode = importModes[i++];
       DebugInfo("Instantiating " << this << " and now need to instantiate its import " <<
 		import << " which has " << import->parameterNames.size() << " parameters");
       int nrImportParameters = import->parameterNames.size();
       if (nrImportParameters == 0)
-	copy->addImport(import, INCLUDING, lineNumber);  // HACK need to fix including
+	copy->addImport(import, mode, lineNumber);
       else
 	{
 	  //
@@ -600,7 +602,7 @@ ImportModule::handleRegularImports(ImportModule* copy,
 	    }
 	  Assert(!(instance->hasFreeParameters()),
 	  	 "free parameter in instance " << instance << " of imported module " << import);
-	  copy->addImport(instance, INCLUDING, lineNumber);  // HACK need to fix including
+	  copy->addImport(instance, mode, lineNumber);
 	}
     }
 }

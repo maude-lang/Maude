@@ -1371,9 +1371,11 @@ MetaLevel::upImports(ImportModule* m, PointerMap& qidMap)
   Vector<DagNode*> args2(1);
   for (Index i = 0; i < nrModules; ++i)
     {
-      args2[0] = upModuleExpression(m->getImportedModule(i), qidMap);
+      ImportModule* im = m->getImportedModule(i);
+      args2[0] = upModuleExpression(im, qidMap);
       
       ImportModule::ImportMode mode = m->getImportMode(i);
+      DebugAdvisory("m = " << m << " mode = " << mode << " import = " << im);
       Symbol* s = generatedBySymbol;
       if (mode == ImportModule::INCLUDING)
 	s = includingSymbol;
