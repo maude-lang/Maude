@@ -77,7 +77,9 @@ public:
 		 LineNumber lineNumber);
   void addParameter(const Token parameterName,
 		    ImportModule* parameterTheory);
-  void addUsedModule(ImportModule* importedModule);
+  void setTransformInfo(ImportModule* transModule,
+			const Vector<ImportModule*>& inModules,
+			const Vector<int>& transOptions);
   void closeSortSet();
   void closeSignature();
   void deepSelfDestruct();
@@ -324,7 +326,9 @@ private:
   //	If we were produced by a user transformation, we will have other
   //	dependancies that we need to track.
   //
-  Vector<ImportModule*> otherUsedModules;
+  ImportModule* transformModule = nullptr;
+  Vector<ImportModule*> inputModules;
+  Vector<int> transformOptions;
   //
   //	Because for sorts, symbols, and polymorphs, stuff from parameter
   //	theories is inserted first we can keep track of what came from
@@ -682,9 +686,14 @@ ImportModule::getParameterTheoryCopy(int index) const
 }
 
 inline void
-ImportModule::addUsedModule(ImportModule* usedModule)
+ImportModule::setTransformInfo(ImportModule* transModule,
+			       const Vector<ImportModule*>& inModules,
+			       const Vector<int>& transOptions)
 {
-  otherUsedModules.push_back(usedModule);
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  transformModule = transModule;
+  inputModules = inModules;
+  transformOptions = transOptions;
 }
 
 #endif

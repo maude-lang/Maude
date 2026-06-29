@@ -290,17 +290,17 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	      //
 	      //	Our result module becomes a user of all the input modules and
 	      //	the transform module. If any of these change, it becomes stale.
-	      //	We must also add these modules to our used modules so we can
-	      //	removed ourselves if we deepSelfDestruct() to avoid getting
-	      //	a regretToInform() message sent to a deleted object.
 	      //
 	      for (ImportModule* m : inputModules)
-		{
-		  m->addUser(resultModule);
-		  resultModule->addUsedModule(m);
-		}
+		m->addUser(resultModule);
 	      transformModule->addUser(resultModule);
-	      resultModule->addUsedModule(transformModule);
+	      //
+	      //	We pass it all the information used to construct it, so it
+	      //	can remove itself as a dependency if it becomes stale and
+	      //	calls deepSelfDestruct(). This also enables us to reconstruct
+	      //	the module expression that built it.
+	      //
+	      resultModule->setTransformInfo(transformModule, inputModules, optionVec);
 	    }
 	  (void) transformModule->unprotect();
 	  return resultModule;

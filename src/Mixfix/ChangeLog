@@ -1,5 +1,36 @@
 2026-06-28  Saruman the White  <eker@eker10>
 
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): use setTranformInfo()
+	in place of setTransformModule(), setInputModules(), setTransformOptions()
+
+	* importModule.hh (ImportModule::setTransformModule)
+	(ImportModule::setInputModules)
+	(ImportModule::setTransformOptions): replaced with setTransformInfo()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): call
+	setTransformOptions()
+
+	* importModule.cc (ImportModule::deepSelfDestruct): removed self
+	as user from inputModules and transformModule rather than
+	otherUsedModules
+
+	* importModule.hh (class ImportModule): added data members
+	transformModule and inputModules; deleted data member
+	otherUsedModules
+	(class ImportModule): added data member transformOptions
+	(ImportModule::setTransformOptions): added
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): use
+	setTransformModule() and setInputModules() rather than
+	addUsedModule()
+
+	* importModule.hh (ImportModule::setInputModules): added
+	(ImportModule::setTransformModule): added
+	(ImportModule::addUsedModule): deleted
+
 	* process.cc (SyntacticPreModule::process): pass origin as TEXT to
 	VisibleModule()
 
