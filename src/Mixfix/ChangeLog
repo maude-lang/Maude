@@ -1,5 +1,14 @@
 2026-06-28  Saruman the White  <eker@eker10>
 
+	* view.hh (View::getBaseView): added
+	(View::getArguments): added
+
+	* importModule.hh (ImportModule::getBaseModule): added
+	(ImportModule::getArguments): added
+	(ImportModule::getTransformModule): added
+	(ImportModule::getInputModules): added
+	(ImportModule::getTransformOptions): added
+
 	* transformResultSymbol.cc
 	(TransformResultSymbol::makeTransformation): use setTranformInfo()
 	in place of setTransformModule(), setInputModules(), setTransformOptions()

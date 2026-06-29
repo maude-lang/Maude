@@ -514,6 +514,7 @@ private:
   DagNode* upArguments(const Vector<ViewExpression*>& arguments, PointerMap& qidMap);
   DagNode* upArgument(const ViewExpression* argument, PointerMap& qidMap);
   DagNode* upRenaming(const Renaming* r, PointerMap& qidMap);
+
   DagNode* upTypeSorts(const set<int>& sorts, PointerMap& qidMap);
   DagNode* upRenamingAttributeSet(const Renaming* r, int index, PointerMap& qidMap);
   DagNode* upSortMappings(View* view, PointerMap& qidMap);
@@ -522,6 +523,17 @@ private:
   DagNode* upHeader(View* view, PointerMap& qidMap);
   DagNode* upParameterDecls(View* view, PointerMap& qidMap);
   DagNode* upParameterDecl(View* view, int index, PointerMap& qidMap);
+  //
+  //	These up virtual module/view expressions reconstructed from
+  //	ImportModules and Views.
+  //
+  DagNode* upModuleExpression(ImportModule* m, PointerMap& qidMap);
+  DagNode* upModuleExpressionList(const Vector<ImportModule*>& modExprList,
+				PointerMap& qidMap);
+  DagNode* upArguments(const Vector<Argument*>& arguments, PointerMap& qidMap);
+  DagNode* upArgument(const Argument* argument, PointerMap& qidMap);
+  DagNode* upViewExpression(const View* view, PointerMap& qidMap);
+  DagNode* upImports(ImportModule* m, PointerMap& qidMap);
 
   DagNode* upStratExpr(const StrategyExpression* expr, MixfixModule* m, PointerMap& qidMap);
   DagNode* upCallStrat(int label, Term* callTerm, MixfixModule* m, PointerMap& qidMap);

@@ -433,7 +433,7 @@ MetaLevel::downModuleExpression(DagNode* metaExpr)
 		options[i].tokenize(arguments[i], FileTable::META_LEVEL_CREATED);
 	      
 	      Vector<ModuleExpression*> inputModules;
-	      if (downModuleExpressionList(f->getArgument(2), inputModules))
+	      if (downModuleExpressionList(f->getArgument(1), inputModules))
 		return new ModuleExpression(moduleName, inputModules, options);
 	    }
 	}

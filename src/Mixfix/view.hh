@@ -129,6 +129,9 @@ public:
   void printViewExpression(ostream& s, bool parameterBrackets) const;
   string latexViewExpression(bool parameterBrackets = false) const;
 
+  const View* getBaseView() const;
+  const Vector<Argument*>& getArguments() const;
+
 protected:
   void regretToInform(Entity* doomedEntity);
   ConnectedComponent* mapComponent(const ConnectedComponent* component) const;
@@ -353,7 +356,6 @@ View::getStratExprMap() const
   return stratExprMap;
 }
 
-
 inline
 View::StratExprInfo::StratExprInfo(CallStrategy* call,
 				   StrategyExpression* value,
@@ -377,6 +379,18 @@ inline bool
 View::hasFreeParameters() const
 {
   return getNrParameters() > 0 && !(hasBoundParameters());
+}
+
+inline const View*
+View::getBaseView() const
+{
+  return baseView;
+}
+
+inline const Vector<Argument*>&
+View::getArguments() const
+{
+  return savedArguments;
 }
 
 #endif

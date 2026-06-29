@@ -133,6 +133,12 @@ public:
   bool parameterDeclared(RewriteStrategy* strat) const;
   bool parameterDeclaredPolymorph(int index) const;
   const Renaming* getCanonicalRenaming() const;  // only supported for parameter copies
+
+  ImportModule* getBaseModule() const;
+  const Vector<Argument*>& getArguments() const;
+  ImportModule* getTransformModule() const;
+  const Vector<ImportModule*>& getInputModules() const;
+  const Vector<int>& getTransformOptions() const;
   //
   //	Needed for EnclosingObject base.
   //
@@ -653,7 +659,7 @@ ImportModule::parameterDeclaredPolymorph(int index) const
 inline const Renaming*
 ImportModule::getCanonicalRenaming() const
 {
-  Assert(origin == PARAMETER, "called on origin = " << origin);
+  //Assert(origin == PARAMETER, "called on origin = " << origin);
   return canonicalRenaming;
 }
 
@@ -694,6 +700,42 @@ ImportModule::setTransformInfo(ImportModule* transModule,
   transformModule = transModule;
   inputModules = inModules;
   transformOptions = transOptions;
+}
+
+inline ImportModule*
+ImportModule::getBaseModule() const
+{
+  Assert(origin == RENAMING || origin == PARAMETER || origin == INSTANTIATION,
+	 "called on origin = " << origin);
+  return baseModule;
+}
+
+inline const Vector<Argument*>&
+ImportModule::getArguments() const
+{
+  Assert(origin == INSTANTIATION, "called on origin = " << origin);
+  return savedArguments;
+}
+
+inline ImportModule*
+ImportModule::getTransformModule() const
+{
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  return transformModule;
+}
+
+inline const Vector<ImportModule*>&
+ImportModule::getInputModules() const
+{
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  return inputModules;
+}
+
+inline const Vector<int>&
+ImportModule::getTransformOptions() const
+{
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin);
+  return transformOptions;
 }
 
 #endif

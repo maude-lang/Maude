@@ -1,5 +1,31 @@
 2026-06-28  Saruman the White  <eker@eker10>
 
+	* metaUpModule.cc (MetaLevel::upImports): check for bad import
+	mode
+
+	* metaDownView.cc (MetaLevel::downModuleExpression): fix bug where
+	we were calling downModuleExpressionList() on the wrong argument
+
+	* metaUpModule.cc (MetaLevel::upModule): use ImportModule* version
+	of upImports() 
+
+	* metaLevel.hh (class MetaLevel): added decl for ImportModule*
+	version of upImports()
+
+	* metaUpModule.cc (MetaLevel::upImports): added ImportModule*
+	version
+
+	* metaLevel.hh (class MetaLevel): added decls for following 5
+	member functions
+
+	* metaUpModule.cc (MetaLevel::upModuleExpression): added
+	ImportModule* version
+	(MetaLevel::upModuleExpressionList): added Vector<ImportModule*>&
+	version
+	(MetaLevel::upArguments): added Vector<Argument*>& version
+	(MetaLevel::upArgument): added Argument* version
+	(MetaLevel::upViewExpression): added View* view version
+
 	* metaLevel.hh (class MetaLevel): updated decl for downSignature()
 
 	* metaDownSignature.cc (MetaLevel::downSignature): take and pass
