@@ -158,6 +158,17 @@ viewExpr	:	viewExpr '{' instantArgs '}'
 			{
 			  $$ = new ViewExpression($1);
 			}
+		|	token '('
+			{
+			  lexBubble(BAR_RIGHT_PAREN, 0);
+			}
+			')'
+			{
+			  Vector<int> options;
+			  for (Token t : lexerBubble)
+			    options.push_back(t.code());
+			  $$ = new ViewExpression($1, options);
+			}
 		;
 
 instantArgs	:	instantArgs ',' viewExpr

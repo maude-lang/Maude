@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,12 @@
 class ViewExpression
 {
 public:
+  enum Type
+  {
+    SIMPLE_NAME,
+    INSTANTIATION,
+    GENERATION
+  };
   //
   //	A view expression is the name of a view or parameter:
   //
@@ -44,10 +50,17 @@ public:
   //	a vector of view expressions:
   //
   ViewExpression(ViewExpression* view, const Vector<ViewExpression*>& arguments);
+  //
+  //	OR a call to a user-defined view generator with a
+  //	a vector of options:
+  //
+  ViewExpression(Token name, const Vector<int>& options);
 
+  Type getType() const;
+  
   bool isInstantiation() const;
   //
-  //	For the non-instantiation case only.
+  //	For the simple view and generator cases only.
   //
   Token getName() const;
   //
@@ -55,12 +68,19 @@ public:
   //
   ViewExpression* getView() const;
   const Vector<ViewExpression*>& getArguments() const;
+  //
+  //	For the generator case only.
+  //
+  const Vector<int>& getOptions() const;
+  
   void deepSelfDestruct();
   void latexPrint(ostream& s, const Module* enclosingModule = nullptr) const;
 
 private:
+  const Type type;
   //
-  //	For the non-instantiation case only.
+  //	This is a view name, a parameter name or the name of the module
+  //	defining a view generator.
   //
   Token name;
   //
@@ -68,7 +88,17 @@ private:
   //
   ViewExpression* view;
   Vector<ViewExpression*> arguments;
+  //
+  //	For the generator case only.
+  //
+  Vector<int> options;
 };
+
+inline ViewExpression::Type
+ViewExpression::getType() const
+{
+  return type;
+}
 
 ostream& operator<<(ostream& s, const ViewExpression* expr);
 
@@ -81,22 +111,29 @@ ViewExpression::isInstantiation() const
 inline Token
 ViewExpression::getName() const
 {
-  Assert(!isInstantiation(), "instantiation, not named view/parameter " << this);
+  Assert(type == SIMPLE_NAME || type == GENERATION, "instantiation " << this);
   return name;
 }
 
 inline ViewExpression*
 ViewExpression::getView() const
 {
-  Assert(isInstantiation(), "named view/parameter not instantiation " << this);
+  Assert(type == INSTANTIATION, "not instantiation " << this);
   return view;
 }
 
 inline const Vector<ViewExpression*>&
 ViewExpression::getArguments() const
 {
-  Assert(isInstantiation(), "named view/parameter not instantiation " << this);
+  Assert(type == INSTANTIATION, "named view/parameter not instantiation " << this);
   return arguments;
+}
+
+inline const Vector<int>&
+ViewExpression::getOptions() const
+{
+  Assert(type == GENERATION, "not a generation");
+  return options;
 }
 
 #endif

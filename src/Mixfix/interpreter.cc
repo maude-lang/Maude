@@ -658,7 +658,6 @@ Interpreter::handleArgument(const ViewExpression* expr,
   //
   if (expr->isInstantiation())
     {
-      //IssueAdvisory("evaluation of view instantiation " << expr << " is experimental");
       //
       //	We have the instantiation of a parameterized view.
       //
@@ -835,7 +834,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		if (fm->hasFreeParameters())
 		  {
 		    IssueWarning("summand module " << fm << " has free parameters.");
-		    return 0;
+		    return nullptr;
 		  }
 		fms.append(fm);
 	      }
@@ -853,8 +852,8 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	    int nrArguments = argumentExpressions.size();
 	    if (nrArguments != nrParameters)
 	      {
-		IssueWarning("wrong number of parameters in module instantiation " << QUOTE(expr) << "; " <<
-			     nrParameters << " expected.");
+		IssueWarning("wrong number of parameters in module instantiation " <<
+			     QUOTE(expr) << "; " << nrParameters << " expected.");
 		break;
 	      }
 	    Vector<Argument*> arguments(nrParameters);
@@ -863,8 +862,11 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	    bool hasViewWithBoundParameters = false;
 	    for (int i = 0; i < nrParameters; ++i)
 	      {
-		Argument* a = handleArgument(argumentExpressions[i], enclosingObject, fm->getParameterTheory(i), i);
-		if (a != 0)
+		Argument* a = handleArgument(argumentExpressions[i],
+					     enclosingObject,
+					     fm->getParameterTheory(i),
+					     i);
+		if (a != nullptr)
 		  {
 		    if (View* v = dynamic_cast<View*>(a))
 		      {
@@ -874,7 +876,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 					 QUOTE(Token::name(v->getParameterName(0))) <<
 					 " and cannot be used in module instantiation " <<
 					 QUOTE(expr) << ".");
-			    return 0;
+			    return nullptr;
 			  }
 			if (v->hasBoundParameters())
 			  hasViewWithBoundParameters = true;
@@ -885,7 +887,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		      hasPEO = true;
 		  }
 		else
-		  return 0;
+		  return nullptr;
 		arguments[i] = a;
 	      }
 	    if (hasTheoryView && hasPEO)
@@ -894,7 +896,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 			     " uses both a theory-view and a parameter from enclosing " <<
 			     enclosingObject->getObjectType() << " " <<
 			     QUOTE(enclosingObject->getObjectName()) << '.');
-		return 0;
+		return nullptr;
 	      }
 	    if (hasTheoryView && hasViewWithBoundParameters)
 	      {
@@ -902,7 +904,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 			     " uses both a theory-view and a view with bound parameters from enclosing " <<
 			     enclosingObject->getObjectType() << " " <<
 			     QUOTE(enclosingObject->getObjectName()) << '.');
-		return 0;
+		return nullptr;
 	      }
 	    return makeModuleInstantiation(fm, arguments);  // may return null but never has bad flag set
 	  }
@@ -910,9 +912,6 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
       }
     case ModuleExpression::TRANSFORM:
       {
-	//
-	//	Dummy identity transformation.
-	//
 	Token name = expr->getModuleName();
 	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
 	  {
@@ -945,7 +944,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	      }
 	    return makeModuleTransformation(fm, inputModules, expr->getOptions(), this);
 	  }
-	return nullptr;
+	break;
       }
     default:
       CantHappen("bad module expression");
