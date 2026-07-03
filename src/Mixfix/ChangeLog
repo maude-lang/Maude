@@ -1,3 +1,20 @@
+2026-07-02  Saruman the White  <eker@eker10>
+
+	* viewResultSignature.cc: created
+
+	* viewResultSymbol.hh: created
+
+	* viewResultSymbol.cc: created
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): use
+	finishFlattening()
+
+	* importModule.hh (class ImportModule): added decl for
+	finishFlattening()
+
+	* importModule.cc (ImportModule::finishFlattening): added
+
 2026-07-01  Saruman the White  <eker@eker10>
 
 	* modules.yy (viewExpr): added syntax and semantics for view

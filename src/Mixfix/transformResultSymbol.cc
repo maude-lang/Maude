@@ -231,7 +231,8 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  Rope name("I");
 	  name += int64ToString(index + 1);
 	  int newName = Token::ropeToCode(name);
-	  flattenModule(m);
+	  //flattenModule(m);
+	  m->finishFlattening();
 	  metaModules[index] = metaLevel->upModule(flat, m, qidMap, newName);
 	}
       args[0] = (inputModules.size() == 1) ? metaModules[0] :
@@ -245,7 +246,8 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   //
   //	Reduce it using user's code.
   //
-  flattenModule(transformModule);
+  //flattenModule(transformModule);
+  transformModule->finishFlattening();
   UserLevelRewritingContext context(startDag);
   transformModule->protect();  // in case it gets replaced in debugger
   context.reduce();

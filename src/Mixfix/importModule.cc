@@ -956,6 +956,40 @@ ImportModule::resetImportPhase()
 }
 
 void
+ImportModule::finishFlattening()
+{
+  //
+  //	This is intended to be called on modules which have had their
+  //	signatures flattened, but have not had their statements flattened
+  //	and compiled.
+  //
+  //	It could be the module has never been rewritten in or maybe the
+  //	module was created for a module expression so there is no PreModule
+  //	to do this work.
+  //
+  if (getStatus() < Module::THEORY_CLOSED)
+    {
+      Assert(getStatus() == FIX_UPS_CLOSED, "fix ups not closed for " << this);
+      //
+      //	Need to flatten in statements and compile.
+      //
+      importStatements();
+      Assert(!isBad(), "importStatements() unexpectedly set bad flag in " << this);
+      resetImports();
+      //
+      //	Compile  module.
+      //
+      closeTheory();
+      //
+      //	We don't allow reserved fresh variable names in variant
+      //	equations or narrowing rules. We can't do this until statements
+      //	have been compiled since it relied on VariableInfo being filled out.
+      //
+      checkFreshVariableNames();
+    }
+}
+
+void
 ImportModule::printModuleExpression(ostream& s, bool parameterBrackets) const
 {
   //

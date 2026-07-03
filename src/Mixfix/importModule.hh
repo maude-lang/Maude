@@ -92,6 +92,7 @@ public:
   void resetImports();
 
   void localStatementsComplete();
+  void finishFlattening();
   void protect();
   bool unprotect();
 
