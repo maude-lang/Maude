@@ -236,6 +236,7 @@ public:
   Sort* getStrategyRangeSort() const;
   const NatSet& getObjectSymbols() const;
   TransformResultSymbol* getTransformResultSymbol() const;
+  ViewResultSymbol* getViewResultSymbol() const;
   //
   //	Find functions.
   //
@@ -1080,6 +1081,7 @@ private:
   SMT_Status smtStatus;
 
   TransformResultSymbol* transformResultSymbol = nullptr;
+  ViewResultSymbol* viewResultSymbol = nullptr;
 
   static const char* latexRed;
   static const char* latexGreen;
@@ -1426,4 +1428,9 @@ MixfixModule::getTransformResultSymbol() const
   return transformResultSymbol;
 }
 
+inline ViewResultSymbol*
+MixfixModule::getViewResultSymbol() const
+{
+  return viewResultSymbol;
+}
 #endif

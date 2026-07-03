@@ -31,14 +31,17 @@
 //      forward declarations
 #include "interface.hh"
 #include "core.hh"
+#include "AU_Theory.hh"
 #include "strategyLanguage.hh"
+#include "meta.hh"
 #include "mixfix.hh"
 
 //	front end class definitions
+#include "fileTable.hh"
 #include "renaming.hh"
 #include "view.hh"
+#include "viewResultSymbol.hh"
 #include "viewCache.hh"
-#include "fileTable.hh"
 
 ViewCache::ViewCache()
 {
@@ -158,6 +161,54 @@ ViewCache::makeViewInstantiation(View* view, const Vector<Argument*>& arguments)
     }
   viewMap[nameCode] = copy;
   return copy;
+}
+
+View*
+ViewCache::generateView(ImportModule* generator,
+			const Vector<Token>& options,
+			Interpreter* owner)
+{
+  ViewResultSymbol* vs = generator->getViewResultSymbol();
+  if (vs == nullptr)
+    {
+      IssueWarning("view generator module " << generator <<
+		   " does not have a symbol with the ViewResultSymbol specials attribute.");
+      return nullptr;
+    }
+  //
+  //	Make name.
+  //
+  Rope name;
+  Vector<int> optionVec;
+  
+  name += Token::name(generator->id());
+  name += "(";
+  const char* sep = "";
+  for (const Token& t : options)
+    {
+      name += sep;
+      name += t.name();
+      sep = " ";
+      optionVec.push_back(t.code());
+    }
+  name += ")";
+  //
+  //	Now check if a view having our name is already in cache.
+  //
+  int nameCode = Token::ropeToCode(name);
+  ViewMap::const_iterator c = viewMap.find(nameCode);
+  if (c != viewMap.end())
+    {
+      DebugAdvisory("using existing copy of view " << name);
+      return c->second;
+    }
+  View* generated = vs->generateView(nameCode, optionVec, owner);
+  if (generated != nullptr)
+    {
+      viewMap[nameCode] = generated;
+      generated->addUser(this);
+    }
+  return generated;
 }
 
 int

@@ -76,6 +76,7 @@ class MaudeLatexBuffer;
 class CommutativeDecomposeEqualitySymbol;
 class PrintSettings;
 class TransformResultSymbol;
+class ViewResultSymbol;
 
 //
 //	Support for quantifying just active computations (rather than

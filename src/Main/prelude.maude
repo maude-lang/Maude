@@ -3182,7 +3182,7 @@ fmod META-LEVEL is
 endfm
 
 ***
-***	Module transformations.
+***	Module transformation and view generation.
 ***
 
 fmod SYSTEM-MESSAGE is
@@ -3237,7 +3237,17 @@ fmod VIEW-GENERATOR is
   op failure : -> View? [ctor] .
 
   sort ViewResult .
-  op {_,_} : View? SystemMsgList -> ViewResult [ctor] .
+  op {_,_} : View? SystemMsgList -> ViewResult
+    [special (
+      id-hook ViewResultSymbol
+      op-hook viewFailureSymbol		(failure : ~> View?)
+      op-hook nilSystemMsgListSymbol	(nil : ~> SystemMsgList)
+      op-hook systemMsgListSymbol	(__ : SystemMsgList SystemMsgList ~> SystemMsgList)
+      op-hook advisorySymbol		(advisory : String ~> SystemMsg)
+      op-hook warningSymbol		(warning : String ~> SystemMsg)
+      op-hook verboseSymbol		(verbose : String ~> SystemMsg)
+      op-hook shareWith			(metaReduce : Module Term ~> ResultPair))
+     ctor] .
 endfm
 
 ***

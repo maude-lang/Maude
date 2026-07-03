@@ -153,6 +153,9 @@ View::~View()
     fromExpr->deepSelfDestruct();
   if (toExpr != 0)
     toExpr->deepSelfDestruct();
+  if (generatorModule != nullptr)
+    generatorModule->removeUser(this);
+
   //
   //	Remove ourselves as users of our parameter theories and
   //	deepSelfDestruct() parameter theory expressions.
@@ -1166,6 +1169,7 @@ View::latexViewExpression(bool parameterBrackets) const
       result += "\\maudeRightBrace";
       return result;
     }
+  // FIXME: need latex generated modules nicely
   string result = "\\maudeView{";
   result += Token::latexName(id());
   result += "}";
@@ -1205,5 +1209,10 @@ View::printViewExpression(ostream& s, bool parameterBrackets) const
       s << '}';
     }
   else
-    s << Token::name(id());
+    {
+      //
+      //	OK for generated views because the options are in the name.
+      //
+      s << Token::name(id());
+    }
 }

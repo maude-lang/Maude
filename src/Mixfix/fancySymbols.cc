@@ -195,6 +195,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new ObjectConstructorSymbol(name);
     case SymbolType::TRANSFORM_RESULT_SYMBOL:
       return new TransformResultSymbol(name);
+    case SymbolType::VIEW_RESULT_SYMBOL:
+      return new ViewResultSymbol(name);
     }
   //
   //	Handle regular symbols that have semantic attributes.

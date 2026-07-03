@@ -21,7 +21,7 @@
 */
 
 //
-//	List of all recognized transform result constructors.
+//	List of all recognized view result constructors.
 //
 //	We generate various chunks of linear (branching) code to handle
 //	this hetrogeneous collection by macro expansion.

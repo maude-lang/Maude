@@ -1,3 +1,10 @@
+2026-07-03  Saruman the White  <eker@eker10>
+
+	* metaLevel.hh (class MetaLevel): updated decl for downView()
+
+	* metaDownView.cc (MetaLevel::downView): support replacementName
+	arugment
+
 2026-06-29  Saruman the White  <eker@eker10>
 
 	* metaUpModule.cc (MetaLevel::upModuleExpression): fix bug where

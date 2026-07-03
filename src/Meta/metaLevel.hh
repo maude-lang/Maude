@@ -285,7 +285,7 @@ public:
   bool downToken(DagNode* metaQid, Token& token) const;
   bool downOpName(DagNode* metaQid, int& id) const;
   MetaModule* downModule(DagNode* metaModule);
-  View* downView(DagNode* metaView, Interpreter* owner);
+  View* downView(DagNode* metaView, Interpreter* owner, int replacementName = NONE);
   bool downParameterDeclList(DagNode* metaParameterDeclList, MetaView* v);
   bool downParameterDecl(DagNode* metaParameterDecl, MetaView* v);
   MetaModule* downSignature(DagNode* metaModule,

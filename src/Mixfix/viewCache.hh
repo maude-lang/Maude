@@ -37,6 +37,9 @@ public:
   ~ViewCache();
 
   View* makeViewInstantiation(View* view, const Vector<Argument*>& arguments);
+  View* generateView(ImportModule* generator,
+		     const Vector<Token>& options,
+		     Interpreter* owner);
 
   int destructUnusedViews();
   void showCreatedViews(ostream& s) const;

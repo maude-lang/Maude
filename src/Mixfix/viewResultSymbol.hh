@@ -62,7 +62,7 @@ private:
 #undef MACRO
 
   MetaLevel* metaLevel = nullptr;
-  Symbol* cachedViewOp = nullptr;  // for implicit view ops
+  Symbol* cachedGeneratorOp = nullptr;
 };
 
 #endif

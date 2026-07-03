@@ -65,3 +65,4 @@
   MACRO(PrngManagerSymbol, SymbolType::PRNG_MANAGER_SYMBOL)
   MACRO(ObjectConstructorSymbol, SymbolType::OBJECT_CONSTRUCTOR_SYMBOL)
   MACRO(TransformResultSymbol, SymbolType::TRANSFORM_RESULT_SYMBOL)
+  MACRO(ViewResultSymbol, SymbolType::VIEW_RESULT_SYMBOL)

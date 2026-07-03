@@ -1,3 +1,7 @@
+2026-07-03  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added special for view result symbol
+
 2026-06-29  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added meta-recursion operator _(_)[_] to fmod

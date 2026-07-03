@@ -168,6 +168,7 @@
 #include "commutativeDecomposeEqualitySymbol.hh"
 #include "importModule.hh"
 #include "transformResultSymbol.hh"
+#include "viewResultSymbol.hh"
 
 #include "interpreter.hh"
 #include "global.hh"  // HACK shouldn't be accessing global variables

@@ -121,44 +121,6 @@ TransformResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
   FreeSymbol::copyAttachments(original, map);
 }
 
-void
-TransformResultSymbol::flattenModule(ImportModule* m)
-{
-  //
-  //	Both transform module and input modules not have had their
-  //	statements imported and we don't have access to a PreModule.
-  //
-  //	We don't need to compile input modules, but we don't have
-  //	a way of flagging that statements have been imported but not
-  //	compiled so we do the full thing. If we imported the statements
-  //	but didn't close the theory, we might import them a second time,
-  //	if the module corresponds to a text module, or is used as an
-  //	input module another time.
-  //
-  //	We know that all modules will have come via the module expression
-  //	evaluation mechanism so signatures will already have been flattened.
-  //
-  if (m->getStatus() < Module::THEORY_CLOSED)
-    {
-      //
-      //	Need to flatten in statements and compile.
-      //
-      m->importStatements();
-      Assert(!(m->isBad()), "importStatements() unexpectedly set bad flag in " << *m);
-      m->resetImports();
-      //
-      //	Compile  module.
-      //
-      m->closeTheory();
-      //
-      //	We don't allow reserved fresh variable names in variant
-      //	equations or narrowing rules. We can't do this until statements
-      //	have been compiled since it relied on VariableInfo being filled out.
-      //
-      m->checkFreshVariableNames();
-    }
-}
-
 ImportModule*
 TransformResultSymbol::makeTransformation(int newModuleName,
 					  const Vector<ImportModule*>& inputModules,
@@ -206,7 +168,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	}
       if (cachedTransformOp == nullptr)
 	{
-	  IssueWarning("didn't find suitable implicit transform operator in module " <<
+	  IssueWarning("didn't find suitable transform operator in module " <<
 		       QUOTE(transformModule) << ".");
 	  return nullptr;
 	}
@@ -231,7 +193,6 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	  Rope name("I");
 	  name += int64ToString(index + 1);
 	  int newName = Token::ropeToCode(name);
-	  //flattenModule(m);
 	  m->finishFlattening();
 	  metaModules[index] = metaLevel->upModule(flat, m, qidMap, newName);
 	}
@@ -246,7 +207,6 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   //
   //	Reduce it using user's code.
   //
-  //flattenModule(transformModule);
   transformModule->finishFlattening();
   UserLevelRewritingContext context(startDag);
   transformModule->protect();  // in case it gets replaced in debugger

@@ -426,6 +426,19 @@ MixfixModule::addOpDeclaration(Token prefixName,
 			   " with the TransformResultSymbol special attribute.");
 	    }
 	}
+        else if (symbolType.getBasicType() == SymbolType::VIEW_RESULT_SYMBOL)
+	{
+	  if (viewResultSymbol == nullptr)
+	    viewResultSymbol = safeCastNonNull<ViewResultSymbol*>(symbol);
+	  else
+	    {
+	      IssueWarning(LineNumber(prefixName.lineNumber()) <<
+			   ": cannot have both " << QUOTE(viewResultSymbol) <<
+			   " and " << QUOTE(symbol) <<
+			   " with the ViewResultSymbol special attribute.");
+	    }
+	}
+
     }
   if (symbolType.hasFlag(SymbolType::FROZEN))
     symbol->setFrozen(frozen);

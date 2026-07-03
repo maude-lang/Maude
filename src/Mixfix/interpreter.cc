@@ -652,50 +652,121 @@ Interpreter::handleArgument(const ViewExpression* expr,
 {
   //
   //	An argument must be the name of a parameter from an enclosing object or the name of
-  //	a view or an instantiation of a view.
+  //	a view or an instantiation of a view, or the generation of a view.
   //	In all cases the fromTheory of the view or the theory of the parameter must match
   //	requiredParameterTheory.
   //
-  if (expr->isInstantiation())
+  switch (expr->getType())
     {
-      //
-      //	We have the instantiation of a parameterized view.
-      //
-      ViewExpression* baseViewExpr = expr->getView();
-      //
-      //	Base view must be a named view or a view expression - cannot be a parameter.
-      //
-      Argument* baseArg = handleArgument(baseViewExpr, enclosingObject, requiredParameterTheory, NONE);
-      if (baseArg == 0)
-	return 0;
-      View* baseView = safeCast(View*, baseArg);
-      //
-      //	Number of parameters in base view must match number of arguments passed
-      //	in instantiation.
-      //
-      int nrParameters = baseView->getNrParameters();
-      const Vector<ViewExpression*>& argumentExpressions = expr->getArguments();
-      int nrArguments = argumentExpressions.size();
-      if (nrArguments != nrParameters)
-	{
-	  IssueWarning(nrArguments << (nrArguments == 1 ? " argument" : " arguments") <<
-		       " passed in view instantiation " << QUOTE(expr) << " whereas " <<
-		       nrParameters << " expected.");
-	  return 0;
-	}
-      //
-      //	We now construct an argument list of Parameters and Views.
-      //
-      Vector<Argument*> arguments(nrParameters);
-      bool hasTheoryView = false;  // theory-view maintain free parameters
-      bool hasPEO = false;  // parameters from an enclosing object (PEO) create bound parameters
-      bool hasViewWithBoundParameters = false;
-      for (int i = 0; i < nrParameters; ++i)
-	{
-	  DebugInfo("----- looking argument " << i << " which is " << argumentExpressions[i] << " --------");
-	  Argument* a = handleArgument(argumentExpressions[i], enclosingObject, baseView->getParameterTheory(i), i);
-	  if (a == 0)
-	    return 0;
+    case ViewExpression::SIMPLE_NAME:
+      {
+	//
+	//	Base case: parameter name or view name.
+	//
+	Token name = expr->getName();
+	int code  = name.code();
+	if (enclosingObject != nullptr && argNr != NONE)
+	  {
+	    //
+	    //	Because we have an enclosing object and we're in an argument list we
+	    //	check for a parameter from the enclosing object.
+	    //
+	    int index = enclosingObject->findParameterIndex(code);
+	    if (index != NONE)
+	      {
+		//
+		//	Parameters from an enclosing object occlude views.
+		//
+		ImportModule* enclosingObjectParameterTheory =
+		  enclosingObject->getParameterTheory(index);
+		if (enclosingObjectParameterTheory != requiredParameterTheory)
+		  {
+		    IssueWarning(LineNumber(name.lineNumber()) << ": parameter " << QUOTE(name) <<
+				 " from enclosing " << enclosingObject->getObjectType() <<
+				 ' ' << QUOTE(enclosingObject->getObjectName()) <<
+				 " is of theory " << QUOTE(enclosingObjectParameterTheory) <<
+				 " whereas theory " <<  QUOTE(requiredParameterTheory) <<
+				 " is required.");
+		    return nullptr;
+		  }
+		return getParameter(code);
+	      }
+	  }
+	//
+	//	Must be a view
+	//
+	if (View* v = getView(code))
+	  {
+	    //
+	    //	Instantiation argument is a view.
+	    //
+	    if (!(v->evaluate()))
+	      {
+		IssueWarning(LineNumber(name.lineNumber()) << ": unusable view " << QUOTE(v) << '.');
+		return nullptr;
+	      }
+	    ImportModule* fromTheory = v->getFromTheory();
+	    if (fromTheory != requiredParameterTheory)
+	      {
+		IssueWarning(LineNumber(name.lineNumber()) << ": view " << QUOTE(name) <<
+			     " is from theory " << QUOTE(fromTheory) <<
+			     " whereas theory " << QUOTE(requiredParameterTheory) <<
+			     " is required.");
+		return nullptr;
+	      }
+	    return v;
+	  }
+	IssueWarning(LineNumber(name.lineNumber()) << ": could not find a parameter or view " <<
+		     QUOTE(name) << ".");
+	return nullptr;
+      }
+    case ViewExpression::INSTANTIATION:
+      {
+	//
+	//	We have the instantiation of a parameterized view.
+	//
+	ViewExpression* baseViewExpr = expr->getView();
+	//
+	//	Base view must be a named view or a view expression - cannot be a parameter.
+	//
+	Argument* baseArg = handleArgument(baseViewExpr,
+					   enclosingObject,
+					   requiredParameterTheory,
+					   NONE);
+	if (baseArg == nullptr)
+	  return nullptr;
+	View* baseView = safeCast(View*, baseArg);
+	//
+	//	Number of parameters in base view must match number of arguments passed
+	//	in instantiation.
+	//
+	Index nrParameters = baseView->getNrParameters();
+	const Vector<ViewExpression*>& argumentExpressions = expr->getArguments();
+	Index nrArguments = argumentExpressions.size();
+	if (nrArguments != nrParameters)
+	  {
+	    IssueWarning(nrArguments << (nrArguments == 1 ? " argument" : " arguments") <<
+			 " passed in view instantiation " << QUOTE(expr) << " whereas " <<
+			 nrParameters << " expected.");
+	    return nullptr;
+	  }
+	//
+	//	We now construct an argument list of Parameters and Views.
+	//
+	Vector<Argument*> arguments(nrParameters);
+	bool hasTheoryView = false;  // theory-view maintain free parameters
+	bool hasPEO = false;  // parameters from an enclosing object (PEO) create bound parameters
+	bool hasViewWithBoundParameters = false;
+	for (int i = 0; i < nrParameters; ++i)
+	  {
+	    DebugInfo("----- looking argument " << i << " which is " <<
+		      argumentExpressions[i] << " --------");
+	    Argument* a = handleArgument(argumentExpressions[i],
+					 enclosingObject,
+					 baseView->getParameterTheory(i),
+					 i);
+	    if (a == nullptr)
+	      return nullptr;
 
 	  if (View* v = dynamic_cast<View*>(a))
 	    {
@@ -705,7 +776,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 			       QUOTE(Token::name(v->getParameterName(0))) <<
 			       " and cannot be used in view instantiation " <<
 			       QUOTE(expr) << ".");
-		  return 0;
+		  return nullptr;
 		}
 	      if (v->hasBoundParameters())
 		hasViewWithBoundParameters = true;
@@ -715,81 +786,28 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	  else
 	    hasPEO = true;
 	  arguments[i] = a;
-	}
-      if (hasTheoryView && hasPEO)
-	{
-	  IssueWarning("Instantiation " << QUOTE(expr) <<
-		       " uses both a theory-view and a parameter from enclosing " <<
-		       enclosingObject->getObjectType() << " " <<
-		       QUOTE(enclosingObject->getObjectName()) << '.');
-	  return 0;
-	}
-      if (hasTheoryView && hasViewWithBoundParameters)
-	{
-	  IssueWarning("Nonfinal instantiation " << QUOTE(expr) <<
-		       " uses both a theory-view and a view with bound parameters from enclosing " <<
-		       enclosingObject->getObjectType() << " " <<
-		       QUOTE(enclosingObject->getObjectName()) << '.');
-	}
-      return makeViewInstantiation(baseView, arguments);
+	  }
+	if (hasTheoryView && hasPEO)
+	  {
+	    IssueWarning("Instantiation " << QUOTE(expr) <<
+			 " uses both a theory-view and a parameter from enclosing " <<
+			 enclosingObject->getObjectType() << " " <<
+			 QUOTE(enclosingObject->getObjectName()) << '.');
+	    return nullptr;
+	  }
+	if (hasTheoryView && hasViewWithBoundParameters)
+	  {
+	    IssueWarning("Nonfinal instantiation " << QUOTE(expr) <<
+			 " uses both a theory-view and a view with bound parameters from enclosing " <<
+			 enclosingObject->getObjectType() << " " <<
+			 QUOTE(enclosingObject->getObjectName()) << '.');
+	  }
+	return makeViewInstantiation(baseView, arguments);
+      }
+    case ViewExpression::GENERATION:
+      break;
     }
-  //
-  //	Base case: parameter name or view name.
-  //
-  Token name = expr->getName();
-  int code  = name.code();
-  if (enclosingObject != 0 && argNr != NONE)
-    {
-      //
-      //	Because we have an enclosing object and we're in an argument list we
-      //	check for a parameter from the enclosing object.
-      //
-      int index = enclosingObject->findParameterIndex(code);
-      if (index != NONE)
-	{
-	  //
-	  //	Parameters from an enclosing object occlude views.
-	  //
-	  ImportModule* enclosingObjectParameterTheory = enclosingObject->getParameterTheory(index);
-	  if (enclosingObjectParameterTheory != requiredParameterTheory)
-	    {
-	      IssueWarning(LineNumber(name.lineNumber()) << ": parameter " << QUOTE(name) <<
-			   " from enclosing " << enclosingObject->getObjectType() <<
-			   ' ' << QUOTE(enclosingObject->getObjectName()) <<
-			   " is of theory " << QUOTE(enclosingObjectParameterTheory) <<
-			   " whereas theory " <<  QUOTE(requiredParameterTheory) <<
-			   " is required.");
-	      return 0;
-	    }
-	  return getParameter(code);
-	}
-    }
-  //
-  //	Must be a view
-  //
-  if (View* v = getView(code))
-    {
-      //
-      //	Instantiation argument is a view.
-      //
-      if (!(v->evaluate()))
-	{
-	  IssueWarning(LineNumber(name.lineNumber()) << ": unusable view " << QUOTE(v) << '.');
-	  return 0;
-	}
-      ImportModule* fromTheory = v->getFromTheory();
-      if (fromTheory != requiredParameterTheory)
-	{
-	  IssueWarning(LineNumber(name.lineNumber()) << ": view " << QUOTE(name) <<
-		       " is from theory " << QUOTE(fromTheory) <<
-		       " whereas theory " << QUOTE(requiredParameterTheory) <<
-		       " is required.");
-	  return 0;
-	}
-      return v;
-    }
-  IssueWarning(LineNumber(name.lineNumber()) << ": could not find a parameter or view " << QUOTE(name) << ".");
-  return 0;
+  return nullptr;
 }
 
 ImportModule*

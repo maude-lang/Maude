@@ -1,3 +1,63 @@
+2026-07-03  Saruman the White  <eker@eker10>
+
+	* interpreter.cc (Interpreter::handleArgument): refactored; use
+	getType()
+
+	* viewCache.hh (class ViewCache): added decl for generateView()
+
+	* viewCache.cc (ViewCache::generateView): added
+
+	* view.cc (View::latexViewExpression): added FIXME about generated
+	modules
+
+	* transformResultSymbol.hh: deleted decl for flattenModule()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): fix Warning() now
+	that we don't have explicit transform operators
+	(TransformResultSymbol::flattenModule): deleted
+	(TransformResultSymbol::makeTransformation): deleted commented out
+	calls to flattenModule()
+
+	* viewResultSymbol.hh (class ViewResultSymbol): viewModule ->
+	generatorModule()
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): viewModule
+	-> generatorModule()
+	(ViewResultSymbol::generateView): cachedViewOp ->
+	cachedGeneratorOp
+
+	* view.cc (View::~View): remove ourselves as a user of
+	generatorModule
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): call
+	setGenerationInfo()
+
+	* view.hh (ImportModule::setGenerationInfo): added
+
+	* view.cc (View::printViewExpression): added comment to explain
+	why we don't handle generated views specially
+
+	* view.hh (class View): added data members generatorModule and
+	generationOptions
+
+	* viewResultSignature.cc: fix comment
+
+	* mixfix.hh: added class ViewResultSymbol
+
+	* mixfixModule.hh (class MixfixModule): added data member
+	viewResultSymbol
+	(MixfixModule::getViewResultSymbol): added
+
+	* entry.cc (MixfixModule::addOpDeclaration): set viewResultSymbol
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): added
+	ViewResultSymbol
+
+	* symbolType.hh (enum BasicTypes): added VIEW_RESULT_SYMBOL
+
+	* specialSymbolTypes.cc: added ViewResultSymbol
+
 2026-07-02  Saruman the White  <eker@eker10>
 
 	* viewResultSignature.cc: created

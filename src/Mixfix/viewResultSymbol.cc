@@ -132,39 +132,39 @@ ViewResultSymbol::generateView(int viewName,
 		   " has no metalevel attached.");
       return nullptr;
     }
-  ImportModule* viewModule = safeCastNonNull<ImportModule*>(getModule());
+  ImportModule* generatorModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = shareWith->getMetaLevel();
   DagNode* metaOptions = metaLevel->upQidList(optionVec);
   ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
-  if (cachedViewOp == nullptr)
+  if (cachedGeneratorOp == nullptr)
     {
       //
       //	Need to find suitable operator.
       //
       ConnectedComponent* viewResultKind = rangeComponent();
-      for (Symbol* s : viewModule->getSymbols())
+      for (Symbol* s : generatorModule->getSymbols())
 	{
 	  if (s->arity() == 1 &&
 	      s->domainComponent(0) == qidKind &&
 	      s->rangeComponent() == viewResultKind)
 	    {
-	      if (cachedViewOp == nullptr)
-		cachedViewOp = s;
+	      if (cachedGeneratorOp == nullptr)
+		cachedGeneratorOp = s;
 	      else
 		{
 		  IssueWarning("multiple view generator operators " <<
-			       QUOTE(cachedViewOp) << " and " <<
-			       QUOTE(s) << "in module " << QUOTE(viewModule) <<
-			       ". Using " << QUOTE(cachedViewOp));
+			       QUOTE(cachedGeneratorOp) << " and " <<
+			       QUOTE(s) << "in module " << QUOTE(generatorModule) <<
+			       ". Using " << QUOTE(cachedGeneratorOp));
 		  break;
 		}
 	    }
 	}
     }
-  if (cachedViewOp == nullptr)
+  if (cachedGeneratorOp == nullptr)
     {
       IssueWarning("didn't find suitable view generator operator in module " <<
-		   QUOTE(viewModule) << ".");
+		   QUOTE(generatorModule) << ".");
       return nullptr;
     }
   Verbose("Attempting to generate view " << Token::name(viewName));
@@ -173,18 +173,18 @@ ViewResultSymbol::generateView(int viewName,
   //
   Vector<DagNode*> args(1);
   args[0] = metaOptions;
-  DagNode* startDag = cachedViewOp->makeDagNode(args);
+  DagNode* startDag = cachedGeneratorOp->makeDagNode(args);
   DebugAdvisory("Start dag = " << startDag);
   //
   //	Reduce it using user's code.
   //
-  viewModule->finishFlattening();
+  generatorModule->finishFlattening();
   UserLevelRewritingContext context(startDag);
-  viewModule->protect();  // in case it gets replaced in debugger
+  generatorModule->protect();  // in case it gets replaced in debugger
   context.reduce();
   if (UserLevelRewritingContext::aborted())
     {
-      (void) viewModule->unprotect();
+      (void) generatorModule->unprotect();
       return nullptr;
     }
   DagNode* result = context.root();
@@ -214,29 +214,28 @@ ViewResultSymbol::generateView(int viewName,
 	{
 	  Verbose("Generated view " << Token::name(viewName));
 	  View* resultView =
-	    metaLevel->downView(metaView,
-				owner);  // FIXME: need the option of renaming view!
+	    metaLevel->downView(metaView, owner, viewName);
 	  if (resultView != nullptr)
 	    {
 	      //
 	      //	Our result view becomes a user of the view generator module.
 	      //
-	      resultView->addUser(viewModule);
+	      resultView->addUser(generatorModule);
 	      //
 	      //	We pass it all the information used to construct it, so it
 	      //	can remove itself as a dependency if it becomes stale and
 	      //	calls deepSelfDestruct(). This also enables us to reconstruct
 	      //	the view expression that built it.
 	      //
-	      // resultView->setGenerationInfo(viewModule, optionVec);  // FIXME
+	      resultView->setGenerationInfo(generatorModule, optionVec);
 	    }
-	  (void) viewModule->unprotect();
+	  (void) generatorModule->unprotect();
 	  return resultView;
 	}
       else
 	Verbose("Failed to make generate view " << Token::name(viewName));
     }
-  (void) viewModule->unprotect();
+  (void) generatorModule->unprotect();
   return nullptr;
 }
 
