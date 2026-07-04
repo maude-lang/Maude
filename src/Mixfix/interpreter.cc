@@ -687,7 +687,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 				 " is of theory " << QUOTE(enclosingObjectParameterTheory) <<
 				 " whereas theory " <<  QUOTE(requiredParameterTheory) <<
 				 " is required.");
-		    return nullptr;
+		    break;
 		  }
 		return getParameter(code);
 	      }
@@ -703,7 +703,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	    if (!(v->evaluate()))
 	      {
 		IssueWarning(LineNumber(name.lineNumber()) << ": unusable view " << QUOTE(v) << '.');
-		return nullptr;
+		break;
 	      }
 	    ImportModule* fromTheory = v->getFromTheory();
 	    if (fromTheory != requiredParameterTheory)
@@ -712,13 +712,13 @@ Interpreter::handleArgument(const ViewExpression* expr,
 			     " is from theory " << QUOTE(fromTheory) <<
 			     " whereas theory " << QUOTE(requiredParameterTheory) <<
 			     " is required.");
-		return nullptr;
+		break;
 	      }
 	    return v;
 	  }
 	IssueWarning(LineNumber(name.lineNumber()) << ": could not find a parameter or view " <<
 		     QUOTE(name) << ".");
-	return nullptr;
+	break;
       }
     case ViewExpression::INSTANTIATION:
       {
@@ -734,7 +734,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 					   requiredParameterTheory,
 					   NONE);
 	if (baseArg == nullptr)
-	  return nullptr;
+	  break;
 	View* baseView = safeCast(View*, baseArg);
 	//
 	//	Number of parameters in base view must match number of arguments passed
@@ -748,7 +748,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	    IssueWarning(nrArguments << (nrArguments == 1 ? " argument" : " arguments") <<
 			 " passed in view instantiation " << QUOTE(expr) << " whereas " <<
 			 nrParameters << " expected.");
-	    return nullptr;
+	    break;
 	  }
 	//
 	//	We now construct an argument list of Parameters and Views.
@@ -793,7 +793,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 			 " uses both a theory-view and a parameter from enclosing " <<
 			 enclosingObject->getObjectType() << " " <<
 			 QUOTE(enclosingObject->getObjectName()) << '.');
-	    return nullptr;
+	    break;
 	  }
 	if (hasTheoryView && hasViewWithBoundParameters)
 	  {
@@ -805,7 +805,45 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	return makeViewInstantiation(baseView, arguments);
       }
     case ViewExpression::GENERATION:
-      break;
+      {
+	Token name = expr->getName();
+	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
+	  {
+	    Assert(!(fm->hasBoundParameters()),
+		   "Generator module " << fm << " has bound parameters.");
+	    if (fm->hasFreeParameters())
+	      {
+		IssueWarning("Generator module " << fm << " has free parameters.");
+		break;
+	      }
+	    if (View* v = generateView(fm, expr->getOptions(), this))
+	      {
+		//
+		//	Make sure the generated view is good.
+		//
+		if (!(v->evaluate()))
+		  {
+		    IssueWarning(LineNumber(name.lineNumber()) << ": unusable view " <<
+				 QUOTE(v) << '.');
+		    break;
+		  }
+		//
+		//	Make sure it maps from the required theory.
+		//
+		ImportModule* fromTheory = v->getFromTheory();
+		if (fromTheory != requiredParameterTheory)
+		  {
+		    IssueWarning(LineNumber(name.lineNumber()) << ": view " << QUOTE(name) <<
+				 " is from theory " << QUOTE(fromTheory) <<
+				 " whereas theory " << QUOTE(requiredParameterTheory) <<
+				 " is required.");
+		    break;
+		  }
+		return v;
+	      }
+	  }
+	break;
+      }
     }
   return nullptr;
 }

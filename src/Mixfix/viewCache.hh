@@ -38,7 +38,7 @@ public:
 
   View* makeViewInstantiation(View* view, const Vector<Argument*>& arguments);
   View* generateView(ImportModule* generator,
-		     const Vector<Token>& options,
+		     const Vector<int>& options,
 		     Interpreter* owner);
 
   int destructUnusedViews();

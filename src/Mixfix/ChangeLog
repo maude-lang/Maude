@@ -1,7 +1,18 @@
 2026-07-03  Saruman the White  <eker@eker10>
 
+	* view.cc (View::evaluate): hack to allow view names with ()s
+
+	* interpreter.cc (Interpreter::handleArgument): evaluate()
+	generated view and check it
+
+	* viewCache.cc (ViewCache::generateView): take options as const
+	Vector<int>&
+
+	* viewCache.hh (class ViewCache): updated decl for generateView()
+
 	* interpreter.cc (Interpreter::handleArgument): refactored; use
 	getType()
+	(Interpreter::handleArgument): hanlde the generation case
 
 	* viewCache.hh (class ViewCache): added decl for generateView()
 

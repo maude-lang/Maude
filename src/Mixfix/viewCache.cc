@@ -165,7 +165,7 @@ ViewCache::makeViewInstantiation(View* view, const Vector<Argument*>& arguments)
 
 View*
 ViewCache::generateView(ImportModule* generator,
-			const Vector<Token>& options,
+			const Vector<int>& options,
 			Interpreter* owner)
 {
   ViewResultSymbol* vs = generator->getViewResultSymbol();
@@ -179,17 +179,15 @@ ViewCache::generateView(ImportModule* generator,
   //	Make name.
   //
   Rope name;
-  Vector<int> optionVec;
   
   name += Token::name(generator->id());
   name += "(";
   const char* sep = "";
-  for (const Token& t : options)
+  for (int v : options)
     {
       name += sep;
-      name += t.name();
+      name += Token::name(v);
       sep = " ";
-      optionVec.push_back(t.code());
     }
   name += ")";
   //
@@ -202,7 +200,7 @@ ViewCache::generateView(ImportModule* generator,
       DebugAdvisory("using existing copy of view " << name);
       return c->second;
     }
-  View* generated = vs->generateView(nameCode, optionVec, owner);
+  View* generated = vs->generateView(nameCode, options, owner);
   if (generated != nullptr)
     {
       viewMap[nameCode] = generated;

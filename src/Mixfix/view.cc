@@ -795,13 +795,13 @@ View::evaluate()
   switch (status)
     {
     case INITIAL:
-      {
+      {/*
 	if (!Token::isValidViewName(id()))
 	  {
 	    IssueWarning(*this << ": " << QUOTE(this) << " is not a valid view name.");
 	    status = BAD;
 	    return false;
-	  }
+	    }FIXME*/
 	//
 	//	Evaluating a view with OO mapping can add sort and op mappings to the
 	//	base renaming. We need to keep track of what was original in case we
