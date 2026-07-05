@@ -47,10 +47,10 @@ MetaLevel::downView(DagNode* metaView, Interpreter* owner, int trueName)
 		      //
 		      if (trueName == NONE)
 			trueName = cleanName;
-		      DagNode* metaOpMappings = f->getArgument(4);
-		      DagNode* metaStratMappings = f->getArgument(5);
 		      Token name;
 		      name.tokenize(trueName, FileTable::META_LEVEL_CREATED);
+		      DagNode* metaOpMappings = f->getArgument(4);
+		      DagNode* metaStratMappings = f->getArgument(5);
 		      MetaView* view =
 			new MetaView(name, cleanName, metaOpMappings, metaStratMappings, this, owner);
 		      if (downParameterDeclList(metaParameterDeclList, view))
@@ -62,6 +62,7 @@ MetaLevel::downView(DagNode* metaView, Interpreter* owner, int trueName)
 			      downStratMappingSet(metaStratMappings, view))
 			    return view;
 			}
+		      toModule->deepSelfDestruct();
 		      delete view;
 		    }
 		  fromTheory->deepSelfDestruct();
@@ -69,7 +70,7 @@ MetaLevel::downView(DagNode* metaView, Interpreter* owner, int trueName)
 	    }
 	}
     }
-  return 0;
+  return nullptr;
 }
 
 bool

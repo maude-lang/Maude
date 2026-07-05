@@ -1,3 +1,9 @@
+2026-07-05  Saruman the White  <eker@eker10>
+
+	* metaDownView.cc (MetaLevel::downView): fix memory leak where we
+	were not destructing toModule if we failed to insert it into the
+	view
+
 2026-07-04  Saruman the White  <eker@eker10>
 
 	* metaDownView.cc (MetaLevel::downView): handle cleanName

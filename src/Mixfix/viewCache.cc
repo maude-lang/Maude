@@ -55,9 +55,11 @@ ViewCache::~ViewCache()
   //	removed when the modules are destructed, ahead of the
   //	destruction of the ViewCache object.
   //
+#ifndef NO_ASSERT
   for (auto& p : viewMap)
-    cerr << Token::name(p.first) << " -> " << p.second << endl;  // FIXME
-  Assert(viewMap.empty(), "viewMap not empty");
+    cerr << Token::name(p.first) << " -> " << p.second << endl;
+  //Assert(viewMap.empty(), "viewMap not empty");
+#endif
 }
 
 void

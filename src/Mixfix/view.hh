@@ -250,12 +250,12 @@ private:
   ImportModule* generatorModule = nullptr;
   Vector<int> generationOptions;
   
-  Status status;
+  Status status = INITIAL;
   Vector<ParameterDecl> parameters;
-  ModuleExpression* fromExpr;
-  ModuleExpression* toExpr;
-  ImportModule* fromTheory;
-  ImportModule* toModule;
+  ModuleExpression* fromExpr = nullptr;
+  ModuleExpression* toExpr = nullptr;
+  ImportModule* fromTheory = nullptr;
+  ImportModule* toModule = nullptr;
   //
   //	We store op->term mappings as term pairs so we can print out
   //	the view.

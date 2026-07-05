@@ -219,7 +219,7 @@ ViewResultSymbol::generateView(int viewName,
 	      //
 	      //	Our result view becomes a user of the view generator module.
 	      //
-	      resultView->addUser(generatorModule);
+	      generatorModule->addUser(resultView);
 	      //
 	      //	We pass it all the information used to construct it, so it
 	      //	can remove itself as a dependency if it becomes stale and

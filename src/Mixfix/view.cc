@@ -72,14 +72,9 @@ View::View(Token viewName, Interpreter* owner)
   : Argument(viewName.code()),
     LineNumber(viewName.lineNumber()),
     owner(owner),
-    baseView(0),  // marks this as an original
+    baseView(nullptr),  // marks this as an original
     cleanName(viewName.code())
 {
-  fromTheory = 0;
-  toModule = 0;
-  fromExpr = 0;
-  toExpr = 0;
-  status = INITIAL;
 }
 
 //
@@ -89,14 +84,9 @@ View::View(Token viewName, int cleanName, Interpreter* owner)
   : Argument(viewName.code()),
     LineNumber(viewName.lineNumber()),
     owner(owner),
-    baseView(0),  // marks this as an original
+    baseView(nullptr),  // marks this as an original
     cleanName(cleanName)
 {
-  fromTheory = 0;
-  toModule = 0;
-  fromExpr = 0;
-  toExpr = 0;
-  status = INITIAL;
 }
 
 //
@@ -114,11 +104,6 @@ View::View(int viewName,
     savedArguments(arguments),
     cleanName(cleanName)
 {
-  fromTheory = 0;
-  toModule = 0;
-  fromExpr = 0;
-  toExpr = 0;
-  status = INITIAL;
   //
   //	We're a user of our baseView, and need to self-destruct if
   //	it goes away.
@@ -146,10 +131,10 @@ View::~View()
   clearOpTermMap();
   clearStratExprMap();
   //
-  //	Remove ourselves as users of our baseView, fromTheory and toModule and
+  //	Remove ourselves as users of our baseView, fromTheory, toModule and generatorModule and
   //	deepSelfDestruct() from/to expressions.
   //
-  if (baseView != 0)
+  if (baseView != nullptr)
     {
       //
       //	We're an instantiation of a view; need to deal with our
@@ -162,26 +147,28 @@ View::~View()
 	}
       baseView->removeUser(this);
     }
-  if (fromTheory != 0)
+  if (fromTheory != nullptr)
     fromTheory->removeUser(this);
-  if (toModule != 0)
+  if (toModule != nullptr)
     toModule->removeUser(this);
-  if (fromExpr != 0)
-    fromExpr->deepSelfDestruct();
-  if (toExpr != 0)
-    toExpr->deepSelfDestruct();
   if (generatorModule != nullptr)
     generatorModule->removeUser(this);
-
+  //
+  //	deepSelfDestruct() from/to expressions.
+  //
+  if (fromExpr != nullptr)
+    fromExpr->deepSelfDestruct();
+  if (toExpr != nullptr)
+    toExpr->deepSelfDestruct();
   //
   //	Remove ourselves as users of our parameter theories and
   //	deepSelfDestruct() parameter theory expressions.
   //
   for (ParameterDecl& pd : parameters)
     {
-      if (pd.theory != 0)
+      if (pd.theory != nullptr)
 	pd.theory->removeUser(this);
-      if (pd.expr != 0)
+      if (pd.expr != nullptr)
 	pd.expr->deepSelfDestruct();
     }
   //
@@ -286,13 +273,23 @@ View::regretToInform(Entity* doomedEntity)
   //
   //	Something we depend on disappeared.
   //
-  if (baseView != 0)
+  if (baseView != nullptr)
     {
       //
       //	We're an instantiation that is generated from a module expression
       //	so we just self-destruct.
       //
       DebugAdvisory("view instatiation " << this << " self-destructs");
+      delete this;
+      return;
+    }
+  if (doomedEntity == generatorModule)
+    {
+      //
+      //	We're a generated view and our generator just disappeared
+      //	so we just self-destruct.
+      //
+      DebugAdvisory("generated view " << this << " self-destructs");
       delete this;
       return;
     }

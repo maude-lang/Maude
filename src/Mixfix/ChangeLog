@@ -1,3 +1,23 @@
+2026-07-05  Saruman the White  <eker@eker10>
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): fix bug
+	where we were making the generatorModule a user of resultView
+	rather than vice versa
+
+	* view.cc (View::View): don't init status, fromExpr, toExpr,
+	fromTheory, toModule in any ctor
+
+	* view.hh (class View): initialize status, fromExpr, toExpr,
+	fromTheory, toModule here
+
+	* view.cc (View::~View): reorganized
+
+	* moduleCache.cc (ModuleCache::~ModuleCache): dump remaining
+	entries in NO_ASSERT case code #ifdef'd
+
+	* viewCache.cc (ViewCache::~ViewCache): dump remaining entries in
+	NO_ASSERT case
+
 2026-07-04  Saruman the White  <eker@eker10>
 
 	* view.cc (View::evaluate): check cleanName rather than true name

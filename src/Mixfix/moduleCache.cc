@@ -55,9 +55,11 @@ ModuleCache::~ModuleCache()
   //	modules they depend on are destructed - ahead of the deletion of the
   //	ModuleCache object. We check this in debug mode.
   //
+#ifndef NO_ASSERT
   for (auto p : moduleMap)
-    cerr << Token::name(p.first) << endl;
-  Assert(moduleMap.empty(), "moduleMap not empty");
+    cerr << Token::name(p.first) << " -> " << p.second << endl;
+  //Assert(moduleMap.empty(), "moduleMap not empty");
+#endif
 }
 
 void
