@@ -1,3 +1,12 @@
+2026-07-04  Saruman the White  <eker@eker10>
+
+	* metaDownView.cc (MetaLevel::downView): handle cleanName
+
+	* metaView.cc (MetaView::MetaView): handle cleanName argument
+
+	* metaView.hh (class MetaView): added int cleanName argument to
+	ctor
+
 2026-07-03  Saruman the White  <eker@eker10>
 
 	* metaLevel.hh (class MetaLevel): updated decl for downView()

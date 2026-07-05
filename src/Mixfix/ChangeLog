@@ -1,3 +1,12 @@
+2026-07-04  Saruman the White  <eker@eker10>
+
+	* view.cc (View::evaluate): check cleanName rather than true name
+	for validity
+
+	* view.hh (class View): added decl for new ctor
+
+	* view.cc (View::View): added new ctor for metaview/generated view
+
 2026-07-03  Saruman the White  <eker@eker10>
 
 	* view.cc (View::evaluate): hack to allow view names with ()s

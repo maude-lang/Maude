@@ -21,7 +21,7 @@
 */
 
 View*
-MetaLevel::downView(DagNode* metaView, Interpreter* owner, int replacementName)
+MetaLevel::downView(DagNode* metaView, Interpreter* owner, int trueName)
 {
   if (metaView->symbol() == viewSymbol)
     {
@@ -30,11 +30,11 @@ MetaLevel::downView(DagNode* metaView, Interpreter* owner, int replacementName)
       //	SortMappingSet OpMappingSet StratMappingSet -> View .
       //
       FreeDagNode* f = safeCast(FreeDagNode*, metaView);
-      int id;
+      int cleanName;
       DagNode* metaParameterDeclList;
-      if (downHeader(f->getArgument(0), id, metaParameterDeclList))
+      if (downHeader(f->getArgument(0), cleanName, metaParameterDeclList))
 	{
-	  if (Token::isValidViewName(id))
+	  if (Token::isValidViewName(cleanName))
 	    {
 	      if (ModuleExpression* fromTheory = downModuleExpression(f->getArgument(1)))
 		{
@@ -45,14 +45,14 @@ MetaLevel::downView(DagNode* metaView, Interpreter* owner, int replacementName)
 		      //	expression evaluation isn't a valid identifier,
 		      //	let alone a valid view name.
 		      //
-		      if (replacementName != NONE)
-			id = replacementName;
+		      if (trueName == NONE)
+			trueName = cleanName;
 		      DagNode* metaOpMappings = f->getArgument(4);
 		      DagNode* metaStratMappings = f->getArgument(5);
 		      Token name;
-		      name.tokenize(id, FileTable::META_LEVEL_CREATED);
+		      name.tokenize(trueName, FileTable::META_LEVEL_CREATED);
 		      MetaView* view =
-			new MetaView(name, metaOpMappings, metaStratMappings, this, owner);
+			new MetaView(name, cleanName, metaOpMappings, metaStratMappings, this, owner);
 		      if (downParameterDeclList(metaParameterDeclList, view))
 			{
 			  view->addFrom(fromTheory);

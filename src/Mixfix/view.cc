@@ -83,6 +83,23 @@ View::View(Token viewName, Interpreter* owner)
 }
 
 //
+//	Version for metaview/generated view.
+//
+View::View(Token viewName, int cleanName, Interpreter* owner)
+  : Argument(viewName.code()),
+    LineNumber(viewName.lineNumber()),
+    owner(owner),
+    baseView(0),  // marks this as an original
+    cleanName(cleanName)
+{
+  fromTheory = 0;
+  toModule = 0;
+  fromExpr = 0;
+  toExpr = 0;
+  status = INITIAL;
+}
+
+//
 //	Version for instantiation of a view.
 //
 View::View(int viewName,
@@ -795,13 +812,13 @@ View::evaluate()
   switch (status)
     {
     case INITIAL:
-      {/*
-	if (!Token::isValidViewName(id()))
+      {
+	if (!Token::isValidViewName(cleanName))
 	  {
 	    IssueWarning(*this << ": " << QUOTE(this) << " is not a valid view name.");
 	    status = BAD;
 	    return false;
-	    }FIXME*/
+	  }
 	//
 	//	Evaluating a view with OO mapping can add sort and op mappings to the
 	//	base renaming. We need to keep track of what was original in case we

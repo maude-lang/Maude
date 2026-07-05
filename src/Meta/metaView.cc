@@ -50,8 +50,13 @@
 #include "metaLevel.hh"
 #include "metaView.hh"
 
-MetaView::MetaView(Token viewName, DagNode* opMappings, DagNode* stratMappings, MetaLevel* metaLevel, Interpreter* owner)
-  : View(viewName, owner),
+MetaView::MetaView(Token viewName,
+		   int cleanName,
+		   DagNode* opMappings,
+		   DagNode* stratMappings,
+		   MetaLevel* metaLevel,
+		   Interpreter* owner)
+  : View(viewName, cleanName, owner),
     opMappings(opMappings),
     stratMappings(stratMappings),
     metaLevel(metaLevel)

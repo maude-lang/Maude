@@ -33,7 +33,13 @@ class MetaView : public View
   NO_COPYING(MetaView);
 
 public:
-  MetaView(Token name, DagNode* opMappings, DagNode* stratMappings, MetaLevel* metaLevel, Interpreter* owner);
+  MetaView(Token name,
+	   int cleanName,
+	   DagNode* opMappings,
+	   DagNode* stratMappings,
+	   MetaLevel* metaLevel,
+	   Interpreter* owner);
+
   ~MetaView();
 
 private:

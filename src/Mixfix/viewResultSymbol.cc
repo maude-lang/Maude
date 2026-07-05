@@ -213,8 +213,7 @@ ViewResultSymbol::generateView(int viewName,
       if (metaView->symbol() != viewFailureSymbol)
 	{
 	  Verbose("Generated view " << Token::name(viewName));
-	  View* resultView =
-	    metaLevel->downView(metaView, owner, viewName);
+	  View* resultView = metaLevel->downView(metaView, owner, viewName);
 	  if (resultView != nullptr)
 	    {
 	      //

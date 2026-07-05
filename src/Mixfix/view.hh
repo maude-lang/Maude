@@ -61,6 +61,7 @@ public:
   typedef multimap<int, StratExprInfo> StratExprMap;
 
   View(Token viewName, Interpreter* owner);
+  View(Token viewName, int cleanName, Interpreter* owner);
   View(int viewName,
        int cleanName,
        View* baseView,
