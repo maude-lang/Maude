@@ -1,5 +1,11 @@
 2026-07-05  Saruman the White  <eker@eker10>
 
+	* metaUpModule.cc (MetaLevel::upViewExpression): handle generated
+	view case
+	(MetaLevel::upArgument): handle generated view case
+
+	* metaLevelSignature.cc: added generationSymbol
+
 	* metaDownView.cc (MetaLevel::downView): fix memory leak where we
 	were not destructing toModule if we failed to insert it into the
 	view

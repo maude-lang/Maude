@@ -231,7 +231,7 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
     default:
       CantHappen("bad module expression");
     }
-  return 0;
+  return nullptr;
 }
 
 DagNode*
@@ -265,15 +265,30 @@ MetaLevel::upArguments(const Vector<ViewExpression*>& arguments, PointerMap& qid
 DagNode*
 MetaLevel::upArgument(const ViewExpression* argument, PointerMap& qidMap)
 {
-  if (argument->isInstantiation())
+  switch (argument->getType())
     {
-      Vector<DagNode*> args(2);
-      args[0] = upArgument(argument->getView(), qidMap);
-      args[1] = upArguments(argument->getArguments(), qidMap);
-      return instantiationSymbol->makeDagNode(args);
+    case ViewExpression::SIMPLE_NAME:  // view or parameter name
+      {
+	return upQid(argument->getName().code(), qidMap);
+      }
+    case ViewExpression::INSTANTIATION:
+      {
+	Vector<DagNode*> args(2);
+	args[0] = upArgument(argument->getView(), qidMap);
+	args[1] = upArguments(argument->getArguments(), qidMap);
+	return instantiationSymbol->makeDagNode(args);
     }
-  DagNode* name = upQid(argument->getName().code(), qidMap);  // view or parameter name
-  return name;
+    case ViewExpression::GENERATION:
+      {
+	Vector<DagNode*> args(2);
+	args[0] = upQid(argument->getName().code(), qidMap);
+	args[1] = upQidList(argument->getOptions(), qidMap);
+	return generationSymbol->makeDagNode(args);
+      }
+    default:
+      CantHappen("bad module expression");
+    }
+  return nullptr;
 }
 
 DagNode*
@@ -1355,10 +1370,23 @@ MetaLevel::upViewExpression(const View* view, PointerMap& qidMap)
 {
   if (const View* baseView = view->getBaseView())
     {
+      //
+      //	View instantiation.
+      //
       Vector<DagNode*> args(2);
       args[0] = upViewExpression(baseView, qidMap);
       args[1] = upArguments(view->getArguments(), qidMap);
       return instantiationSymbol->makeDagNode(args);
+    }
+  else if (const ImportModule* genModule = view->getGeneratorModule())
+    {
+      //
+      //	Generated view.
+      //
+      Vector<DagNode*> args(2);
+      args[0] = upQid(genModule->id(), qidMap);
+      args[1] = upQidList(view->getGenerationOptions(), qidMap);
+      return generationSymbol->makeDagNode(args);
     }
   return upQid(view->id(), qidMap);
 }

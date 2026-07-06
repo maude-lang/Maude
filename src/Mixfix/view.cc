@@ -128,6 +128,7 @@ View::View(int viewName,
 
 View::~View()
 {
+  //DebugAlways(this << " deleted");
   clearOpTermMap();
   clearStratExprMap();
   //
@@ -270,6 +271,7 @@ View::clearStratExprMap()
 void
 View::regretToInform(Entity* doomedEntity)
 {
+  //DebugAlways(this << " informed that " << doomedEntity << " is going away");
   //
   //	Something we depend on disappeared.
   //

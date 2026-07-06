@@ -158,6 +158,11 @@
      MACRO(instantiationSymbol, FreeSymbol, 0, 2)
      MACRO(transformationSymbol, FreeSymbol, 0, 3)
      //
+     //	View expression constructor.
+     //	(Instantiation is shared with module expressions.)
+     //
+     MACRO(generationSymbol, FreeSymbol, 0, 2)
+     //
      //	Hook constructors.
      //
      MACRO(termHookSymbol, FreeSymbol, 0, 2)

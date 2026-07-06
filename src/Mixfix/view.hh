@@ -74,6 +74,9 @@ public:
   void addTo(ModuleExpression* expr);
   void finishView();
   void setGenerationInfo(ImportModule* genModule, const Vector<int>& genOptions);
+  ImportModule* getGeneratorModule() const;
+  const Vector<int>& getGenerationOptions() const;
+
   bool evaluate();
   bool isComplete();
   int getNrParameters() const;
@@ -406,6 +409,18 @@ View::setGenerationInfo(ImportModule* genModule, const Vector<int>& genOptions)
 {
   generatorModule = genModule;
   generationOptions = genOptions;
+}
+
+inline ImportModule*
+View::getGeneratorModule() const
+{
+  return generatorModule;
+}
+
+inline const Vector<int>&
+View::getGenerationOptions() const
+{
+  return generationOptions;
 }
 
 #endif

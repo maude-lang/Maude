@@ -58,7 +58,7 @@ ModuleCache::~ModuleCache()
 #ifndef NO_ASSERT
   for (auto p : moduleMap)
     cerr << Token::name(p.first) << " -> " << p.second << endl;
-  //Assert(moduleMap.empty(), "moduleMap not empty");
+  Assert(moduleMap.empty(), "moduleMap not empty");
 #endif
 }
 

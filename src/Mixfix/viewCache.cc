@@ -58,7 +58,7 @@ ViewCache::~ViewCache()
 #ifndef NO_ASSERT
   for (auto& p : viewMap)
     cerr << Token::name(p.first) << " -> " << p.second << endl;
-  //Assert(viewMap.empty(), "viewMap not empty");
+  Assert(viewMap.empty(), "viewMap not empty");
 #endif
 }
 

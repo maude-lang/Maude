@@ -1,5 +1,10 @@
 2026-07-05  Saruman the White  <eker@eker10>
 
+	* viewExpression.hh (ViewExpression::isInstantiation): deleted
+
+	* view.hh (View::getGeneratorModule): added
+	(View::getGenerationOptions): added
+
 	* viewResultSymbol.cc (ViewResultSymbol::generateView): fix bug
 	where we were making the generatorModule a user of resultView
 	rather than vice versa

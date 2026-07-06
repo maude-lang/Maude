@@ -57,8 +57,6 @@ public:
   ViewExpression(Token name, const Vector<int>& options);
 
   Type getType() const;
-  
-  bool isInstantiation() const;
   //
   //	For the simple view and generator cases only.
   //
@@ -101,12 +99,6 @@ ViewExpression::getType() const
 }
 
 ostream& operator<<(ostream& s, const ViewExpression* expr);
-
-inline bool
-ViewExpression::isInstantiation() const
-{
-  return !(arguments.isNull());
-}
 
 inline Token
 ViewExpression::getName() const

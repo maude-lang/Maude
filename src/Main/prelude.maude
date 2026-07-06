@@ -1872,9 +1872,10 @@ fmod META-MODULE is
   subsort Sort < Expression < ViewExpression ModuleExpression .
   op _{_} : Expression NeParameterList -> Expression [ctor prec 37] .
   op _{_} : ViewExpression NeParameterList -> ViewExpression [ctor ditto] .
+  op _(_) : Qid QidList -> ViewExpression [ctor prec 35] .
   op _{_} : ModuleExpression NeParameterList -> ModuleExpression [ctor ditto] .
   op _+_ : ModuleExpression ModuleExpression -> ModuleExpression [ctor assoc comm] .
-  op _[_](_) : Qid ModuleExpressionList QidList -> ModuleExpression [ctor] .
+  op _[_](_) : Qid ModuleExpressionList QidList -> ModuleExpression [ctor prec 35] .
   op _*(_) : ModuleExpression RenamingSet -> ModuleExpression
     [ctor prec 39 format (d d s n++i n--i d)] .
 
@@ -2578,6 +2579,7 @@ fmod META-LEVEL is
         op-hook renamingSymbol		(_*(_) : ModuleExpression RenamingSet ~> ModuleExpression)
         op-hook instantiationSymbol	(_{_} : Expression ParameterList ~> Expression)
 	op-hook transformationSymbol	(_[_](_) : Qid ModuleExpressionList QidList ~> ModuleExpression)
+	op-hook generationSymbol	(_(_) : Qid QidList ~> ViewExpression)
 
         op-hook protectingSymbol	(protecting_. : ModuleExpression ~> Import)
         op-hook extendingSymbol		(extending_. : ModuleExpression ~> Import)

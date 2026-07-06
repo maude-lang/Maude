@@ -1,3 +1,9 @@
+2026-07-05  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added _(_) : Qid QidList -> ViewExpression;
+	changed prec of _[_](_) : Qid ModuleExpressionList QidList ->
+	ModuleExpression to 35 so it binds tigher than instantiation
+
 2026-07-03  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added special for view result symbol
