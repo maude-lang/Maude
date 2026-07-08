@@ -1300,7 +1300,7 @@ MetaLevel::downTerm(DagNode* metaTerm, MixfixModule* m)
 		}
 	      IssueAdvisory("could not find an operator " << QUOTE(Token::name(id)) <<
 			    " with appropriate domain in meta-module " << QUOTE(m) <<
-			    " when trying to interprete metaterm " << QUOTE(metaTerm) << '.');
+			    " when trying to interpret metaterm " << QUOTE(metaTerm) << '.');
 	  // cerr << metaTerm << '\n';
 	  // m->showAll(cerr);
 	      for (int i = 0; i < nrArgs; i++)

@@ -532,5 +532,19 @@ MetaLevel::downViewExpression(DagNode* metaViewExpr)
 	  instantiated->deepSelfDestruct();
 	}
     }
-  return 0;
+  else if (ma == generationSymbol)
+    {
+      //
+      //	View generation.
+      //
+      FreeDagNode* f = safeCastNonNull<FreeDagNode*>(metaViewExpr);
+      Token moduleName;
+      if (downToken(f->getArgument(0), moduleName))
+	{
+	  Vector<int> options;
+	  if (downQidList(f->getArgument(1), options))
+	    return new ViewExpression(moduleName, options);
+	}
+    }
+  return nullptr;
 }

@@ -1,3 +1,15 @@
+2026-07-07  Saruman the White  <eker@eker10>
+
+	* metaDownStrats.cc (MetaLevel::downStratCall): interprete ->
+	interpret
+
+	* metaDown.cc (MetaLevel::downTerm): interprete -> interpret
+
+2026-07-06  Saruman the White  <eker@eker10>
+
+	* metaDownView.cc (MetaLevel::downViewExpression): handle
+	generated view case
+
 2026-07-05  Saruman the White  <eker@eker10>
 
 	* metaUpModule.cc (MetaLevel::upViewExpression): handle generated

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -475,7 +475,7 @@ MetaLevel::downStratCall(DagNode* metaStratCall, MixfixModule* m, RewriteStrateg
 
       IssueAdvisory("could not find an strategy " << QUOTE(Token::name(label)) <<
 		    " with appropriate domain in meta-module " << QUOTE(m) <<
-		    " when trying to interprete meta strategy call " <<
+		    " when trying to interpret meta strategy call " <<
 		    QUOTE(metaStratCall) << '.');
 
       for (Term* t : args)
