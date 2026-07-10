@@ -52,9 +52,11 @@ public:
   ViewExpression(ViewExpression* view, const Vector<ViewExpression*>& arguments);
   //
   //	OR a call to a user-defined view generator with a
-  //	a vector of options:
+  //	a vector of input modules and a vector of options:
   //
-  ViewExpression(Token name, const Vector<int>& options);
+  ViewExpression(Token name,
+		 const Vector<ModuleExpression*>& inputModules,
+		 const Vector<int>& options);
 
   Type getType() const;
   //
@@ -69,8 +71,9 @@ public:
   //
   //	For the generator case only.
   //
+  const Vector<ModuleExpression*>& getInputModules() const;
   const Vector<int>& getOptions() const;
-  
+
   void deepSelfDestruct();
   void latexPrint(ostream& s, const Module* enclosingModule = nullptr) const;
 
@@ -89,6 +92,7 @@ private:
   //
   //	For the generator case only.
   //
+  Vector<ModuleExpression*> inputModules;
   Vector<int> options;
 };
 
@@ -119,6 +123,13 @@ ViewExpression::getArguments() const
 {
   Assert(type == INSTANTIATION, "named view/parameter not instantiation " << this);
   return arguments;
+}
+
+inline const Vector<ModuleExpression*>&
+ViewExpression::getInputModules() const
+{
+  Assert(type == GENERATION, "not a generation");
+  return inputModules;
 }
 
 inline const Vector<int>&

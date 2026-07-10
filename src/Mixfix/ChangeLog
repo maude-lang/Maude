@@ -1,3 +1,19 @@
+2026-07-09  Saruman the White  <eker@eker10>
+
+	* viewExpression.cc (ViewExpression::ViewExpression): updated ctor
+	for view generator case
+	(<<): handle new syntax for view generators
+	(ViewExpression::latexPrint): handle new syntax for view generators
+
+	* modules.yy (viewExpr): use new ViewExpression view generator
+	ctor
+
+	* viewExpression.hh (ViewExpression::getInputModules): added
+	(class ViewExpression): added data member inputModules; updated
+	decl for view generator ctor
+
+	* modules.yy (viewExpr): use transOptions
+
 2026-07-05  Saruman the White  <eker@eker10>
 
 	* viewExpression.hh (ViewExpression::isInstantiation): deleted

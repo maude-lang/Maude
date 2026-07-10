@@ -36,8 +36,9 @@
 //	front end class definitions
 #include "token.hh"
 #include "renaming.hh"
-#include "viewExpression.hh"
 #include "importModule.hh"
+#include "moduleExpression.hh"
+#include "viewExpression.hh"
 
 ViewExpression::ViewExpression(Token name)
   : type(SIMPLE_NAME),
@@ -52,9 +53,12 @@ ViewExpression::ViewExpression(ViewExpression* view, const Vector<ViewExpression
 {
 }
 
-ViewExpression::ViewExpression(Token name, const Vector<int>& options)
+ViewExpression::ViewExpression(Token name,
+			       const Vector<ModuleExpression*>& inputModules,
+			       const Vector<int>& options)
   : type(GENERATION),
     name(name),
+    inputModules(inputModules),
     options(options)
 {
 }
@@ -99,14 +103,39 @@ operator<<(ostream& s, const ViewExpression* expr)
       }
     case ViewExpression::GENERATION:
       {
-	s << expr->getName() << '(';
-	const char* sep = "";
-	for (int v : expr->getOptions())
+	const Vector<ModuleExpression*>& inputModules = expr->getInputModules();
+	const Vector<int>& options = expr->getOptions();
+	//
+	//	Generator specification.
+	//
+	s << expr->getName();
+	//
+	//	Input modules.
+	//
+	if (!inputModules.empty())
 	  {
-	    s << sep << Token::name(v);
-	    sep = " ";
+	    const char* sep = "[";
+	    for (ModuleExpression* m :  inputModules)
+	      {
+		s << sep << m;
+		sep = ", ";
+	      }
+	    s << ']';
 	  }
-	s << ')';
+	//
+	//	Options.
+	//
+	if (!options.empty() || inputModules.empty())
+	  {
+	    s << '(';
+	    const char* sep = "";
+	    for (int v : options)
+	      {
+		s << sep << Token::name(v);
+		sep = " ";
+	      }
+	    s << ')';
+	  }
 	break;
       }
     }
@@ -149,15 +178,38 @@ ViewExpression::latexPrint(ostream& s, const Module* enclosingModule) const
       }
     case ViewExpression::GENERATION:
       {
+	//
+	//	Transformer specification.
+	//
 	s << "\\maudeModule{" << Token::latexName(name.code()) << "}";
-	s << "\\maudeLeftParen";
-	const char* sep = "";
-	for (int v : options)
+	//
+	//	Input modules.
+	//
+	if (!inputModules.empty())
 	  {
-	    s << sep << "\\maudeQid{" << Token::latexName(v) << "}";
-	    sep = "\\maudeSpace";
+	    const char* sep = "\\maudeLeftBracket ";
+	    for (ModuleExpression* m : inputModules)
+	      {
+		s << sep;
+		m->latexPrint(s, enclosingModule);
+		sep = "\\maudeComma ";
+	      }
+	    s << "\\maudeRightBracket";
 	  }
-	s << "\\maudeRightParen";
+	//
+	//	Options.
+	//
+	if (!options.empty() || inputModules.empty())
+	  {
+	    s << "\\maudeLeftParen";
+	    const char* sep = "";
+	    for (int v : options)
+	      {
+		s << sep << "\\maudeQid{" << Token::latexName(v) << "}";
+		sep = "\\maudeSpace";
+	      }
+	    s << "\\maudeRightParen";
+	  }
 	break;
       }
     }

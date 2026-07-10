@@ -158,16 +158,21 @@ viewExpr	:	viewExpr '{' instantArgs '}'
 			{
 			  $$ = new ViewExpression($1);
 			}
-		|	token '('
-			{
-			  lexBubble(BAR_RIGHT_PAREN, 0);
-			}
-			')'
+		|	token transInput optTransOptions
 			{
 			  Vector<int> options;
 			  for (Token t : lexerBubble)
 			    options.push_back(t.code());
-			  $$ = new ViewExpression($1, options);
+			  $$ = new ViewExpression($1, *$2, options);
+			  delete $2;
+			}
+		|	token transOptions
+			{
+			  Vector<int> options;
+			  for (Token t : lexerBubble)
+			    options.push_back(t.code());
+			  Vector<ModuleExpression*> empty;
+			  $$ = new ViewExpression($1, empty, options);
 			}
 		;
 

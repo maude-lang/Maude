@@ -543,7 +543,11 @@ MetaLevel::downViewExpression(DagNode* metaViewExpr)
 	{
 	  Vector<int> options;
 	  if (downQidList(f->getArgument(2), options))
-	    return new ViewExpression(moduleName, options);
+	    {
+	      Vector<ModuleExpression*> inputModules;
+	      if (downModuleExpressionList(f->getArgument(1), inputModules))
+		return new ViewExpression(moduleName, inputModules, options);
+	    }
 	}
     }
   return nullptr;

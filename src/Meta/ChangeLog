@@ -1,5 +1,8 @@
 2026-07-09  Saruman the White  <eker@eker10>
 
+	* metaDownView.cc (MetaLevel::downViewExpression): handle module
+	expression list in view generator call
+
 	* metaUpModule.cc (MetaLevel::upViewExpression): use
 	transformationSymbol rather than generationSymbol
 	(MetaLevel::upArgument): use transformationSymbol rather than
