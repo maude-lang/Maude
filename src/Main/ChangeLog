@@ -1,3 +1,9 @@
+2026-07-09  Saruman the White  <eker@eker10>
+
+	* prelude.maude: deleted generationSymbol to avoid the problem
+	with 'Foo('Bar) being parsed as a QidList 'Foo 'Bar
+	have _[_](_) return an Expression rather than a ModuleExpression
+
 2026-07-05  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added _(_) : Qid QidList -> ViewExpression;

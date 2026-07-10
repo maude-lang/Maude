@@ -280,10 +280,11 @@ MetaLevel::upArgument(const ViewExpression* argument, PointerMap& qidMap)
     }
     case ViewExpression::GENERATION:
       {
-	Vector<DagNode*> args(2);
+	Vector<DagNode*> args(3);
 	args[0] = upQid(argument->getName().code(), qidMap);
-	args[1] = upQidList(argument->getOptions(), qidMap);
-	return generationSymbol->makeDagNode(args);
+	args[1] = emptyTermListSymbol->makeDagNode();
+	args[2] = upQidList(argument->getOptions(), qidMap);
+	return transformationSymbol->makeDagNode(args);
       }
     default:
       CantHappen("bad module expression");
@@ -1383,10 +1384,11 @@ MetaLevel::upViewExpression(const View* view, PointerMap& qidMap)
       //
       //	Generated view.
       //
-      Vector<DagNode*> args(2);
+      Vector<DagNode*> args(3);
       args[0] = upQid(genModule->id(), qidMap);
-      args[1] = upQidList(view->getGenerationOptions(), qidMap);
-      return generationSymbol->makeDagNode(args);
+      args[1] = emptyTermListSymbol->makeDagNode();
+      args[2] = upQidList(view->getGenerationOptions(), qidMap);
+      return transformationSymbol->makeDagNode(args);
     }
   return upQid(view->id(), qidMap);
 }

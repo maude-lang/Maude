@@ -532,7 +532,7 @@ MetaLevel::downViewExpression(DagNode* metaViewExpr)
 	  instantiated->deepSelfDestruct();
 	}
     }
-  else if (ma == generationSymbol)
+  else if (ma == transformationSymbol)
     {
       //
       //	View generation.
@@ -542,7 +542,7 @@ MetaLevel::downViewExpression(DagNode* metaViewExpr)
       if (downToken(f->getArgument(0), moduleName))
 	{
 	  Vector<int> options;
-	  if (downQidList(f->getArgument(1), options))
+	  if (downQidList(f->getArgument(2), options))
 	    return new ViewExpression(moduleName, options);
 	}
     }
