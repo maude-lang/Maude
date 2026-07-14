@@ -66,11 +66,23 @@ ViewExpression::ViewExpression(Token name,
 void
 ViewExpression::deepSelfDestruct()
 {
-  if (type == INSTANTIATION)
+  switch (type)
     {
-      view->deepSelfDestruct();
-      for (ViewExpression* v : arguments)
-	v->deepSelfDestruct();
+    case INSTANTIATION:
+      {
+	view->deepSelfDestruct();
+	for (ViewExpression* v : arguments)
+	  v->deepSelfDestruct();
+	break;
+      }
+    case GENERATION:
+      {
+	for (ModuleExpression* m : inputModules)
+	  m->deepSelfDestruct();
+	break;
+      }
+    case SIMPLE_NAME:
+      break;  // nothing to delete - avoid compiler warning
     }
   delete this;
 }

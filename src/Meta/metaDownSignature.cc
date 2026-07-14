@@ -33,8 +33,8 @@ MetaLevel::downSignature(DagNode* metaModule,
   //	(1) Don't use the metalevel cache, since will it hold modules created by the functional
   //	metalevel which can have the same meta-syntax but different semantics as modules
   //	pulled down in a meta-interpreter because of different imports with the same name.
-  //	(2) Don't do statement imports and module compilation, since this work may
-  //	not be needed if a module is being inserted but not being rewritten in.
+  //	(2) Don't do statement and strategy definition imports and module compilation, since
+  //	this work may not be needed if a module is being inserted but not being rewritten in.
   //
   Symbol* ms = metaModule->symbol();
 

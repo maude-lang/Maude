@@ -38,7 +38,10 @@ class ViewResultSymbol : public FreeSymbol
 public:
   ViewResultSymbol(int id);
   
-  View* generateView(int newModuleName, const Vector<int>& optionVec, Interpreter* owner);
+  View* generateView(int newModuleName,
+		     const Vector<ImportModule*>& inputModules,
+		     const Vector<int>& optionVec,
+		     Interpreter* owner);
 
 private:
   bool attachData(const Vector<Sort*>& opDeclaration,

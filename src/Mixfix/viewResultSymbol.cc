@@ -123,6 +123,7 @@ ViewResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
 
 View*
 ViewResultSymbol::generateView(int viewName,
+			       const Vector<ImportModule*>& inputModules,
 			       const Vector<int>& optionVec,
 			       Interpreter* owner)
 {
@@ -226,7 +227,7 @@ ViewResultSymbol::generateView(int viewName,
 	      //	calls deepSelfDestruct(). This also enables us to reconstruct
 	      //	the view expression that built it.
 	      //
-	      resultView->setGenerationInfo(generatorModule, optionVec);
+	      resultView->setGenerationInfo(generatorModule, inputModules, optionVec);
 	    }
 	  (void) generatorModule->unprotect();
 	  return resultView;

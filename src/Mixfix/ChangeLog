@@ -1,3 +1,38 @@
+2026-07-13  Saruman the White  <eker@eker10>
+
+	* view.cc (View::printViewExpression): updated comment to explain
+	generation case
+
+	* viewExpression.hh (ViewExpression::getView): fix Assert()
+	message
+	(ViewExpression::getArguments): ditto
+
+	* viewExpression.cc (ViewExpression::deepSelfDestruct):
+	refactored; handle generation case
+
+	* interpreter.cc (Interpreter::handleArgument): construct
+	inputModules and pass them to generateView()
+
+	* viewCache.hh (class ViewCache): updated decl for generateView()
+
+	* viewCache.cc (ViewCache::generateView): take and pass
+	inputModules; incorporate inputModules into name
+
+	* viewResultSymbol.hh (class ViewResultSymbol): updated decl for
+	generateView()
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): take
+	inputModules
+	(ViewResultSymbol::generateView): pass inputModules to
+	setGenerationInfo()
+
+	* view.hh (View::getInputModules): added
+	(View::setGenerationInfo): take inModules
+	(class View): added date member inputModules
+
+	* importModule.cc (ImportModule::importStrategies): fix comment
+	formatting
+
 2026-07-09  Saruman the White  <eker@eker10>
 
 	* viewExpression.cc (ViewExpression::ViewExpression): updated ctor

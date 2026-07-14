@@ -73,8 +73,11 @@ public:
   void addFrom(ModuleExpression* expr);
   void addTo(ModuleExpression* expr);
   void finishView();
-  void setGenerationInfo(ImportModule* genModule, const Vector<int>& genOptions);
+  void setGenerationInfo(ImportModule* genModule,
+			 const Vector<ImportModule*>& inModules,
+			 const Vector<int>& genOptions);
   ImportModule* getGeneratorModule() const;
+  const Vector<ImportModule*>& getInputModules() const;
   const Vector<int>& getGenerationOptions() const;
 
   bool evaluate();
@@ -251,6 +254,7 @@ private:
   //	a copy the options used.
   //
   ImportModule* generatorModule = nullptr;
+  Vector<ImportModule*> inputModules;
   Vector<int> generationOptions;
   
   Status status = INITIAL;
@@ -405,9 +409,12 @@ View::getArguments() const
 }
 
 inline void
-View::setGenerationInfo(ImportModule* genModule, const Vector<int>& genOptions)
+View::setGenerationInfo(ImportModule* genModule,
+			const Vector<ImportModule*>& inModules,
+			const Vector<int>& genOptions)
 {
   generatorModule = genModule;
+  inputModules = inModules;
   generationOptions = genOptions;
 }
 
@@ -415,6 +422,12 @@ inline ImportModule*
 View::getGeneratorModule() const
 {
   return generatorModule;
+}
+
+inline const Vector<ImportModule*>&
+View::getInputModules() const
+{
+  return inputModules;
 }
 
 inline const Vector<int>&

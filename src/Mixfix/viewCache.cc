@@ -169,6 +169,7 @@ ViewCache::makeViewInstantiation(View* view, const Vector<Argument*>& arguments)
 
 View*
 ViewCache::generateView(ImportModule* generator,
+			const Vector<ImportModule*>& inputModules,
 			const Vector<int>& options,
 			Interpreter* owner)
 {
@@ -185,15 +186,29 @@ ViewCache::generateView(ImportModule* generator,
   Rope name;
   
   name += Token::name(generator->id());
-  name += "(";
-  const char* sep = "";
-  for (int v : options)
+  if (!inputModules.empty())
     {
-      name += sep;
-      name += Token::name(v);
-      sep = " ";
+      const char* sep = "[";
+      for (ImportModule* im : inputModules)
+	{
+	  name += sep;
+	  name += Token::name(im->id());
+	  sep = ", ";
+	}
+      name += "]";
     }
-  name += ")";
+  if (inputModules.empty() || !options.empty())
+    {
+      name += "(";
+      const char* sep = "";
+      for (int v : options)
+	{
+	  name += sep;
+	  name += Token::name(v);
+	  sep = " ";
+	}
+      name += ")";
+    }
   //
   //	Now check if a view having our name is already in cache.
   //
@@ -204,7 +219,7 @@ ViewCache::generateView(ImportModule* generator,
       DebugAdvisory("using existing copy of view " << name);
       return c->second;
     }
-  View* generated = vs->generateView(nameCode, options, owner);
+  View* generated = vs->generateView(nameCode, inputModules, options, owner);
   if (generated != nullptr)
     {
       viewMap[nameCode] = generated;

@@ -1185,7 +1185,7 @@ View::latexViewExpression(bool parameterBrackets) const
       result += "\\maudeRightBrace";
       return result;
     }
-  // FIXME: need latex generated modules nicely
+  // FIXME: need latex generated views nicely
   string result = "\\maudeView{";
   result += Token::latexName(id());
   result += "}";
@@ -1227,7 +1227,7 @@ View::printViewExpression(ostream& s, bool parameterBrackets) const
   else
     {
       //
-      //	OK for generated views because the options are in the name.
+      //	ViewCache name is OK in the generation case because we can't have parameter brackets.
       //
       s << Token::name(id());
     }

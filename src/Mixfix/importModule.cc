@@ -570,9 +570,10 @@ ImportModule::importStrategies()
   //
   //	We first fo through our parameter theories and ask them
   //	to donate their strategies.
+  //
   for (ImportModule* m : parameterTheories)
     m->donateStrategies(this);
-   //
+  //
   //	We just imported the operators from our last parameter theory,
   //	so we record the number of strategies we got from parameters.
   //

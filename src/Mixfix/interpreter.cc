@@ -816,7 +816,21 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		IssueWarning("Generator module " << fm << " has free parameters.");
 		break;
 	      }
-	    if (View* v = generateView(fm, expr->getOptions(), this))
+	    Vector<ImportModule*> inputModules;
+	    for (ModuleExpression* m : expr->getInputModules())
+	      {
+		if (ImportModule* fm = makeModule(m, enclosingObject))
+		  {
+		    if (fm->hasBoundParameters())
+		      {
+			IssueWarning("Input module to transformation " << fm <<
+				     " has bound parameters.");
+			return nullptr;
+		      }
+		    inputModules.append(fm);
+		  }
+	      }
+	    if (View* v = generateView(fm, inputModules, expr->getOptions(), this))
 	      {
 		//
 		//	Make sure the generated view is good.

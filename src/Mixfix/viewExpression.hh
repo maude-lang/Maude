@@ -114,14 +114,14 @@ ViewExpression::getName() const
 inline ViewExpression*
 ViewExpression::getView() const
 {
-  Assert(type == INSTANTIATION, "not instantiation " << this);
+  Assert(type == INSTANTIATION, "not an instantiation " << this);
   return view;
 }
 
 inline const Vector<ViewExpression*>&
 ViewExpression::getArguments() const
 {
-  Assert(type == INSTANTIATION, "named view/parameter not instantiation " << this);
+  Assert(type == INSTANTIATION, "not an instantiation " << this);
   return arguments;
 }
 

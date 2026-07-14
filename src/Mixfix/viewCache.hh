@@ -38,6 +38,7 @@ public:
 
   View* makeViewInstantiation(View* view, const Vector<Argument*>& arguments);
   View* generateView(ImportModule* generator,
+		     const Vector<ImportModule*>& inputModules,
 		     const Vector<int>& options,
 		     Interpreter* owner);
 
