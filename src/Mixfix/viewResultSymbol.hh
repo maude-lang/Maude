@@ -67,7 +67,6 @@ private:
 #include "viewResultSignature.cc"
 #undef MACRO
 
-  MetaLevel* metaLevel = nullptr;
   Symbol* cachedGeneratorOp = nullptr;
 };
 

@@ -1,3 +1,11 @@
+2026-07-14  Saruman the White  <eker@eker10>
+
+	* viewResultSymbol.hh (class ViewResultSymbol): deleted data
+	member metaLevel
+
+	* viewResultSymbol.cc (ViewResultSymbol::upModuleList): get
+	metalevel from shareWith
+
 2026-07-13  Saruman the White  <eker@eker10>
 
 	* viewResultSymbol.hh (class ViewResultSymbol): added decl for

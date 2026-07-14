@@ -301,7 +301,7 @@ ViewResultSymbol::upModuleList(bool flat,
       name += int64ToString(index + 1);
       int newName = Token::ropeToCode(name);
       m->finishFlattening();
-      metaModules[index] = metaLevel->upModule(flat, m, qidMap, newName);
+      metaModules[index] = shareWith->getMetaLevel()->upModule(flat, m, qidMap, newName);
     }
   return (inputModules.size() == 1) ? metaModules[0] :
     moduleListSymbol->makeDagNode(metaModules);
