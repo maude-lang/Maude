@@ -1,5 +1,8 @@
 2026-07-13  Saruman the White  <eker@eker10>
 
+	* metaLevel.hh (class MetaLevel): make const
+	Vector<ImportModule*>& version of upModuleExpressionList() public
+
 	* metaUpModule.cc (MetaLevel::upViewExpression): handle input
 	modules
 	(MetaLevel::upArgument): handle input modules

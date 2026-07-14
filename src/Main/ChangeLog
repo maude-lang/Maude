@@ -1,3 +1,10 @@
+2026-07-13  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added fmod MODULE-LIST; fmod MODULE-TRANSFORMER
+	and fmod VIEW-GENERATOR import MODULE-LIST; added
+	nilModuleListSymbol and moduleListSymbol hooks to {_,_} in
+	VIEW-GENERATOR
+
 2026-07-09  Saruman the White  <eker@eker10>
 
 	* prelude.maude: deleted generationSymbol to avoid the problem

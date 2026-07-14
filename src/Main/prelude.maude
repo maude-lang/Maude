@@ -3185,6 +3185,15 @@ endfm
 ***	Module transformation and view generation.
 ***
 
+fmod MODULE-LIST is
+  protecting META-LEVEL .
+  subsort Module < NeModuleList < ModuleList .
+  op nil : -> ModuleList [ctor] .
+  op _,_ : ModuleList ModuleList -> ModuleList [ctor assoc id: nil] .
+  op _,_ : NeModuleList ModuleList -> NeModuleList [ctor ditto] .
+  op _,_ : ModuleList NeModuleList -> NeModuleList [ctor ditto] .
+endfm
+
 fmod SYSTEM-MESSAGE is
   protecting STRING .
   subsort SystemMsg < SystemMsgList .
@@ -3196,13 +3205,8 @@ fmod SYSTEM-MESSAGE is
 endfm
 
 fmod MODULE-TRANSFORMER is
-  protecting META-LEVEL .
+  protecting MODULE-LIST .
   protecting SYSTEM-MESSAGE .
-  subsort Module < NeModuleList < ModuleList .
-  op nil : -> ModuleList [ctor] .
-  op _,_ : ModuleList ModuleList -> ModuleList [ctor assoc id: nil] .
-  op _,_ : NeModuleList ModuleList -> NeModuleList [ctor ditto] .
-  op _,_ : ModuleList NeModuleList -> NeModuleList [ctor ditto] .
 
   sort TransformResult .
   op {_,_} : ModuleList SystemMsgList -> TransformResult
@@ -3231,7 +3235,7 @@ fmod MODULE-TRANSFORMER is
 endfm
 
 fmod VIEW-GENERATOR is
-  protecting META-LEVEL .
+  protecting MODULE-LIST .
   protecting SYSTEM-MESSAGE .
   subsort View < View? .
   op failure : -> View? [ctor] .
@@ -3241,6 +3245,8 @@ fmod VIEW-GENERATOR is
     [special (
       id-hook ViewResultSymbol
       op-hook viewFailureSymbol		(failure : ~> View?)
+      op-hook nilModuleListSymbol	(nil : ~> ModuleList)
+      op-hook moduleListSymbol		(_,_ : ModuleList ModuleList ~> ModuleList)
       op-hook nilSystemMsgListSymbol	(nil : ~> SystemMsgList)
       op-hook systemMsgListSymbol	(__ : SystemMsgList SystemMsgList ~> SystemMsgList)
       op-hook advisorySymbol		(advisory : String ~> SystemMsg)

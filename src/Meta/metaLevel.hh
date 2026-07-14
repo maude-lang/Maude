@@ -231,6 +231,8 @@ public:
 
   DagNode* upView(View* view, PointerMap& qidMap);
   DagNode* upModule(bool flat, PreModule* pm, PointerMap& qidMap);
+  DagNode* upModuleExpressionList(const Vector<ImportModule*>& modExprList,
+				  PointerMap& qidMap);
   DagNode* upImports(PreModule* pm, PointerMap& qidMap);
   DagNode* upSorts(bool flat, ImportModule* m, PointerMap& qidMap);
   DagNode* upSubsortDecls(bool flat, ImportModule* m, PointerMap& qidMap);
@@ -528,8 +530,6 @@ private:
   //	ImportModules and Views.
   //
   DagNode* upModuleExpression(ImportModule* m, PointerMap& qidMap);
-  DagNode* upModuleExpressionList(const Vector<ImportModule*>& modExprList,
-				PointerMap& qidMap);
   DagNode* upArguments(const Vector<Argument*>& arguments, PointerMap& qidMap);
   DagNode* upArgument(const Argument* argument, PointerMap& qidMap);
   DagNode* upViewExpression(const View* view, PointerMap& qidMap);

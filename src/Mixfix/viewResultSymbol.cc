@@ -142,38 +142,55 @@ ViewResultSymbol::generateView(int viewName,
       //
       //	Need to find suitable operator.
       //
+      //	We require that we share the metalevel with an operator
+      //	that takes a module as its first argument, which is most
+      //	descent functions apart from the up*() family and downTerm().
+      //
+      const ConnectedComponent* moduleKind = shareWith->domainComponent(0);
       ConnectedComponent* viewResultKind = rangeComponent();
       for (Symbol* s : generatorModule->getSymbols())
 	{
-	  if (s->arity() == 1 &&
-	      s->domainComponent(0) == qidKind &&
-	      s->rangeComponent() == viewResultKind)
+	  Index nrArgs = s->arity();
+	  if (nrArgs == 3 || nrArgs == 4)
 	    {
-	      if (cachedGeneratorOp == nullptr)
-		cachedGeneratorOp = s;
-	      else
+	      if (s->domainComponent(0) == moduleKind &&
+		  s->domainComponent(1) == qidKind &&
+		  s->domainComponent(2) == qidKind &&
+		  s->rangeComponent() == viewResultKind &&
+		  (nrArgs == 3 || s->domainComponent(3) == moduleKind))
 		{
-		  IssueWarning("multiple view generator operators " <<
-			       QUOTE(cachedGeneratorOp) << " and " <<
-			       QUOTE(s) << "in module " << QUOTE(generatorModule) <<
-			       ". Using " << QUOTE(cachedGeneratorOp));
-		  break;
+		  if (cachedGeneratorOp == nullptr)
+		    cachedGeneratorOp = s;
+		  else
+		    {
+		      IssueWarning("multiple view generator operators " <<
+				   QUOTE(cachedGeneratorOp) << " and " <<
+				   QUOTE(s) << "in module " << QUOTE(generatorModule) <<
+				   ". Using " << QUOTE(cachedGeneratorOp));
+		      break;
+		    }
 		}
 	    }
 	}
-    }
-  if (cachedGeneratorOp == nullptr)
-    {
-      IssueWarning("didn't find suitable view generator operator in module " <<
-		   QUOTE(generatorModule) << ".");
-      return nullptr;
+      if (cachedGeneratorOp == nullptr)
+	{
+	  IssueWarning("didn't find suitable view generator operator in module " <<
+		       QUOTE(generatorModule) << ".");
+	  return nullptr;
+	}
     }
   Verbose("Attempting to generate view " << Token::name(viewName));
   //
   //	Make dag to be reduced.
   //
-  Vector<DagNode*> args(1);
-  args[0] = metaOptions;
+  Index nrArgs = cachedGeneratorOp->arity();
+  Vector<DagNode*> args(nrArgs);
+  PointerMap qidMap;
+  args[0] = upModuleList(false, inputModules, qidMap);
+  args[1] = metaOptions;
+  args[2] = metaLevel->upModuleExpressionList(inputModules, qidMap);
+  if (nrArgs == 4)
+    args[3] = upModuleList(true, inputModules, qidMap);
   DagNode* startDag = cachedGeneratorOp->makeDagNode(args);
   DebugAdvisory("Start dag = " << startDag);
   //
@@ -267,4 +284,25 @@ ViewResultSymbol::handleMessage(DagNode* message)
 	}
     }
   IssueWarning("Unexpected message value returned from view generation: " << QUOTE(message));
+}
+
+DagNode*
+ViewResultSymbol::upModuleList(bool flat,
+			       const Vector<ImportModule*>& inputModules,
+			       PointerMap& qidMap)
+{
+  if (inputModules.empty())
+    return nilModuleListSymbol->makeDagNode();
+  Index index = 0;
+  Vector<DagNode*> metaModules(inputModules.size());
+  for (ImportModule* m : inputModules)
+    {
+      Rope name("I");
+      name += int64ToString(index + 1);
+      int newName = Token::ropeToCode(name);
+      m->finishFlattening();
+      metaModules[index] = metaLevel->upModule(flat, m, qidMap, newName);
+    }
+  return (inputModules.size() == 1) ? metaModules[0] :
+    moduleListSymbol->makeDagNode(metaModules);
 }

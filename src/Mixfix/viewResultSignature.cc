@@ -29,6 +29,8 @@
 //		MACRO(symbols name, symbols C++ class)
 //
   MACRO(viewFailureSymbol, Symbol)
+  MACRO(nilModuleListSymbol, Symbol)
+  MACRO(moduleListSymbol, AU_Symbol)
   MACRO(nilSystemMsgListSymbol, Symbol)
   MACRO(systemMsgListSymbol, AU_Symbol)
   MACRO(advisorySymbol, FreeSymbol)
