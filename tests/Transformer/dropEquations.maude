@@ -1,0 +1,34 @@
+set show timing off .
+
+***
+***	Test meta-recursive transformation of nonflat module.
+***
+
+fmod DROP-EQNS is
+  pr MODULE-TRANSFORMER .
+  op dropEqns : ModuleList QidList -> TransformResult .
+  eq dropEqns(fmod H:Header is
+      I:ImportList
+      sorts S:SortSet .
+      SS:SubsortDeclSet
+      OD:OpDeclSet
+      MA:MembAxSet
+      E:EquationSet endfm,
+      Q:QidList) =
+     {fmod H:Header is
+      'DROP-EQNS(Q:QidList)[I:ImportList]
+      sorts S:SortSet .
+      SS:SubsortDeclSet
+      OD:OpDeclSet
+      MA:MembAxSet
+      none endfm,
+      if Q:QidList == nil then nil else advisory("Arguments ignored") fi} .
+ 
+  eq dropEqns(M:Module, Q:QidList) = {nil, warning("Not a functional module.")} [owise] .
+endfm
+
+show summary .
+
+make FOO is DROP-EQNS[DROP-EQNS] endm
+
+show summary .

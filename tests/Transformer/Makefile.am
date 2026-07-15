@@ -1,10 +1,16 @@
 TESTS = \
-	tuple
+	tuple \
+	dropEquations \
+	defaultView
 
 MAUDE_FILES = \
-	tuple.maude
+	tuple.maude \
+	dropEquations.maude \
+	defaultView.maude
 
 RESULT_FILES = \
-	tuple.expected
+	tuple.expected \
+	dropEquations.expected \
+	defaultView.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

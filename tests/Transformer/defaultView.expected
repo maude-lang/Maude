@@ -1,0 +1,13 @@
+==========================================
+reduce in TEST : 5, 6, 6, 7 .
+rewrites: 1
+result NeSet{Nat}: 5, 6, 7
+==========================================
+reduce in TEST3 : 'a 'b 'c, 'a 'd, 'b 'b 'b .
+rewrites: 0
+result NeSet{List{Qid}}: 'a 'd, 'a 'b 'c, 'b 'b 'b
+==========================================
+reduce in TEST3 : ('a 'b 'c, 'a 'd, 'b 'b 'b) \ 'a 'd .
+rewrites: 11
+result NeSet{List{Qid}}: 'a 'b 'c, 'b 'b 'b
+Bye.

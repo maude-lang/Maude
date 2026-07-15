@@ -1,0 +1,63 @@
+set show timing off .
+
+***
+***	Test generation of default views for modules.
+***
+
+fmod @ is
+  pr VIEW-GENERATOR .
+  pr CONVERSION .
+  var M : Module .
+  var ME : ModuleExpression .
+  var TS : Sort .
+  var S : NeSortSet .
+  var PDL : NeParameterDeclList .
+  var ST : String .
+  var P : Nat .
+
+  op makeDefault : ModuleList QidList ModuleExpressionList -> ViewResult .
+  ceq makeDefault(M, nil, ME) = {
+    view header(qid(peel(string(TS))), getParameters(M))
+      from 'TRIV to target(ME, getParameters(M)) is
+      sort 'Elt to TS .
+      none
+      none
+    endv, nil} if TS := topSort(M, getSorts(M)) .
+
+  op peel : String -> String .
+  ceq peel(ST) = substr(ST, 0, P) if P := find(ST, "`", 0) .
+  eq peel(ST) = ST [owise] .
+
+  op header : Sort ParameterDeclList -> Header .
+  eq header(TS, nil) = TS .
+  eq header(TS, PDL) = TS{PDL} .
+
+  op target : ModuleExpression ParameterDeclList -> ModuleExpression .
+  eq target(ME, nil) = ME .
+  eq target(ME, PDL) = ME{paramList(PDL)} .
+
+  op paramList : NeParameterDeclList -> NeParameterList .
+  eq paramList(TS :: ME) = TS .
+  eq paramList((TS :: ME, PDL)) = TS, paramList(PDL) .
+
+  op topSort : Module SortSet ~> Sort .
+  eq topSort(M, TS) = TS .
+  ceq topSort(M, TS ; S) = TS if S subset lesserSorts(M, TS) .
+endfm
+
+fmod TEST is
+  pr SET{@[NAT]} .
+endfm
+
+red 5, 6, 7, 6 .
+
+fmod TEST2{X :: TRIV} is
+  pr SET{@[LIST]{X}} .
+endfm
+
+fmod TEST3 is
+  pr TEST2{@[QID]} .
+endfm
+
+red 'a 'b 'c, 'a 'd, 'b 'b 'b .
+red ('a 'b 'c, 'a 'd, 'b 'b 'b) \ 'a 'd .
