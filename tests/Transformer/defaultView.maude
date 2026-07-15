@@ -24,6 +24,12 @@ fmod @ is
       none
     endv, nil} if TS := topSort(M, getSorts(M)) .
 
+  eq makeDefault(M, Q:NeQidList, ME) =
+    {failure, warning("options not supported.")} .
+    
+  eq makeDefault(M, nil, ME) =
+    {failure, warning("couldn't find unique top sort in target module.")} [owise] .
+
   op peel : String -> String .
   ceq peel(ST) = substr(ST, 0, P) if P := find(ST, "`", 0) .
   eq peel(ST) = ST [owise] .
@@ -61,3 +67,11 @@ endfm
 
 red 'a 'b 'c, 'a 'd, 'b 'b 'b .
 red ('a 'b 'c, 'a 'd, 'b 'b 'b) \ 'a 'd .
+
+fmod UNEXPECTED-OPTION is
+  pr SET{@[NAT](1)} .
+endfm
+
+fmod NO-UNIQUE-TOP-SORT is
+  pr TEST2{@[STRING]} .
+endfm
