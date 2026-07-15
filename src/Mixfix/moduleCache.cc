@@ -310,7 +310,7 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
 ImportModule*
 ModuleCache::makeModuleTransformation(ImportModule* transformer,
 				      const Vector<ImportModule*>& inputModules,
-				      const Vector<Token>& options,
+				      const Vector<int>& options,
 				      Interpreter* owner)
 {
   TransformResultSymbol* ts = transformer->getTransformResultSymbol();
@@ -324,7 +324,6 @@ ModuleCache::makeModuleTransformation(ImportModule* transformer,
   //	Make name.
   //
   Rope name;
-  Vector<int> optionVec;
   
   name += Token::name(transformer->id());
   if (!inputModules.empty())
@@ -342,12 +341,11 @@ ModuleCache::makeModuleTransformation(ImportModule* transformer,
     {
       name += "(";
       const char* sep = "";
-      for (const Token& t : options)
+      for (int a : options)
 	{
 	  name += sep;
-	  name += t.name();
+	  name += Token::name(a);
 	  sep = " ";
-	  optionVec.push_back(t.code());
 	}
       name += ")";
     }
@@ -362,7 +360,7 @@ ModuleCache::makeModuleTransformation(ImportModule* transformer,
       return c->second;
     }
 
-  ImportModule* transformed = ts->makeTransformation(t, inputModules, optionVec, owner);
+  ImportModule* transformed = ts->makeTransformation(t, inputModules, options, owner);
   if (transformed != nullptr)
     {
       moduleMap[t] = transformed;

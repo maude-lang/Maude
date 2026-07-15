@@ -1,5 +1,23 @@
 2026-07-14  Saruman the White  <eker@eker10>
 
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): take
+	options as const Vector<int>&
+
+	* moduleCache.hh (class ModuleCache): updated decl for
+	makeModuleTransformation()
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression): now
+	take const Vector<int>& options
+	(ModuleExpression::latexPrint): use ints rather than Tokens
+	(<<): ditto
+
+	* modules.yy (transformExpr): pass options as Vector<int>&
+
+	* moduleExpression.hh (class ModuleExpression): updated decl for
+	transform ctor
+	(ModuleExpression::getOptions): return const Vector<int>&
+	(class ModuleExpression): store options as Vector<int>
+
 	* interpreter.cc (Interpreter::makeModule): allow free parameters
 	in input modules to transform
 

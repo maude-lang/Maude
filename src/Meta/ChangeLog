@@ -1,5 +1,11 @@
 2026-07-14  Saruman the White  <eker@eker10>
 
+	* metaDownView.cc (MetaLevel::downModuleExpression): don't convert
+	ints to Tokens
+
+	* metaUpModule.cc (MetaLevel::upModuleExpression): don't convert
+	Tokens to ints
+
 	* metaLevel.hh (class MetaLevel): added decls for ImportModule*
 	versions of upHeader(), upParameterDecls(), upParameterDecl()
 

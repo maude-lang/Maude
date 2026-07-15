@@ -427,19 +427,9 @@ MetaLevel::downModuleExpression(DagNode* metaExpr)
       Token moduleName;
       if (downToken(f->getArgument(0), moduleName))
 	{
-	  Vector<int> arguments;
-	  if (downQidList(f->getArgument(2), arguments))
+	  Vector<int> options;
+	  if (downQidList(f->getArgument(2), options))
 	    {
-	      //
-	      //	Maybe in future ModuleExpression() will take 
-	      //	const Vector<int>& or we will have downTokenList().
-	      //	For the moment we just do a conversion.
-	      //
-	      Index nrArguments = arguments.size();
-	      Vector<Token> options(nrArguments);
-	      for (Index i = 0; i < nrArguments; ++i)
-		options[i].tokenize(arguments[i], FileTable::META_LEVEL_CREATED);
-	      
 	      Vector<ModuleExpression*> inputModules;
 	      if (downModuleExpressionList(f->getArgument(1), inputModules))
 		return new ModuleExpression(moduleName, inputModules, options);

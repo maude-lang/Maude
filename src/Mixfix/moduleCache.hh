@@ -42,7 +42,7 @@ public:
   ImportModule* makeModuleInstantiation(ImportModule* module, const Vector<Argument*>& arguments);
   ImportModule* makeModuleTransformation(ImportModule* transformer,
 					 const Vector<ImportModule*>& modules,
-					 const Vector<Token>& options,
+					 const Vector<int>& options,
 					 Interpreter* owner);
   int destructUnusedModules();
   void showCreatedModules(ostream& s) const;

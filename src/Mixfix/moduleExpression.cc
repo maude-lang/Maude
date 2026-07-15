@@ -81,11 +81,11 @@ ModuleExpression::ModuleExpression(ModuleExpression* module, const Vector<ViewEx
 
 ModuleExpression::ModuleExpression(Token moduleName,
 				   const Vector<ModuleExpression*>& inputModules,
-				   const Vector<Token>& arguments)
+				   const Vector<int>& options)
   : type(TRANSFORM),
     moduleName(moduleName),
     inputModules(inputModules),
-    options(arguments)
+    options(options)
 {
 }
 
@@ -180,7 +180,7 @@ operator<<(ostream& s, const ModuleExpression* expr)
     case ModuleExpression::TRANSFORM:
       {
 	const Vector<ModuleExpression*>& inputModules = expr->getInputModules();
-	const Vector<Token>& options = expr->getOptions();
+	const Vector<int>& options = expr->getOptions();
 	//
 	//	Transformer specification.
 	//
@@ -205,9 +205,9 @@ operator<<(ostream& s, const ModuleExpression* expr)
 	  {
 	    s << '(';
 	    const char* sep = "";
-	    for (const Token& t : options)
+	    for (int a : options)
 	      {
-		s << sep << t;
+		s << sep << Token::name(a);
 		sep = " ";
 	      }
 	    s << ')';
@@ -299,9 +299,9 @@ ModuleExpression::latexPrint(ostream& s, const Module* enclosingModule) const
 	  {
 	    s << "\\maudeLeftParen";
 	    const char* sep = "";
-	    for (const Token& t : options)
+	    for (int a : options)
 	      {
-		s << sep << "\\maudeQid{" << Token::latexName(t.code()) << "}";
+		s << sep << "\\maudeQid{" << Token::latexName(a) << "}";
 		sep = "\\maudeSpace";
 	      }
 	    s << "\\maudeRightParen";

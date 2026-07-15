@@ -103,13 +103,19 @@ parenExpr	:	'(' moduleExpr ')'
  */
 transformExpr	:	token transInput optTransOptions
 			{
-			  $$ = new ModuleExpression($1, *$2, lexerBubble);
+			  Vector<int> options;
+			  for (Token t : lexerBubble)
+			    options.push_back(t.code());
+			  $$ = new ModuleExpression($1, *$2, options);
 			  delete $2;
 			}
 		|	token transOptions
 			{
+			  Vector<int> options;
+			  for (Token t : lexerBubble)
+			    options.push_back(t.code());
 			  Vector<ModuleExpression*> empty;
-			  $$ = new ModuleExpression($1, empty, lexerBubble);
+			  $$ = new ModuleExpression($1, empty, options);
 			}
 		;
 

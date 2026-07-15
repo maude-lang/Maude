@@ -250,13 +250,7 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
 	Vector<DagNode*> args(3);
 	args[0] = upQid(e->getModuleName().code(), qidMap);
 	args[1] = upModuleExpressionList(e->getInputModules(), qidMap);
-	//
-	//	Need to convert Tokens to ints.
-	//
-	Vector<int> ids;
-	for (const Token& t : e->getOptions())
-	  ids.push_back(t.code());
-	args[2] = upQidList(ids, qidMap);
+	args[2] = upQidList(e->getOptions(), qidMap);
 	return transformationSymbol->makeDagNode(args);
       }
     default:

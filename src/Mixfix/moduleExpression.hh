@@ -46,7 +46,7 @@ public:
   ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments);
   ModuleExpression(Token moduleName,
 		   const Vector<ModuleExpression*>& inputModules,
-		   const Vector<Token>& arguments);
+		   const Vector<int>& options);
 
   Type getType() const;
   Token getModuleName() const;
@@ -55,7 +55,7 @@ public:
   Renaming* getRenaming() const;
   const Vector<ViewExpression*>& getArguments() const;
   const Vector<ModuleExpression*>& getInputModules() const;
-  const Vector<Token>& getOptions() const;
+  const Vector<int>& getOptions() const;
 
   void deepSelfDestruct();
 
@@ -87,7 +87,7 @@ private:
   //	For transform.
   //
   Vector<ModuleExpression*> inputModules;
-  Vector<Token> options;
+  Vector<int> options;
 };
 
 ostream& operator<<(ostream& s, const ModuleExpression* expr);
@@ -142,7 +142,7 @@ ModuleExpression::getInputModules() const
   return inputModules;
 }
 
-inline const Vector<Token>&
+inline const Vector<int>&
 ModuleExpression::getOptions() const
 {
   Assert(type == TRANSFORM, "not a transform");
