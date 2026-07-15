@@ -1,0 +1,37 @@
+==========================================
+reduce in TEST : p3 (42, -4, "abc", 'cde) .
+rewrites: 1
+result String: "abc"
+==========================================
+reduce in BAR : p2 (4, ("a", "abc"), 'a) .
+rewrites: 1
+result Tuple{String,String}: ("a", "abc")
+==========================================
+reduce in TEST2 : p1 (((2, 2), (3, 4)) \ (2, 2)) .
+rewrites: 9
+result NzNat: 3
+==========================================
+reduce in TEST3 : p1 ((5, -1, "Foo"), 'Bar) .
+rewrites: 1
+result Tuple{Nat,Int,String}: (5, -1, "Foo")
+==========================================
+reduce in TEST3 : p2 ((5, -1, "Foo"), 'Bar) .
+rewrites: 1
+result Qid: 'Bar
+==========================================
+reduce in TEST4 : ((5, ('a, 'bb), "dd"), 'z) .
+rewrites: 0
+result Tuple{Tuple{Nat,Tuple{Qid,Qid},String},Qid}: ((5, ('a, 'bb), "dd"), 'z)
+==========================================
+reduce in TEST4 : p1 p2 p1 ((5, ('a, 'bb), "dd"), 'z) .
+rewrites: 3
+result Qid: 'a
+Warning: bad argument to Tuple.
+Warning: <standard input>, line 142 (fmod BAD-ARGUMENT): this module contains
+    one or more errors that could not be patched up and thus it cannot be used
+    or imported.
+Warning: input modules not expected by Tuple.
+Warning: <standard input>, line 146 (fmod UNEXPECTED-MODULE): this module
+    contains one or more errors that could not be patched up and thus it cannot
+    be used or imported.
+Bye.

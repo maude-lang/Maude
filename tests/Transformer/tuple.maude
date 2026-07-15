@@ -1,0 +1,148 @@
+set show timing off .
+
+***
+***	Test generation of parameterized TUPLE modules and parameterized Tuple views.
+***
+
+fmod TUPLE is
+  pr MODULE-TRANSFORMER .
+  pr CONVERSION .
+  var N : Nat .
+  var NZ : NzNat .
+  var Q : Qid .
+  
+  op makeTuple : ModuleList QidList -> TransformResult .
+  ceq makeTuple(nil, Q) = {
+    fmod 'DUMMY{ paramDecls(NZ) } is
+      nil
+      sorts S:Sort .
+      none
+      op O:Qid : eltList(NZ) -> S:Sort [ctor] .
+      projectionOps(NZ, S:Sort, eltList(NZ))
+      none
+      projectionEqs(NZ, O:Qid, varList(NZ), varList(NZ))
+    endfm, nil} if NZ := rat(string(Q), 10) /\
+      S:Sort := qid("Tuple{" + params(NZ) + "}") /\
+      O:Qid := qid("(" + underscores(NZ) + ")") .
+
+  eq makeTuple(ML:NeModuleList, QL:QidList) =
+    {nil, warning("input modules not expected for TUPLE.")} .
+
+  eq makeTuple(nil, QL:QidList) =
+    {nil, warning("bad argument to TUPLE.")} [owise] .
+
+  op paramDecls : Nat -> ParameterDeclList .
+  eq paramDecls(0) = nil .
+  eq paramDecls(s N) = paramDecls(N), (qid("X" + string(s N, 10)) :: 'TRIV) .
+
+  op params : NzNat -> String .
+  eq params(1) = "X1" .
+  eq params(s NZ) = params(NZ) + ",X" + string(s NZ, 10) .
+
+  op underscores : NzNat -> String .
+  eq underscores(1) = "_" .
+  eq underscores(s NZ) = underscores(NZ) + ",_" .
+
+  op eltList : Nat -> QidList .
+  eq eltList(0) = nil .
+  eq eltList(s N) = eltList(N) qid("X" + string(s N, 10) + "$Elt") .
+
+  op projectionOps : Nat Qid QidList -> OpDeclSet .
+  eq projectionOps(0, D:Qid, RL:QidList) = none .
+  eq projectionOps(s N, D:Qid, RL:QidList R:Qid) =
+    projectionOps(N, D:Qid, RL:QidList)
+    (op qid("p" + string(s N, 10) + "_") : D:Qid -> R:Qid [none].) .
+
+  op varList : Nat -> TermList .
+  eq varList(0) = empty .
+  eq varList(s N) = varList(N), qid("Y" + string(s N, 10) + ":X" + string(s N, 10) + "$Elt") .
+
+  op projectionEqs : Nat Qid TermList TermList -> EquationSet .
+  eq projectionEqs(0, O:Qid, A:TermList, VS:TermList) = none .
+  eq projectionEqs(s N, O:Qid, A:TermList, (VS:TermList, V:Term)) =
+    projectionEqs(N, O:Qid, A:TermList, VS:TermList)
+    (eq qid("p" + string(s N, 10) + "_")[O:Qid[A:TermList]] = V:Term [none].) .
+endfm
+
+fmod TEST is
+  inc TUPLE(4){Nat, Int, String, Qid} .
+endfm
+
+red p3(42, -4, "abc", 'cde) .
+
+view Pair{T1 :: TRIV, T2 :: TRIV} from TRIV to TUPLE(2){T1, T2} is
+  sort Elt to Tuple{T1,T2} .
+endv
+
+fmod BAR is
+  inc TUPLE(3){Nat, Pair{String, String}, Qid} .
+endfm
+
+red p2(4, ("a", "abc"), 'a) .
+
+***
+***	Tuple view generator.
+***
+
+fmod Tuple is
+  pr VIEW-GENERATOR .
+  pr CONVERSION .
+  var N : Nat .
+  var NZ : NzNat .
+  var Q : Qid .
+  
+  op makeTuple : ModuleList QidList ModuleExpressionList -> ViewResult .
+  ceq makeTuple(nil, Q, empty) = {
+    view 'Tuple{ paramDecls(NZ) } from 'TRIV to ('TUPLE[empty](Q)){paramList(NZ)} is
+      sort 'Elt to S:Sort .
+      none
+      none
+    endv, nil} if NZ := rat(string(Q), 10) /\
+      S:Sort := qid("Tuple{" + params(NZ) + "}") .
+      
+  eq makeTuple(ML:NeModuleList, QL:QidList, MEL:ModuleExpressionList) =
+    {failure, warning("input modules not expected by Tuple.")} .
+
+  eq makeTuple(nil, QL:QidList, empty) =
+    {failure, warning("bad argument to Tuple.")} [owise] .
+
+  op paramDecls : Nat -> ParameterDeclList .
+  eq paramDecls(0) = nil .
+  eq paramDecls(s N) = paramDecls(N), (qid("X" + string(s N, 10)) :: 'TRIV) .
+
+  op paramList : NzNat -> QidList .
+  eq paramList(1) = 'X1 .
+  eq paramList(s NZ) = paramList(NZ), qid("X" + string(s NZ, 10)) .
+
+  op params : NzNat -> String .
+  eq params(1) = "X1" .
+  eq params(s NZ) = params(NZ) + ",X" + string(s NZ, 10) .
+endfm
+
+fmod TEST2 is
+  inc SET{Tuple(2){Nat, Nat}} .
+endfm
+
+red p1(((2, 2), (3, 4)) \ (2, 2)) .
+
+fmod TEST3 is
+  inc TUPLE(2){Tuple(3){Nat, Int, String}, Qid} .
+endfm
+
+red p1((5,-1,"Foo"),'Bar) .
+red p2((5,-1,"Foo"),'Bar) .
+
+fmod TEST4 is
+  inc TUPLE(2){Tuple(3){Nat, Tuple(2){Qid, Qid}, String}, Qid} .
+endfm
+
+red ((5, ('a, 'bb), "dd"), 'z) .
+red p1 p2 p1((5, ('a, 'bb), "dd"), 'z) .
+
+fmod BAD-ARGUMENT is
+  inc SET{Tuple(a b c){Nat, Nat}} .
+endfm
+
+fmod UNEXPECTED-MODULE is
+  inc SET{Tuple[MAP](2){Nat, Nat}} .
+endfm

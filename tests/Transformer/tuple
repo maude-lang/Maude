@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/tuple.maude -no-banner \
+  > tuple.out 2>&1
+
+diff $srcdir/tuple.expected tuple.out > /dev/null 2>&1

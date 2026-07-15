@@ -400,6 +400,7 @@ AC_CONFIG_FILES([Makefile
 		 src/SMT/Makefile
 		 src/Main/Makefile
 		 tests/Makefile
+		 tests/Transformer/Makefile
 		 tests/Corner/Makefile
 		 tests/BuiltIn/Makefile
 		 tests/Meta/Makefile
