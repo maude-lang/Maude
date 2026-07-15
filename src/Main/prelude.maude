@@ -1874,9 +1874,11 @@ fmod META-MODULE is
   op _{_} : ViewExpression NeParameterList -> ViewExpression [ctor ditto] .
   op _{_} : ModuleExpression NeParameterList -> ModuleExpression [ctor ditto] .
   op _+_ : ModuleExpression ModuleExpression -> ModuleExpression [ctor assoc comm] .
-  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor prec 35] .
   op _*(_) : ModuleExpression RenamingSet -> ModuleExpression
     [ctor prec 39 format (d d s n++i n--i d)] .
+
+*** fake declaration to enable op-hook
+  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor prec 35] .
 
 *** parameter lists
   sort EmptyCommaList NeParameterList ParameterList .
@@ -3207,7 +3209,7 @@ fmod EXTENDED-META-LEVEL is
   op _,_ : ExpressionList NeExpressionList -> NeExpressionList [ctor ditto] .
 
 *** the real declaration for the module transformation / view generation operator
-  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor ditto] .
+  op _[_](_) : Qid ModuleExpressionList QidList -> Expression [ctor ditto] .
 endfm
 
 fmod SYSTEM-MESSAGE is

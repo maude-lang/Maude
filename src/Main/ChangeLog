@@ -1,3 +1,9 @@
+2026-07-15  Saruman the White  <eker@eker10>
+
+	* prelude.maude: fix bug where the real declaration for the module
+	transformation / view generation operator was the same as the fake
+	one
+
 2026-07-14  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added getParameters projection function
