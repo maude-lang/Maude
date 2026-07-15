@@ -5,6 +5,7 @@
 	MODULE-LIST; changed _[_](_) to working on ModuleExpressions
 	rather than ModuleExpressionLists, and then added a subsort
 	overloading to MODULE-LIST to restore the functionality
+	rebranded MODULE-LIST as EXTENDED-META-LEVEL
 
 2026-07-13  Saruman the White  <eker@eker10>
 

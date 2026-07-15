@@ -3184,7 +3184,7 @@ endfm
 ***	Module transformation and view generation.
 ***
 
-fmod MODULE-LIST is
+fmod EXTENDED-META-LEVEL is
   protecting META-LEVEL .
 
 *** module lists
@@ -3198,7 +3198,6 @@ fmod MODULE-LIST is
   sort ModuleExpressionList .
   subsort ModuleExpression EmptyCommaList < ModuleExpressionList .
   op _,_ : ModuleExpressionList ModuleExpressionList -> ModuleExpressionList [ctor ditto] .
-  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor ditto] .
 
 *** for preregularity, expression lists
   subsort EmptyCommaList < ExpressionList < ModuleExpressionList ParameterList .
@@ -3206,6 +3205,9 @@ fmod MODULE-LIST is
   op _,_ : ExpressionList ExpressionList -> ExpressionList [ctor ditto] .
   op _,_ : NeExpressionList ExpressionList -> NeExpressionList [ctor ditto] .
   op _,_ : ExpressionList NeExpressionList -> NeExpressionList [ctor ditto] .
+
+*** the real declaration for the module transformation / view generation operator
+  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor ditto] .
 endfm
 
 fmod SYSTEM-MESSAGE is
@@ -3219,7 +3221,7 @@ fmod SYSTEM-MESSAGE is
 endfm
 
 fmod MODULE-TRANSFORMER is
-  protecting MODULE-LIST .
+  protecting EXTENDED-META-LEVEL .
   protecting SYSTEM-MESSAGE .
 
   sort TransformResult .
@@ -3249,7 +3251,7 @@ fmod MODULE-TRANSFORMER is
 endfm
 
 fmod VIEW-GENERATOR is
-  protecting MODULE-LIST .
+  protecting EXTENDED-META-LEVEL .
   protecting SYSTEM-MESSAGE .
   subsort View < View? .
   op failure : -> View? [ctor] .
