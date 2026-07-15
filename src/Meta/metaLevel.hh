@@ -468,6 +468,11 @@ private:
 			PointerMap& qidMap,
 			PointerMap& dagNodeMap);
 
+
+  DagNode* upHeader(ImportModule* m, PointerMap& qidMap, int replacementName);
+  DagNode* upParameterDecls(ImportModule* m, PointerMap& qidMap);
+  DagNode* upParameterDecl(ImportModule* m, Index index, PointerMap& qidMap);
+
   DagNode* upHeader(bool flat, PreModule* pm, PointerMap& qidMap);
   DagNode* upParameterDecls(PreModule* pm, PointerMap& qidMap);
   DagNode* upParameterDecl(PreModule* pm, int index, PointerMap& qidMap);

@@ -1003,12 +1003,6 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 				     " has bound parameters.");
 			return nullptr;
 		      }
-		    if (fm->hasFreeParameters())
-		      {
-			IssueWarning("Input module to transformation " << fm <<
-				     " has free parameters.");
-			return nullptr;
-		      }
 		    inputModules.append(fm);
 		  }
 	      }

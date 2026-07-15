@@ -13,8 +13,8 @@ result [ImportList]: upImports('BAD)
 ==========================================
 reduce in META-LEVEL : upSorts('BAD, false) .
 rewrites: 0
-result [ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,
-    TypeListSet,Type?,Header]: upSorts('BAD, false)
+result [ModuleExpression,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header]: upSorts('BAD, false)
 ==========================================
 reduce in META-LEVEL : upSubsortDecls('BAD, false) .
 rewrites: 0

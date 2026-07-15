@@ -1874,7 +1874,7 @@ fmod META-MODULE is
   op _{_} : ViewExpression NeParameterList -> ViewExpression [ctor ditto] .
   op _{_} : ModuleExpression NeParameterList -> ModuleExpression [ctor ditto] .
   op _+_ : ModuleExpression ModuleExpression -> ModuleExpression [ctor assoc comm] .
-  op _[_](_) : Qid ModuleExpressionList QidList -> Expression [ctor prec 35] .
+  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor prec 35] .
   op _*(_) : ModuleExpression RenamingSet -> ModuleExpression
     [ctor prec 39 format (d d s n++i n--i d)] .
 
@@ -1887,18 +1887,6 @@ fmod META-MODULE is
   op _,_ : NeParameterList ParameterList -> NeParameterList [ctor ditto] .
   op _,_ : ParameterList NeParameterList -> NeParameterList [ctor ditto] .
   op _,_ : EmptyCommaList EmptyCommaList -> EmptyCommaList [ctor ditto] .
-
-*** module expression lists
-  sort ModuleExpressionList .
-  subsort ModuleExpression EmptyCommaList < ModuleExpressionList .
-  op _,_ : ModuleExpressionList ModuleExpressionList -> ModuleExpressionList [ctor ditto] .
-
-*** for preregularity, expression lists
-  subsort EmptyCommaList < ExpressionList < ModuleExpressionList ParameterList .
-  subsort Expression < NeExpressionList < ExpressionList NeParameterList .
-  op _,_ : ExpressionList ExpressionList -> ExpressionList [ctor ditto] .
-  op _,_ : NeExpressionList ExpressionList -> NeExpressionList [ctor ditto] .
-  op _,_ : ExpressionList NeExpressionList -> NeExpressionList [ctor ditto] .
 
 *** parameter declarations
   sorts ParameterDecl NeParameterDeclList ParameterDeclList .
@@ -2096,6 +2084,17 @@ fmod META-MODULE is
   eq getName(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = Q .
   eq getName(smod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = Q .
   eq getName(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = Q .
+
+  op getParameters : Module -> ParameterDeclList .
+  eq getParameters(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = nil .
+  eq getParameters(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = nil .
+  eq getParameters(fmod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS endfm) = PDL .
+  eq getParameters(mod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = PDL .
+  eq getParameters(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = nil .
+  eq getParameters(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = nil .
+  eq getParameters(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = nil .
+  eq getParameters(smod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = PDL .
+  eq getParameters(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = nil .
 
   op getImports : Module -> ImportList .
   eq getImports(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = IL .
@@ -2577,7 +2576,7 @@ fmod META-LEVEL is
         op-hook sumSymbol		(_+_ : ModuleExpression ModuleExpression ~> ModuleExpression)
         op-hook renamingSymbol		(_*(_) : ModuleExpression RenamingSet ~> ModuleExpression)
         op-hook instantiationSymbol	(_{_} : Expression ParameterList ~> Expression)
-	op-hook transformationSymbol	(_[_](_) : Qid ModuleExpressionList QidList ~> Expression)
+	op-hook transformationSymbol	(_[_](_) : Qid ModuleExpression QidList ~> Expression)
 
         op-hook protectingSymbol	(protecting_. : ModuleExpression ~> Import)
         op-hook extendingSymbol		(extending_. : ModuleExpression ~> Import)
@@ -3187,11 +3186,26 @@ endfm
 
 fmod MODULE-LIST is
   protecting META-LEVEL .
+
+*** module lists
   subsort Module < NeModuleList < ModuleList .
   op nil : -> ModuleList [ctor] .
   op _,_ : ModuleList ModuleList -> ModuleList [ctor assoc id: nil] .
   op _,_ : NeModuleList ModuleList -> NeModuleList [ctor ditto] .
   op _,_ : ModuleList NeModuleList -> NeModuleList [ctor ditto] .
+
+*** module expression lists
+  sort ModuleExpressionList .
+  subsort ModuleExpression EmptyCommaList < ModuleExpressionList .
+  op _,_ : ModuleExpressionList ModuleExpressionList -> ModuleExpressionList [ctor ditto] .
+  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor ditto] .
+
+*** for preregularity, expression lists
+  subsort EmptyCommaList < ExpressionList < ModuleExpressionList ParameterList .
+  subsort Expression < NeExpressionList < ExpressionList NeParameterList .
+  op _,_ : ExpressionList ExpressionList -> ExpressionList [ctor ditto] .
+  op _,_ : NeExpressionList ExpressionList -> NeExpressionList [ctor ditto] .
+  op _,_ : ExpressionList NeExpressionList -> NeExpressionList [ctor ditto] .
 endfm
 
 fmod SYSTEM-MESSAGE is

@@ -137,39 +137,39 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     'op_:_->_`[_`].[''applySubstitution.Sort, '__[''Module.Sort, ''Term.Sort,
     ''Substitution.Sort], ''Term.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
     ''breadthFirst.Sort, 'nil.TypeList, ''SrewriteOption.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''completeName.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[
-    ''MetaLevelOpSymbol.Sort, ''metaCompleteName.Sort], 'op-hook[
-    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''delay.Sort, 'nil.TypeList,
-    ''VariantOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''depthFirst.Sort,
-    'nil.TypeList, ''SrewriteOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''downTerm.Sort, '__[''Term.Sort, ''Universal.Sort], ''Universal.Sort, '__[
-    'poly['__['s_^2['0.Zero], '0.Zero]], 'special['__['id-hook[
-    ''MetaLevelOpSymbol.Sort, ''metaDownTerm.Sort], 'op-hook[''shareWith.Sort,
-    ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]]], 'op_:_->_`[_`].[''failure.Sort, 'nil.TypeList,
-    ''NarrowingApplyResult?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''failure.Sort,
-    'nil.TypeList, ''NarrowingSearchPathResult?.Sort, 'ctor.Attr],
+    'op_:_->_`[_`].[''completeName.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaCompleteName.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort,
+    '__[''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]],
+    'op_:_->_`[_`].[''delay.Sort, 'nil.TypeList, ''VariantOption.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''depthFirst.Sort, 'nil.TypeList,
+    ''SrewriteOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''downTerm.Sort, '__[
+    ''Term.Sort, ''Universal.Sort], ''Universal.Sort, '__['poly['__['s_^2[
+    '0.Zero], '0.Zero]], 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaDownTerm.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
+    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]]], 'op_:_->_`[_`].[
+    ''failure.Sort, 'nil.TypeList, ''NarrowingApplyResult?.Sort, 'ctor.Attr],
     'op_:_->_`[_`].[''failure.Sort, 'nil.TypeList,
-    ''NarrowingSearchResult?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''failure.Sort,
-    'nil.TypeList, ''Result4Tuple?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''failure.Sort, 'nil.TypeList, ''ResultPair?.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''failure.Sort, 'nil.TypeList, ''ResultTriple?.Sort,
-    'ctor.Attr], 'op_:_->_`[_`].[''failure.Sort, 'nil.TypeList,
-    ''SmtResult?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''failure.Sort,
-    'nil.TypeList, ''Trace?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''failureIncomplete.Sort, 'nil.TypeList, ''NarrowingApplyResult?.Sort,
-    'ctor.Attr], 'op_:_->_`[_`].[''failureIncomplete.Sort, 'nil.TypeList,
     ''NarrowingSearchPathResult?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''failureIncomplete.Sort, 'nil.TypeList, ''NarrowingSearchResult?.Sort,
+    ''failure.Sort, 'nil.TypeList, ''NarrowingSearchResult?.Sort, 'ctor.Attr],
+    'op_:_->_`[_`].[''failure.Sort, 'nil.TypeList, ''Result4Tuple?.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''failure.Sort, 'nil.TypeList,
+    ''ResultPair?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''failure.Sort,
+    'nil.TypeList, ''ResultTriple?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''failure.Sort, 'nil.TypeList, ''SmtResult?.Sort, 'ctor.Attr],
+    'op_:_->_`[_`].[''failure.Sort, 'nil.TypeList, ''Trace?.Sort, 'ctor.Attr],
+    'op_:_->_`[_`].[''failureIncomplete.Sort, 'nil.TypeList,
+    ''NarrowingApplyResult?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''failureIncomplete.Sort, 'nil.TypeList, ''NarrowingSearchPathResult?.Sort,
     'ctor.Attr], 'op_:_->_`[_`].[''failureIncomplete.Sort, 'nil.TypeList,
-    ''ResultTriple?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''filter.Sort,
-    'nil.TypeList, ''VariantOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''flat.Sort, 'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''format.Sort, 'nil.TypeList, ''PrintOption.Sort,
-    'ctor.Attr], 'op_:_->_`[_`].[''getAccumulatedSubstitution.Sort,
-    ''NarrowingSearchResult.Sort, ''Substitution.Sort, 'none.AttrSet],
-    'op_:_->_`[_`].[''getAccumulatedSubstitution.Sort, ''NarrowingStep.Sort,
+    ''NarrowingSearchResult?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''failureIncomplete.Sort, 'nil.TypeList, ''ResultTriple?.Sort, 'ctor.Attr],
+    'op_:_->_`[_`].[''filter.Sort, 'nil.TypeList, ''VariantOption.Sort,
+    'ctor.Attr], 'op_:_->_`[_`].[''flat.Sort, 'nil.TypeList,
+    ''PrintOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''format.Sort,
+    'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''getAccumulatedSubstitution.Sort, ''NarrowingSearchResult.Sort,
+    ''Substitution.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
+    ''getAccumulatedSubstitution.Sort, ''NarrowingStep.Sort,
     ''Substitution.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''getContext.Sort,
     ''MatchPair.Sort, ''Context.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
     ''getContext.Sort, ''NarrowingApplyResult.Sort, ''Context.Sort,
@@ -181,24 +181,22 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''NarrowingSearchPathResult.Sort, ''Term.Sort, 'none.AttrSet],
     'op_:_->_`[_`].[''getInitialType.Sort, ''NarrowingSearchPathResult.Sort,
     ''Type.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''getKind.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
-    'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaGetKind.Sort],
-    'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
-    ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''getKinds.Sort,
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[
-    ''MetaLevelOpSymbol.Sort, ''metaGetKinds.Sort], 'op-hook[''shareWith.Sort,
-    ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''getLabel.Sort,
-    ''NarrowingApplyResult.Sort, ''Qid.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
-    ''getLabel.Sort, ''NarrowingStep.Sort, ''Qid.Sort, 'none.AttrSet],
-    'op_:_->_`[_`].[''getLhsSubstitution.Sort, ''UnificationTriple.Sort,
-    ''Substitution.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
-    ''getMoreVariantsInLayerFlag.Sort, ''Variant.Sort, ''Bool.Sort,
-    'none.AttrSet], 'op_:_->_`[_`].[''getParent.Sort, ''Variant.Sort,
-    ''Parent.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''getRhsSubstitution.Sort,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__[
+    'id-hook[''MetaLevelOpSymbol.Sort, ''metaGetKind.Sort], 'op-hook[
+    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''getKinds.Sort, ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaGetKinds.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
+    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
+    ''getLabel.Sort, ''NarrowingApplyResult.Sort, ''Qid.Sort, 'none.AttrSet],
+    'op_:_->_`[_`].[''getLabel.Sort, ''NarrowingStep.Sort, ''Qid.Sort,
+    'none.AttrSet], 'op_:_->_`[_`].[''getLhsSubstitution.Sort,
     ''UnificationTriple.Sort, ''Substitution.Sort, 'none.AttrSet],
-    'op_:_->_`[_`].[''getRule.Sort, ''TraceStep.Sort, ''Rule.Sort,
-    'none.AttrSet], 'op_:_->_`[_`].[''getRuleSubstitution.Sort,
+    'op_:_->_`[_`].[''getMoreVariantsInLayerFlag.Sort, ''Variant.Sort,
+    ''Bool.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''getParent.Sort,
+    ''Variant.Sort, ''Parent.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
+    ''getRhsSubstitution.Sort, ''UnificationTriple.Sort, ''Substitution.Sort,
+    'none.AttrSet], 'op_:_->_`[_`].[''getRule.Sort, ''TraceStep.Sort,
+    ''Rule.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''getRuleSubstitution.Sort,
     ''NarrowingApplyResult.Sort, ''Substitution.Sort, 'none.AttrSet],
     'op_:_->_`[_`].[''getStateVariableFamily.Sort,
     ''NarrowingSearchResult.Sort, ''Qid.Sort, 'none.AttrSet], 'op_:_->_`[_`].[
@@ -247,29 +245,30 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''getVariableFamily.Sort, ''UnificationTriple.Sort, ''Qid.Sort,
     'none.AttrSet], 'op_:_->_`[_`].[''getVariableFamily.Sort, ''Variant.Sort,
     ''Qid.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''glbSorts.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
-    ''metaGlbSorts.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
-    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''leastSort.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
-    ''metaLeastSort.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
-    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''lesserSorts.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
-    ''metaLesserSorts.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
-    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''maximalAritySet.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special[
-    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaMaximalAritySet.Sort],
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaGlbSorts.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
-    ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''maximalSorts.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''leastSort.Sort,
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special[
+    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaLeastSort.Sort], 'op-hook[
+    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''lesserSorts.Sort, '__[
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__[
+    'id-hook[''MetaLevelOpSymbol.Sort, ''metaLesserSorts.Sort], 'op-hook[
+    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''maximalAritySet.Sort, '__[
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaMaximalAritySet.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort,
+    '__[''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]],
+    'op_:_->_`[_`].[''maximalSorts.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaMaximalSorts.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort,
     '__[''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]],
-    'op_:_->_`[_`].[''metaApply.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Substitution?`].Kind,
+    'op_:_->_`[_`].[''metaApply.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Substitution?`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[ResultTriple?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaApply.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaCheck.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special[
-    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaCheck.Sort], 'op-hook[
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__[
+    'id-hook[''MetaLevelOpSymbol.Sort, ''metaCheck.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaDisjointUnify.Sort, '__[
     ''`[Module`].Kind, ''`[UnificationProblem`].Kind,
@@ -279,64 +278,64 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''MetaLevelOpSymbol.Sort, ''legacyMetaDisjointUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaDisjointUnify.Sort, '__[
-    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[UnificationTriple?`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaDisjointUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaFrewrite.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[ResultPair?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaFrewrite.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaGetIrredundantVariant.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
+    ''metaGetIrredundantVariant.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[Variant?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''legacyMetaGetIrredundantVariant.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaGetIrredundantVariant.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
-    ''`[Variant?`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[Variant?`].Kind,
+    'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaGetIrredundantVariant.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaGetVariant.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[Variant?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''legacyMetaGetVariant.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort,
     '__[''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]],
-    'op_:_->_`[_`].[''metaGetVariant.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    'op_:_->_`[_`].[''metaGetVariant.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[Variant?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaGetVariant.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''metaIrredundantDisjointUnify.Sort, '__[''`[Module`].Kind,
-    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[UnificationTriple?`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaIrredundantDisjointUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaIrredundantUnify.Sort, '__[
-    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`].Kind, 'special[
     '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaIrredundantUnify.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaMatch.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[Condition`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[Substitution?`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaMatch.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
     ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaNarrow.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind, ''`[Bool`].Kind,
+    ''metaNarrow.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind, ''`[Bool`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[ResultPair?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaNarrow2.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaNarrow.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[ResultTriple?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaNarrow.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
@@ -366,39 +365,39 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''metaNarrowingSearchPath.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaNormalize.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[ResultPair?`].Kind,
-    'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaNormalize.Sort],
-    'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
-    ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaParse.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind],
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[ResultPair?`].Kind, 'special[
+    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaNormalize.Sort], 'op-hook[
+    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaParse.Sort, '__[
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind],
     ''`[ResultPair?`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaParse.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[ResultPair?`].Kind, 'special['__['id-hook[
-    ''MetaLevelOpSymbol.Sort, ''metaParse.Sort], 'op-hook[''shareWith.Sort,
-    ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaParseStrategy.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind],
-    ''`[StrategyList`,Strategy?`].Kind, 'special['__['id-hook[
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[ResultPair?`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaParse.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
+    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
+    ''metaParseStrategy.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[StrategyList`,Strategy?`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaParseStrategy.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'none.AttrSet],
+    'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[PrintOptionSet`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'none.AttrSet],
+    'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[PrintOptionSet`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[PrintOptionSet`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
-    ''`[PrintOptionSet`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'none.AttrSet],
-    'op_:_->_`[_`].[''metaPrettyPrint.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[PrintOptionSet`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
-    ''metaPrettyPrint.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
-    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[PrintOptionSet`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaPrettyPrint.Sort],
+    'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
+    ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
+    ''metaPrettyPrintStrategy.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[StrategyList`,Strategy?`].Kind, ''`[PrintOptionSet`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaPrettyPrintStrategy.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaPrintToString.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
-    ''`[PrintOptionSet`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[String`].Kind,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[PrintOptionSet`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[String`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaPrintToString.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaReduce.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[ResultPair?`].Kind,
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[ResultPair?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaReduce.Sort],
     'op-hook[''qidSymbol.Sort, ''<Qids>.Sort, 'nil.TypeList, ''Qid.Sort],
     'op-hook[''metaTermSymbol.Sort, ''_`[_`].Qid, '__[''Qid.Sort,
@@ -513,7 +512,7 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     'op-hook[''instantiationSymbol.Sort, ''_`{_`}.Sort, '__[''Expression.Sort,
     ''NeParameterList.Sort], ''Expression.Sort], 'op-hook[
     ''transformationSymbol.Sort, ''_`[_`]`(_`).Qid, '__[''Qid.Sort,
-    ''ModuleExpressionList.Sort, ''QidList.Sort], ''Expression.Sort], 'op-hook[
+    ''ModuleExpression.Sort, ''QidList.Sort], ''Expression.Sort], 'op-hook[
     ''termHookSymbol.Sort, ''term-hook.Sort, '__[''Qid.Sort, ''Term.Sort],
     ''Hook.Sort], 'op-hook[''hookListSymbol.Sort, ''__.Sort, '__[
     ''HookList.Sort, ''HookList.Sort], ''HookList.Sort], 'op-hook[
@@ -750,32 +749,32 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''Substitution.Sort, ''Nat.Sort, ''Parent.Sort, ''Bool.Sort],
     ''Variant.Sort], 'term-hook[''trueTerm.Sort, ''true.Bool.Constant],
     'term-hook[''falseTerm.Sort, ''false.Bool.Constant]]]], 'op_:_->_`[_`].[
-    ''metaRewrite.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''metaRewrite.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[ResultPair?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaRewrite.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaSearch.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
-    ''`[Condition`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Condition`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[ResultTriple?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaSearch.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaSearchPath.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Condition`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''metaSearchPath.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Condition`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[Trace?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaSearchPath.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaSmtSearch.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Condition`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''metaSmtSearch.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Condition`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[SmtResult?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaSmtSearch.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''metaSrewrite.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''metaSrewrite.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[StrategyList`,Strategy?`].Kind, ''`[SrewriteOption`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[ResultPair?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaSrewrite.Sort],
@@ -788,33 +787,36 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     '__['id-hook[''MetaLevelOpSymbol.Sort, ''legacyMetaUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaUnify.Sort, '__[
-    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`].Kind, 'special[
     '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaVariantDisjointUnify.Sort,
-    '__[''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
+    '__[''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[UnificationTriple?`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''legacyMetaVariantDisjointUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaVariantDisjointUnify.Sort,
-    '__[''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
+    '__[''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[UnificationTriple?`].Kind, 'none.AttrSet], 'op_:_->_`[_`].[
     ''metaVariantDisjointUnify.Sort, '__[''`[Module`].Kind,
-    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[VariantOptionSet`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
+    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[VariantOptionSet`].Kind,
+    ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[UnificationTriple?`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaVariantDisjointUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaVariantMatch.Sort, '__[
-    ''`[Module`].Kind, ''`[MatchingProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[VariantOptionSet`].Kind,
+    ''`[Module`].Kind, ''`[MatchingProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[VariantOptionSet`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[Substitution?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaVariantMatch.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''metaVariantUnify.Sort, '__[''`[Module`].Kind,
-    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`].Kind, 'special[
@@ -822,23 +824,24 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''metaVariantUnify.Sort, '__[''`[Module`].Kind,
-    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
+    ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`].Kind,
     'none.AttrSet], 'op_:_->_`[_`].[''metaVariantUnify.Sort, '__[
-    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[VariantOptionSet`].Kind,
+    ''`[Module`].Kind, ''`[UnificationProblem`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[VariantOptionSet`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
     ''`[MatchPair?`,UnificationPair?`,MatchOrUnificationPair`].Kind, 'special[
     '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaVariantUnify.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaXapply.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[Substitution?`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind], ''`[Result4Tuple?`].Kind,
     'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaXapply.Sort],
     'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
     ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''metaXmatch.Sort,
-    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
+    '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
     ''`[Condition`].Kind, ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind,
     ''`[FindResult`,NatList`,Bound`,Parent`].Kind],
@@ -846,16 +849,16 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaXmatch.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''minimalSorts.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind,
-    'special['__['id-hook[''MetaLevelOpSymbol.Sort, ''metaMinimalSorts.Sort],
-    'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort,
-    ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''mixfix.Sort,
-    'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''nil.Sort,
-    'nil.TypeList, ''NarrowingTrace.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''nil.Sort, 'nil.TypeList, ''Trace.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''noMatch.Sort, 'nil.TypeList, ''MatchPair?.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''noMatch.Sort, 'nil.TypeList, ''Substitution?.Sort,
-    'ctor.Attr], 'op_:_->_`[_`].[''noMatchIncomplete.Sort, 'nil.TypeList,
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__[
+    'id-hook[''MetaLevelOpSymbol.Sort, ''metaMinimalSorts.Sort], 'op-hook[
+    ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''mixfix.Sort, 'nil.TypeList,
+    ''PrintOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''nil.Sort, 'nil.TypeList,
+    ''NarrowingTrace.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''nil.Sort,
+    'nil.TypeList, ''Trace.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''noMatch.Sort,
+    'nil.TypeList, ''MatchPair?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''noMatch.Sort, 'nil.TypeList, ''Substitution?.Sort, 'ctor.Attr],
+    'op_:_->_`[_`].[''noMatchIncomplete.Sort, 'nil.TypeList,
     ''Substitution?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''noParse.Sort,
     ''Nat.Sort, ''ResultPair?.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''noStratParse.Sort, ''Nat.Sort, ''Strategy?.Sort, 'ctor.Attr],
@@ -873,55 +876,56 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''VariantOptionSet.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''number.Sort,
     'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''rat.Sort,
     'nil.TypeList, ''PrintOption.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''sameKind.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''sameKind.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaSameKind.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
     ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''sortLeq.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''sortLeq.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaSortLeq.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
     ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''upEqs.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind],
+    ''upEqs.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind],
     ''`[EquationSet`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaUpEqs.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
     ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
-    ''upImports.Sort, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[ImportList`].Kind, 'special[
-    '__['id-hook[''MetaLevelOpSymbol.Sort, ''metaUpImports.Sort], 'op-hook[
+    ''upImports.Sort, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[ImportList`].Kind, 'special['__[
+    'id-hook[''MetaLevelOpSymbol.Sort, ''metaUpImports.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upMbs.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[MembAxSet`].Kind, 'special['__['id-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upMbs.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[MembAxSet`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpMbs.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upModule.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[Module`].Kind, 'special['__['id-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upModule.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[Module`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpModule.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upOpDecls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[OpDeclSet`].Kind, 'special['__['id-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upOpDecls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[OpDeclSet`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpOpDecls.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upRls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[RuleSet`].Kind, 'special['__['id-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upRls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[RuleSet`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpRls.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upSds.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[StratDefSet`].Kind, 'special['__['id-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upSds.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[StratDefSet`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpSds.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upSorts.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upSorts.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpSorts.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upStratDecls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[StratDeclSet`].Kind, 'special['__['id-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upStratDecls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[StratDeclSet`].Kind, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpStratDecls.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upSubsortDecls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[SubsortDeclSet`].Kind, 'special['__[
-    'id-hook[''MetaLevelOpSymbol.Sort, ''metaUpSubsortDecls.Sort], 'op-hook[
+    ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upSubsortDecls.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind], ''`[SubsortDeclSet`].Kind, 'special['__['id-hook[
+    ''MetaLevelOpSymbol.Sort, ''metaUpSubsortDecls.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''upTerm.Sort, ''Universal.Sort,
     ''Term.Sort, '__['poly['s_['0.Zero]], 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaUpTerm.Sort], 'op-hook[''shareWith.Sort,
     ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
-    ''ResultPair?.Sort]]]]], 'op_:_->_`[_`].[''upView.Sort, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind, ''`[View`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''ResultPair?.Sort]]]]], 'op_:_->_`[_`].[''upView.Sort, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind,
+    ''`[View`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaUpView.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
     ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''wellFormed.Sort, ''Module.Sort, ''Bool.Sort, 'special['__['id-hook[
     ''MetaLevelOpSymbol.Sort, ''metaWellFormedModule.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''wellFormed.Sort, '__[
-    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpressionList`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__[
+    ''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__[
     'id-hook[''MetaLevelOpSymbol.Sort, ''metaWellFormedTerm.Sort], 'op-hook[
     ''shareWith.Sort, ''metaReduce.Sort, '__[''Module.Sort, ''QidList.Sort],
     ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[''wellFormed.Sort, '__[

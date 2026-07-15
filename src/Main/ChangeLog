@@ -1,3 +1,11 @@
+2026-07-14  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added getParameters projection function
+	moved module expression lists and expression lists to fmod
+	MODULE-LIST; changed _[_](_) to working on ModuleExpressions
+	rather than ModuleExpressionLists, and then added a subsort
+	overloading to MODULE-LIST to restore the functionality
+
 2026-07-13  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added fmod MODULE-LIST; fmod MODULE-TRANSFORMER

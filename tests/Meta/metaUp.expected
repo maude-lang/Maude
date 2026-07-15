@@ -330,6 +330,38 @@ eq 'getOps['sth_is_sorts_._______endsth['Q:Qid, 'IL:ImportList, 'SS:SortSet,
 eq 'getOps['th_is_sorts_._____endth['Q:Qid, 'IL:ImportList, 'SS:SortSet,
     'SSDS:SubsortDeclSet, 'OPDS:OpDeclSet, 'MAS:MembAxSet, 'EQS:EquationSet,
     'RLS:RuleSet]] = 'OPDS:OpDeclSet [none] .
+eq 'getParameters['fmod_is_sorts_.____endfm['Q:Qid, 'IL:ImportList,
+    'SS:SortSet, 'SSDS:SubsortDeclSet, 'OPDS:OpDeclSet, 'MAS:MembAxSet,
+    'EQS:EquationSet]] = 'nil.ParameterDeclList [none] .
+eq 'getParameters['fmod_is_sorts_.____endfm['_`{_`}['Q:Qid,
+    'PDL:ParameterDeclList], 'IL:ImportList, 'SS:SortSet, 'SSDS:SubsortDeclSet,
+    'OPDS:OpDeclSet, 'MAS:MembAxSet, 'EQS:EquationSet]] =
+    'PDL:ParameterDeclList [none] .
+eq 'getParameters['fth_is_sorts_.____endfth['Q:Qid, 'IL:ImportList,
+    'SS:SortSet, 'SSDS:SubsortDeclSet, 'OPDS:OpDeclSet, 'MAS:MembAxSet,
+    'EQS:EquationSet]] = 'nil.ParameterDeclList [none] .
+eq 'getParameters['mod_is_sorts_._____endm['Q:Qid, 'IL:ImportList, 'SS:SortSet,
+    'SSDS:SubsortDeclSet, 'OPDS:OpDeclSet, 'MAS:MembAxSet, 'EQS:EquationSet,
+    'RLS:RuleSet]] = 'nil.ParameterDeclList [none] .
+eq 'getParameters['mod_is_sorts_._____endm['_`{_`}['Q:Qid,
+    'PDL:ParameterDeclList], 'IL:ImportList, 'SS:SortSet, 'SSDS:SubsortDeclSet,
+    'OPDS:OpDeclSet, 'MAS:MembAxSet, 'EQS:EquationSet, 'RLS:RuleSet]] =
+    'PDL:ParameterDeclList [none] .
+eq 'getParameters['smod_is_sorts_._______endsm['Q:Qid, 'IL:ImportList,
+    'SS:SortSet, 'SSDS:SubsortDeclSet, 'OPDS:OpDeclSet, 'MAS:MembAxSet,
+    'EQS:EquationSet, 'RLS:RuleSet, 'STDS:StratDeclSet, 'STDFS:StratDefSet]] =
+    'nil.ParameterDeclList [none] .
+eq 'getParameters['smod_is_sorts_._______endsm['_`{_`}['Q:Qid,
+    'PDL:ParameterDeclList], 'IL:ImportList, 'SS:SortSet, 'SSDS:SubsortDeclSet,
+    'OPDS:OpDeclSet, 'MAS:MembAxSet, 'EQS:EquationSet, 'RLS:RuleSet,
+    'STDS:StratDeclSet, 'STDFS:StratDefSet]] = 'PDL:ParameterDeclList [none] .
+eq 'getParameters['sth_is_sorts_._______endsth['Q:Qid, 'IL:ImportList,
+    'SS:SortSet, 'SSDS:SubsortDeclSet, 'OPDS:OpDeclSet, 'MAS:MembAxSet,
+    'EQS:EquationSet, 'RLS:RuleSet, 'STDS:StratDeclSet, 'STDFS:StratDefSet]] =
+    'nil.ParameterDeclList [none] .
+eq 'getParameters['th_is_sorts_._____endth['Q:Qid, 'IL:ImportList, 'SS:SortSet,
+    'SSDS:SubsortDeclSet, 'OPDS:OpDeclSet, 'MAS:MembAxSet, 'EQS:EquationSet,
+    'RLS:RuleSet]] = 'nil.ParameterDeclList [none] .
 eq 'getParent['`{_`,_`,_`,_`,_`}['T:Term, 'S:Substitution, 'Q:Qid, 'P:Parent,
     'B:Bool]] = 'P:Parent [none] .
 eq 'getRhsSubstitution['`{_`,_`,_`}['LS:Substitution, 'RS:Substitution,

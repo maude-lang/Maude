@@ -23,11 +23,9 @@
 DagNode*
 MetaLevel::upModule(bool flat, ImportModule* m, PointerMap& qidMap, int replacementName)
 {
-  //
-  //	For the moment we only deal with flattened modules without parameters.
-  //
   Vector<DagNode*> args;
-    args.push_back(upQid(replacementName, qidMap));
+  //args.push_back(upQid(replacementName, qidMap));
+  args.push_back(upHeader(m, qidMap, replacementName));
   if (flat)
     args.push_back(nilImportListSymbol->makeDagNode());
   else
@@ -51,6 +49,39 @@ MetaLevel::upModule(bool flat, ImportModule* m, PointerMap& qidMap, int replacem
   args.push_back(upStratDecls(flat, m, qidMap));
   args.push_back(upSds(flat, m, qidMap));
   return ((mt == MixfixModule::STRATEGY_MODULE) ? smodSymbol : sthSymbol)->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upHeader(ImportModule* m, PointerMap& qidMap, int replacementName)
+{
+  DagNode* name = upQid(replacementName, qidMap);
+  if (m->getNrParameters() == 0)
+    return name;
+  Vector<DagNode*> args(2);
+  args[0] = name;
+  args[1] = upParameterDecls(m, qidMap);
+  return headerSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upParameterDecls(ImportModule* m, PointerMap& qidMap)
+{
+  Index nrParameters = m->getNrParameters();
+  if (nrParameters == 1)
+    return upParameterDecl(m, 0, qidMap);
+  Vector<DagNode*> args(nrParameters);
+  for (Index i = 0; i < nrParameters; ++i)
+    args[i] = upParameterDecl(m, i, qidMap);
+  return parameterDeclListSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upParameterDecl(ImportModule* m, Index index, PointerMap& qidMap)
+{
+  Vector<DagNode*> args(2);
+  args[0] = upQid(m->getParameterName(index), qidMap);
+  args[1] = upModuleExpression(m->getParameterTheory(index), qidMap);
+  return parameterDeclSymbol->makeDagNode(args);
 }
 
 DagNode*

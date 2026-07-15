@@ -1,3 +1,13 @@
+2026-07-14  Saruman the White  <eker@eker10>
+
+	* metaLevel.hh (class MetaLevel): added decls for ImportModule*
+	versions of upHeader(), upParameterDecls(), upParameterDecl()
+
+	* metaUpModule.cc (MetaLevel::upHeader)
+	(MetaLevel::upParameterDecls, MetaLevel::upParameterDecl): added
+	ImportModule* versions
+	(MetaLevel::upModule): handle parameters
+
 2026-07-13  Saruman the White  <eker@eker10>
 
 	* metaLevel.hh (class MetaLevel): make const
