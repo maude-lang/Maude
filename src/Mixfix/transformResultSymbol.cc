@@ -36,16 +36,11 @@
 #include "AU_Theory.hh"
 #include "mixfix.hh"
 #include "higher.hh"
-#include "SMT.hh"
 #include "meta.hh"
 
 //      interface class definitions
 #include "symbol.hh"
 #include "dagNode.hh"
-
-//	core class definitions
-#include "symbolMap.hh"
-#include "dagArgumentIterator.hh"
 
 //      free class definitions
 #include "freeDagNode.hh"
@@ -53,18 +48,14 @@
 //      AU class definitions
 #include "AU_Symbol.hh"
 
-//	built-in macros
-#include "bindingMacros.hh"
-
 //      MetaLevel class definitions
-#include "metaLevelOpSymbol.hh"
 #include "metaLevel.hh"
 
 //	mixfix class definitions
 #include "transformResultSymbol.hh"
 
 TransformResultSymbol::TransformResultSymbol(int id)
-  : FreeSymbol(id, 2)
+  : ResultSymbol(id, 2)
 {
 }
 
@@ -75,7 +66,7 @@ TransformResultSymbol::attachData(const Vector<Sort*>& opDeclaration,
 {
   if (strcmp(purpose, "TransformResultSymbol") == 0)
     return true;
-  return FreeSymbol::attachData(opDeclaration, purpose, data);
+  return ResultSymbol::attachData(opDeclaration, purpose, data);
 }
 
 void
@@ -83,42 +74,9 @@ TransformResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 					    Vector<const char*>& purposes,
 					    Vector<Vector<const char*>>& data)
 {
-  purposes.push_back("TransformResultOpSymbol");
+  purposes.push_back("TransformResultSymbol");
   data.resize(data.size() + 1);
-  FreeSymbol::getDataAttachments(opDeclaration, purposes, data);
-}
-
-bool
-TransformResultSymbol::attachSymbol(const char* purpose, Symbol* symbol)
-{
-  Assert(symbol != nullptr, "null symbol for " << purpose);
-#define MACRO(SymbolName, SymbolClass) \
-  BIND_SYMBOL(purpose, symbol, SymbolName, SymbolClass*)
-#include "transformResultSignature.cc"
-#undef MACRO
-  return FreeSymbol::attachSymbol(purpose, symbol);
-}
-
-void
-TransformResultSymbol::getSymbolAttachments(Vector<const char*>& purposes,
-					    Vector<Symbol*>& symbols)
-{
-#define MACRO(SymbolName, SymbolClass) \
-  APPEND_SYMBOL(purposes, symbols, SymbolName)
-#include "transformResultSignature.cc"
-#undef MACRO
-  FreeSymbol::getSymbolAttachments(purposes, symbols);
-}
-
-void
-TransformResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
-{
-  TransformResultSymbol* orig = safeCastNonNull<TransformResultSymbol*>(original);
-#define MACRO(SymbolName, SymbolClass) \
-  COPY_SYMBOL(orig, SymbolName, map, SymbolClass*)
-#include "transformResultSignature.cc"
-#undef MACRO
-  FreeSymbol::copyAttachments(original, map);
+  ResultSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
 
 ImportModule*
@@ -127,23 +85,18 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 					  const Vector<int>& optionVec,
 					  Interpreter* owner)
 {
-  if (shareWith == nullptr)
-    {
-      IssueWarning(*this << ": transformer operator " << QUOTE(this) <<
-		   " has no metalevel attached.");
-      return nullptr;
-    }
   ImportModule* transformModule = safeCastNonNull<ImportModule*>(getModule());
-  MetaLevel* metaLevel = shareWith->getMetaLevel();
-  DagNode* metaOptions = metaLevel->upQidList(optionVec);
-  ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
+  MetaLevel* metaLevel = getMetaLevel();
+  PointerMap qidMap;
+  DagNode* metaOptions = metaLevel->upQidList(optionVec, qidMap);
+  const ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
   if (cachedTransformOp == nullptr)
     {
       //
       //	Need to find suitable operator.
       //
       const ConnectedComponent* moduleKind = domainComponent(0);
-      ConnectedComponent* transformResultKind = rangeComponent();
+      const ConnectedComponent* transformResultKind = rangeComponent();
       for (Symbol* s : transformModule->getSymbols())
 	{
 	  if (s->arity() == 2 && s->rangeComponent() == transformResultKind)
@@ -168,7 +121,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	}
       if (cachedTransformOp == nullptr)
 	{
-	  IssueWarning("didn't find suitable transform operator in module " <<
+	  IssueWarning("didn't find suitable module transform operator in module " <<
 		       QUOTE(transformModule) << ".");
 	  return nullptr;
 	}
@@ -181,24 +134,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   //
   bool flat = cachedTransformOp->domainComponent(0) == qidKind;
   Vector<DagNode*> args(2);
-  if (inputModules.empty())
-     args[0] = nilModuleListSymbol->makeDagNode();
-  else
-    {
-      PointerMap qidMap;
-      Index index = 0;
-      Vector<DagNode*> metaModules(inputModules.size());
-      for (ImportModule* m : inputModules)
-	{
-	  Rope name("I");
-	  name += int64ToString(index + 1);
-	  int newName = Token::ropeToCode(name);
-	  m->finishFlattening();
-	  metaModules[index] = metaLevel->upModule(flat, m, qidMap, newName);
-	}
-      args[0] = (inputModules.size() == 1) ? metaModules[0] :
-	moduleListSymbol->makeDagNode(metaModules);
-    }
+  args[0] = upModuleList(flat, inputModules, qidMap);
   args[1] = metaOptions;
   if (flat)
     swap(args[0], args[1]);
@@ -224,32 +160,29 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   if (result->symbol() == this)
     {
       FreeDagNode* r = safeCastNonNull<FreeDagNode*>(result);
-      //
-      //	Deal with message list.
-      //
-      DagNode* messages = r->getArgument(1);
-      if (messages->symbol() == systemMsgListSymbol)
-	{
-	  for (DagArgumentIterator i(messages); i.valid(); i.next())
-	    handleMessage(i.argument());
-	}
-      else if (messages->symbol() != nilSystemMsgListSymbol)
-	handleMessage(messages);
+      handleMessageList(r->getArgument(1));
       //
       //	Deal with module list.
       //
       DagNode* modules = r->getArgument(0);
-      if (modules->symbol() == moduleListSymbol)
-	IssueWarning("only expected one module returned");
-      else if (modules->symbol() != nilModuleListSymbol)
+      Symbol* topSymbol = modules->symbol();
+      if (multipleModules(topSymbol))
+	IssueWarning("expected module transformer to return a single module.");
+      else if (noModules(topSymbol))
+	{
+	  //
+	  //	We assume module transformer will have returned an appropriate warning.
+	  //
+	  Verbose("Failed to make transformed module " << Token::name(newModuleName));
+	}
+      else 
 	{
 	  Verbose("Made transformed module " << Token::name(newModuleName));
-	  ImportModule* resultModule =
-	    metaLevel->downSignature(modules,
-				     owner,
-				     ImportModule::TRANSFORMATION,
-				     newModuleName);
-	  if (resultModule != nullptr)
+	  if (ImportModule* resultModule =
+	      metaLevel->downSignature(modules,
+				       owner,
+				       ImportModule::TRANSFORMATION,
+				       newModuleName))
 	    {
 	      //
 	      //	Our result module becomes a user of all the input modules and
@@ -265,44 +198,14 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	      //	the module expression that built it.
 	      //
 	      resultModule->setTransformInfo(transformModule, inputModules, optionVec);
+	      (void) transformModule->unprotect();
+	      return resultModule;
 	    }
-	  (void) transformModule->unprotect();
-	  return resultModule;
+	  IssueWarning("module transformer returned bad module.");
 	}
-      else
-	Verbose("Failed to make transformed module " << Token::name(newModuleName));
     }
+  else
+    IssueWarning("module generator returned bad result term.");
   (void) transformModule->unprotect();
   return nullptr;
-}
-
-void
-TransformResultSymbol::handleMessage(DagNode* message)
-{
-  Symbol* s = message->symbol();
-  DagArgumentIterator i(message);
-  if (i.valid())
-    {
-      Rope text;
-      if (shareWith->getMetaLevel()->downString(i.argument(), text))
-	{
-	  if (s == advisorySymbol)
-	    {
-	      IssueAdvisory(text);
-	      return;
-	    }
-	  else if (s == warningSymbol)
-	    {
-	      IssueWarning(text);
-	      return;
-	    }
-	  else if (s == verboseSymbol)
-	    {
-	      Verbose(text);
-	      return;
-	    }
-	}
-    }
-  IssueWarning("Unexpected message value returned from module transformation: " <<
-	       QUOTE(message));
 }

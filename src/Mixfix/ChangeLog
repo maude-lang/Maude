@@ -1,5 +1,35 @@
 2026-07-16  Saruman the White  <eker@eker10>
 
+	* resultSymbol.hh (ResultSymbol::multipleModules): added
+	(ResultSymbol::noModules): added
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): use upModuleList()
+	(TransformResultSymbol::makeTransformation): use
+	handleMessageList()
+	(TransformResultSymbol::makeTransformation): rewritten
+	(TransformResultSymbol::handleMessage): deleted
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): viewName
+	-> newViewName
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::TransformResultSymbol): pass args to
+	ResultSymbol ctor
+	(TransformResultSymbol::getDataAttachments): fix bug where we were
+	returning TransformResultSymbol rather than TransformResultSymbol
+	(TransformResultSymbol::getSymbolAttachments): deleted
+	(TransformResultSymbol::copyAttachments): deleted
+	(TransformResultSymbol::attachSymbol): deleted
+	(TransformResultSymbol::getDataAttachments): call
+	ResultSymbol::getDataAttachments()
+	(TransformResultSymbol::attachData): call
+	ResultSymbol::attachData()
+	(TransformResultSymbol::makeTransformation): pass qidMap to upQidList()
+
+	* transformResultSymbol.hh (class TransformResultSymbol): derive from
+	ResultSymbol
+
 	* mixfix.hh: added ResultSymbol
 
 	* viewResultSymbol.cc (ViewResultSymbol::getDataAttachments): fix

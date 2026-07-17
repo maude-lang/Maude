@@ -197,8 +197,7 @@ EXTRA_DIST = \
 	latexResult.cc \
 	latexCommand.cc \
 	latexPreModulePrint.cc \
-	resultSignature.cc \
-	transformResultSignature.cc
+	resultSignature.cc
 
 noinst_HEADERS = \
 	renaming.hh \

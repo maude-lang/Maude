@@ -77,7 +77,7 @@ ViewResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 }
 
 View*
-ViewResultSymbol::generateView(int viewName,
+ViewResultSymbol::generateView(int newViewName,
 			       const Vector<ImportModule*>& inputModules,
 			       const Vector<int>& optionVec,
 			       Interpreter* owner)
@@ -125,7 +125,7 @@ ViewResultSymbol::generateView(int viewName,
 	  return nullptr;
 	}
     }
-  Verbose("Attempting to generate view " << Token::name(viewName));
+  Verbose("Attempting to generate view " << Token::name(newViewName));
   //
   //	Make dag to be reduced.
   //
@@ -168,12 +168,12 @@ ViewResultSymbol::generateView(int viewName,
 	  //
 	  //	We assume view generator will have returned an appropriate warning.
 	  //
-	  Verbose("Failed to make generate view " << Token::name(viewName));
+	  Verbose("Failed to make generate view " << Token::name(newViewName));
 	}
       else
 	{
-	  Verbose("Generated view " << Token::name(viewName));
-	  if (View* resultView = metaLevel->downView(metaView, owner, viewName))
+	  Verbose("Generated view " << Token::name(newViewName));
+	  if (View* resultView = metaLevel->downView(metaView, owner, newViewName))
 	    {
 	      //
 	      //	Our result view becomes a user of the view generator module.

@@ -4,6 +4,7 @@
 #ifndef _resultSymbol_hh_
 #define _resultSymbol_hh_
 #include "freeSymbol.hh"
+#include "AU_Symbol.hh"
 
 class ResultSymbol : public FreeSymbol
 {
@@ -16,6 +17,8 @@ protected:
   MetaLevel* getMetaLevel() const;
   const ConnectedComponent* getModuleKind() const;
   bool viewFailure(Symbol* s) const;
+  bool multipleModules(Symbol* s) const;
+  bool noModules(Symbol* s) const;
   void handleMessageList(DagNode* messages) const;
   DagNode* upModuleList(bool flat,
 			const Vector<ImportModule*>& inputModules,
@@ -42,5 +45,18 @@ ResultSymbol::viewFailure(Symbol* s) const
 {
   return s == viewFailureSymbol;
 }
+
+inline bool
+ResultSymbol::multipleModules(Symbol* s) const
+{
+  return s == moduleListSymbol;
+}
+
+inline bool
+ResultSymbol::noModules(Symbol* s) const
+{
+  return s == nilModuleListSymbol;
+}
+
 
 #endif
