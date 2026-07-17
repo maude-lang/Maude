@@ -58,5 +58,4 @@ ResultSymbol::noModules(Symbol* s) const
   return s == nilModuleListSymbol;
 }
 
-
 #endif

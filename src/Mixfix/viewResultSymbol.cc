@@ -109,18 +109,19 @@ ViewResultSymbol::generateView(int newViewName,
 		    cachedGeneratorOp = s;
 		  else
 		    {
-		      IssueWarning("multiple view generator operators " <<
+		      IssueWarning(*generatorModule << ": multiple view generator operators " <<
 				   QUOTE(cachedGeneratorOp) << " and " <<
-				   QUOTE(s) << "in module " << QUOTE(generatorModule) <<
-				   ". Using " << QUOTE(cachedGeneratorOp));
-		      break;
+				   QUOTE(s) << "in module " << QUOTE(generatorModule) << ".");
+		      cachedGeneratorOp = nullptr;
+		      return nullptr;
 		    }
 		}
 	    }
 	}
       if (cachedGeneratorOp == nullptr)
 	{
-	  IssueWarning("didn't find suitable view generator operator in module " <<
+	  IssueWarning(*generatorModule <<
+		       ": didn't find suitable view generator operator in module " <<
 		       QUOTE(generatorModule) << ".");
 	  return nullptr;
 	}
@@ -189,11 +190,13 @@ ViewResultSymbol::generateView(int newViewName,
 	      (void) generatorModule->unprotect();
 	      return resultView;
 	    }
-	  IssueWarning("view generator returned bad view.");
+	  IssueWarning(*cachedGeneratorOp << ": view generator " << QUOTE(cachedGeneratorOp) <<
+		       " returned bad view " << QUOTE(metaView) << ".");
 	}
     }
   else
-    IssueWarning("view generator returned bad result term.");
+    IssueWarning(*cachedGeneratorOp << ": view generator " << QUOTE(cachedGeneratorOp) <<
+		 " returned bad result term " << QUOTE(result) << ".");
   (void) generatorModule->unprotect();
   return nullptr;
 }

@@ -159,7 +159,7 @@ ResultSymbol::handleMessage(DagNode* message) const
 	    }
 	}
     }
-  IssueWarning("unexpected message value returned from view generation: " << QUOTE(message));
+  IssueWarning(*this << ": " << QUOTE(this) << " returned bad system message: " << QUOTE(message));
 }
 
 DagNode*

@@ -316,8 +316,8 @@ ModuleCache::makeModuleTransformation(ImportModule* transformer,
   TransformResultSymbol* ts = transformer->getTransformResultSymbol();
   if (ts == nullptr)
     {
-      IssueWarning("transformer module " << transformer <<
-		   " does not have a symbol with the TransformerResultSymbol specials attribute.");
+      IssueWarning(*transformer << ": transformer module " << QUOTE(transformer) <<
+		   " does not have a symbol with the special TransformerResultSymbol attribute.");
       return nullptr;
     }
   //

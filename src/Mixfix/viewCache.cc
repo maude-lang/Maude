@@ -176,8 +176,8 @@ ViewCache::generateView(ImportModule* generator,
   ViewResultSymbol* vs = generator->getViewResultSymbol();
   if (vs == nullptr)
     {
-      IssueWarning("view generator module " << generator <<
-		   " does not have a symbol with the ViewResultSymbol specials attribute.");
+      IssueWarning(*generator << ": view generator module " << QUOTE(generator) <<
+		   " does not have a symbol with the ViewResultSymbol special attribute.");
       return nullptr;
     }
   //

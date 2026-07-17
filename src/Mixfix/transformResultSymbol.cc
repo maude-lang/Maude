@@ -110,18 +110,19 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 		    cachedTransformOp = s;
 		  else
 		    {
-		      IssueWarning("multiple transform operators " <<
+		      IssueWarning(*transformModule << ": multiple transform operators " <<
 				   QUOTE(cachedTransformOp) << " and " <<
-				   QUOTE(s) << "in module " << QUOTE(transformModule) <<
-				   ". Using " << QUOTE(cachedTransformOp));
-		      break;
+				   QUOTE(s) << " in module " << QUOTE(transformModule) << ".");
+		      cachedTransformOp = nullptr;
+		      return nullptr;
 		    }
 		}
 	    }
 	}
       if (cachedTransformOp == nullptr)
 	{
-	  IssueWarning("didn't find suitable module transform operator in module " <<
+	  IssueWarning(*transformModule <<
+		       ": didn't find suitable module transform operator in module " <<
 		       QUOTE(transformModule) << ".");
 	  return nullptr;
 	}
@@ -167,7 +168,9 @@ TransformResultSymbol::makeTransformation(int newModuleName,
       DagNode* modules = r->getArgument(0);
       Symbol* topSymbol = modules->symbol();
       if (multipleModules(topSymbol))
-	IssueWarning("expected module transformer to return a single module.");
+	IssueWarning(*cachedTransformOp <<
+		     ": expected module transformer " << QUOTE(cachedTransformOp) <<
+		     " to return a single module.");
       else if (noModules(topSymbol))
 	{
 	  //
@@ -201,11 +204,13 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	      (void) transformModule->unprotect();
 	      return resultModule;
 	    }
-	  IssueWarning("module transformer returned bad module.");
+	  IssueWarning(*cachedTransformOp << ": module transformer " << QUOTE(cachedTransformOp) <<
+		       " returned bad module " << QUOTE(modules) << ".");
 	}
     }
   else
-    IssueWarning("module generator returned bad result term.");
+    IssueWarning(*cachedTransformOp << ": module transformer " << QUOTE(cachedTransformOp) <<
+		 " returned bad result term " << QUOTE(result) << ".");
   (void) transformModule->unprotect();
   return nullptr;
 }

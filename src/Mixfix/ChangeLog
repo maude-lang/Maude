@@ -1,5 +1,28 @@
 2026-07-16  Saruman the White  <eker@eker10>
 
+	* resultSymbol.cc (ResultSymbol::handleMessage): include line
+	number and operator name in bad system message warning
+
+	* viewCache.cc (ViewCache::generateView): include line number in
+	warning
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): include
+	line number in warning
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): don't proceed if
+	there are multiple transform operators in a module
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): put line
+	numbers and more detail in warnings
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): put line numbers and
+	more detail in warnings
+
+	* resultSymbol.cc (ResultSymbol::handleMessage): no longer
+	specific to view generation
+
 	* resultSymbol.hh (ResultSymbol::multipleModules): added
 	(ResultSymbol::noModules): added
 

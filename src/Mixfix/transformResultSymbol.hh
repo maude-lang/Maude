@@ -52,6 +52,7 @@ private:
 			  Vector<Vector<const char*>>& data);
   
   void flattenModule(ImportModule* module);  // maybe move this to ImportModule
+
   Symbol* cachedTransformOp = nullptr;  // for implicit transform ops
 };
 
