@@ -1,5 +1,37 @@
 2026-07-17  Saruman the White  <eker@eker10>
 
+	* resultSymbol.cc (ResultSymbol::handleMessageList): take and pass
+	lineNumber
+	(ResultSymbol::handleMessage): take lineNumber and put it
+	advisories and warnings
+
+	* viewResultSymbol.hh (class ViewResultSymbol): updated decl for generateView()
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): take
+	lineNumber argument and pass it to handleMessageList()
+
+	* transformResultSymbol.hh (class TransformResultSymbol): updated
+	decl for makeTransformation()
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): take lineNumber
+	argument and pass it to handleMessageList()
+
+	* viewCache.hh (class ViewCache): updated decl for generateView()
+
+	* viewCache.cc (ViewCache::generateView): take lineNumber arugment
+	and pass it to generateView()
+
+	* moduleCache.hh (class ModuleCache): updated decl for
+	makeModuleTransformation()
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): take
+	lineNumber arugment and pass it to makeTransformation()
+
+	* interpreter.cc (Interpreter::makeModule): pass line number to
+	makeModuleTransformation()
+	(Interpreter::handleArgument): pass line number to generateView()
+
 	* entity.cc (Entity::informUsers): added DebugAdvisory()
 
 	* importModule.cc (ImportModule::deepSelfDestruct): added comment

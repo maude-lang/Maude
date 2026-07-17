@@ -40,7 +40,8 @@ public:
   View* generateView(ImportModule* generator,
 		     const Vector<ImportModule*>& inputModules,
 		     const Vector<int>& options,
-		     Interpreter* owner);
+		     Interpreter* owner,
+		     LineNumber lineNumber);
 
   int destructUnusedViews();
   void showCreatedViews(ostream& s) const;

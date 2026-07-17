@@ -830,7 +830,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		    inputModules.append(fm);
 		  }
 	      }
-	    if (View* v = generateView(fm, inputModules, expr->getOptions(), this))
+	    if (View* v = generateView(fm,inputModules, expr->getOptions(), this, name.getLineNr()))
 	      {
 		//
 		//	Make sure the generated view is good.
@@ -1006,7 +1006,11 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		    inputModules.append(fm);
 		  }
 	      }
-	    return makeModuleTransformation(fm, inputModules, expr->getOptions(), this);
+	    return makeModuleTransformation(fm,
+					    inputModules,
+					    expr->getOptions(),
+					    this,
+					    name.getLineNr());
 	  }
 	break;
       }

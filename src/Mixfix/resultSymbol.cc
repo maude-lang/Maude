@@ -121,19 +121,19 @@ ResultSymbol::getModuleKind() const
 }
 
 void
-ResultSymbol::handleMessageList(DagNode* messages) const
+ResultSymbol::handleMessageList(DagNode* messages, LineNumber lineNumber) const
 {
   if (messages->symbol() == systemMsgListSymbol)
     {
       for (DagArgumentIterator i(messages); i.valid(); i.next())
-	handleMessage(i.argument());
+	handleMessage(i.argument(), lineNumber);
     }
   else if (messages->symbol() != nilSystemMsgListSymbol)
-    handleMessage(messages);
+    handleMessage(messages, lineNumber);
 }
 
 void
-ResultSymbol::handleMessage(DagNode* message) const
+ResultSymbol::handleMessage(DagNode* message, LineNumber lineNumber) const
 {
   Symbol* s = message->symbol();
   DagArgumentIterator i(message);
@@ -144,12 +144,12 @@ ResultSymbol::handleMessage(DagNode* message) const
 	{
 	  if (s == advisorySymbol)
 	    {
-	      IssueAdvisory(text);
+	      IssueAdvisory(lineNumber << ": " << text);
 	      return;
 	    }
 	  else if (s == warningSymbol)
 	    {
-	      IssueWarning(text);
+	      IssueWarning(lineNumber << ": " << text);
 	      return;
 	    }
 	  else if (s == verboseSymbol)

@@ -171,7 +171,8 @@ View*
 ViewCache::generateView(ImportModule* generator,
 			const Vector<ImportModule*>& inputModules,
 			const Vector<int>& options,
-			Interpreter* owner)
+			Interpreter* owner,
+			LineNumber lineNumber)
 {
   ViewResultSymbol* vs = generator->getViewResultSymbol();
   if (vs == nullptr)
@@ -219,7 +220,7 @@ ViewCache::generateView(ImportModule* generator,
       DebugAdvisory("using existing copy of view " << name);
       return c->second;
     }
-  View* generated = vs->generateView(nameCode, inputModules, options, owner);
+  View* generated = vs->generateView(nameCode, inputModules, options, owner, lineNumber);
   if (generated != nullptr)
     {
       viewMap[nameCode] = generated;

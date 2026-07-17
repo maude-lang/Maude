@@ -43,7 +43,8 @@ public:
   ImportModule* makeModuleTransformation(ImportModule* transformer,
 					 const Vector<ImportModule*>& modules,
 					 const Vector<int>& options,
-					 Interpreter* owner);
+					 Interpreter* owner,
+					 LineNumber lineNumber);
   int destructUnusedModules();
   void showCreatedModules(ostream& s) const;
   void latexShowCreatedModules(ostream& s) const;

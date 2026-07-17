@@ -26,11 +26,12 @@ result Tuple{Tuple{Nat,Tuple{Qid,Qid},String},Qid}: ((5, ('a, 'bb), "dd"), 'z)
 reduce in TEST4 : p1 p2 p1 ((5, ('a, 'bb), "dd"), 'z) .
 rewrites: 3
 result Qid: 'a
-Warning: bad argument to Tuple.
+Warning: <standard input>, line 143 (fmod BAD-ARGUMENT): bad argument to Tuple.
 Warning: <standard input>, line 142 (fmod BAD-ARGUMENT): this module contains
     one or more errors that could not be patched up and thus it cannot be used
     or imported.
-Warning: input modules not expected by Tuple.
+Warning: <standard input>, line 147 (fmod UNEXPECTED-MODULE): input modules not
+    expected by Tuple.
 Warning: <standard input>, line 146 (fmod UNEXPECTED-MODULE): this module
     contains one or more errors that could not be patched up and thus it cannot
     be used or imported.

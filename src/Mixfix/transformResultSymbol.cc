@@ -83,7 +83,8 @@ ImportModule*
 TransformResultSymbol::makeTransformation(int newModuleName,
 					  const Vector<ImportModule*>& inputModules,
 					  const Vector<int>& optionVec,
-					  Interpreter* owner)
+					  Interpreter* owner,
+					  LineNumber lineNumber)
 {
   ImportModule* transformModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();
@@ -161,7 +162,7 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   if (result->symbol() == this)
     {
       FreeDagNode* r = safeCastNonNull<FreeDagNode*>(result);
-      handleMessageList(r->getArgument(1));
+      handleMessageList(r->getArgument(1), lineNumber);
       //
       //	Deal with module list.
       //

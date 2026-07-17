@@ -80,7 +80,8 @@ View*
 ViewResultSymbol::generateView(int newViewName,
 			       const Vector<ImportModule*>& inputModules,
 			       const Vector<int>& optionVec,
-			       Interpreter* owner)
+			       Interpreter* owner,
+			       LineNumber lineNumber)
 {
   ImportModule* generatorModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();
@@ -159,7 +160,7 @@ ViewResultSymbol::generateView(int newViewName,
   if (result->symbol() == this)
     {
       FreeDagNode* r = safeCastNonNull<FreeDagNode*>(result);
-      handleMessageList(r->getArgument(1));
+      handleMessageList(r->getArgument(1), lineNumber);
       //
       //	Deal with view? result.
       //

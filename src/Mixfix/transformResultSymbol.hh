@@ -41,7 +41,8 @@ public:
   ImportModule* makeTransformation(int newModuleName,
 				   const Vector<ImportModule*>& inputModules,
 				   const Vector<int>& optionVec,
-				   Interpreter* owner);
+				   Interpreter* owner,
+				   LineNumber lineNumber);
 
 private:
   bool attachData(const Vector<Sort*>& opDeclaration,
