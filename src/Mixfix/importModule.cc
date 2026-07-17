@@ -352,6 +352,10 @@ ImportModule::regretToInform(Entity*  doomedEntity )
 void
 ImportModule::deepSelfDestruct()
 {
+  //
+  //	We do this stuff here rather than our destructor because we
+  //	might want to postpone our destruction, but we still need to clean up.
+  //
   DebugEnter("module " << this);
   //
   //	First remove ourself from the list of users of each of our parameters, imports,

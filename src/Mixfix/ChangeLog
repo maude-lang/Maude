@@ -1,3 +1,16 @@
+2026-07-17  Saruman the White  <eker@eker10>
+
+	* entity.cc (Entity::informUsers): added DebugAdvisory()
+
+	* importModule.cc (ImportModule::deepSelfDestruct): added comment
+	to explain why deepSelfDestruct() is needed
+
+	* view.cc (View::~View): remove ourself as a user of each of our
+	input modules
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): make
+	resultView a user of each of the input modules
+
 2026-07-16  Saruman the White  <eker@eker10>
 
 	* resultSymbol.cc (ResultSymbol::upModuleList): fix bug where we

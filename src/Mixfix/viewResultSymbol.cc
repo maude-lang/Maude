@@ -58,8 +58,8 @@ ViewResultSymbol::ViewResultSymbol(int id)
 
 bool
 ViewResultSymbol::attachData(const Vector<Sort*>& opDeclaration,
-				  const char* purpose,
-				  const Vector<const char*>& data)
+			     const char* purpose,
+			     const Vector<const char*>& data)
 {
   if (strcmp(purpose, "ViewResultSymbol") == 0)
     return true;
@@ -68,8 +68,8 @@ ViewResultSymbol::attachData(const Vector<Sort*>& opDeclaration,
 
 void
 ViewResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
-					    Vector<const char*>& purposes,
-					    Vector<Vector<const char*>>& data)
+				     Vector<const char*>& purposes,
+				     Vector<Vector<const char*>>& data)
 {
   purposes.push_back("ViewResultSymbol");
   data.resize(data.size() + 1);
@@ -177,8 +177,11 @@ ViewResultSymbol::generateView(int newViewName,
 	  if (View* resultView = metaLevel->downView(metaView, owner, newViewName))
 	    {
 	      //
-	      //	Our result view becomes a user of the view generator module.
+	      //	Our result module becomes a user of all the input modules and
+	      //	the generator module. If any of these change, it becomes stale.
 	      //
+	      for (ImportModule* m : inputModules)
+		m->addUser(resultView);
 	      generatorModule->addUser(resultView);
 	      //
 	      //	We pass it all the information used to construct it, so it

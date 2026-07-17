@@ -154,6 +154,9 @@ View::~View()
     toModule->removeUser(this);
   if (generatorModule != nullptr)
     generatorModule->removeUser(this);
+  for (ImportModule* m : inputModules)
+    m->removeUser(this);
+
   //
   //	deepSelfDestruct() from/to expressions.
   //

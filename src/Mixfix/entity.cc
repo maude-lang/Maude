@@ -123,6 +123,7 @@ Entity::informUsers()
 	}
       else
 	{
+	  DebugAdvisory("    " << QUOTE(this) << " informs " << user);
 	  user->regretToInform(this);  // invalidates i since user may remove itself from set
 	  last = user;
 	}
