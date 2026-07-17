@@ -1,3 +1,7 @@
+2026-07-16  Saruman the White  <eker@eker10>
+
+	* metaLevel.hh (class MetaLevel): make 2 arg upQidList() public
+
 2026-07-14  Saruman the White  <eker@eker10>
 
 	* metaDownView.cc (MetaLevel::downModuleExpression): don't convert

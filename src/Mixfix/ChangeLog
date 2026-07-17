@@ -1,3 +1,25 @@
+2026-07-16  Saruman the White  <eker@eker10>
+
+	* mixfix.hh: added ResultSymbol
+
+	* viewResultSymbol.cc (ViewResultSymbol::getDataAttachments): fix
+	bug where we were returning ViewResultOpSymbol rather than
+	ViewResultSymbol
+	(ViewResultSymbol::ViewResultSymbol): pass args to ResultSymbol
+	ctor
+	(ViewResultSymbol::attachSymbol): deleted
+	(ViewResultSymbol::getSymbolAttachments): deleted
+	(ViewResultSymbol::copyAttachments): deleted
+	(ViewResultSymbol::generateView): pass qidMap to upQidList()
+	(ViewResultSymbol::generateView): use getMetaLevel() and
+	getModuleKind()
+	(ViewResultSymbol::handleMessage): deleted
+	(ViewResultSymbol::upModuleList): deleted
+	(ViewResultSymbol::generateView): rewritten
+
+	* viewResultSymbol.hh (class ViewResultSymbol): derive from
+	ResultSymbol
+
 2026-07-14  Saruman the White  <eker@eker10>
 
 	* moduleCache.cc (ModuleCache::makeModuleTransformation): take

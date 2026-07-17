@@ -90,6 +90,7 @@ public:
   DagNode* upKindSet(const Vector<ConnectedComponent*>& kinds, int nrUserKinds);
   DagNode* upSortSet(const Vector<Sort*>& sorts);
   DagNode* upQidList(const Vector<int>& ids);
+  DagNode* upQidList(const Vector<int>& ids, PointerMap& qidMap);
   DagNode* upResultTriple(DagNode* dagNode,
 			  const Substitution& substitution,
 			  const VariableInfo& variableInfo,
@@ -506,7 +507,6 @@ private:
 		      SymbolType st,
 		      Term* identity,
 		      PointerMap& qidMap);
-  DagNode* upQidList(const Vector<int>& ids, PointerMap& qidMap);
   DagNode* upPolymorphSpecial(int index, MixfixModule* m, PointerMap& qidMap);
   DagNode* upIdHook(int purpose, const Vector<int>& items, PointerMap& qidMap);
   DagNode* upOpHook(int purpose, Symbol* op, PointerMap& qidMap);

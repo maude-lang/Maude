@@ -80,6 +80,7 @@ libmixfix_a_SOURCES = \
 	variableGenerator.cc \
 	objectConstructorSymbol.cc \
 	maudeLatexBuffer.cc \
+	resultSymbol.cc \
 	transformResultSymbol.cc \
 	viewResultSymbol.cc \
 	$(COMPILER_SRC)
@@ -196,8 +197,8 @@ EXTRA_DIST = \
 	latexResult.cc \
 	latexCommand.cc \
 	latexPreModulePrint.cc \
-	transformResultSignature.cc \
-	viewResultSignature.cc
+	resultSignature.cc \
+	transformResultSignature.cc
 
 noinst_HEADERS = \
 	renaming.hh \
@@ -252,4 +253,6 @@ noinst_HEADERS = \
 	statementTransformer.hh \
 	maudeLatexBuffer.hh \
 	printSettings.hh \
+	resultSymbol.hh \
+	transformResultSymbol.hh \
 	viewResultSymbol.hh

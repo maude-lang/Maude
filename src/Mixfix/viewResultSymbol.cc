@@ -36,35 +36,23 @@
 #include "AU_Theory.hh"
 #include "mixfix.hh"
 #include "higher.hh"
-#include "SMT.hh"
 #include "meta.hh"
 
 //      interface class definitions
 #include "symbol.hh"
 #include "dagNode.hh"
 
-//	core class definitions
-#include "symbolMap.hh"
-#include "dagArgumentIterator.hh"
-
 //      free class definitions
 #include "freeDagNode.hh"
 
-//      AU class definitions
-#include "AU_Symbol.hh"
-
-//	built-in macros
-#include "bindingMacros.hh"
-
 //      MetaLevel class definitions
-#include "metaLevelOpSymbol.hh"
 #include "metaLevel.hh"
 
 //	mixfix class definitions
 #include "viewResultSymbol.hh"
 
 ViewResultSymbol::ViewResultSymbol(int id)
-  : FreeSymbol(id, 2)
+  : ResultSymbol(id, 2)
 {
 }
 
@@ -75,7 +63,7 @@ ViewResultSymbol::attachData(const Vector<Sort*>& opDeclaration,
 {
   if (strcmp(purpose, "ViewResultSymbol") == 0)
     return true;
-  return FreeSymbol::attachData(opDeclaration, purpose, data);
+  return ResultSymbol::attachData(opDeclaration, purpose, data);
 }
 
 void
@@ -83,42 +71,9 @@ ViewResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 					    Vector<const char*>& purposes,
 					    Vector<Vector<const char*>>& data)
 {
-  purposes.push_back("ViewResultOpSymbol");
+  purposes.push_back("ViewResultSymbol");
   data.resize(data.size() + 1);
-  FreeSymbol::getDataAttachments(opDeclaration, purposes, data);
-}
-
-bool
-ViewResultSymbol::attachSymbol(const char* purpose, Symbol* symbol)
-{
-  Assert(symbol != nullptr, "null symbol for " << purpose);
-#define MACRO(SymbolName, SymbolClass) \
-  BIND_SYMBOL(purpose, symbol, SymbolName, SymbolClass*)
-#include "viewResultSignature.cc"
-#undef MACRO
-  return FreeSymbol::attachSymbol(purpose, symbol);
-}
-
-void
-ViewResultSymbol::getSymbolAttachments(Vector<const char*>& purposes,
-					    Vector<Symbol*>& symbols)
-{
-#define MACRO(SymbolName, SymbolClass) \
-  APPEND_SYMBOL(purposes, symbols, SymbolName)
-#include "viewResultSignature.cc"
-#undef MACRO
-  FreeSymbol::getSymbolAttachments(purposes, symbols);
-}
-
-void
-ViewResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
-{
-  ViewResultSymbol* orig = safeCastNonNull<ViewResultSymbol*>(original);
-#define MACRO(SymbolName, SymbolClass) \
-  COPY_SYMBOL(orig, SymbolName, map, SymbolClass*)
-#include "viewResultSignature.cc"
-#undef MACRO
-  FreeSymbol::copyAttachments(original, map);
+  ResultSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
 
 View*
@@ -127,27 +82,18 @@ ViewResultSymbol::generateView(int viewName,
 			       const Vector<int>& optionVec,
 			       Interpreter* owner)
 {
-  if (shareWith == nullptr)
-    {
-      IssueWarning(*this << ": view result operator " << QUOTE(this) <<
-		   " has no metalevel attached.");
-      return nullptr;
-    }
   ImportModule* generatorModule = safeCastNonNull<ImportModule*>(getModule());
-  MetaLevel* metaLevel = shareWith->getMetaLevel();
-  DagNode* metaOptions = metaLevel->upQidList(optionVec);
-  ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
+  MetaLevel* metaLevel = getMetaLevel();
+  PointerMap qidMap;
+  DagNode* metaOptions = metaLevel->upQidList(optionVec, qidMap);
   if (cachedGeneratorOp == nullptr)
     {
       //
       //	Need to find suitable operator.
       //
-      //	We require that we share the metalevel with an operator
-      //	that takes a module as its first argument, which is most
-      //	descent functions apart from the up*() family and downTerm().
-      //
-      const ConnectedComponent* moduleKind = shareWith->domainComponent(0);
-      ConnectedComponent* viewResultKind = rangeComponent();
+      const ConnectedComponent* moduleKind = getModuleKind();
+      const ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
+      const ConnectedComponent* viewResultKind = rangeComponent();
       for (Symbol* s : generatorModule->getSymbols())
 	{
 	  Index nrArgs = s->arity();
@@ -185,7 +131,6 @@ ViewResultSymbol::generateView(int viewName,
   //
   Index nrArgs = cachedGeneratorOp->arity();
   Vector<DagNode*> args(nrArgs);
-  PointerMap qidMap;
   args[0] = upModuleList(false, inputModules, qidMap);
   args[1] = metaOptions;
   args[2] = metaLevel->upModuleExpressionList(inputModules, qidMap);
@@ -213,26 +158,22 @@ ViewResultSymbol::generateView(int viewName,
   if (result->symbol() == this)
     {
       FreeDagNode* r = safeCastNonNull<FreeDagNode*>(result);
-      //
-      //	Deal with message list.
-      //
-      DagNode* messages = r->getArgument(1);
-      if (messages->symbol() == systemMsgListSymbol)
-	{
-	  for (DagArgumentIterator i(messages); i.valid(); i.next())
-	    handleMessage(i.argument());
-	}
-      else if (messages->symbol() != nilSystemMsgListSymbol)
-	handleMessage(messages);
+      handleMessageList(r->getArgument(1));
       //
       //	Deal with view? result.
       //
       DagNode* metaView = r->getArgument(0);
-      if (metaView->symbol() != viewFailureSymbol)
+      if (viewFailure(metaView->symbol()))
+	{
+	  //
+	  //	We assume view generator will have returned an appropriate warning.
+	  //
+	  Verbose("Failed to make generate view " << Token::name(viewName));
+	}
+      else
 	{
 	  Verbose("Generated view " << Token::name(viewName));
-	  View* resultView = metaLevel->downView(metaView, owner, viewName);
-	  if (resultView != nullptr)
+	  if (View* resultView = metaLevel->downView(metaView, owner, viewName))
 	    {
 	      //
 	      //	Our result view becomes a user of the view generator module.
@@ -245,64 +186,14 @@ ViewResultSymbol::generateView(int viewName,
 	      //	the view expression that built it.
 	      //
 	      resultView->setGenerationInfo(generatorModule, inputModules, optionVec);
+	      (void) generatorModule->unprotect();
+	      return resultView;
 	    }
-	  (void) generatorModule->unprotect();
-	  return resultView;
+	  IssueWarning("view generator returned bad view.");
 	}
-      else
-	Verbose("Failed to make generate view " << Token::name(viewName));
     }
+  else
+    IssueWarning("view generator returned bad result term.");
   (void) generatorModule->unprotect();
   return nullptr;
-}
-
-void
-ViewResultSymbol::handleMessage(DagNode* message)
-{
-  Symbol* s = message->symbol();
-  DagArgumentIterator i(message);
-  if (i.valid())
-    {
-      Rope text;
-      if (shareWith->getMetaLevel()->downString(i.argument(), text))
-	{
-	  if (s == advisorySymbol)
-	    {
-	      IssueAdvisory(text);
-	      return;
-	    }
-	  else if (s == warningSymbol)
-	    {
-	      IssueWarning(text);
-	      return;
-	    }
-	  else if (s == verboseSymbol)
-	    {
-	      Verbose(text);
-	      return;
-	    }
-	}
-    }
-  IssueWarning("Unexpected message value returned from view generation: " << QUOTE(message));
-}
-
-DagNode*
-ViewResultSymbol::upModuleList(bool flat,
-			       const Vector<ImportModule*>& inputModules,
-			       PointerMap& qidMap)
-{
-  if (inputModules.empty())
-    return nilModuleListSymbol->makeDagNode();
-  Index index = 0;
-  Vector<DagNode*> metaModules(inputModules.size());
-  for (ImportModule* m : inputModules)
-    {
-      Rope name("I");
-      name += int64ToString(index + 1);
-      int newName = Token::ropeToCode(name);
-      m->finishFlattening();
-      metaModules[index] = shareWith->getMetaLevel()->upModule(flat, m, qidMap, newName);
-    }
-  return (inputModules.size() == 1) ? metaModules[0] :
-    moduleListSymbol->makeDagNode(metaModules);
 }

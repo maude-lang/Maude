@@ -75,6 +75,7 @@ class StatementTransformer;
 class MaudeLatexBuffer;
 class CommutativeDecomposeEqualitySymbol;
 class PrintSettings;
+class ResultSymbol;
 class TransformResultSymbol;
 class ViewResultSymbol;
 
