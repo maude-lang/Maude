@@ -217,6 +217,15 @@ Token::quoteNameCode(int idCode)
   return encode(quotedName.c_str());
 }
 
+int
+Token::addQuotes(int idCode)
+{
+  string quotedName("\"");
+  quotedName += stringTable.name(idCode);
+  quotedName += '"';
+  return encode(quotedName.c_str());
+}
+
 bool
 Token::getInt(int& value) const
 {

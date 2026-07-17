@@ -138,6 +138,7 @@ public:
   static int encode(const char* tokenString);
   static int dotNameCode(int sortNameCode);
   static int quoteNameCode(int idCode);
+  static int addQuotes(int idCode);
   static int extractMixfix(int prefixNameCode, Vector<int>& mixfixSyntax);
   static bool specialChar(char c);
 

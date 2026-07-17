@@ -173,11 +173,9 @@ ResultSymbol::upModuleList(bool flat,
   Vector<DagNode*> metaModules(inputModules.size());
   for (ImportModule* m : inputModules)
     {
-      Rope name("I");
-      name += int64ToString(index + 1);
-      int newName = Token::ropeToCode(name);
       m->finishFlattening();
-      metaModules[index] = getMetaLevel()->upModule(flat, m, qidMap, newName);
+      metaModules[index] = getMetaLevel()->upModule(flat, m, qidMap, Token::addQuotes(m->id()));
+      ++index;
     }
   return (inputModules.size() == 1) ? metaModules[0] :
     moduleListSymbol->makeDagNode(metaModules);

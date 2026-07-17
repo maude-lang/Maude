@@ -1,5 +1,13 @@
 2026-07-16  Saruman the White  <eker@eker10>
 
+	* resultSymbol.cc (ResultSymbol::upModuleList): fix bug where we
+	weren't incrementing the index; use addQuotes() to make module
+	name
+
+	* token.hh (class Token): added decl for quoteNameCode()
+
+	* token.cc (Token::addQuotes): added
+
 	* resultSymbol.cc (ResultSymbol::handleMessage): include line
 	number and operator name in bad system message warning
 
