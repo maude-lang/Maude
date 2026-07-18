@@ -101,10 +101,10 @@ fmod Tuple is
       S:Sort := qid("Tuple{" + params(NZ) + "}") .
       
   eq makeTuple(ML:NeModuleList, QL:QidList, MEL:ModuleExpressionList) =
-    {failure, warning("input modules not expected by Tuple.")} .
+    {nil, warning("input modules not expected by Tuple.")} .
 
   eq makeTuple(nil, QL:QidList, empty) =
-    {failure, warning("bad argument to Tuple.")} [owise] .
+    {nil, warning("bad argument to Tuple.")} [owise] .
 
   op paramDecls : Nat -> ParameterDeclList .
   eq paramDecls(0) = nil .

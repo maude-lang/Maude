@@ -44,7 +44,7 @@ private:
 inline bool
 ResultSymbol::viewFailure(Symbol* s) const
 {
-  return s == viewFailureSymbol;
+  return s == nilViewListSymbol;
 }
 
 inline bool

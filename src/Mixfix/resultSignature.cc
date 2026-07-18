@@ -28,7 +28,7 @@
 //	The format is:
 //		MACRO(symbols name, symbols C++ class)
 //
-  MACRO(viewFailureSymbol, Symbol)
+  MACRO(nilViewListSymbol, Symbol)
   MACRO(nilModuleListSymbol, Symbol)
   MACRO(moduleListSymbol, AU_Symbol)
   MACRO(nilSystemMsgListSymbol, Symbol)

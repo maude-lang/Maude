@@ -3239,8 +3239,8 @@ fmod SYSTEM-MESSAGE is
   eq string(nil) = "" .
   eq string(Q NQL) = string(Q) + " " + string(NQL) .
 
-  op quote : String -> String .
-  eq quote(S) = "\036" + S + "\037" .
+  op highlight : String -> String .
+  eq highlight(S) = "\036" + S + "\037" .
 
   op stripQuotes : String -> String .
   eq stripQuotes(S) = if length(S) >= 2 and-then
@@ -3249,10 +3249,10 @@ fmod SYSTEM-MESSAGE is
                         substr(S, 1, sd(length(S), 2))
 		      else S fi .
 
-  op quote : QidList String -> String .
-  eq quote(nil, S) = "" .
-  eq quote(Q, S) = quote(stripQuotes(string(Q))) .
-  eq quote(Q NQL, S) = quote(stripQuotes(string(Q))) + S + quote(NQL, S) .
+  op highlight : QidList String -> String .
+  eq highlight(nil, S) = "" .
+  eq highlight(Q, S) = highlight(stripQuotes(string(Q))) .
+  eq highlight(Q NQL, S) = highlight(stripQuotes(string(Q))) + S + highlight(NQL, S) .
 
   op pluralize : String Nat -> String .
   eq pluralize(S, s 0) = S .
@@ -3292,14 +3292,14 @@ endfm
 fmod VIEW-GENERATOR is
   protecting EXTENDED-META-LEVEL .
   protecting SYSTEM-MESSAGE .
-  subsort View < View? .
-  op failure : -> View? [ctor] .
+  subsort View < ViewList .
+  op nil : -> ViewList [ctor] .
 
   sort ViewResult .
-  op {_,_} : View? SystemMsgList -> ViewResult
+  op {_,_} : ViewList SystemMsgList -> ViewResult
     [special (
       id-hook ViewResultSymbol
-      op-hook viewFailureSymbol		(failure : ~> View?)
+      op-hook nilViewListSymbol		(nil : ~> ViewList)
       op-hook nilModuleListSymbol	(nil : ~> ModuleList)
       op-hook moduleListSymbol		(_,_ : ModuleList ModuleList ~> ModuleList)
       op-hook nilSystemMsgListSymbol	(nil : ~> SystemMsgList)
@@ -3342,12 +3342,12 @@ fmod TUPLE is
       OP := qid("(" + underscores(NzN) + ")") .
 
   eq makeTuple(NeML, QL) =
-    {nil, warning("module generator " + quote("TUPLE(n)") + " did not expect input " +
-     pluralize("module", size(getNames(NeML))) + " " + quote(getNames(NeML), ", ") + ".")} .
+    {nil, warning("module generator " + highlight("TUPLE(n)") + " did not expect input " +
+     pluralize("module", size(getNames(NeML))) + " " + highlight(getNames(NeML), ", ") + ".")} .
 
   eq makeTuple(nil, QL) =
-    {nil, warning("module generator " + quote("TUPLE(n)") +
-     " expects a single numeric argument, not " + quote(string(QL:QidList)) + ".")} [owise] .
+    {nil, warning("module generator " + highlight("TUPLE(n)") +
+     " expects a single numeric argument, not " + highlight(string(QL)) + ".")} [owise] .
 
   op paramDecls : Nat -> ParameterDeclList .
   eq paramDecls(0) = nil .
@@ -3380,6 +3380,38 @@ fmod TUPLE is
   eq projectionEqs(s N, OP, Args, (Vars, Var)) =
     projectionEqs(N, OP, Args, Vars)
     (eq qid("p" + string(s N, 10) + "_")[OP[Args]] = Var [none].) .
+endfm
+
+fmod POWER is
+  pr MODULE-TRANSFORMER .
+  pr CONVERSION .
+  var NzN : NzNat .
+  var Q : Qid .
+  var QL : QidList .
+  var NeML : NeModuleList .
+
+  op makePower : ModuleList QidList -> TransformResult .
+  ceq makePower(nil, Q) = {
+    fmod 'DUMMY{ 'X :: 'TRIV } is
+      including ('TUPLE[empty](Q)){paramList(NzN)} .
+      sorts none .
+      none
+      none
+      none
+      none
+    endfm, nil} if NzN := rat(string(Q), 10)  .
+
+  eq makePower(NeML, QL) =
+    {nil, warning("module generator " + highlight("POWER(n)") + " did not expect input " +
+     pluralize("module", size(getNames(NeML))) + " " + highlight(getNames(NeML), ", ") + ".")} .
+
+  eq makePower(nil, QL) =
+    {nil, warning("module generator " + highlight("POWER(n)") +
+     " expects a single numeric argument, not " + highlight(string(QL)) + ".")} [owise] .
+
+  op paramList : NzNat -> NeParameterList .
+  eq paramList(1) = 'X .
+  eq paramList(s NzN) = 'X, paramList(NzN) .
 endfm
 
 ***

@@ -25,10 +25,10 @@ fmod @ is
     endv, nil} if TS := topSort(M, getSorts(M)) .
 
   eq makeDefault(M, Q:NeQidList, ME) =
-    {failure, warning("options not supported.")} .
+    {nil, warning("options not supported.")} .
     
   eq makeDefault(M, nil, ME) =
-    {failure, warning("couldn't find unique top sort in target module.")} [owise] .
+    {nil, warning("couldn't find unique top sort in target module.")} [owise] .
 
   op peel : String -> String .
   ceq peel(ST) = substr(ST, 0, P) if P := find(ST, "`", 0) .

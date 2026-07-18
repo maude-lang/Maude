@@ -1,3 +1,10 @@
+2026-07-18  Saruman the White  <eker@eker10>
+
+	* resultSymbol.hh (ResultSymbol::viewFailure): viewFailureSymbol
+	-> nilViewListSymbol
+
+	* resultSignature.cc: viewFailureSymbol -> nilViewListSymbol
+
 2026-07-17  Saruman the White  <eker@eker10>
 
 	* resultSymbol.cc (ResultSymbol::colorize): fix bug where quote
