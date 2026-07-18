@@ -185,7 +185,7 @@ Rope
 ResultSymbol::colorize(const Rope& text)
 {
   Rope result;
-  bool quote;
+  bool quote = false;
   for (const char c : text)
     {
       if (c == '\036')  // Record Separator

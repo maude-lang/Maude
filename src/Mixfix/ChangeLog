@@ -1,5 +1,8 @@
 2026-07-17  Saruman the White  <eker@eker10>
 
+	* resultSymbol.cc (ResultSymbol::colorize): fix bug where quote
+	wasn't initialized
+
 	* resultSymbol.hh (class ResultSymbol): added decl for colorize()
 
 	* resultSymbol.cc (ResultSymbol::handleMessageList): take and pass

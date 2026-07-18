@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -3309,6 +3309,77 @@ fmod VIEW-GENERATOR is
       op-hook verboseSymbol		(verbose : String ~> SystemMsg)
       op-hook shareWith			(metaReduce : Module Term ~> ResultPair))
      ctor] .
+endfm
+
+***
+***	Predefined module and view generators.
+***
+
+fmod TUPLE is
+  pr MODULE-TRANSFORMER .
+  pr CONVERSION .
+  var N : Nat .
+  var NzN : NzNat .
+  vars Q OP : Qid .
+  var S D R : Sort .
+  vars QL RL : QidList .
+  var NeML : NeModuleList .
+  var Var : Term .
+  vars Args Vars : TermList .
+
+  op makeTuple : ModuleList QidList -> TransformResult .
+  ceq makeTuple(nil, Q) = {
+    fmod 'DUMMY{ paramDecls(NzN) } is
+      nil
+      sorts S .
+      none
+      op OP : eltList(NzN) -> S [ctor] .
+      projectionOps(NzN, S, eltList(NzN))
+      none
+      projectionEqs(NzN, OP, varList(NzN), varList(NzN))
+    endfm, nil} if NzN := rat(string(Q), 10) /\
+      S := qid("Tuple{" + params(NzN) + "}") /\
+      OP := qid("(" + underscores(NzN) + ")") .
+
+  eq makeTuple(NeML, QL) =
+    {nil, warning("module generator " + quote("TUPLE(n)") + " did not expect input " +
+     pluralize("module", size(getNames(NeML))) + " " + quote(getNames(NeML), ", ") + ".")} .
+
+  eq makeTuple(nil, QL) =
+    {nil, warning("module generator " + quote("TUPLE(n)") +
+     " expects a single numeric argument, not " + quote(string(QL:QidList)) + ".")} [owise] .
+
+  op paramDecls : Nat -> ParameterDeclList .
+  eq paramDecls(0) = nil .
+  eq paramDecls(s N) = paramDecls(N), (qid("X" + string(s N, 10)) :: 'TRIV) .
+
+  op params : NzNat -> String .
+  eq params(1) = "X1" .
+  eq params(s NzN) = params(NzN) + ",X" + string(s NzN, 10) .
+
+  op underscores : NzNat -> String .
+  eq underscores(1) = "_" .
+  eq underscores(s NzN) = underscores(NzN) + ",_" .
+
+  op eltList : Nat -> QidList .
+  eq eltList(0) = nil .
+  eq eltList(s N) = eltList(N) qid("X" + string(s N, 10) + "$Elt") .
+
+  op projectionOps : Nat Qid QidList -> OpDeclSet .
+  eq projectionOps(0, D, RL) = none .
+  eq projectionOps(s N, D, RL R) =
+    projectionOps(N, D, RL)
+    (op qid("p" + string(s N, 10) + "_") : D -> R [none].) .
+
+  op varList : Nat -> TermList .
+  eq varList(0) = empty .
+  eq varList(s N) = varList(N), qid("Y" + string(s N, 10) + ":X" + string(s N, 10) + "$Elt") .
+
+  op projectionEqs : Nat Qid TermList TermList -> EquationSet .
+  eq projectionEqs(0, OP, Args, Vars) = none .
+  eq projectionEqs(s N, OP, Args, (Vars, Var)) =
+    projectionEqs(N, OP, Args, Vars)
+    (eq qid("p" + string(s N, 10) + "_")[OP[Args]] = Var [none].) .
 endfm
 
 ***

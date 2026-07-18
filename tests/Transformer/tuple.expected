@@ -1,3 +1,4 @@
+Advisory: redefining module TUPLE.
 ==========================================
 reduce in TEST : p3 (42, -4, "abc", 'cde) .
 rewrites: 1
