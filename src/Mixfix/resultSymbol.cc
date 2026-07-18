@@ -144,12 +144,12 @@ ResultSymbol::handleMessage(DagNode* message, LineNumber lineNumber) const
 	{
 	  if (s == advisorySymbol)
 	    {
-	      IssueAdvisory(lineNumber << ": " << text);
+	      IssueAdvisory(lineNumber << ": " << colorize(text));
 	      return;
 	    }
 	  else if (s == warningSymbol)
 	    {
-	      IssueWarning(lineNumber << ": " << text);
+	      IssueWarning(lineNumber << ": " << colorize(text));
 	      return;
 	    }
 	  else if (s == verboseSymbol)
@@ -179,4 +179,35 @@ ResultSymbol::upModuleList(bool flat,
     }
   return (inputModules.size() == 1) ? metaModules[0] :
     moduleListSymbol->makeDagNode(metaModules);
+}
+
+Rope
+ResultSymbol::colorize(const Rope& text)
+{
+  Rope result;
+  bool quote;
+  for (const char c : text)
+    {
+      if (c == '\036')  // Record Separator
+	{
+	  if (!quote)
+	    {
+	      result += BEGIN_QUOTE.ctrlSequence();
+	      quote = true;
+	    }
+	}
+      else if (c == '\037')  // Unit Separator
+	{
+	  if (quote)
+	    {
+	      result += END_QUOTE.ctrlSequence();
+	      quote = false;
+	    }
+	}
+      else
+	result += c;
+    }
+  if (quote)
+    result += END_QUOTE.ctrlSequence();  // don't leave hanging color
+  return result;
 }

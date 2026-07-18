@@ -1,3 +1,10 @@
+2026-07-17  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added quote() operator to fmod SYSTEM-MESSAGE
+	added getNames() operator to EXTENDED-META-LEVEL
+	added string() on QidList, quote() on QidList and stripQuotes()
+	operators to fmod SYSTEM-MESSAGE
+
 2026-07-15  Saruman the White  <eker@eker10>
 
 	* prelude.maude: fix bug where the real declaration for the module

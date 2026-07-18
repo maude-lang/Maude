@@ -3196,6 +3196,12 @@ fmod EXTENDED-META-LEVEL is
   op _,_ : NeModuleList ModuleList -> NeModuleList [ctor ditto] .
   op _,_ : ModuleList NeModuleList -> NeModuleList [ctor ditto] .
 
+  var M : Module .
+  var ML : ModuleList .
+  op getNames : ModuleList -> QidList .
+  eq getNames(nil) = nil .
+  eq getNames(M, ML) = getName(M) getNames(ML) .
+
 *** module expression lists
   sort ModuleExpressionList .
   subsort ModuleExpression EmptyCommaList < ModuleExpressionList .
@@ -3213,13 +3219,44 @@ fmod EXTENDED-META-LEVEL is
 endfm
 
 fmod SYSTEM-MESSAGE is
+  protecting EXT-BOOL .
   protecting STRING .
+  protecting QID-LIST .
   subsort SystemMsg < SystemMsgList .
   op nil : -> SystemMsgList [ctor] .
   op __ : SystemMsgList SystemMsgList -> SystemMsgList [ctor assoc id: nil] .
   op advisory : String -> SystemMsg [ctor] .
   op warning : String -> SystemMsg [ctor] .
   op verbose : String -> SystemMsg [ctor] .
+
+*** convenience functions for constructing messages
+  var S : String .
+  var Q : Qid .
+  var NQL : NeQidList .
+  var N : Nat .
+
+  op string : QidList -> String [ditto] .
+  eq string(nil) = "" .
+  eq string(Q NQL) = string(Q) + " " + string(NQL) .
+
+  op quote : String -> String .
+  eq quote(S) = "\036" + S + "\037" .
+
+  op stripQuotes : String -> String .
+  eq stripQuotes(S) = if length(S) >= 2 and-then
+                         substr(S, 0, 1) == "\"" and-then
+			 substr(S, sd(length(S), 1), 1) == "\"" then
+                        substr(S, 1, sd(length(S), 2))
+		      else S fi .
+
+  op quote : QidList String -> String .
+  eq quote(nil, S) = "" .
+  eq quote(Q, S) = quote(stripQuotes(string(Q))) .
+  eq quote(Q NQL, S) = quote(stripQuotes(string(Q))) + S + quote(NQL, S) .
+
+  op pluralize : String Nat -> String .
+  eq pluralize(S, s 0) = S .
+  eq pluralize(S, N) = S + "s" [owise] .
 endfm
 
 fmod MODULE-TRANSFORMER is

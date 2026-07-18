@@ -1,11 +1,17 @@
 2026-07-17  Saruman the White  <eker@eker10>
 
+	* resultSymbol.hh (class ResultSymbol): added decl for colorize()
+
 	* resultSymbol.cc (ResultSymbol::handleMessageList): take and pass
 	lineNumber
 	(ResultSymbol::handleMessage): take lineNumber and put it
 	advisories and warnings
+	(ResultSymbol::colorize): added
+	(ResultSymbol::handleMessage): use colorize() for advisories and
+	warnings
 
-	* viewResultSymbol.hh (class ViewResultSymbol): updated decl for generateView()
+	* viewResultSymbol.hh (class ViewResultSymbol): updated decl for
+	generateView()
 
 	* viewResultSymbol.cc (ViewResultSymbol::generateView): take
 	lineNumber argument and pass it to handleMessageList()
