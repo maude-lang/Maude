@@ -112,7 +112,7 @@ ViewResultSymbol::generateView(int newViewName,
 		    {
 		      IssueWarning(*generatorModule << ": multiple view generator operators " <<
 				   QUOTE(cachedGeneratorOp) << " and " <<
-				   QUOTE(s) << "in module " << QUOTE(generatorModule) << ".");
+				   QUOTE(s) << " in module " << QUOTE(generatorModule) << ".");
 		      cachedGeneratorOp = nullptr;
 		      return nullptr;
 		    }

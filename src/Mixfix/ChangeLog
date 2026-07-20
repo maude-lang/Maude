@@ -1,3 +1,10 @@
+2026-07-20  Saruman the White  <eker@eker10>
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): fix typo
+
+	* interpreter.cc (Interpreter::handleArgument): fail early if we
+	fail to make an input module for view generation
+
 2026-07-19  Saruman the White  <eker@eker10>
 
 	* view.cc (View::evaluate): revert to checking

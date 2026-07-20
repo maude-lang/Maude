@@ -3232,12 +3232,13 @@ fmod SYSTEM-MESSAGE is
 *** convenience functions for constructing messages
   var S : String .
   var Q : Qid .
-  var NQL : NeQidList .
+  var QL : QidList .
+  var NeQL : NeQidList .
   var N : Nat .
 
   op string : QidList -> String [ditto] .
   eq string(nil) = "" .
-  eq string(Q NQL) = string(Q) + " " + string(NQL) .
+  eq string(Q NeQL) = string(Q) + " " + string(NeQL) .
 
   op highlight : String -> String .
   eq highlight(S) = "\036" + S + "\037" .
@@ -3249,14 +3250,21 @@ fmod SYSTEM-MESSAGE is
                         substr(S, 1, sd(length(S), 2))
 		      else S fi .
 
-  op highlight : QidList String -> String .
-  eq highlight(nil, S) = "" .
-  eq highlight(Q, S) = highlight(stripQuotes(string(Q))) .
-  eq highlight(Q NQL, S) = highlight(stripQuotes(string(Q))) + S + highlight(NQL, S) .
+  op highlightSQ : Qid -> String .
+  eq highlightSQ(Q) = highlight(stripQuotes(string(Q))) .
+
+  op highlightSQ : QidList String -> String .
+  eq highlightSQ(nil, S) = "" .
+  eq highlightSQ(Q, S) = highlightSQ(Q) .
+  eq highlightSQ(Q NeQL, S) = highlightSQ(Q) + S + highlightSQ(NeQL, S) .
 
   op pluralize : String Nat -> String .
   eq pluralize(S, s 0) = S .
   eq pluralize(S, N) = S + "s" [owise] .
+
+  op concat : QidList -> String .
+  eq concat(nil) = "" .
+  eq concat(Q QL) = string(Q) + concat(QL) .
 endfm
 
 fmod MODULE-TRANSFORMER is
@@ -3343,7 +3351,7 @@ fmod TUPLE is
 
   eq makeTuple(NeML, QL) =
     {nil, warning("module generator " + highlight("TUPLE(n)") + " did not expect input " +
-     pluralize("module", size(getNames(NeML))) + " " + highlight(getNames(NeML), ", ") + ".")} .
+     pluralize("module", size(getNames(NeML))) + " " + highlightSQ(getNames(NeML), ", ") + ".")} .
 
   eq makeTuple(nil, QL) =
     {nil, warning("module generator " + highlight("TUPLE(n)") +
@@ -3403,7 +3411,7 @@ fmod POWER is
 
   eq makePower(NeML, QL) =
     {nil, warning("module generator " + highlight("POWER(n)") + " did not expect input " +
-     pluralize("module", size(getNames(NeML))) + " " + highlight(getNames(NeML), ", ") + ".")} .
+     pluralize("module", size(getNames(NeML))) + " " + highlightSQ(getNames(NeML), ", ") + ".")} .
 
   eq makePower(nil, QL) =
     {nil, warning("module generator " + highlight("POWER(n)") +
@@ -3422,7 +3430,7 @@ fmod @ is
   var ME : ModuleExpression .
   var MEL : ModuleExpressionList .
   vars TS P VN : Sort .
-  var SS : SortSet .
+  vars SS SV LS : SortSet .
   var NeSS : NeSortSet .
   var PDL : ParameterDeclList .
   var NePDL : NeParameterDeclList .
@@ -3439,36 +3447,67 @@ fmod @ is
   eq makeDefault(nil, QL, empty) =
     {nil, warning("view generator " + highlight("@[m]") + " requires a target module.")} .
   eq makeDefault((M, NeML), QL, MEL) =
-    {nil, warning("multiple target modules " + highlight(getNames(M, NeML), ", ")  +
+    {nil, warning("multiple target modules " + highlightSQ(getNames(M, NeML), ", ")  +
      " supplied to view generator " + highlight("@[m]") + ".")} .
 ***
-***	No target sort supplied case.
+***	No target sort supplied so we have to chose one.
 ***
-  ceq makeDefault(M, nil, ME) = makeView(ME, TS, getParameters(M))
-    if TS := topSort(M, getSorts(M)) .
-  eq makeDefault(M, nil, ME) = {nil, warning("view generator " + highlight("@[m]") +
-    " could not find a unique local sort in " + highlight(getName(M), "") + " to map " +
-    highlight("Elt") + " to.")} [owise] .
+  eq makeDefault(M, nil, ME) = useChosenSort(bestSorts(M, getSorts(M)), M, ME)  .
 
-  op topSort : Module SortSet ~> Sort .
-  eq topSort(M, TS) = TS .
-  ceq topSort(M, TS ; NeSS) = TS if NeSS subset lesserSorts(M, TS) .
+  op useChosenSort : SortSet Module ModuleExpressionList -> ViewResult .
+  eq useChosenSort(TS, M, ME) = makeView(ME, TS, getParameters(M)) .
 ***
-***	User supplied target sort case.
+***	Make sure we have exactly one chosen sort.
 ***
-  ceq makeDefault(M, NeQL, ME) = makeView(ME, TS, getParameters(M))
-    if TS := qid(concat(NeQL)) /\ SS := lesserSorts(M, TS) .
-  eq makeDefault(M, NeQL, ME) = {nil, warning("view generator " + highlight("@[m]") +
-    " could not find sort " + highlight(concat(NeQL)) + " in module " +
-    highlight(getName(M), "") + ".")} [owise] .
+  eq useChosenSort(none, M, ME) =
+    {nil, warning("view generator " + highlight("@[m]") +
+    " could not find any local sort in module " + highlightSQ(getName(M)) +
+    " to map " + highlight("Elt") + " to.")} .
+  eq useChosenSort((TS ; NeSS), M, ME) =
+    {nil, warning("view generator " + highlight("@[m]") +
+    " could not find a unique best sort in module " + highlightSQ(getName(M)) +
+    " to map " + highlight("Elt") + " to. Possible sorts are: " +
+    highlightSortSet((TS ; NeSS)))} .
+***
+***	The best sorts are usually the top local sorts. If there is more
+***	than one, we try removing sorts that have nonlocal subsorts.
+***
+  op bestSorts : Module SortSet -> SortSet .
+  eq bestSorts(M, none) = none .
+  eq bestSorts(M, NeSS) = select(M, NeSS, topSorts(M, NeSS, NeSS)) .
 
-  op concat : QidList -> String .
-  eq concat(nil) = "" .
-  eq concat(Q QL) = string(Q) + concat(QL) .
+  op topSorts : Module SortSet SortSet -> SortSet .
+  eq topSorts(M, none, SS) = SS .
+  eq topSorts(M, (TS ; SS), NeSS) = topSorts(M, SS, (NeSS \ lesserSorts(M, TS))) .
+  
+  op select : Module SortSet SortSet -> SortSet .
+  eq select(M, LS, TS) = TS .
+  eq select(M, LS, (TS ; NeSS)) =
+    if filter(M, LS, (TS ; NeSS), none) == none then
+      TS ; NeSS
+    else
+      filter(M, LS, (TS ; NeSS), none)
+    fi .
+
+  op filter : Module SortSet SortSet SortSet -> SortSet .
+  eq filter(M, LS, none, SV) = SV .
+  eq filter(M, LS, (TS ; SS), SV) =
+    filter(M, LS, SS, if lesserSorts(M, TS) subset LS then TS ; SV else SV fi) .
+***
+***	User provided target sort.
+***
+  eq makeDefault(M, NeQL, ME) = useGivenSort(concat(NeQL), M, ME) .
+
+  op useGivenSort : String Module ModuleExpressionList -> ViewResult .
+  ceq useGivenSort(ST, M, ME) = makeView(ME, TS, getParameters(M))
+    if TS := qid(ST) /\ SS := lesserSorts(M, TS) .
+  eq useGivenSort(ST, M, ME) = {nil, warning("view generator " + highlight("@[m]") +
+    " could not find sort " + highlight(ST) + " in module " +
+    highlightSQ(getName(M)) + ".")} [owise] .
 ***
 ***	View making machinery.
 ***
-  op makeView : ModuleExpressionList Sort ParameterDeclList -> ViewResult .
+  op makeView : ModuleExpressionList SortSet ParameterDeclList -> ViewResult .
   eq makeView(ME, TS, PDL) = {
     view header(qid(cleanName(string(TS), PDL)), PDL)
       from 'TRIV to target(ME, PDL) is
@@ -3528,6 +3567,12 @@ fmod @ is
         lastBraces(Name, sd(Index, 1), Depth)
       fi
     fi .
+***
+***	Utility function.
+***
+  op highlightSortSet : SortSet -> String .
+  eq highlightSortSet(TS) = highlight(stripQuotes(string(TS))) .
+  eq highlightSortSet(TS ; NeSS) = highlight(stripQuotes(string(TS))) + ", " + highlightSortSet(NeSS) .
 endfm
 
 ***

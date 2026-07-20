@@ -829,6 +829,8 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		      }
 		    inputModules.append(fm);
 		  }
+		else
+		  return nullptr;
 	      }
 	    if (View* v = generateView(fm,inputModules, expr->getOptions(), this, name.getLineNr()))
 	      {
