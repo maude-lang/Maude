@@ -298,12 +298,25 @@ View::regretToInform(Entity* doomedEntity)
       delete this;
       return;
     }
+  for (ImportModule* m : inputModules)
+    {
+      if (doomedEntity == m)
+	{
+	  //
+	  //	We're a generated view and one of our input modules just disappeared
+	  //	so we just self-destruct.
+	  //
+	  DebugAdvisory("generated view " << this << " self-destructs");
+	  delete this;
+	  return;
+	}
+    }
   //
   //	We're an original syntactic or meta-syntactic view.
   //
   if (doomedEntity == fromTheory)
     fromTheory = 0;
-  else if(doomedEntity == toModule)
+  else if (doomedEntity == toModule)
     toModule = 0;
   else
     {
@@ -815,7 +828,16 @@ View::evaluate()
     {
     case INITIAL:
       {
-	if (!Token::isValidViewName(cleanName))
+	//
+	//	If we're a generated view then the true name, id() will look
+	//	something like VG[...](...) and the clean name will have been
+	//	checked by downView() and will look completely different.
+	//	In this case, we don't require that either be a valid user
+	//	entered view name, since we will need to generate clean names
+	//	names that look like instantiated view names to keep sort names
+	//	consistent.
+	//
+	if (id() == cleanName && !Token::isValidViewName(id()))
 	  {
 	    IssueWarning(*this << ": " << QUOTE(this) << " is not a valid view name.");
 	    status = BAD;

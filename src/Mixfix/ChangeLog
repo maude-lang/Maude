@@ -1,3 +1,11 @@
+2026-07-19  Saruman the White  <eker@eker10>
+
+	* view.cc (View::evaluate): revert to checking
+	Token::isValidViewName(id())
+	(View::evaluate): don't do checking for generated views
+	(View::regretToInform): self destruct if an input module
+	disappears
+
 2026-07-18  Saruman the White  <eker@eker10>
 
 	* resultSymbol.hh (ResultSymbol::viewFailure): viewFailureSymbol

@@ -166,6 +166,7 @@ fmod META-TERM
 fmod META-CONDITION
 fmod META-STRATEGY
 fmod META-MODULE
+fmod @
 oth T
 fmod META-VIEW
 fmod META-LEVEL
@@ -383,6 +384,7 @@ fmod META-TERM
 fmod META-CONDITION
 fmod META-STRATEGY
 fmod META-MODULE
+fmod @
 oth T
 fmod META-VIEW
 fmod META-LEVEL
@@ -602,6 +604,7 @@ fmod META-TERM
 fmod META-CONDITION
 fmod META-STRATEGY
 fmod META-MODULE
+fmod @
 oth T
 fmod META-VIEW
 fmod META-LEVEL
@@ -815,6 +818,7 @@ fmod META-TERM
 fmod META-CONDITION
 fmod META-STRATEGY
 fmod META-MODULE
+fmod @
 oth T
 fmod META-VIEW
 fmod META-LEVEL

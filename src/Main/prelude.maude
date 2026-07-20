@@ -3414,6 +3414,122 @@ fmod POWER is
   eq paramList(s NzN) = 'X, paramList(NzN) .
 endfm
 
+fmod @ is
+  pr VIEW-GENERATOR .
+  pr CONVERSION .
+  var M : Module .
+  var NeML : NeModuleList .
+  var ME : ModuleExpression .
+  var MEL : ModuleExpressionList .
+  vars TS P VN : Sort .
+  var SS : SortSet .
+  var NeSS : NeSortSet .
+  var PDL : ParameterDeclList .
+  var NePDL : NeParameterDeclList .
+  vars ST Name : String .
+  vars Index Depth Start : Nat .
+  var Q : Qid .
+  var QL : QidList .
+  var NeQL : NeQidList .
+
+  op makeDefault : ModuleList QidList ModuleExpressionList -> ViewResult .
+***
+***	Make sure we have exactly one target module.
+***
+  eq makeDefault(nil, QL, empty) =
+    {nil, warning("view generator " + highlight("@[m]") + " requires a target module.")} .
+  eq makeDefault((M, NeML), QL, MEL) =
+    {nil, warning("multiple target modules " + highlight(getNames(M, NeML), ", ")  +
+     " supplied to view generator " + highlight("@[m]") + ".")} .
+***
+***	No target sort supplied case.
+***
+  ceq makeDefault(M, nil, ME) = makeView(ME, TS, getParameters(M))
+    if TS := topSort(M, getSorts(M)) .
+  eq makeDefault(M, nil, ME) = {nil, warning("view generator " + highlight("@[m]") +
+    " could not find a unique local sort in " + highlight(getName(M), "") + " to map " +
+    highlight("Elt") + " to.")} [owise] .
+
+  op topSort : Module SortSet ~> Sort .
+  eq topSort(M, TS) = TS .
+  ceq topSort(M, TS ; NeSS) = TS if NeSS subset lesserSorts(M, TS) .
+***
+***	User supplied target sort case.
+***
+  ceq makeDefault(M, NeQL, ME) = makeView(ME, TS, getParameters(M))
+    if TS := qid(concat(NeQL)) /\ SS := lesserSorts(M, TS) .
+  eq makeDefault(M, NeQL, ME) = {nil, warning("view generator " + highlight("@[m]") +
+    " could not find sort " + highlight(concat(NeQL)) + " in module " +
+    highlight(getName(M), "") + ".")} [owise] .
+
+  op concat : QidList -> String .
+  eq concat(nil) = "" .
+  eq concat(Q QL) = string(Q) + concat(QL) .
+***
+***	View making machinery.
+***
+  op makeView : ModuleExpressionList Sort ParameterDeclList -> ViewResult .
+  eq makeView(ME, TS, PDL) = {
+    view header(qid(cleanName(string(TS), PDL)), PDL)
+      from 'TRIV to target(ME, PDL) is
+      sort 'Elt to TS .
+      none
+      none
+    endv, nil} .
+
+  op header : Sort ParameterDeclList -> Header .
+  eq header(VN, nil) = VN .
+  eq header(VN, NePDL) = VN{NePDL} .
+
+  op target : ModuleExpression ParameterDeclList -> ModuleExpression .
+  eq target(ME, nil) = ME .
+  eq target(ME, NePDL) = ME{paramList(NePDL)} .
+
+  op paramList : NeParameterDeclList -> NeParameterList .
+  eq paramList(TS :: ME) = TS .
+  eq paramList((TS :: ME, PDL)) = TS, paramList(PDL) .
+***
+***	Compute a clean name from the target sort name and parameter list.
+***	A structured sort name looks like
+***	  base{...}...{final}
+***	and we chop {final} if it contains one of our parameters, even if
+***	the parameter is inside nested, nonfinal {}s, in order to keep the
+***	clean name simple.
+***
+  op cleanName : String ParameterDeclList -> String .
+  eq cleanName(Name, PDL) =
+    if substr(Name, sd(length(Name), 1), 1) == "}" then
+      chop(Name, lastBraces(Name, sd(length(Name), 3), 0), PDL)
+    else
+      Name
+    fi .
+
+  op chop : String Nat ParameterDeclList -> String .
+  eq chop(Name, Start, nil) = Name .
+  eq chop(Name, Start, (P :: ME, PDL)) =
+    if find(Name, string(P), Start) == notFound then
+      chop(Name, Start, PDL)
+    else
+      substr(Name, 0, Start)
+    fi .
+
+  op lastBraces : String Nat Nat -> Nat .
+  eq lastBraces(Name, Index, Depth) =
+    if substr(Name, Index, 1) == "{" then
+      if Depth == 0 then
+        sd(Index, 1)
+      else
+        lastBraces(Name, sd(Index, 2), sd(Depth, 1))
+      fi
+    else
+      if substr(Name, Index, 1) == "}" then
+        lastBraces(Name, sd(Index, 2), Depth + 1)
+      else
+        lastBraces(Name, sd(Index, 1), Depth)
+      fi
+    fi .
+endfm
+
 ***
 ***	Lexical module.
 ***

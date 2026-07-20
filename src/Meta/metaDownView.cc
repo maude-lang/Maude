@@ -34,7 +34,15 @@ MetaLevel::downView(DagNode* metaView, Interpreter* owner, int trueName)
       DagNode* metaParameterDeclList;
       if (downHeader(f->getArgument(0), cleanName, metaParameterDeclList))
 	{
-	  if (Token::isValidViewName(cleanName))
+	  //
+	  //	Normally we require the declared name of a view to be a valid
+	  //	base level view name. But if a trueName is supplied, the
+	  //	declared name is coming from a view generator and we relax
+	  //	this constraint to allow structured view names like
+	  //	  Map`{Int`,String`}
+	  //
+	  if ((trueName == NONE) ? Token::isValidViewName(cleanName) :
+	      Token::isValidSortName(cleanName))
 	    {
 	      if (ModuleExpression* fromTheory = downModuleExpression(f->getArgument(1)))
 		{
