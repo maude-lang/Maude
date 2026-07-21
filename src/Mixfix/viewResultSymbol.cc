@@ -83,6 +83,10 @@ ViewResultSymbol::generateView(int newViewName,
 			       Interpreter* owner,
 			       LineNumber lineNumber)
 {
+  DebugEnter("generating " << Token::name(newViewName));
+  //for (ImportModule* m : inputModules)
+  //  DebugAlways("  input module " << m);
+  
   ImportModule* generatorModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();
   PointerMap qidMap;
@@ -140,6 +144,9 @@ ViewResultSymbol::generateView(int newViewName,
     args[3] = upModuleList(true, inputModules, qidMap);
   DagNode* startDag = cachedGeneratorOp->makeDagNode(args);
   DebugAdvisory("Start dag = " << startDag);
+  //for (ImportModule* m : inputModules)
+  //  DebugAlways("  input module before reduction " << m);
+
   //
   //	Reduce it using user's code.
   //
@@ -152,6 +159,8 @@ ViewResultSymbol::generateView(int newViewName,
       (void) generatorModule->unprotect();
       return nullptr;
     }
+  //for (ImportModule* m : inputModules)
+  //  DebugAlways("  input module after reduction " << m);
   DagNode* result = context.root();
   DebugAdvisory("result dag = " << result);
   //
@@ -182,8 +191,12 @@ ViewResultSymbol::generateView(int newViewName,
 	      //	the generator module. If any of these change, it becomes stale.
 	      //
 	      for (ImportModule* m : inputModules)
-		m->addUser(resultView);
+		{
+		  m->addUser(resultView);
+		  //DebugAlways(resultView << " is user of " << m);
+		}
 	      generatorModule->addUser(resultView);
+	      DebugInfo(resultView << " is user of " << generatorModule);
 	      //
 	      //	We pass it all the information used to construct it, so it
 	      //	can remove itself as a dependency if it becomes stale and

@@ -144,19 +144,27 @@ Interpreter::quit()
 }
 
 void
-Interpreter::cleanCaches()
+Interpreter::tryToCleanCaches()
 {
   //
-  //	We can have constructed modules that are users of constructed modules
-  //	and/or view instantiations.
-  //	We can also have view instantiations that are user of constructed
-  //	modules and/or view instantiations.
-  //	So we iterate the purge up to fixed point.
-  //	This is expensive for long dependency chains but in practice long
-  //	dependency chains rare.
+  //	If we are called from the meta^n level it could be that some shallower
+  //	level is in the process of module expression evaluation, so we need
+  //	to check before doing a garbage collect of cached modules and views.
   //
-  while (destructUnusedModules() + destructUnusedViews() > 0)
-    ;
+  if (cacheUserCount == 0)
+    {
+      //
+      //	We can have constructed modules that are users of constructed modules
+      //	and/or view instantiations.
+      //	We can also have view instantiations that are user of constructed
+      //	modules and/or view instantiations.
+      //	So we iterate the purge up to fixed point.
+      //	This is expensive for long dependency chains but in practice long
+      //	dependency chains rare.
+      //
+      while (destructUnusedModules() + destructUnusedViews() > 0)
+	;
+    }
 }
 
 void

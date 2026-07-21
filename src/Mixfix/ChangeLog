@@ -1,3 +1,38 @@
+2026-07-21  Saruman the White  <eker@eker10>
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): converted
+	or commented out DebugAlways() calls introduced during debugging
+
+	* view.cc (View::~View): commented out DebugAlways() converted to
+	DebugInfo()
+	(View::regretToInform): DebugAlways() converted to DebugInfo()
+
+	* importModule.cc (ImportModule::regretToInform): commented out
+	DebugAlways() converted to DebugInfo()
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): no
+	longer care if we displaced a module, for similar reason
+
+	* modules.yy (view): no longer care if we displaced a view because
+	views can have arbitrary metalevel stuff running to generate their
+	paremeter theories, their from-theory and their to-module and this
+	can produce junk modules and views in the caches
+
+	* interpreter.hh (Interpreter::unprotectCaches): added
+
+	* modules.yy (view): call protectCaches()/unprotectCaches() around
+	finishView()
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): call
+	protectCaches()/unprotectCaches() around process()
+
+	* interpreter.hh (Interpreter::protectCaches): added
+	(class Interpreter): added data member cacheUserCount
+
+	* interpreter.cc (Interpreter::cleanCaches): becomes
+	tryToCleanCaches(); check cacheUserCount before doing  a
+	module/view garbage collection
+
 2026-07-20  Saruman the White  <eker@eker10>
 
 	* viewResultSymbol.cc (ViewResultSymbol::generateView): fix typo

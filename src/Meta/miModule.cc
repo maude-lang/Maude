@@ -94,9 +94,9 @@ InterpreterManagerSymbol::insertModule(FreeDagNode* message,
 	  //
 	  //	We displaced an existing module in this interpreter which means we
 	  //	might have orphaned constructed modules, and view instantiations in
-	  //	the interpreters caches, so we do a clean up.
+	  //	the interpreters caches, so we try to do a clean up.
 	  //
-	  interpreter->cleanCaches();
+	  interpreter->tryToCleanCaches();
 	}
 
       Vector<DagNode*> reply(2);
@@ -152,7 +152,7 @@ InterpreterManagerSymbol::insertView(FreeDagNode* message,
 	  //	modules that depended on it. Thus we could have some orphaned constructed
 	  //	modules and view instantiations in the caches.
 	  //
-	  interpreter->cleanCaches();
+	  interpreter->tryToCleanCaches();
 	}
 
       Vector<DagNode*> reply(2);

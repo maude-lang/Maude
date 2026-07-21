@@ -322,10 +322,10 @@ view		:	KW_VIEW			{ lexerIdMode(); }
 			  CV->addTo($9);
 			  lexerInitialMode();
 			  fileTable.endModule(lineNumber);
-			  bool displacedView = interpreter.insertView(($3).code(), CV);
+			  (void) interpreter.insertView(($3).code(), CV);
+			  interpreter.protectCaches();
 			  CV->finishView();
-			  if (displacedView)
-			    interpreter.cleanCaches();
+			  interpreter.unprotectCaches();
 			}
 		;
 

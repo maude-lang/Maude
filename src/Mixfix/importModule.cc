@@ -342,7 +342,7 @@ ImportModule::checkForPolymorphOperatorClash()
 void
 ImportModule::regretToInform(Entity*  doomedEntity )
 {
-  // DebugAlways(this << " informed that " << doomedEntity << " is going away and will self destruct");
+  DebugInfo(this << " informed that " << doomedEntity << " is going away and will self destruct");
   //
   //	Something that we depend on is about to disappear - so we must self destruct.
   //

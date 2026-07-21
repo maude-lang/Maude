@@ -3258,6 +3258,13 @@ fmod SYSTEM-MESSAGE is
   eq highlightSQ(Q, S) = highlightSQ(Q) .
   eq highlightSQ(Q NeQL, S) = highlightSQ(Q) + S + highlightSQ(NeQL, S) .
 
+  op stripBackQuotes : String -> String .
+  eq stripBackQuotes(S) = if find(S, "`", 0) == notFound then S
+                          else
+                            substr(S, 0, find(S, "`", 0)) +
+                            stripBackQuotes(substr(S, find(S, "`", 0) + 1, length(S)))
+                          fi .
+
   op pluralize : String Nat -> String .
   eq pluralize(S, s 0) = S .
   eq pluralize(S, N) = S + "s" [owise] .
@@ -3466,10 +3473,10 @@ fmod @ is
   eq useChosenSort((TS ; NeSS), M, ME) =
     {nil, warning("view generator " + highlight("@[m]") +
     " could not find a unique best sort in module " + highlightSQ(getName(M)) +
-    " to map " + highlight("Elt") + " to. Possible sorts are: " +
+    " to map " + highlight("Elt") + " to. Possible choices are: " +
     highlightSortSet((TS ; NeSS)))} .
 ***
-***	The best sorts are usually the top local sorts. If there is more
+***	The best sorts are usually the local top sorts. If there is more
 ***	than one, we try removing sorts that have nonlocal subsorts.
 ***
   op bestSorts : Module SortSet -> SortSet .
@@ -3502,7 +3509,7 @@ fmod @ is
   ceq useGivenSort(ST, M, ME) = makeView(ME, TS, getParameters(M))
     if TS := qid(ST) /\ SS := lesserSorts(M, TS) .
   eq useGivenSort(ST, M, ME) = {nil, warning("view generator " + highlight("@[m]") +
-    " could not find sort " + highlight(ST) + " in module " +
+    " could not find sort " + highlight(stripBackQuotes(ST)) + " in module " +
     highlightSQ(getName(M)) + ".")} [owise] .
 ***
 ***	View making machinery.
@@ -3571,8 +3578,9 @@ fmod @ is
 ***	Utility function.
 ***
   op highlightSortSet : SortSet -> String .
-  eq highlightSortSet(TS) = highlight(stripQuotes(string(TS))) .
-  eq highlightSortSet(TS ; NeSS) = highlight(stripQuotes(string(TS))) + ", " + highlightSortSet(NeSS) .
+  eq highlightSortSet(TS) = highlight(stripBackQuotes(string(TS))) .
+  eq highlightSortSet(TS ; NeSS) = highlight(stripBackQuotes(string(TS))) + ", " +
+    highlightSortSet(NeSS) .
 endfm
 
 ***

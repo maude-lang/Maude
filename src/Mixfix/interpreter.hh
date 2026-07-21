@@ -146,7 +146,10 @@ public:
   void endLatexLog();
   MaudemlBuffer* getXmlBuffer() const;
 
-  void cleanCaches();
+  void protectCaches();
+  void unprotectCaches();
+  void tryToCleanCaches();
+
   void setFlag(Flags flag, bool polarity);
   bool getFlag(Flags flag) const;
 
@@ -346,6 +349,15 @@ private:
   MaudeLatexBuffer* latexBuffer;
 
   int flags;
+  //
+  //	Now that module expression evaluation can involve calls to the metalevel which
+  //	also does module evaluation for metamodule expressions, we need to keep a count
+  //	of how many levels are currently using the module and view caches so they are not
+  //	inadvertently cleared while there are modules and views in the caches that are
+  //	going to be used during module expression evaluation, but whose user has yet to be
+  //	constructed.
+  //
+  int cacheUserCount = 0;
   SyntacticPreModule* currentModule;
   SyntacticView* currentView;
   //
@@ -363,6 +375,29 @@ private:
   IdSet printAttributeIds;	// names of labels selected to execute print attribute
   IdSet excludedModules;	// names of modules to be excluded from tracing
 };
+
+inline void
+Interpreter::protectCaches()
+{
+  ++cacheUserCount;
+}
+
+inline void
+Interpreter::unprotectCaches()
+{
+  --cacheUserCount;
+  //
+  //	Any code that was constructing modules and views may have resulted
+  //	modules and views without any users.
+  //	This can happen at any level if module expression evaluation fails
+  //	but at the metalevel it can also arise from modules being displaced
+  //	from a metamodule cache.
+  //	Now that the cache user count is 0, nothing is in the process of
+  //	evaluating a model expression and all users of modules and views will
+  //	have be recorded. We do a garbage collection.
+  //
+  tryToCleanCaches();
+}
 
 inline void
 Interpreter::traceSelect(bool add)

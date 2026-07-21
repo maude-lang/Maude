@@ -2,6 +2,8 @@
 
 	* prelude.maude: NQL -> NeQL; added op concat(); added op
 	highlightSQ(); highlight -> highlightSQ for the 2 arg version
+	added op stripBackQuotes()
+	use stripBackQuotes() for putting sorts in warnings in fmod @
 
 2026-07-19  Saruman the White  <eker@eker10>
 

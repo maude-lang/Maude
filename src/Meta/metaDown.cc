@@ -247,6 +247,7 @@ MetaLevel::downModule(DagNode* metaModule)
   DagNode* metaParameterDeclList;
   if (downHeader(f->getArgument(0), id, metaParameterDeclList))
     {
+      owner->protectCaches();
       MetaModule* m = new MetaModule(id, mt, ImportModule::TEXT, owner);
       m->addUser(&cache);
       if (downParameterDeclList(metaParameterDeclList, m) &&
@@ -288,14 +289,12 @@ MetaLevel::downModule(DagNode* metaModule)
 				  m->checkFreshVariableNames();
 				  cache.insert(metaModule, m);
 				  //
-				  //	We may have displaced a module from the metamodule cache.
-				  //	The displaced module may have had parameter and imports
-				  //	constructed for it which could now be orphans. Now that
-				  //	any parameters and imports of this new module have been
-				  //	processed, the module system is quiescent and we can
-				  //	purge any orphans.
+				  //	Any modules and view we depend on, we
+				  //	are now recorded as a user of, so we
+				  //	don't need to protect the caches and we
+				  //	might trigger a garbage collect of them.
 				  //
-				  owner->cleanCaches();
+				  owner->unprotectCaches();
 				  return m;
 				}
 			    }
@@ -315,13 +314,13 @@ MetaLevel::downModule(DagNode* metaModule)
       //
       m->deepSelfDestruct();
       //
-      //	Processing module expressions for parameters and imports may have resulted in the
-      //	construction of modules and views that are now orphaned because we failed to build
-      //	the metamodule. We purge these now.
+      //	We failed to build so we no longer need to protect the caches
+      //	and we might trigger a garbage collect of them to remove any
+      //	unused modules and views we created during failure.
       //	
-      owner->cleanCaches();
+      owner->unprotectCaches();
     }
-  return 0;
+  return nullptr;
 }
 
 bool

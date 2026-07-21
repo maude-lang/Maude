@@ -59,6 +59,7 @@ MetaLevel::downSignature(DagNode* metaModule,
   DagNode* metaParameterDeclList;
   if (downHeader(f->getArgument(0), id, metaParameterDeclList))
     {
+      owner->protectCaches();
       if (replacementName != NONE)
 	id = replacementName;
       MetaModule* m = new MetaModule(id, mt, origin, owner);
@@ -95,6 +96,12 @@ MetaLevel::downSignature(DagNode* metaModule,
 				  m->registerRuleLabels();
 				  m->localStatementsComplete();
 				  m->resetImports();
+				  //
+				  //	We shouldn't have produced any unused modules
+				  //	or views, but we still need to allow garbage
+				  //	collection of the module and view caches.
+				  //
+				  owner->unprotectCaches();
 				  return m;
 				}
 			    }
@@ -114,14 +121,13 @@ MetaLevel::downSignature(DagNode* metaModule,
       //
       m->deepSelfDestruct();
       //
-      //	Pulling down module expressions may have resulted in
-      //	the creation of cached modules that no longer have
-      //	dependents now that we failed to build the metamodule.
-      //	Thus we now need to tidy the module and view caches.
+      //	We failed to build so we no longer need to protect the caches
+      //	and we might trigger a garbage collect of them to remove any
+      //	unused modules and views we created during failure.
       //	
-      owner->cleanCaches();
+      owner->unprotectCaches();
     }
-  return 0;
+  return nullptr;
 }
 
 bool
