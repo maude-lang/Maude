@@ -1,3 +1,8 @@
+2026-07-21  Saruman the White  <eker@eker10>
+
+	* tests/Transformer/tuple.maude: use predefined TUPLE module;
+	added tests for POWER
+
 2026-07-14  Saruman the White  <eker@eker10>
 
 	* tests/Transformer/tuple.maude: added

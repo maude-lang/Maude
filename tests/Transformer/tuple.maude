@@ -1,68 +1,8 @@
 set show timing off .
 
 ***
-***	Test generation of parameterized TUPLE modules and parameterized Tuple views.
+***	Test predefined TUPLE and POWER module generators and a Tuple view generator.
 ***
-
-fmod TUPLE is
-  pr MODULE-TRANSFORMER .
-  pr CONVERSION .
-  var N : Nat .
-  var NZ : NzNat .
-  var Q : Qid .
-  
-  op makeTuple : ModuleList QidList -> TransformResult .
-  ceq makeTuple(nil, Q) = {
-    fmod 'DUMMY{ paramDecls(NZ) } is
-      nil
-      sorts S:Sort .
-      none
-      op O:Qid : eltList(NZ) -> S:Sort [ctor] .
-      projectionOps(NZ, S:Sort, eltList(NZ))
-      none
-      projectionEqs(NZ, O:Qid, varList(NZ), varList(NZ))
-    endfm, nil} if NZ := rat(string(Q), 10) /\
-      S:Sort := qid("Tuple{" + params(NZ) + "}") /\
-      O:Qid := qid("(" + underscores(NZ) + ")") .
-
-  eq makeTuple(ML:NeModuleList, QL:QidList) =
-    {nil, warning("input modules not expected for TUPLE.")} .
-
-  eq makeTuple(nil, QL:QidList) =
-    {nil, warning("bad argument to TUPLE.")} [owise] .
-
-  op paramDecls : Nat -> ParameterDeclList .
-  eq paramDecls(0) = nil .
-  eq paramDecls(s N) = paramDecls(N), (qid("X" + string(s N, 10)) :: 'TRIV) .
-
-  op params : NzNat -> String .
-  eq params(1) = "X1" .
-  eq params(s NZ) = params(NZ) + ",X" + string(s NZ, 10) .
-
-  op underscores : NzNat -> String .
-  eq underscores(1) = "_" .
-  eq underscores(s NZ) = underscores(NZ) + ",_" .
-
-  op eltList : Nat -> QidList .
-  eq eltList(0) = nil .
-  eq eltList(s N) = eltList(N) qid("X" + string(s N, 10) + "$Elt") .
-
-  op projectionOps : Nat Qid QidList -> OpDeclSet .
-  eq projectionOps(0, D:Qid, RL:QidList) = none .
-  eq projectionOps(s N, D:Qid, RL:QidList R:Qid) =
-    projectionOps(N, D:Qid, RL:QidList)
-    (op qid("p" + string(s N, 10) + "_") : D:Qid -> R:Qid [none].) .
-
-  op varList : Nat -> TermList .
-  eq varList(0) = empty .
-  eq varList(s N) = varList(N), qid("Y" + string(s N, 10) + ":X" + string(s N, 10) + "$Elt") .
-
-  op projectionEqs : Nat Qid TermList TermList -> EquationSet .
-  eq projectionEqs(0, O:Qid, A:TermList, VS:TermList) = none .
-  eq projectionEqs(s N, O:Qid, A:TermList, (VS:TermList, V:Term)) =
-    projectionEqs(N, O:Qid, A:TermList, VS:TermList)
-    (eq qid("p" + string(s N, 10) + "_")[O:Qid[A:TermList]] = V:Term [none].) .
-endfm
 
 fmod TEST is
   inc TUPLE(4){Nat, Int, String, Qid} .
@@ -79,6 +19,12 @@ fmod BAR is
 endfm
 
 red p2(4, ("a", "abc"), 'a) .
+
+make POWER-TEST is POWER(3){Nat} endm
+
+show sorts .
+
+red p3(4, 5, 6) .
 
 ***
 ***	Tuple view generator.
@@ -138,6 +84,12 @@ endfm
 
 red ((5, ('a, 'bb), "dd"), 'z) .
 red p1 p2 p1((5, ('a, 'bb), "dd"), 'z) .
+
+make TEST5 is POWER(2){Tuple(3){Nat, String, Qid}} endm
+
+show sorts .
+red ((3, "three", 'three), (4, "four", 'four)) .
+red p1 p2((3, "three", 'three), (4, "four", 'four)) .
 
 fmod BAD-ARGUMENT is
   inc SET{Tuple(a b c){Nat, Nat}} .
