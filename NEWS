@@ -1,3 +1,14 @@
+Overview of Changes in alpha165 (2026-07-23)
+============================================
+* make command to create modules from module expressions
+* user-defined module transformation and view generation as module expressions
+* TUPLE, POWER module transformers and @ view generator in the prelude
+* print attribute enabling or disabling by label
+* rpo attribute for the NuITP theorem prover
+* consistency check for attribute declarations in overloaded operators
+* support for CVC5 as SMT backend
+* other optimization and bug fixes
+
 Overview of Changes in Maude 3.5.1 (alpha164) (2025-07-10)
 ==========================================================
 * new LTL+ and MODEL-CHECKER+ modules for easily obtaining witnesses of LTL properties

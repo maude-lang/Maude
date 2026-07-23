@@ -1,10 +1,222 @@
 Alpha 165 release notes
 ========================
 
-New feature
-===========
+New features
+============
 
-Operator declarations can now take an attribute rpo <number> to be used by
+(1) A new make command with the same syntax as in OBJ3 is now available.
+
+  <MakeCommand> ::= make <ModId> [ <ParameterList> ] is <ModExp> endm
+
+The command creates a new module with name <ModId>. The type of the module is determined by that of ModExp. Automatic imports (usually BOOL) don't happen.
+
+(2) There is an attempt at supporting user-definable module transformations. Given user-defined module transformations, they are made available as module expressions, which produce new modules that are made available in Maude.
+
+The syntax for calling user-defined module transformations is
+
+  <ModuleExpression> ::= <id> [ <ModuleExpression>, ..., <ModuleExpression> ] (<id> ... <id>)
+
+Either, but not both of the module expression part or the parenthesized options part can be omitted. The module expression list must be nonempty if present but the option list may be empty. Thus
+
+  TUPLE(4)
+  ID-COMPLETION[List{Nat}]
+  KB-COMPLETION[TOP-MOD](new-eq-bound = 10)
+  DISJOINT-UNION[M1, M2, M3](decoration = numeric)
+  DEGENERATE()
+
+are all perfectly good calls to user-defined transformations.
+
+Currently, transformations must be defined in unparameterized modules. Module transformations take as argument a list of input modules, so that many-to-one transformations (combinators) may be defined. Arbitrary parameters may be provided between parentheses.
+
+The module transformation operation is reflected by
+
+  op _[_](_) : Qid ModuleExpressionList QidList -> ModuleExpression [ctor] .
+
+in the META-MODULE module.
+
+There are some new modules in the prelude. Two of interest to module transformation writers are SYSTEM-MESSAGE (which is just a constructor signature for system messages) and MODULE-TRANSFORMER (which provides module lists, the all important operator for returning the result module of the transformation along with related system messages, and a convenience operator to make meta-recursive calls on imports).
+
+A module is recognized as defining a module transformation when it imports MODULE-TRANSFORMER. An operator in such a module is recognized as a module transformer if it has one of two signatures (at the kind level); the normal signature:
+
+  op f : ModuleList QidList -> TransformResult .
+
+or the reverse signature:
+
+  op f : QidList ModuleList -> TransformResult .
+
+The normal signature is used for module transformers that expect nonflat input modules, and the reverse signature is used for transformers that expect flat input modules. Either kind of transformer can return nonflat parameterized modules. Exactly one such operator should be declared in a module defining a module transformation otherwise Maude will complain when you try to use it.
+
+A term headed by the module transformer should reduce to a pair headed by the transform result operator, {_,_}. The first item is either an empty list of modules denoting failure or a single module that is the result of a successful transformation. Returning multiple modules is not supported.
+
+The second argument is a list of system messages. Warnings are intended to indicate errors (which may have been recovered from in some way), advisories are intended to notify about unusual occurrences that are not errors and can be disabled with "set advise off ." while verbose is used to return extra information during normal operation which is not displayed unless "set verbose on ." has been used. In the failure case, it is recommended that at least one warning be returned.
+
+A trivial module-to-module transformation that works only on fmods and simply removes the equations may be defined as follows.
+
+  fmod DROP-EQNS is
+    pr MODULE-TRANSFORMER .
+    op dropEqns : ModuleList QidList -> TransformResult .
+    eq dropEqns(fmod H:Header is I:ImportList sorts S:SortSet . SS:SubsortDeclSet OD:OpDeclSet MA:MembAxSet E:EquationSet endfm, Q:QidList)
+      = {fmod H:Header is 'DROP-EQNS(Q:QidList)[I:ImportList] sorts S:SortSet . SS:SubsortDeclSet OD:OpDeclSet MA:MembAxSet none  endfm,
+      if Q:QidList == nil then nil else advisory("Arguments ignored") fi} .
+    eq dropEqns(M:Module, Q:QidList)
+      = {nil, warning("Not a functional module.")}
+      [owise] .
+  endfm
+
+The only magic is the subterm
+
+  'DROP-EQNS(Q:QidList)[I:ImportList]
+
+which handles the list of imports by wrapping a meta call to DROP-EQNS around each import. This way when the transformed metamodule is pulled down, the meta calls become real calls to transform the imported modules. By making the recursive call via the module system in this way, you benefit from module caching---if the transformed module has already been made on some other path through the importation hierarchy, this copy will be used rather than running the module transformation again.
+
+Input modules get a Qid as name that reflects their true name (based on the expression that created them) wrapped in a string. So the module constructed for
+  LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)
+would receive the name
+  '"LIST{Nat} * (sort NeList{Nat} to NeNatList, sort List{Nat} to NatList)"
+
+There is the possibility of highlighting text in warning() and advisory() constructors with
+  op highlight : String -> String .
+in fmod SYSTEM-MESSAGE. The highlighting works just like the magenta highlighting, and as is disabled with the -no-ansi-color flag or if stdout is not a terminal.
+
+warning() and advisory() messages are printed with line numbers based on the location of the module transformer/view generator name in the expression that invoked it. There are several convenience functions in the SYSTEM-MESSAGE module for constructing pretty messages.
+
+(3) View generation is also supported through syntax similar to that of module transformations. The two uses of the syntax (or meta-syntax) are distinguished by context---whether Maude is expecting a module (meta-module) or view (meta-view). The key new module in the prelude regarding view generators is VIEW-GENERATOR.
+
+A module is recognized as defining a view generator when it imports VIEW-GENERATOR. An operator in such a module is recognized as a view generator if it has one of two signatures (at the kind level); the simple case signature:
+
+  op f : ModuleList QidList ModuleExpressionList -> ViewResult .
+
+or the complex case signature:
+
+  op f : ModuleList QidList ModuleExpressionList ModuleList -> ViewResult .
+
+Since both of these differ in the number of arguments from module transformer operators there can be no confusion. Exactly one such operator should be declared in a module defining a view generator; otherwise, Maude will complain when you try to use it.
+
+In the simple case, the view generator receives a list of nonflat modules, a list of options, and a list of module expressions that generate the nonflat modules. The complex case adds a list of the flattened modules.
+
+As with module transformers, the input modules are renamed to I1, I2, I3, ... when they are lifted to metalevel modules. A term headed by a view generator should reduce to a pair {V, M} where V is a metaview or the special value failure and M is a list of system messages.
+
+Views are trickier than modules in the following sense: view names get incorporated into instantiations of parameterized sort names. Already in the module system, instances of parameterized views can have a true name like V{[X], Nat} which is shown in the view cache and a clean name V`{X`,Nat`} which is rendered as V{X,Nat} when embedded inside a sort name. If a metaview is returned, the single Qid name in its Header is used as its clean name for embedding in sorts. This Qid must be a valid view name; it cannot contain the characters ( ) [ ] { } ,
+
+One use for view generators that accept modules is for default view generation. The following view generator attempts to produce a default view from TRIV to its input module, by mapping Elt to the unique largest sort in the nonflat, potentially parameterized, input module.
+
+  fmod @ is
+    pr VIEW-GENERATOR .
+    pr CONVERSION .
+    var M : Module .
+    var ME : ModuleExpression .
+    var TS : Sort .
+    var S : NeSortSet .
+    var PDL : NeParameterDeclList .
+    var ST : String .
+    var P : Nat .
+    op makeDefault : ModuleList QidList ModuleExpressionList -> ViewResult .
+    ceq makeDefault(M, nil, ME) = {view header(qid(peel(string(TS))), getParameters(M)) from 'TRIV to target(ME, getParameters(M)) is sort 'Elt to TS . none none endv, nil}
+     if TS := topSort(M, getSorts(M)) .
+    eq makeDefault(M, Q:NeQidList, ME) = {failure, warning("options not supported.")} .
+    eq makeDefault(M, nil, ME) = {failure, warning("couldn't find unique top sort in target module.")} [owise] .
+    op peel : String -> String .
+    ceq peel(ST) = substr(ST, 0, P) if P := find(ST, "`", 0) .
+    eq peel(ST) = ST [owise] .
+    op header : Sort ParameterDeclList -> Header .
+    eq header(TS, nil) = TS .
+    eq header(TS, PDL) = TS{PDL} .
+    op target : ModuleExpression ParameterDeclList -> ModuleExpression .
+    eq target(ME, nil) = ME .
+    eq target(ME, PDL) = ME{paramList(PDL)} .
+    op paramList : NeParameterDeclList -> NeParameterList .
+    eq paramList(TS :: ME) = TS .
+    eq paramList((TS :: ME, PDL)) = TS, paramList(PDL) .
+    op topSort : Module SortSet ~> Sort .
+    eq topSort(M, TS) = TS .
+    ceq topSort(M, TS ; S) = TS if S subset lesserSorts(M, TS) .
+  endfm
+
+It can be used in place of the predefined Nat view by automatically making a view from TRIV to NAT:
+
+  fmod TEST is
+    pr SET{@[NAT]} .
+  endfm
+
+It also works on modules with free parameters such as LIST; the parameters in the result view can of course be bound to parameters from an enclosing module or view:
+
+  fmod TEST2{X :: TRIV} is
+    pr SET{@[LIST]{X}} .
+  endfm
+
+  fmod TEST3 is
+    pr TEST2{@[QID]} .
+  endfm
+
+Note that when parameters are involved, the generation of the view header and target module expression are subtle. The main limitation arises when the target module does not define a unique top sort. For example STRING has incomparable sorts String and FindResult which results in failure.
+
+(4) Several other changes to the prelude. Including module transformers defining tuples (TUPLE(n)), power modules (POWER(n)), and default view generators (@[m]). The available default view transformer targets the top sort in the module, if there are multiple top sorts in a module, it looks if there is a unique one which doesn't have a subsort in an imported module. However, you can optionally specify which sort you want to use:
+
+  make CharList is LIST{@[STRING](Char)} endm
+
+You can specify structured sorts
+
+  make FOO is LIST{@[SET](NeSet{X}){Nat}} endm
+
+but you cannot specify a kind
+
+  make FOO is LIST{@[NAT]([Nat])} endm
+  Warning: <standard input>, line 18 (make FOO): view generator @[m] could not find sort [Nat] in module NAT.
+
+The main reason is the metaview syntax does not support sort to type mappings.
+
+If the target sort is structured, the clean name of the generated view may also be. So generating a view for a parameterized module, and then instantiating it
+
+  fmod FOO is
+    pr SET{@[TUPLE(2)]{Nat, Nat}} .
+  endfm
+
+and generating a view for the instantiated module
+
+  fmod BAR is
+    pr SET{@[TUPLE(2){Nat, Nat}]} .
+  endfm
+
+will in most cases result in a module with the same set of structured sort names. Though the former is preferred for efficiency and generality---the second form doesn't work with bound parameters.
+
+There are many subtle cases with pseudo-parameters and views that have the same name as parameters---Maude tracks all this detail and detects conflicts. The @[m] implementation takes a much simpler approach. If the target sort has a structured name, Foo{...}...{final}, the view will have the same name except that {final} will be chopped off if it contains a parameter from the target module. The chop happens even if the parameter X appears in a position where is actually is not a parameter, but a pseudo-parameter or clashing view name, such as if {final} is {FOO{X, TRIV}{Y, Z}}. I considered doing something more elaborate but percolating stuff that deserves to lose into the generated view seems unappealing, and explaining the algorithm even less so.
+
+Naturally you can nest these constructs, and bind parameters outside of module expressions passed to @[m]
+
+  fmod FOO{X :: TRIV, Y :: TRIV} is
+    pr TUPLE(2){@[TUPLE(3)]{X, X, @[TUPLE(2)]{Y, Y}}, Y} .
+  endfm
+
+  fmod BAR is
+    pr FOO{@[NAT](NzNat), @[STRING]} .
+  endfm
+
+You can also nest a call to @[m] inside an instantiation passed to a call to @[m] as long as there are no bound parameters.
+
+  make FOO is LIST{@[SET{@[NAT]}]} endm
+
+but in general you are better off passing uninstantiated modules. If you want to do something like
+
+  fmod FOO{X :: TRIV, Y :: TRIV} is
+    inc LIST{Set{Map{X, Y}}} .
+  endfm
+
+you have to write it as
+
+  fmod FOO{X :: TRIV, Y :: TRIV} is
+    inc LIST{@[SET]{@[MAP]{X, Y}}} .
+  endfm
+
+so that @[m] never sees a bound parameter.
+
+(5) Several commands have been added to control what is shown when the print attribute gets active. They work analogously to the trace select commands. One major difference is that with trace select, a statement will be active for tracing if the statement label is in the selected set OR the top symbol being rewriting is in the selected set. Currently, print attribute select only looks at the label.
+
+  set print attr select on .
+  set print attr select off .
+  print attr select <ids> .
+  print attr deselect <ids> .
+
+(6) Operator declarations can now take an attribute rpo <number> to be used by
 the termination checker of the NuITP tool, based on recursive path orderings.
 
   op f : Foo -> Foo [rpo 4] .
@@ -15,7 +227,7 @@ consistent among all declarations in the module.
 
 
 Other changes
-==============
+=============
 
 (1) The qid operator of the QID module, which convert strings into quoted
 identifiers, now supports UTF-8 strings. Previously, the following command
@@ -71,5 +283,15 @@ now shows
 As before, ditto can be used in subsequent subsort-overloaded declarations to
 copy the attributes of the first declaration.
 
-(4) Better warnings for associative non-preregularity and associative ctor
+(4) Support for the CVC5 SMT solver (at least version 1.2 is required). The
+existing support for CVC4 (whose latest version was released 6 years ago) is
+deprecated and will be removed in a future version of Maude.
+
+The build options --with-yices2=yes/no and --with-cvc4=yes/no have been replaced by
+a single option --with-smt=yices2/cvc5/cvc4/no. Its default value is yices2 and this
+is the option used for the released binaries.
+
+(5) Better warnings for associative non-preregularity and associative ctor
 inconsistency.
+
+(6) Multiple optimizations and bug fixes

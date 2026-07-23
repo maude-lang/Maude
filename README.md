@@ -40,6 +40,6 @@ Report bugs to: maude-bugs@maude.cs.uiuc.edu
 
 ## Copyright
 
-Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
 The Maude 3 interpreter is free software. See the file [COPYING](COPYING) for copying permission.
