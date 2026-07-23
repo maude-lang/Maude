@@ -45,7 +45,9 @@ Maude's experimental SMT features:
 
 Yices2		  https://github.com/SRI-CSL/yices2
   or
-CVC4		  https://cvc4.github.io/
+CVC5		  https://cvc5.github.io/
+  or
+CVC4 (deprecated) https://cvc4.github.io/
   SMT Solver library
 
 
@@ -71,9 +73,9 @@ OPTLIB=...
 
 libsigsegv
 ----------
-curl -LJO https://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.13.tar.gz
-tar xvf libsigsegv-2.13.tar.gz
-cd libsigsegv-2.13
+curl -LJO https://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.15.tar.gz
+tar xvf libsigsegv-2.15.tar.gz
+cd libsigsegv-2.15
 mkdir Opt
 cd Opt
 
@@ -126,7 +128,7 @@ make check
 make install
 
 
-Telca
+Tecla
 ------
 Tecla does not support building in a subdirectory.
 
@@ -148,9 +150,9 @@ Yices2 does not support building in a subdirectory and ships without
 a configure file. Yices requires a dynamic GMP library to build, even
 though we don't want dynamic libraries.
 
-curl -LJO https://github.com/SRI-CSL/yices2/archive/refs/tags/Yices-2.6.4.tar.gz
-tar xvf yices2-Yices-2.6.4.tar.gz
-cd yices2-Yices-2.6.4
+curl -LJO https://github.com/SRI-CSL/yices2/archive/refs/tags/yices-2.7.0.tar.gz
+tar xvf yices2-yices-2.7.0.tar.gz
+cd yices2-yices-2.7.0
 
 autoconf
 
@@ -189,8 +191,7 @@ mkdir Opt
 cd Opt
 
 ../configure \
---with-yices2=yes \
---with-cvc4=no \
+--with-smt=yices2 \
 --enable-compiler \
 CXXFLAGS="-g -Wall -O3 -fno-stack-protector" \
 CPPFLAGS="-I$OPTLIB/include" \
@@ -231,9 +232,9 @@ HSLIB=...
 
 libsigsegv
 ----------
-curl -LJO https://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.13.tar.gz
-tar xvf libsigsegv-2.13.tar.gz
-cd libsigsegv-2.13
+curl -LJO https://ftp.gnu.org/gnu/libsigsegv/libsigsegv-2.15.tar.gz
+tar xvf libsigsegv-2.15.tar.gz
+cd libsigsegv-2.15
 mkdir HighSierra
 cd HighSierra
 
@@ -318,9 +319,9 @@ Yices2 does not support building in a subdirectory and ships without
 a configure file. Yices requires a dynamic GMP library to build, even
 though we don't want dynamic libraries.
 
-curl -LJO https://github.com/SRI-CSL/yices2/archive/refs/tags/Yices-2.6.4.tar.gz
-tar xvf yices2-Yices-2.6.4.tar.gz
-cd yices2-Yices-2.6.4
+curl -LJO https://github.com/SRI-CSL/yices2/archive/refs/tags/yices-2.7.0.tar.gz
+tar xvf yices2-yices-2.7.0.tar.gz
+cd yices2-yices-2.7.0
 
 autoconf
 
@@ -353,8 +354,7 @@ mkdir HighSierra
 cd HighSierra
 
 ../configure \
---with-yices2=yes \
---with-cvc4=no \
+--with-smt=yices2 \
 --enable-compiler \
 BISON="path to recent bison" \
 CXXFLAGS="-Wall -O3 -fno-stack-protector -fstrict-aliasing -mmacosx-version-min=10.13 -std=c++11" \
