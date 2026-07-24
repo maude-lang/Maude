@@ -1,3 +1,10 @@
+2026-07-23  Saruman the White  <eker@eker10>
+
+	* renameModule.cc (ImportModule::makeRenamedCopy): call
+	addInAllConflicts(); this fixes a bug that allowed instantiation
+	of conflicting parameters by theory views, as long as the module
+	had been renamed
+
 2026-07-21  Saruman the White  <eker@eker10>
 
 	* viewResultSymbol.cc (ViewResultSymbol::generateView): converted
