@@ -36,6 +36,11 @@ ImportModule::makeRenamedCopy(int name, Renaming* canonical, ModuleCache* module
    }
   copy->copyBoundParameters(this);
   //
+  //	If we had any conflicts between our parameters, the renamed copy will have the
+  //	same conflicts.
+  //
+  copy->addInAllConflicts(this);
+  //
   //	We only rename regular imports, not parameter theory copies.
   //
   for (ImportModule* i : importedModules)
