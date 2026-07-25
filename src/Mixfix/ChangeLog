@@ -1,5 +1,11 @@
 2026-07-24  Saruman the White  <eker@eker10>
 
+	* view.cc (View::latexViewExpression): handle generated views
+	properly
+
+	* latexImportModule.cc (ImportModule::latexModuleExpression):
+	implement the TRANSFORMATION properly
+
 	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
 	updated decl for checkForPrintAttribute()
 

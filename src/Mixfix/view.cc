@@ -1210,7 +1210,50 @@ View::latexViewExpression(bool parameterBrackets) const
       result += "\\maudeRightBrace";
       return result;
     }
-  // FIXME: need latex generated views nicely
+  if (generatorModule != nullptr)
+    {
+      //
+      //	We're a generated view.
+      //
+      string result("\\maudeModule{");
+      result += Token::latexName(generatorModule->id());
+      result += "}";
+      //
+      //	Input modules.
+      //
+      if (!inputModules.empty())
+	{
+	  const char* sep = "\\maudeLeftBracket ";
+	  for (const ImportModule* m : inputModules)
+	    {
+	      result += sep;
+	      result += m->latexModuleExpression(parameterBrackets);
+	      sep = "\\maudeComma ";
+	    }
+	  result += "\\maudeRightBracket";
+	}
+      //
+      //	Options.
+      //
+      if (!generationOptions.empty() || inputModules.empty())
+	{
+	  result += "\\maudeLeftParen";
+	  const char* sep = "";
+	  for (int a : generationOptions)
+	    {
+	      result += sep;
+	      result += "\\maudeQid{";
+	      result += Token::latexName(a);
+	      result += "}";
+	      sep = "\\maudeSpace";
+	    }
+	  result +=  "\\maudeRightParen";
+	}
+      return result;
+    }
+  //
+  //	Regular view.
+  //
   string result = "\\maudeView{";
   result += Token::latexName(id());
   result += "}";

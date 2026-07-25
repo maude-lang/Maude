@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ ImportModule::latexModuleExpression(bool parameterBrackets) const
   switch (origin)
     {
     case TEXT:
-    case TRANSFORMATION: // FIXME: should latex structure of name
       {
 	return "\\maudeModule{" + Token::latexName(id()) + "}";
       }
@@ -52,7 +51,8 @@ ImportModule::latexModuleExpression(bool parameterBrackets) const
 	if (baseModule->origin == SUMMATION)
 	  result = "\\maudeLeftParen" + result + "\\maudeRightParen";  // (M + N) * R
 	result += "\\maudeRenaming";
-	result += canonicalRenaming->latexRenaming("\\maudeLeftParen", "\\maudeComma", baseModule, this, true);
+	result += canonicalRenaming->latexRenaming("\\maudeLeftParen", "\\maudeComma", baseModule,
+						   this, true);
 	result += "\\maudeRightParen";
 	return result;
       }
@@ -92,6 +92,47 @@ ImportModule::latexModuleExpression(bool parameterBrackets) const
 	  }
 	result += "\\maudeRightBrace";
 	return result;
+      }
+    case TRANSFORMATION:
+      {
+	//
+	//	Transformer specification.
+	//
+	string result("\\maudeModule{");
+	result += Token::latexName(transformModule->id());
+	result += "}";
+	//
+	//	Input modules.
+	//
+	if (!inputModules.empty())
+	  {
+	    const char* sep = "\\maudeLeftBracket ";
+	    for (const ImportModule* m : inputModules)
+	      {
+		result += sep;
+		result += m->latexModuleExpression(parameterBrackets);
+		sep = "\\maudeComma ";
+	      }
+	    result += "\\maudeRightBracket";
+	  }
+	//
+	//	Options.
+	//
+	if (!transformOptions.empty() || inputModules.empty())
+	  {
+	    result += "\\maudeLeftParen";
+	    const char* sep = "";
+	    for (int a : transformOptions)
+	      {
+		result += sep;
+		result += "\\maudeQid{";
+		result += Token::latexName(a);
+		result += "}";
+		sep = "\\maudeSpace";
+	      }
+	    result +=  "\\maudeRightParen";
+	  }
+	break;
       }
     }
   CantHappen("bad module origin");
