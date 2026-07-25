@@ -118,15 +118,19 @@ UserLevelRewritingContext::dontTrace(const DagNode* redex, const PreEquation* pe
 }
 
 void
-UserLevelRewritingContext::checkForPrintAttribute(MixfixModule::ItemType itemType, const PreEquation* item)
+UserLevelRewritingContext::checkForPrintAttribute(const DagNode* redex,
+						  MixfixModule::ItemType itemType,
+						  const PreEquation* item)
 {
   if (item != 0)
     {
       MixfixModule* m = safeCast(MixfixModule*, item->getModule());
       const PrintAttribute* pa = m->getPrintAttribute(itemType, item);
+
       if (pa != 0 &&
 	  (!interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE_SELECT) ||
-	   interpreter.printAttributeId(item->getLabel().id())))
+	   interpreter.printAttributeId(item->getLabel().id()) ||
+	   interpreter.printAttributeId(redex->symbol()->id())))
 	{
 	  pa->print(*printAttrStream, *this);
 	  if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE_NEWLINE))
@@ -163,7 +167,7 @@ UserLevelRewritingContext::tracePreEqRewrite(DagNode* redex,
 	profileEqRewrite(redex, equation, type);
     }
   if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
-    checkForPrintAttribute(MetadataStore::EQUATION, equation);
+    checkForPrintAttribute(redex, MetadataStore::EQUATION, equation);
   //
   //	handeDebug() takes care of abort, single stepping, breakpoints,
   //	^C interrupts and info interrupts, single these are common to
@@ -246,7 +250,7 @@ UserLevelRewritingContext::tracePreRuleRewrite(DagNode* redex, const Rule* rule)
 	profileRlRewrite(redex, rule);
     }
   if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
-    checkForPrintAttribute(MetadataStore::RULE, rule);
+    checkForPrintAttribute(redex, MetadataStore::RULE, rule);
 
   if (handleDebug(redex, rule) ||
       !localTraceFlag ||
@@ -426,7 +430,7 @@ UserLevelRewritingContext::traceStrategyCall(StrategyDefinition* sdef,
       safeCast(ProfileModule*, root()->symbol()->getModule())->profileSdRewrite(subject, sdef);
     }
   if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
-    checkForPrintAttribute(MetadataStore::STRAT_DEF, sdef);
+    checkForPrintAttribute(callDag, MetadataStore::STRAT_DEF, sdef);
 
   if (handleDebug(callDag, sdef) ||
       !localTraceFlag ||
@@ -478,7 +482,7 @@ UserLevelRewritingContext::tracePreScApplication(DagNode* subject, const SortCon
 	profileMbRewrite(subject, sc);
     }
   if (interpreter.getFlag(Interpreter::PRINT_ATTRIBUTE))
-    checkForPrintAttribute(MetadataStore::MEMB_AX, sc);
+    checkForPrintAttribute(subject, MetadataStore::MEMB_AX, sc);
 
   if (handleDebug(subject, sc) ||
       !localTraceFlag ||

@@ -1,6 +1,22 @@
 2026-07-24  Saruman the White  <eker@eker10>
 
+	* userLevelRewritingContext.hh (class UserLevelRewritingContext):
+	updated decl for checkForPrintAttribute()
+
+	* userLevelRewritingContext.cc
+	(UserLevelRewritingContext::checkForPrintAttribute): take redex;
+	do print in select case if id of top symbol of redex is selected
+	(UserLevelRewritingContext::tracePreEqRewrite): pass redex to
+	checkForPrintAttribute()
+	(UserLevelRewritingContext::tracePreRuleRewrite): ditto
+	(UserLevelRewritingContext::traceStrategyCall): pass callDag to
+	checkForPrintAttribute()
+	(UserLevelRewritingContext::tracePreScApplication): pass subject
+	to checkForPrintAttribute()
+
 	* interpreter.hh (Interpreter::unprotectCaches): fix comment
+	(class Interpreter): deleted commented out decl for
+	doFvuNarrowing()
 
 	* interpreter.cc (Interpreter::handleArgument): use Index
 	(Interpreter::makeModule): use Index

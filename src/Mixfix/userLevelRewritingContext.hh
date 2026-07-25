@@ -165,8 +165,9 @@ private:
 
   bool handleInterrupt();
   bool blockAndHandleInterrupts(sigset_t *normalSet);
-  
-  void checkForPrintAttribute(MetadataStore::ItemType itemType, const PreEquation* item);
+  void checkForPrintAttribute(const DagNode* redex,
+			      MetadataStore::ItemType itemType,
+			      const PreEquation* item);
   bool handleDebug(DagNode* subject, const PreEquation* pe);
   void where(ostream& s);
   void printStatusReportCommon();
