@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@
 #include "compiler.hh"
 #include "viewDatabase.hh"
 #include "viewCache.hh"
-//#include "syntacticView.hh"
 #include "parameterDatabase.hh"
 #include "printSettings.hh"
 #include "SMT.hh"
@@ -130,7 +129,8 @@ public:
 
     DEFAULT_FLAGS = SHOW_COMMAND | SHOW_STATS | SHOW_TIMING | SHOW_LOOP_TIMING |
     COMPILE_COUNT |
-    TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL | TRACE_SD | TRACE_REWRITE | TRACE_BODY | TRACE_BUILTIN |
+    TRACE_CONDITION | TRACE_SUBSTITUTION | TRACE_MB | TRACE_EQ | TRACE_RL | TRACE_SD |
+    TRACE_REWRITE | TRACE_BODY | TRACE_BUILTIN |
     AUTO_CLEAR_PROFILE | AUTO_CLEAR_CACHES | AUTO_CLEAR_RULES | PRINT_ATTRIBUTE_NEWLINE
   };
 
@@ -230,8 +230,8 @@ public:
   void showStrats(bool all = true) const;
   void showSds(bool all = true) const;
 
-  ImportModule* getModuleOrIssueWarning(int name, const LineNumber& lineNumber);
-  ImportModule* makeModule(const ModuleExpression* expr, EnclosingObject* enclosingObject = 0);
+  ImportModule* getModuleOrIssueWarning(int name, LineNumber lineNumber);
+  ImportModule* makeModule(const ModuleExpression* expr, EnclosingObject* enclosingObject = nullptr);
 
 private:
   typedef void (Interpreter::*ContinueFuncPtr)(Int64 limit, bool debug);
@@ -259,7 +259,7 @@ private:
   void endRewriting(Timer& timer,
 		    CacheableRewritingContext* context,
 		    VisibleModule* module,
-		    ContinueFuncPtr cf = 0);
+		    ContinueFuncPtr cf = nullptr);
   void rewriteCont(Int64 limit, bool debug);
   void fRewriteCont(Int64 limit, bool debug);
   void eRewriteCont(Int64 limit, bool debug);
@@ -285,13 +285,6 @@ private:
 		     Int64 solutionCount,
 		     Int64 limit);
   void vuNarrowingCont(Int64 limit, bool debug);
-  /*
-  void doFvuNarrowing(Timer& timer,
-		      VisibleModule* module,
-		      NarrowingSequenceSearch3* state,
-		      Int64 solutionCount,
-		      Int64 limit);
-  */
   void doGetVariants(Timer& timer,
 		     VisibleModule* module,
 		     VariantSearch* state,
@@ -344,11 +337,11 @@ private:
 			       MixfixModule* module);
   void showNarrowingSearchPath(int stateNr, bool showRule, NarrowingSequenceSearch3* savedNarrowingSequence) const;
 
-  ofstream* xmlLog;
-  MaudemlBuffer* xmlBuffer;
-  MaudeLatexBuffer* latexBuffer;
+  ofstream* xmlLog = nullptr;
+  MaudemlBuffer* xmlBuffer = nullptr;
+  MaudeLatexBuffer* latexBuffer = nullptr;
 
-  int flags;
+  int flags = DEFAULT_FLAGS;
   //
   //	Now that module expression evaluation can involve calls to the metalevel which
   //	also does module evaluation for metamodule expressions, we need to keep a count
@@ -358,15 +351,15 @@ private:
   //	constructed.
   //
   int cacheUserCount = 0;
-  SyntacticPreModule* currentModule;
-  SyntacticView* currentView;
+  SyntacticPreModule* currentModule = nullptr;
+  SyntacticView* currentView = nullptr;
   //
   //	Continuation information.
   //
-  CacheableState* savedState;
-  Int64 savedSolutionCount;
-  VisibleModule* savedModule;
-  ContinueFuncPtr continueFunc;
+  CacheableState* savedState = nullptr;
+  Int64 savedSolutionCount = 0;
+  VisibleModule* savedModule = nullptr;
+  ContinueFuncPtr continueFunc = nullptr;
   Vector<Token> savedLoopSubject;
 
   IdSet selected;		// temporary for building set of identifiers
@@ -392,9 +385,9 @@ Interpreter::unprotectCaches()
   //	This can happen at any level if module expression evaluation fails
   //	but at the metalevel it can also arise from modules being displaced
   //	from a metamodule cache.
-  //	Now that the cache user count is 0, nothing is in the process of
-  //	evaluating a model expression and all users of modules and views will
-  //	have be recorded. We do a garbage collection.
+  //	We check if the cache user count is 0, in which case nothing is in the 
+  //	process of evaluating a module expression, and all users of modules and
+  //	views will have be recorded and we can do a garbage collection.
   //
   tryToCleanCaches();
 }

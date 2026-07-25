@@ -93,17 +93,6 @@
 Interpreter::Interpreter()
 : PrintSettings(DEFAULT_PRINT_FLAGS)
 {
-  xmlLog = 0;
-  xmlBuffer = 0;
-  latexBuffer = 0;
-
-  flags = DEFAULT_FLAGS;
-  currentModule = 0;
-  currentView = 0;
-
-  savedState = 0;
-  savedModule = 0;
-  continueFunc = 0;
 }
 
 Interpreter::~Interpreter()
@@ -196,9 +185,9 @@ void
 Interpreter::endXmlLog()
 {
   delete xmlBuffer;
-  xmlBuffer = 0;
+  xmlBuffer = nullptr;
   delete xmlLog;
-  xmlLog = 0;
+  xmlLog = nullptr;
 }
 
 void
@@ -212,7 +201,7 @@ void
 Interpreter::endLatexLog()
 {
   delete latexBuffer;
-  latexBuffer = 0;
+  latexBuffer = nullptr;
 }
 
 bool
@@ -231,7 +220,7 @@ Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
       //
       //	No module specified. See if there is a usable currentModule.
       //
-      if (currentModule == 0)
+      if (currentModule == nullptr)
 	{
 	  IssueWarning("no module expression provided and no last module.");
 	  return false;
@@ -251,19 +240,19 @@ Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
       if (nrTokens == 1)
 	{
 	  m = safeCast(SyntacticPreModule*, getModule(moduleExpr[start].code()));  // HACK
-	  if (m != 0)
+	  if (m != nullptr)
 	    {      
 	      if (m->getFlatSignature()->isBad())
 		goto bad;
 	      setCurrentModule(m);
 	      return true;
 	    }
-	  IssueWarning(LineNumber(moduleExpr[start].lineNumber()) <<
-		       ": no module " << QUOTE(moduleExpr[start]) << '.');
+	  IssueWarning(moduleExpr[start].getLineNr() << ": no module " <<
+		       QUOTE(moduleExpr[start]) << '.');
 	}
       else 
 	{
-	  IssueWarning(LineNumber(moduleExpr[start].lineNumber()) <<
+	  IssueWarning(moduleExpr[start].getLineNr() <<
 		       ": module expressions not supported in commands.");
 	}
       return false;
@@ -278,7 +267,7 @@ Interpreter::setCurrentModule(SyntacticPreModule* module)
 {
   if (currentModule != module)
     {
-      if (currentModule != 0)
+      if (currentModule != nullptr)
 	{
 	  clearContinueInfo();
 	  currentModule->loseFocus(getFlag(AUTO_CLEAR_CACHES));
@@ -294,7 +283,7 @@ Interpreter::setCurrentView(const Vector<Token>& viewExpr)
     {
     case 0:
       {
-	if (currentView == 0)
+	if (currentView == nullptr)
 	  {
 	    IssueWarning("no view expression provided and no last view.");
 	    return false;
@@ -312,8 +301,7 @@ Interpreter::setCurrentView(const Vector<Token>& viewExpr)
       }
     default:
       {
-	IssueWarning(LineNumber(viewExpr[0].lineNumber()) <<
-		   ": no view " << QUOTE(viewExpr) << '.');
+	IssueWarning(viewExpr[0].getLineNr() << ": no view " << QUOTE(viewExpr) << '.');
       }
     }
   return false;
@@ -322,17 +310,18 @@ Interpreter::setCurrentView(const Vector<Token>& viewExpr)
 void
 Interpreter::makeClean(int lineNumber)
 {
-  if (currentModule != 0 && !(currentModule->isComplete()))
+  if (currentModule != nullptr && !(currentModule->isComplete()))
     {
-      IssueAdvisory(*currentModule << ": discarding incomplete module " << QUOTE(currentModule) << ".");
+      IssueAdvisory(*currentModule << ": discarding incomplete module " <<
+		    QUOTE(currentModule) << ".");
       delete currentModule;
-      currentModule = 0;
+      currentModule = nullptr;
     }
-  else if (currentView != 0 && !(currentView->isComplete()))
+  else if (currentView != nullptr && !(currentView->isComplete()))
     {
       IssueAdvisory(*currentView << ": discarding incomplete view " << QUOTE(currentView) << ".");
       delete currentView;
-      currentView = 0;
+      currentView = nullptr;
     }
 }
 
@@ -380,16 +369,16 @@ Interpreter::parse(const Vector<Token>& subject)
   //	flattened in and the theory is closed.
   //
   Term* s = currentModule->getFlatModule()->parseTerm(subject);
-  if (s != 0)
+  if (s != nullptr)
     {
       bool showCommand = getFlag(SHOW_COMMAND);
-      if (latexBuffer != 0)
+      if (latexBuffer != nullptr)
 	latexBuffer->generateCommand(showCommand, "parse", s);
 
       if (s->getSortIndex() == Sort::SORT_UNKNOWN)
 	s->symbol()->fillInSortInfo(s);
       cout << s->getSort() << ": " << s << '\n';
-      if (latexBuffer != 0)
+      if (latexBuffer != nullptr)
 	{
 	  latexBuffer->generateResult(s);
 	  latexBuffer->cleanUp();
@@ -614,7 +603,7 @@ Interpreter::showSummary() const
 }
 
 ImportModule*
-Interpreter::getModuleOrIssueWarning(int name, const LineNumber& lineNumber)
+Interpreter::getModuleOrIssueWarning(int name, LineNumber lineNumber)
 {
   if (PreModule* m = getModule(name))
     {
@@ -638,18 +627,16 @@ Interpreter::getModuleOrIssueWarning(int name, const LineNumber& lineNumber)
 	}
       else
 	{
-	  IssueWarning(lineNumber <<
-		       ": mutually recursive import of module " <<
+	  IssueWarning(lineNumber << ": mutually recursive import of module " <<
 		       QUOTE(m) << " ignored.");
 	}
     }
   else
     {
-      IssueWarning(lineNumber <<
-		   ": module " << QUOTE(Token::name(name)) <<
+      IssueWarning(lineNumber << ": module " << QUOTE(Token::name(name)) <<
 		   " does not exist.");
     }
-  return 0;
+  return nullptr;
 }
 
 Argument*
@@ -689,7 +676,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		  enclosingObject->getParameterTheory(index);
 		if (enclosingObjectParameterTheory != requiredParameterTheory)
 		  {
-		    IssueWarning(LineNumber(name.lineNumber()) << ": parameter " << QUOTE(name) <<
+		    IssueWarning(name.getLineNr() << ": parameter " << QUOTE(name) <<
 				 " from enclosing " << enclosingObject->getObjectType() <<
 				 ' ' << QUOTE(enclosingObject->getObjectName()) <<
 				 " is of theory " << QUOTE(enclosingObjectParameterTheory) <<
@@ -710,13 +697,13 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	    //
 	    if (!(v->evaluate()))
 	      {
-		IssueWarning(LineNumber(name.lineNumber()) << ": unusable view " << QUOTE(v) << '.');
+		IssueWarning(name.getLineNr() << ": unusable view " << QUOTE(v) << '.');
 		break;
 	      }
 	    ImportModule* fromTheory = v->getFromTheory();
 	    if (fromTheory != requiredParameterTheory)
 	      {
-		IssueWarning(LineNumber(name.lineNumber()) << ": view " << QUOTE(name) <<
+		IssueWarning(name.getLineNr() << ": view " << QUOTE(name) <<
 			     " is from theory " << QUOTE(fromTheory) <<
 			     " whereas theory " << QUOTE(requiredParameterTheory) <<
 			     " is required.");
@@ -724,7 +711,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	      }
 	    return v;
 	  }
-	IssueWarning(LineNumber(name.lineNumber()) << ": could not find a parameter or view " <<
+	IssueWarning(name.getLineNr() << ": could not find a parameter or view " <<
 		     QUOTE(name) << ".");
 	break;
       }
@@ -765,7 +752,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	bool hasTheoryView = false;  // theory-view maintain free parameters
 	bool hasPEO = false;  // parameters from an enclosing object (PEO) create bound parameters
 	bool hasViewWithBoundParameters = false;
-	for (int i = 0; i < nrParameters; ++i)
+	for (Index i = 0; i < nrParameters; ++i)
 	  {
 	    DebugInfo("----- looking argument " << i << " which is " <<
 		      argumentExpressions[i] << " --------");
@@ -815,13 +802,14 @@ Interpreter::handleArgument(const ViewExpression* expr,
     case ViewExpression::GENERATION:
       {
 	Token name = expr->getName();
-	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
+	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.getLineNr()))
 	  {
 	    Assert(!(fm->hasBoundParameters()),
 		   "Generator module " << fm << " has bound parameters.");
 	    if (fm->hasFreeParameters())
 	      {
-		IssueWarning("Generator module " << fm << " has free parameters.");
+		IssueWarning(name.getLineNr() << ": generator module " << fm <<
+			     " has free parameters.");
 		break;
 	      }
 	    Vector<ImportModule*> inputModules;
@@ -831,7 +819,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		  {
 		    if (fm->hasBoundParameters())
 		      {
-			IssueWarning("Input module to transformation " << fm <<
+			IssueWarning(name.getLineNr() << ": input module to transformation " << fm <<
 				     " has bound parameters.");
 			return nullptr;
 		      }
@@ -840,15 +828,14 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		else
 		  return nullptr;
 	      }
-	    if (View* v = generateView(fm,inputModules, expr->getOptions(), this, name.getLineNr()))
+	    if (View* v = generateView(fm, inputModules, expr->getOptions(), this, name.getLineNr()))
 	      {
 		//
 		//	Make sure the generated view is good.
 		//
 		if (!(v->evaluate()))
 		  {
-		    IssueWarning(LineNumber(name.lineNumber()) << ": unusable view " <<
-				 QUOTE(v) << '.');
+		    IssueWarning(name.getLineNr() << ": unusable generated view " << QUOTE(v) << '.');
 		    break;
 		  }
 		//
@@ -857,7 +844,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		ImportModule* fromTheory = v->getFromTheory();
 		if (fromTheory != requiredParameterTheory)
 		  {
-		    IssueWarning(LineNumber(name.lineNumber()) << ": view " << QUOTE(name) <<
+		    IssueWarning(name.getLineNr() << ": view " << QUOTE(name) <<
 				 " is from theory " << QUOTE(fromTheory) <<
 				 " whereas theory " << QUOTE(requiredParameterTheory) <<
 				 " is required.");
@@ -884,7 +871,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
     case ModuleExpression::MODULE:
       {
 	Token name = expr->getModuleName();
-	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
+	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.getLineNr()))
 	  return fm;
 	break;
       }
@@ -940,7 +927,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	    bool hasTheoryView = false;
 	    bool hasPEO = false;
 	    bool hasViewWithBoundParameters = false;
-	    for (int i = 0; i < nrParameters; ++i)
+	    for (Index i = 0; i < nrParameters; ++i)
 	      {
 		Argument* a = handleArgument(argumentExpressions[i],
 					     enclosingObject,
@@ -993,13 +980,14 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
     case ModuleExpression::TRANSFORM:
       {
 	Token name = expr->getModuleName();
-	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.lineNumber()))
+	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.getLineNr()))
 	  {
 	    Assert(!(fm->hasBoundParameters()),
 		   "Transformer module " << fm << " has bound parameters.");
 	    if (fm->hasFreeParameters())
 	      {
-		IssueWarning("Transformer module " << fm << " has free parameters.");
+		IssueWarning(name.getLineNr() << ": transformer module " << fm <<
+			     " has free parameters.");
 		return nullptr;
 	      }
 	    Vector<ImportModule*> inputModules;
@@ -1009,7 +997,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		  {
 		    if (fm->hasBoundParameters())
 		      {
-			IssueWarning("Input module to transformation " << fm <<
+			IssueWarning(name.getLineNr() << ": input module to transformation " << fm <<
 				     " has bound parameters.");
 			return nullptr;
 		      }

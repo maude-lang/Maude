@@ -1,3 +1,40 @@
+2026-07-24  Saruman the White  <eker@eker10>
+
+	* interpreter.hh (Interpreter::unprotectCaches): fix comment
+
+	* interpreter.cc (Interpreter::handleArgument): use Index
+	(Interpreter::makeModule): use Index
+	(Interpreter::makeModule): use getLineNr()
+	(Interpreter::handleArgument): use getLineNr()
+	(Interpreter::setCurrentModule): use getLineNr()
+	(Interpreter::setCurrentView): use getLineNr()
+	(Interpreter::handleArgument): added line numbers to the 2
+	generation case warnings that lacked them
+	(Interpreter::makeModule): added line number to tranform case
+	warnings
+
+	* interpreter.hh (class Interpreter): updated decl for
+	getModuleOrIssueWarning()
+
+	* interpreter.cc (Interpreter::endXmlLog): use nullptr
+	(Interpreter::endLatexLog): ditto
+	(Interpreter::setCurrentModule): ditto, both versions
+	(Interpreter::setCurrentView): ditto
+	(Interpreter::parse): ditto
+	(Interpreter::makeClean): ditto
+	(Interpreter::getModuleOrIssueWarning): take lineNumber by value
+	rather than const reference
+
+	* interpreter.hh (class Interpreter): init savedSolutionCount for
+	cleanliness even though we could leave it unitialized until needed
+
+	* interpreter.cc (Interpreter::Interpreter): removed all inits now
+	done in class decl
+
+	* interpreter.hh (class Interpreter): init xmlLog, xmlBuffer,
+	latexBuffer, currentModule, currentView, savedState, savedModule,
+	continueFunc here
+
 2026-07-23  Saruman the White  <eker@eker10>
 
 	* renameModule.cc (ImportModule::makeRenamedCopy): call
