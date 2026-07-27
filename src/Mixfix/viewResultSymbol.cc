@@ -84,9 +84,6 @@ ViewResultSymbol::generateView(int newViewName,
 			       LineNumber lineNumber)
 {
   DebugEnter("generating " << Token::name(newViewName));
-  //for (ImportModule* m : inputModules)
-  //  DebugAlways("  input module " << m);
-  
   ImportModule* generatorModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();
   PointerMap qidMap;
@@ -144,23 +141,14 @@ ViewResultSymbol::generateView(int newViewName,
     args[3] = upModuleList(true, inputModules, qidMap);
   DagNode* startDag = cachedGeneratorOp->makeDagNode(args);
   DebugAdvisory("Start dag = " << startDag);
-  //for (ImportModule* m : inputModules)
-  //  DebugAlways("  input module before reduction " << m);
-
   //
   //	Reduce it using user's code.
   //
   generatorModule->finishFlattening();
   UserLevelRewritingContext context(startDag);
-  generatorModule->protect();  // in case it gets replaced in debugger
   context.reduce();
   if (UserLevelRewritingContext::aborted())
-    {
-      (void) generatorModule->unprotect();
-      return nullptr;
-    }
-  //for (ImportModule* m : inputModules)
-  //  DebugAlways("  input module after reduction " << m);
+    return nullptr;
   DagNode* result = context.root();
   DebugAdvisory("result dag = " << result);
   //
@@ -191,10 +179,7 @@ ViewResultSymbol::generateView(int newViewName,
 	      //	the generator module. If any of these change, it becomes stale.
 	      //
 	      for (ImportModule* m : inputModules)
-		{
-		  m->addUser(resultView);
-		  //DebugAlways(resultView << " is user of " << m);
-		}
+		m->addUser(resultView);
 	      generatorModule->addUser(resultView);
 	      DebugInfo(resultView << " is user of " << generatorModule);
 	      //
@@ -204,7 +189,6 @@ ViewResultSymbol::generateView(int newViewName,
 	      //	the view expression that built it.
 	      //
 	      resultView->setGenerationInfo(generatorModule, inputModules, optionVec);
-	      (void) generatorModule->unprotect();
 	      return resultView;
 	    }
 	  IssueWarning(*cachedGeneratorOp << ": view generator " << QUOTE(cachedGeneratorOp) <<
@@ -214,6 +198,5 @@ ViewResultSymbol::generateView(int newViewName,
   else
     IssueWarning(*cachedGeneratorOp << ": view generator " << QUOTE(cachedGeneratorOp) <<
 		 " returned bad result term " << QUOTE(result) << ".");
-  (void) generatorModule->unprotect();
   return nullptr;
 }

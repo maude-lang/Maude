@@ -1,0 +1,20 @@
+break on labeled equation:
+eq [foo] : dropEqns(fmod H:Header is
+  I:ImportList
+  sorts S:SortSet .
+  SS:SubsortDeclSet
+  OD:OpDeclSet
+  MA:MembAxSet
+  E:EquationSet
+endfm, Q:QidList) = {fmod H:Header is
+  'DROP-EQNS(Q:QidList)[I:ImportList]
+  sorts S:SortSet .
+  SS:SubsortDeclSet
+  OD:OpDeclSet
+  MA:MembAxSet
+  none
+endfm, if Q:QidList == (nil).TypeList then nil else advisory(
+    "Arguments ignored") fi} .
+Warning: <standard input>, line 40: module database locked during module
+    expression evaluation.
+Bye.

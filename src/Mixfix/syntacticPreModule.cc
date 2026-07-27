@@ -244,6 +244,14 @@ SyntacticPreModule::finishModule(Token endToken)
 	autoImports.insert(i);
     }
   isCompleteFlag = true;
+  if (getOwner()->databasesLocked())
+    {
+      IssueWarning(LineNumber(endToken.lineNumber()) <<
+		   ": module database locked during module expression evaluation.");
+      getOwner()->setCurrentModule(nullptr);
+      delete this;
+      return;
+    }
   (void) getOwner()->insertModule(id(), this);
   getOwner()->protectCaches();
   process();

@@ -149,6 +149,7 @@ public:
   void protectCaches();
   void unprotectCaches();
   void tryToCleanCaches();
+  bool databasesLocked() const;
 
   void setFlag(Flags flag, bool polarity);
   bool getFlag(Flags flag) const;
@@ -390,6 +391,17 @@ Interpreter::unprotectCaches()
   //	views will have be recorded and we can do a garbage collection.
   //
   tryToCleanCaches();
+}
+
+inline bool
+Interpreter::databasesLocked() const
+{
+  //
+  //	If code is using the module and view caches, we don't want to allow
+  //	the module and view databases to change underneath it or memory
+  //	corruption make occur.
+  //
+  return cacheUserCount > 0;
 }
 
 inline void

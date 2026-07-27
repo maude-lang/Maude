@@ -1,3 +1,22 @@
+2026-07-27  Saruman the White  <eker@eker10>
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): no longer
+	protect()/unprotect() because we don't allow module and view
+	databases to be modified during a module expression evaluation;
+	deleted commented out debugging code
+
+	* transformResultSymbol.cc
+	(TransformResultSymbol::makeTransformation): no longer
+	protect()/unprotect() because we don't allow module and view
+	databases to be modified during a module expression evaluation
+
+	* modules.yy (view): don't insertView() if databasesLocked()
+
+	* syntacticPreModule.cc (SyntacticPreModule::finishModule): don't
+	insertModule() if databasesLocked()
+
+	* interpreter.hh (Interpreter::databasesLocked): added
+
 2026-07-24  Saruman the White  <eker@eker10>
 
 	* view.cc (View::latexViewExpression): handle generated views

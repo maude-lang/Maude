@@ -1,0 +1,42 @@
+set show timing off .
+
+***
+***	Try to cause memory corruption by changing module database part way
+***	through a module expression evaluation.
+***	Note that in debug mode, blank lines are interpreted as "step ."
+***
+
+fmod BAR is
+endfm
+
+fmod DROP-EQNS is
+  pr MODULE-TRANSFORMER .
+  op dropEqns : ModuleList QidList -> TransformResult .
+  eq dropEqns(fmod H:Header is
+      I:ImportList
+      sorts S:SortSet .
+      SS:SubsortDeclSet
+      OD:OpDeclSet
+      MA:MembAxSet
+      E:EquationSet endfm,
+      Q:QidList) =
+     {fmod H:Header is
+      'DROP-EQNS(Q:QidList)[I:ImportList]
+      sorts S:SortSet .
+      SS:SubsortDeclSet
+      OD:OpDeclSet
+      MA:MembAxSet
+      none endfm,
+      if Q:QidList == nil then nil else advisory("Arguments ignored") fi} [label foo].
+ 
+  eq dropEqns(M:Module, Q:QidList) = {nil, warning("Not a functional module.")} [owise] .
+endfm
+
+break select foo .
+set break on .
+
+make FOO is DROP-EQNS[BAR] endm
+fmod BAR is
+endfm
+set break off .
+resume .

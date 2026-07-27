@@ -147,13 +147,9 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   //
   transformModule->finishFlattening();
   UserLevelRewritingContext context(startDag);
-  transformModule->protect();  // in case it gets replaced in debugger
   context.reduce();
   if (UserLevelRewritingContext::aborted())
-    {
-      (void) transformModule->unprotect();
-      return nullptr;
-    }
+    return nullptr;
   DagNode* result = context.root();
   DebugAdvisory("result dag = " << result);
   //
@@ -202,7 +198,6 @@ TransformResultSymbol::makeTransformation(int newModuleName,
 	      //	the module expression that built it.
 	      //
 	      resultModule->setTransformInfo(transformModule, inputModules, optionVec);
-	      (void) transformModule->unprotect();
 	      return resultModule;
 	    }
 	  IssueWarning(*cachedTransformOp << ": module transformer " << QUOTE(cachedTransformOp) <<
@@ -212,6 +207,5 @@ TransformResultSymbol::makeTransformation(int newModuleName,
   else
     IssueWarning(*cachedTransformOp << ": module transformer " << QUOTE(cachedTransformOp) <<
 		 " returned bad result term " << QUOTE(result) << ".");
-  (void) transformModule->unprotect();
   return nullptr;
 }

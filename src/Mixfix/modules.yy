@@ -322,10 +322,20 @@ view		:	KW_VIEW			{ lexerIdMode(); }
 			  CV->addTo($9);
 			  lexerInitialMode();
 			  fileTable.endModule(lineNumber);
-			  (void) interpreter.insertView(($3).code(), CV);
-			  interpreter.protectCaches();
-			  CV->finishView();
-			  interpreter.unprotectCaches();
+			  if (interpreter.databasesLocked())
+			    {
+			      IssueWarning(LineNumber($12.lineNumber()) <<
+		                ": view database locked during module expression evaluation.");
+                              delete CV;
+                              interpreter.setCurrentView(nullptr);
+			    }
+			  else
+			    {
+			      (void) interpreter.insertView(($3).code(), CV);
+			      interpreter.protectCaches();
+			      CV->finishView();
+			      interpreter.unprotectCaches();
+			    }
 			}
 		;
 
