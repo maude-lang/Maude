@@ -337,7 +337,7 @@ public:
 		     Vector<ConditionFragment*>& condition);
   bool downSimpleSort(DagNode* metaSort, MixfixModule* m, Sort*& sort);
   bool downType(DagNode* metaType, MixfixModule* m, Sort*& type);
-  bool downType2(int id, MixfixModule* m, Sort*& type) const;
+  bool downType2(int id, MixfixModule* m, Sort*& type, bool dontAdvise = false) const;
   bool downQidList(DagNode* metaQidList, Vector<int>& ids);
   bool downQidSet(DagNode* metaQidSet, Vector<int>& ids);
   bool downConcealedSet(DagNode* metaQidSet, PrintSettings& printSettings);

@@ -1,3 +1,11 @@
+2026-07-27  Saruman the White  <eker@eker10>
+
+	* descentFunctions.cc (MetaLevelOpSymbol::metaTypeExists): added
+
+	* metaLevel.hh (class MetaLevel): updated decl for downType2()
+
+	* metaDown.cc (MetaLevel::downType2): take dontAvise flag
+
 2026-07-21  Saruman the White  <eker@eker10>
 
 	* miModule.cc (InterpreterManagerSymbol::insertModule): call

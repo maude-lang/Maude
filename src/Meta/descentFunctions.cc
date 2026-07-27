@@ -122,6 +122,20 @@ MetaLevelOpSymbol::metaSameKind(FreeDagNode* subject, RewritingContext& context)
 }
 
 bool
+MetaLevelOpSymbol::metaTypeExists(FreeDagNode* subject, RewritingContext& context)
+{
+  if (MixfixModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      int id;
+      Sort* s;
+      bool result = metaLevel->downQid(subject->getArgument(1), id) &&
+	metaLevel->downType2(id, m, s, true);
+      return context.builtInReplace(subject, metaLevel->upBool(result));
+    }
+  return false;
+}
+
+bool
 MetaLevelOpSymbol::metaLeastSort(FreeDagNode* subject, RewritingContext& context)
 {
   if (ImportModule* m = metaLevel->downModule(subject->getArgument(0)))

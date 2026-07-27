@@ -882,6 +882,10 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     ''sortLeq.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind], ''`[Bool`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaSortLeq.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
     ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
+    ''typeExists.Sort, '__[''`[Module`].Kind, ''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind],
+    ''`[Bool`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
+    ''metaTypeExists.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[
+    ''Module.Sort, ''QidList.Sort], ''ResultPair?.Sort]]]], 'op_:_->_`[_`].[
     ''upEqs.Sort, '__[''`[QidList`,TypeListSet`,QidSet`,Type?`,ModuleExpression`,ParameterList`,GTermList`,Header`].Kind, ''`[Bool`].Kind],
     ''`[EquationSet`].Kind, 'special['__['id-hook[''MetaLevelOpSymbol.Sort,
     ''metaUpEqs.Sort], 'op-hook[''shareWith.Sort, ''metaReduce.Sort, '__[

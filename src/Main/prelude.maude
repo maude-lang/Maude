@@ -2944,6 +2944,11 @@ fmod META-LEVEL is
            id-hook MetaLevelOpSymbol	(metaPrettyPrintStrategy)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
+  op typeExists : Module Type ~> Bool
+        [special (
+           id-hook MetaLevelOpSymbol	(metaTypeExists)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
   op sortLeq : Module Type Type ~> Bool
         [special (
            id-hook MetaLevelOpSymbol	(metaSortLeq)
@@ -3506,11 +3511,15 @@ fmod @ is
   eq makeDefault(M, NeQL, ME) = useGivenSort(concat(NeQL), M, ME) .
 
   op useGivenSort : String Module ModuleExpressionList -> ViewResult .
-  ceq useGivenSort(ST, M, ME) = makeView(ME, TS, getParameters(M))
-    if TS := qid(ST) /\ SS := lesserSorts(M, TS) .
-  eq useGivenSort(ST, M, ME) = {nil, warning("view generator " + highlight("@[m]") +
+  ceq useGivenSort(ST, M, ME) = if typeExists(M, TS) then
+    makeView(ME, TS, getParameters(M))
+  else
+    {nil, warning("view generator " + highlight("@[m]") +
     " could not find sort " + highlight(stripBackQuotes(ST)) + " in module " +
-    highlightSQ(getName(M)) + ".")} [owise] .
+    highlightSQ(getName(M)) + ".")}
+  fi if TS := qid(ST) .
+  eq useGivenSort(ST, M, ME) = {nil, warning("view generator " + highlight("@[m]") +
+    " expected a valid sort name, not " + highlight(stripBackQuotes(ST)) + ".")} [owise] .
 ***
 ***	View making machinery.
 ***
