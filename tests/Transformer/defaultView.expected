@@ -1,4 +1,3 @@
-Advisory: redefining module @.
 ==========================================
 reduce in TEST : 5, 6, 6, 7 .
 rewrites: 1
@@ -11,14 +10,183 @@ result NeSet{List{Qid}}: 'a 'd, 'a 'b 'c, 'b 'b 'b
 reduce in TEST3 : ('a 'b 'c, 'a 'd, 'b 'b 'b) \ 'a 'd .
 rewrites: 11
 result NeSet{List{Qid}}: 'a 'b 'c, 'b 'b 'b
-Warning: <standard input>, line 72 (fmod UNEXPECTED-OPTION): options not
-    supported.
-Warning: <standard input>, line 71 (fmod UNEXPECTED-OPTION): this module
-    contains one or more errors that could not be patched up and thus it cannot
-    be used or imported.
-Warning: <standard input>, line 76 (fmod NO-UNIQUE-TOP-SORT): couldn't find
-    unique top sort in target module.
-Warning: <standard input>, line 75 (fmod NO-UNIQUE-TOP-SORT): this module
-    contains one or more errors that could not be patched up and thus it cannot
-    be used or imported.
+sort Bool .
+sort Zero .	subsort Zero < Nat .
+sort NzNat .	subsorts NzNat < NeList{NzNat} Nat List{NzNat} .
+sort Nat .	subsorts NzNat Zero < Nat .
+sort NeList{NzNat} .	subsorts NzNat < NeList{NzNat} < List{NzNat} .
+sort List{NzNat} .	subsorts NzNat NeList{NzNat} < List{NzNat} .
+Warning: <standard input>, line 27 (make FOO2): view generator @[m] could not
+    find sort Int in module NAT.
+Warning: <standard input>, line 27 (make FOO2): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 29 (make FOO3): view generator @[m] expected a
+    valid sort name, not `{not a sort`}.
+Warning: <standard input>, line 29 (make FOO3): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: <standard input>, line 35 (make BAR1): view generator @[m] could not
+    find a unique best sort in module FOO to map Elt to. Possible choices are:
+    A`B`C, F{A}, G{A,B}
+Warning: <standard input>, line 35 (make BAR1): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+sort Bool .
+sort F{A} .
+sort G{A,B} .
+sort A`B`C .	subsorts A`B`C < NeList{A`B`C} List{A`B`C} .
+sort Zero .	subsort Zero < Nat .
+sort NzNat .	subsort NzNat < Nat .
+sort Nat .	subsorts NzNat Zero < Nat .
+sort NeList{A`B`C} .	subsorts A`B`C < NeList{A`B`C} < List{A`B`C} .
+sort List{A`B`C} .	subsorts A`B`C NeList{A`B`C} < List{A`B`C} .
+sort Bool .
+sort F{A} .	subsorts F{A} < NeList{F{A}} List{F{A}} .
+sort G{A,B} .
+sort A`B`C .
+sort Zero .	subsort Zero < Nat .
+sort NzNat .	subsort NzNat < Nat .
+sort Nat .	subsorts NzNat Zero < Nat .
+sort NeList{F{A}} .	subsorts F{A} < NeList{F{A}} < List{F{A}} .
+sort List{F{A}} .	subsorts F{A} NeList{F{A}} < List{F{A}} .
+sort Bool .
+sort F{A} .
+sort G{A,B} .	subsorts G{A,B} < NeList{G{A,B}} List{G{A,B}} .
+sort A`B`C .
+sort Zero .	subsort Zero < Nat .
+sort NzNat .	subsort NzNat < Nat .
+sort Nat .	subsorts NzNat Zero < Nat .
+sort NeList{G{A,B}} .	subsorts G{A,B} < NeList{G{A,B}} < List{G{A,B}} .
+sort List{G{A,B}} .	subsorts G{A,B} NeList{G{A,B}} < List{G{A,B}} .
+Warning: <standard input>, line 46 (make BAR5): view generator @[m] expected a
+    valid sort name, not F `{ A `} `, G `{ A `, B `}.
+Warning: <standard input>, line 46 (make BAR5): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+sort Bool .
+sort Zero .	subsorts Zero < Nat FindResult .
+sort NzNat .	subsorts NzNat < Nat FindResult .
+sort Nat .	subsorts NzNat Zero < Nat < FindResult .
+sort String .	subsorts Char < String < NeList{String} List{String} .
+sort Char .	subsorts Char < String NeList{String} List{String} .
+sort FindResult .	subsorts NzNat Zero Nat < FindResult .
+sort NeList{String} .	subsorts Char String < NeList{String} < List{String} .
+sort List{String} .	subsorts Char String NeList{String} < List{String} .
+==========================================
+reduce in StringList : "a" "bc" "de" .
+rewrites: 0
+result NeList{String}: "a" "bc" "de"
+sort Bool .
+sort Zero .	subsorts Zero < Nat FindResult .
+sort NzNat .	subsorts NzNat < Nat FindResult .
+sort Nat .	subsorts NzNat Zero < Nat < FindResult .
+sort String .	subsort Char < String .
+sort Char .	subsorts Char < NeList{Char} String List{Char} .
+sort FindResult .	subsorts NzNat Zero Nat < FindResult .
+sort NeList{Char} .	subsorts Char < NeList{Char} < List{Char} .
+sort List{Char} .	subsorts Char NeList{Char} < List{Char} .
+==========================================
+reduce in CharList : "a" "b" "c" "d" "e" .
+rewrites: 0
+result NeList{Char}: "a" "b" "c" "d" "e"
+sort Bool .
+sort Zero .	subsort Zero < Nat .
+sort NzNat .	subsort NzNat < Nat .
+sort Nat .	subsorts NzNat Zero < Nat .
+sort Tuple{Nat,Nat} .	subsorts Tuple{Nat,Nat} < NeSet{Tuple{Nat,Nat}} Set{
+    Tuple{Nat,Nat}} .
+sort NeSet{Tuple{Nat,Nat}} .	subsorts Tuple{Nat,Nat} < NeSet{Tuple{Nat,Nat}}
+    < Set{Tuple{Nat,Nat}} .
+sort Set{Tuple{Nat,Nat}} .	subsorts Tuple{Nat,Nat} NeSet{Tuple{Nat,Nat}} <
+    Set{Tuple{Nat,Nat}} .
+sort Bool .
+sort Zero .	subsort Zero < Nat .
+sort NzNat .	subsort NzNat < Nat .
+sort Nat .	subsorts NzNat Zero < Nat .
+sort Tuple{Nat,Nat} .	subsorts Tuple{Nat,Nat} < NeSet{Tuple{Nat,Nat}} Set{
+    Tuple{Nat,Nat}} .
+sort NeSet{Tuple{Nat,Nat}} .	subsorts Tuple{Nat,Nat} < NeSet{Tuple{Nat,Nat}}
+    < Set{Tuple{Nat,Nat}} .
+sort Set{Tuple{Nat,Nat}} .	subsorts Tuple{Nat,Nat} NeSet{Tuple{Nat,Nat}} <
+    Set{Tuple{Nat,Nat}} .
+sort X$Elt .
+sort Y$Elt .
+sort Bool .
+sort Tuple{Y,Y} .
+sort Tuple{X,X,Tuple{Y,Y}} .
+sort Tuple{Tuple{X,X,Tuple{Y,Y}},Y} .
+sort Bool .
+sort Zero .	subsorts Zero < Nat FindResult .
+sort NzNat .	subsorts NzNat < Nat FindResult .
+sort Nat .	subsorts NzNat Zero < Nat < FindResult .
+sort String .	subsort Char < String .
+sort Char .	subsort Char < String .
+sort FindResult .	subsorts NzNat Zero Nat < FindResult .
+sort Tuple{String,String} .
+sort Tuple{NzNat,NzNat,Tuple{String,String}} .
+sort Tuple{Tuple{NzNat,NzNat,Tuple{String,String}},String} .
+sort Bool .
+sort Zero .	subsorts Zero < Nat NeSet{Nat} Set{Nat} NeList{Set{Nat}} List{
+    Set{Nat}} .
+sort NzNat .	subsorts NzNat < Nat NeSet{Nat} Set{Nat} NeList{Set{Nat}} List{
+    Set{Nat}} .
+sort Nat .	subsorts NzNat Zero < Nat < NeSet{Nat} Set{Nat} NeList{Set{
+    Nat}} List{Set{Nat}} .
+sort NeSet{Nat} .	subsorts NzNat Zero Nat < NeSet{Nat} < Set{Nat} NeList{
+    Set{Nat}} List{Set{Nat}} .
+sort Set{Nat} .	subsorts NzNat Zero Nat NeSet{Nat} < Set{Nat} < NeList{Set{
+    Nat}} List{Set{Nat}} .
+sort NeList{Set{Nat}} .	subsorts NzNat Zero Nat NeSet{Nat} Set{Nat} < NeList{
+    Set{Nat}} < List{Set{Nat}} .
+sort List{Set{Nat}} .	subsorts NzNat Zero Nat NeSet{Nat} Set{Nat} NeList{Set{
+    Nat}} < List{Set{Nat}} .
+sort X$Elt .
+sort Y$Elt .
+sort Bool .
+sort Tuple{X,Y} .	subsorts Tuple{X,Y} < NeSet{Tuple{X,Y}} Set{Tuple{X,Y}}
+    NeList{Set{Tuple{X,Y}}} List{Set{Tuple{X,Y}}} .
+sort Zero .	subsort Zero < Nat .
+sort NzNat .	subsort NzNat < Nat .
+sort Nat .	subsorts NzNat Zero < Nat .
+sort NeSet{Tuple{X,Y}} .	subsorts Tuple{X,Y} < NeSet{Tuple{X,Y}} < Set{
+    Tuple{X,Y}} NeList{Set{Tuple{X,Y}}} List{Set{Tuple{X,Y}}} .
+sort Set{Tuple{X,Y}} .	subsorts Tuple{X,Y} NeSet{Tuple{X,Y}} < Set{Tuple{X,Y}}
+    < NeList{Set{Tuple{X,Y}}} List{Set{Tuple{X,Y}}} .
+sort NeList{Set{Tuple{X,Y}}} .	subsorts Tuple{X,Y} NeSet{Tuple{X,Y}} Set{
+    Tuple{X,Y}} < NeList{Set{Tuple{X,Y}}} < List{Set{Tuple{X,Y}}} .
+sort List{Set{Tuple{X,Y}}} .	subsorts Tuple{X,Y} NeSet{Tuple{X,Y}} Set{
+    Tuple{X,Y}} NeList{Set{Tuple{X,Y}}} < List{Set{Tuple{X,Y}}} .
+sort Bool .
+sort Zero .	subsorts Zero < Nat FindResult .
+sort NzNat .	subsorts NzNat < Nat FindResult .
+sort Nat .	subsorts NzNat Zero < Nat < FindResult .
+sort String .	subsort Char < String .
+sort Char .	subsort Char < String .
+sort FindResult .	subsorts NzNat Zero Nat < FindResult .
+sort Tuple{Nat,String} .	subsorts Tuple{Nat,String} < NeSet{Tuple{Nat,
+    String}} Set{Tuple{Nat,String}} NeList{Set{Tuple{Nat,String}}} List{Set{
+    Tuple{Nat,String}}} .
+sort NeSet{Tuple{Nat,String}} .	subsorts Tuple{Nat,String} < NeSet{Tuple{Nat,
+    String}} < Set{Tuple{Nat,String}} NeList{Set{Tuple{Nat,String}}} List{Set{
+    Tuple{Nat,String}}} .
+sort Set{Tuple{Nat,String}} .	subsorts Tuple{Nat,String} NeSet{Tuple{Nat,
+    String}} < Set{Tuple{Nat,String}} < NeList{Set{Tuple{Nat,String}}} List{
+    Set{Tuple{Nat,String}}} .
+sort NeList{Set{Tuple{Nat,String}}} .	subsorts Tuple{Nat,String} NeSet{Tuple{
+    Nat,String}} Set{Tuple{Nat,String}} < NeList{Set{Tuple{Nat,String}}} <
+    List{Set{Tuple{Nat,String}}} .
+sort List{Set{Tuple{Nat,String}}} .	subsorts Tuple{Nat,String} NeSet{Tuple{
+    Nat,String}} Set{Tuple{Nat,String}} NeList{Set{Tuple{Nat,String}}} < List{
+    Set{Tuple{Nat,String}}} .
+==========================================
+reduce in FOO10 : (3, "three"), (4, "four"), (5, "five") .
+rewrites: 0
+result NeSet{Tuple{Nat,String}}: (3, "three"), (4, "four"), (5, "five")
+==========================================
+reduce in FOO10 : ((3, "three"), (4, "four"), (5, "five")) ((6, "six"), (7,
+    "seven")) .
+rewrites: 0
+result NeList{Set{Tuple{Nat,String}}}: ((3, "three"), (4, "four"), (5, "five"))
+    ((6, "six"), (7, "seven"))
 Bye.

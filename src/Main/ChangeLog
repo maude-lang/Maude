@@ -3,6 +3,8 @@
 	* prelude.maude: added typeExists() descent function; use
 	typeExists() in fmod @; distinguish between a bad sort name and
 	sort that doesn't exist
+	added formatSortName(), $backquote(); deleted stripBackQuotes()
+	handle funky sort names like A`B`C properly
 
 2026-07-20  Saruman the White  <eker@eker10>
 

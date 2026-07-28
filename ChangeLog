@@ -1,3 +1,8 @@
+2026-07-27  Saruman the White  <eker@eker10>
+
+	* tests/Transformer/defaultView.maude: use view generator from
+	prelude; added more cases
+
 ==================================Maude165===========================================
 
 2026-07-21  Saruman the White  <eker@eker10>

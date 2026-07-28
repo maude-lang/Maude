@@ -4,53 +4,6 @@ set show timing off .
 ***	Test generation of default views for modules.
 ***
 
-fmod @ is
-  pr VIEW-GENERATOR .
-  pr CONVERSION .
-  var M : Module .
-  var ME : ModuleExpression .
-  var TS : Sort .
-  var S : NeSortSet .
-  var PDL : NeParameterDeclList .
-  var ST : String .
-  var P : Nat .
-
-  op makeDefault : ModuleList QidList ModuleExpressionList -> ViewResult .
-  ceq makeDefault(M, nil, ME) = {
-    view header(qid(peel(string(TS))), getParameters(M))
-      from 'TRIV to target(ME, getParameters(M)) is
-      sort 'Elt to TS .
-      none
-      none
-    endv, nil} if TS := topSort(M, getSorts(M)) .
-
-  eq makeDefault(M, Q:NeQidList, ME) =
-    {nil, warning("options not supported.")} .
-    
-  eq makeDefault(M, nil, ME) =
-    {nil, warning("couldn't find unique top sort in target module.")} [owise] .
-
-  op peel : String -> String .
-  ceq peel(ST) = substr(ST, 0, P) if P := find(ST, "`", 0) .
-  eq peel(ST) = ST [owise] .
-
-  op header : Sort ParameterDeclList -> Header .
-  eq header(TS, nil) = TS .
-  eq header(TS, PDL) = TS{PDL} .
-
-  op target : ModuleExpression ParameterDeclList -> ModuleExpression .
-  eq target(ME, nil) = ME .
-  eq target(ME, PDL) = ME{paramList(PDL)} .
-
-  op paramList : NeParameterDeclList -> NeParameterList .
-  eq paramList(TS :: ME) = TS .
-  eq paramList((TS :: ME, PDL)) = TS, paramList(PDL) .
-
-  op topSort : Module SortSet ~> Sort .
-  eq topSort(M, TS) = TS .
-  ceq topSort(M, TS ; S) = TS if S subset lesserSorts(M, TS) .
-endfm
-
 fmod TEST is
   pr SET{@[NAT]} .
 endfm
@@ -68,10 +21,77 @@ endfm
 red 'a 'b 'c, 'a 'd, 'b 'b 'b .
 red ('a 'b 'c, 'a 'd, 'b 'b 'b) \ 'a 'd .
 
-fmod UNEXPECTED-OPTION is
-  pr SET{@[NAT](1)} .
+make FOO1 is LIST{@[NAT](NzNat)} endm
+show sorts .
+
+make FOO2 is LIST{@[NAT](Int)} endm
+
+make FOO3 is LIST{@[NAT](`{not a sort`})} endm
+
+fmod FOO is
+  sorts F{A} G{A,B} A`B`C .
 endfm
 
-fmod NO-UNIQUE-TOP-SORT is
-  pr TEST2{@[STRING]} .
+make BAR1 is LIST{@[FOO]} endm
+
+make BAR2 is LIST{@[FOO](A`B`C)} endm
+show sorts .
+
+make BAR3 is LIST{@[FOO](F{A})} endm
+show sorts .
+
+make BAR4 is LIST{@[FOO](G{A,B})} endm
+show sorts .
+
+make BAR5 is LIST{@[FOO](F{A}, G{A,B})} endm
+
+make StringList is LIST{@[STRING]} endm
+show sorts .
+red "a" "bc" "de" .
+
+make CharList is LIST{@[STRING](Char)} endm
+show sorts .
+red "a" "b" "c" "d" "e" .
+
+fmod FOO4 is
+  pr SET{@[TUPLE(2)]{Nat, Nat}} .
 endfm
+
+show sorts .
+
+fmod FOO5 is
+  pr SET{@[TUPLE(2){Nat, Nat}]} .
+endfm
+
+show sorts .
+
+fmod FOO6{X :: TRIV, Y :: TRIV} is
+  pr TUPLE(2){@[TUPLE(3)]{X, X, @[TUPLE(2)]{Y, Y}}, Y} .
+endfm
+
+show sorts .
+
+fmod FOO7 is
+  pr FOO6{@[NAT](NzNat), @[STRING]} .
+endfm
+
+show sorts .
+
+make FOO8 is LIST{@[SET{@[NAT]}]} endm
+show sorts .
+
+fmod FOO9{X :: TRIV, Y :: TRIV} is
+  pr LIST{@[SET]{@[TUPLE(2)]{X, Y}}} .
+endfm
+
+show sorts .
+
+fmod FOO10 is
+  pr FOO9{@[NAT], @[STRING]} .
+endfm
+
+show sorts .
+
+red (3, "three"), (4, "four"), (5, "five") .
+
+red ((3, "three"), (4, "four"), (5, "five")) ((6, "six"), (7, "seven")) .
