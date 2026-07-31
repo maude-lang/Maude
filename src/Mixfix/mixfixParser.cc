@@ -223,6 +223,104 @@ MixfixParser::insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse)
   iterSymbolTerminals[iterSymbolNameCode] = tokenToIndex(codeToUse);
 }
 
+void
+MixfixParser::makeOtfTranslations()
+{
+  if (otfTranslationsMade)
+    return;
+  otfTranslationsMade = true;
+  //
+  //	We scan through the original tokens, looking for things that
+  //	are unambiguously on-the-fly variables, and make these into
+  //	otf translations.
+  //
+  Index beyondEnd = currentOffset + sentence.size();
+  for (Index i = currentOffset; i < beyondEnd; ++i)
+    {
+      int code = (*currentSentence)[i].code();
+      if (tokenSet.find(code) == NONE)
+	{
+	  //
+	  //	Token is not part of the regular syntax - it needs to be
+	  //	translated to avoid a syntax error.
+	  //
+	  int sp = Token::specialProperty(code);
+	  if (sp == Token::CONTAINS_COLON)
+	    {
+	      //
+	      //	Token looks like X:Bar so it may be an otf
+	      //	variable of sort Bar or an an otf variable of
+	      //	sort Bar{...}.
+	      //
+	      int varName;
+	      int sortName;
+	      Token::split(code, varName, sortName);
+	      //
+	      //	Make sure that X is not part of the user's signature
+	      //	and doesn't have any special properties, such as being a
+	      //	number, that would give it a special translation.
+	      //
+	      if (tokenSet.find(varName) == NONE && Token::specialProperty(varName) == NONE)
+		{
+		  //
+		  //	X appearing in the sentence on will cause a syntax error so it is
+		  //	safe to make a translation for it.
+		  //
+		  if (i + 1 < beyondEnd && (*currentSentence)[i + 1].code() == NONE)
+		    {
+		      //
+		      //	We have X:Bar { ... so we need to decide what sort
+		      //	the otf variable is using.
+		    }
+		  else
+		    {
+		      //
+		      //	Must be a simple X:Bar otf variable if we
+		      //	have a sort Bar, we map occurrences of X to the
+		      //	terminal for unseen variables of sort Bar.
+		      //	
+		      auto j = variableTerminals.find(sortName);
+		      if (j != variableTerminals.end())
+			{
+			  auto k = otfTranslations.find(varName);
+			  if (k != otfTranslations.end())
+			    {
+			      if (k->second != j->second)
+				{
+				  //
+				  //	We already have a different otf translation
+				  //	for X so we avoid all otf translations of X.
+				  //
+				  DebugInfo("killed otf variable translation for " <<
+					      Token::name(varName) << " because of " <<
+					      Token::name(code));
+				  otfTranslations[varName] = NONE;
+				}
+			      else
+				{
+				  DebugInfo("duplicate otf variable translation for " <<
+					      Token::name(varName) << " to " <<
+					      Token::name(code));
+				}
+			    }
+			  else
+			    {
+			      DebugInfo("made otf variable translation for " <<
+					    Token::name(varName) << " to " <<
+					    Token::name(code));
+			      otfTranslations[varName] = j->second;
+			    }
+			}
+		    }
+		}
+	    }
+	  else if (sp == Token::ENDS_IN_COLON)
+	    {
+	    }
+	}
+    }
+}
+
 int
 MixfixParser::translateSpecialToken(int code)
 {
@@ -247,6 +345,18 @@ MixfixParser::translateSpecialToken(int code)
     }
   else if (sp != NONE)
     return specialTerminals[sp];
+  //
+  //	We have a token that doesn't have standard or special translations; see
+  //	if we can avoid a syntax error with an otf variable translation.
+  //
+  makeOtfTranslations();
+  auto i = otfTranslations.find(code);
+  if (i != otfTranslations.end() && i->second != NONE)
+    return i->second;
+  //
+  //	If we're parsing with bubbles, they can take anything so we map otherwise
+  //	unmapped tokens to a special out-of-band value.
+  //
   if (bubblesAllowed)
     return tokenSet.size();
   return NONE;
@@ -261,16 +371,15 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 {
   currentSentence = &original;
   currentOffset = begin;
-
+  otfTranslations.clear();
+  otfTranslationsMade = false;
   sentence.resize(nrTokens);
-  for (int i = 0; i < nrTokens; i++)
+  for (int i = 0; i < nrTokens; ++i)
     {
       int j = begin + i;
       int code = original[j].code();
-
-      int terminal = NONE;
-      int entry = tokenSet.find(code);
-      if (entry == NONE)
+      int terminal = tokenSet.find(code);
+      if (terminal == NONE)
 	{
 	  terminal = translateSpecialToken(code);
 	  if (terminal == NONE)
@@ -279,8 +388,6 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 	      return -1;
 	    }
 	}
-      else
-	terminal = entry;
       sentence[i] = terminal;
     }
 
@@ -854,13 +961,21 @@ MixfixParser::makeTerm(int node)
       {
 	Sort* sort = client.getSorts()[a.data];
 	VariableSymbol* symbol = safeCast(VariableSymbol*, client.instantiateVariable(sort));
-	int varName;
-	int sortName;
-	Token::split((*currentSentence)[pos].code(), varName, sortName);
-	Assert(sortName == NONE ||
-	       sortName == sort->id() ||
-	       Token::auxProperty(sort->id()) == Token::AUX_STRUCTURED_SORT,
-	       "sort name clash");
+	int varName = (*currentSentence)[pos].code();
+	int sp = Token::specialProperty(varName);
+	if (sp != NONE)
+	  {
+	    Assert(sp == Token::CONTAINS_COLON || sp == Token::ENDS_IN_COLON,
+		   "upexpected special property " << sp);
+	    int baseName;
+	    int sortName;
+	    Token::split(varName, baseName, sortName);
+	    Assert(sortName == NONE ||
+		   sortName == sort->id() ||
+		   Token::auxProperty(sort->id()) == Token::AUX_STRUCTURED_SORT,
+		   "sort name clash");
+	    varName = baseName;
+	  }
 	t = new VariableTerm(symbol, varName);
 	break;
       }
@@ -1140,7 +1255,7 @@ MixfixParser::makePrintList(int node, Vector<int>& names, Vector<Sort*>& sorts)
 	    Action& a = actions[parser.getProductionNumber(variableNode)];
 	    int pos = currentOffset + parser.getFirstPosition(variableNode);
 	    int varName = (*currentSentence)[pos].code();
-	    if (a.action != MAKE_VARIABLE_FROM_ALIAS)
+	    if (a.action != MAKE_VARIABLE_FROM_ALIAS && Token::specialProperty(varName) != NONE)
 	      {
 		//
 		//	Full variable name given, need to split of base.

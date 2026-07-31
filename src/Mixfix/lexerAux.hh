@@ -70,13 +70,3 @@ enum TERMINATION_TOKENS
     END_STATEMENT = 0x40000000,
     END_COMMAND = 0x80000000
   };
-
-/*
- *	A transformer is a named operator in a module. We need to pass this
- *	on the bison stack as a pointer to a pair since transform module expressions
- *	can appear as input to other transform module expressions, overwriting
- *	an opName held in static data.
- *	We need to put this here because the bison %union can be seen by lexer, even
- *	though the lexer doesn't need this type.
- */
-typedef std::pair<ModuleExpression*, int> Transformer;

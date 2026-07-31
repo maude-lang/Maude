@@ -92,7 +92,6 @@ int terminationSet;
 string accumulator;
 string fileName;
 
-//int terminationCondition;
 int minLength;
 extern Vector<Token> lexerBubble;
 extern bool suppressParserErrorMessage;

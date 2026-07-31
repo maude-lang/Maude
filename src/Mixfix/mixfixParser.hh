@@ -251,6 +251,7 @@ private:
   void makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
   void makeTermDisjunction(int node, Vector<Term*>& terms);
   int translateSpecialToken(int code);
+  void makeOtfTranslations();
 
   MixfixModule& client;
   const bool complexParser;
@@ -265,14 +266,16 @@ private:
   IntMap variableTerminals;		// special terminals for on-the-fly variables
   IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
   bool bubblesAllowed;			// do we allow bubbles of unknown tokens
+  bool otfTranslationsMade = false;
   //
   //	We store the tokens we are parsing here to avoid passing extra parameters
   //	when recursing down a parse tree.
   //
   const Vector<Token>* currentSentence;	// actual tokens so we can deal with special tokens
-  int currentOffset;			// start of parsed tokens
   Vector<int> sentence;			// sentence translated into terminal numbers
+  int currentOffset;			// start of parsed tokens
   int nrParses;
+  IntMap otfTranslations;
 };
 
 inline int

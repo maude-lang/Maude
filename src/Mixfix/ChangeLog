@@ -1,3 +1,34 @@
+2026-07-31  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::parseSentence): clear
+	otfTranslations and set otfTranslationsMade = false before start
+	of translation from input tokens to parser terminals
+
+	* mixfixParser.hh (class MixfixParser): added decl for
+	makeOtfTranslations()
+	(class MixfixParser): added data member oftTranslationsMade
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslations): added
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): added
+	comments to explain how productions for on-the-fly variables work
+
+2026-07-30  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::parseSentence): code cleaning;
+	clear otfTranslations;
+	(MixfixParser::translateSpecialToken): support on-the-fly
+	translations
+	(MixfixParser::makeTerm): handle on-the-fly variable declarations
+	(MixfixParser::makePrintList): handle on-the-fly variable
+	declarations
+
+2026-07-29  Saruman the White  <eker@eker10>
+
+	* lexer.ll: deleted commented out variable terminationCondition
+
+	* lexerAux.hh: deleted unused typedef Transformer
+
 2026-07-27  Saruman the White  <eker@eker10>
 
 	* viewResultSymbol.cc (ViewResultSymbol::generateView): no longer

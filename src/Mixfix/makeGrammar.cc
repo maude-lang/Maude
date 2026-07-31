@@ -931,6 +931,24 @@ MixfixModule::makeComponentProductions()
 	  IntMap::const_iterator p = leadTokens.find(sortNameCode);
 	  if (p != leadTokens.end())
 	    {
+	      //
+	      //	This means our sort looks like Foo and Foo is a lead
+	      //	token because we have at least one sort Foo{...}
+	      //	Thus we already have a nonterminal and terminal for Foo
+	      //	with
+	      //	  <nonterminal> ::= terminal
+	      //	We use the nonterminal for on-the-fly variables
+	      //	  <FooTerm> ::= nonterminal
+	      //	so we can handle X:Foo where X:Foo is part of the user's
+	      //	syntax by adding a production
+	      //	  <nonterminal> ::= X:Foo
+	      //	in makeSpecialProductions()
+	      //	The point of having a nonterminal, is that it is used to
+	      //	parse X:Foo{...} whether the X:Foo in a new token or
+	      //	part of the user's syntax with its own mapping.
+	      //	Tokens like Y:Foo with out a mapping will be mapped to
+	      //	terminal.
+	      //
 	      rhsOne[0] = p->second;
 	      parser->insertProduction(termNt, rhsOne, 0, gatherAny,
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
@@ -939,6 +957,19 @@ MixfixModule::makeComponentProductions()
 	    }
 	  else
 	    {
+	      //
+	      //	Our sort could be unstructured like Foo or structured
+	      //	like Foo`{Bar`}
+	      //	We make a terminal for it to handle on-the-fly variables
+	      //	with
+	      //	  <FooTerm> ::= terminal
+	      //	If there is a token X:Foo`{Bar`} in the user's syntax
+	      //	we will add a production
+	      //	  <FooTerm> ::= X:Foo`{Bar`}
+	      //	in makeSpecialProductions()
+	      //	Tokens like X:Foo`{Bar`} without a mapping will be mapped
+	      //	to terminal.
+	      //
 	      string sortName(Token::name(sortNameCode));
 	      int t = Token::encode((sortName + " variable").c_str());
 	      parser->insertVariableTerminal(sortNameCode, t);
