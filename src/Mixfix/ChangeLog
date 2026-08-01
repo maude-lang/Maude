@@ -1,5 +1,18 @@
 2026-07-31  Saruman the White  <eker@eker10>
 
+	* mixfixParser.cc (MixfixParser::makeOtfTranslation): added
+	(MixfixParser::makeOtfTranslations): disable this if bubbles are
+	allowed
+
+	* token.hh (class Token): added decl for 3 arg version of
+	bubbleToPrefixNameCode()
+
+	* token.cc (Token::bubbleToPrefixNameCode): take 3 arguments
+
+	* token.hh (Token::bubbleToPrefixNameCode): added 1 arg wrapper
+
+	* sharedTokens.cc (SharedTokens::skipInstantiation): added
+
 	* mixfixParser.cc (MixfixParser::parseSentence): clear
 	otfTranslations and set otfTranslationsMade = false before start
 	of translation from input tokens to parser terminals

@@ -166,6 +166,7 @@ public:
   static int ropeToCode(const Rope& r);
   static int ropeToPrefixNameCode(const Rope& r);
   static int bubbleToPrefixNameCode(const Vector<Token>& opBubble);
+  static int bubbleToPrefixNameCode(const Vector<Token>& opBubble, Index start, Index beyondEnd);
   void getRational(mpz_class& numerator, mpz_class& denominator);
   static void printTokens(ostream& s,
 			  const Vector<Token>& tokens,
@@ -360,6 +361,12 @@ inline Rope
 Token::codeToRope(int code)
 {
   return stringToRope(stringTable.name(code));
+}
+
+inline int
+Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
+{
+  return bubbleToPrefixNameCode(opBubble, 0, opBubble.size());
 }
 
 ostream& operator<<(ostream& s, const Token& token);

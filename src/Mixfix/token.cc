@@ -1064,10 +1064,9 @@ Token::ropeToPrefixNameCode(const Rope& r)
 }
 
 int
-Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
+Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble, Index start, Index beyondEnd)
 {
-  int nrTokens = opBubble.size();
-  if (nrTokens == 1)
+  if (beyondEnd - start == 1)
     {
       int code = opBubble[0].codeNr;
       //      if (specialProperties[code] == STRING)
@@ -1077,7 +1076,7 @@ Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble)
     }
   bool needBQ = false;
   buffer.clear();
-  for (int i = 0; i < nrTokens; i++)
+  for (Index i = start; i < beyondEnd; ++i)
     {
       const char* name = stringTable.name(opBubble[i].codeNr);
       char c = name[0];

@@ -252,6 +252,7 @@ private:
   void makeTermDisjunction(int node, Vector<Term*>& terms);
   int translateSpecialToken(int code);
   void makeOtfTranslations();
+  void makeOtfTranslation(int varName, int variableTerminal);
 
   MixfixModule& client;
   const bool complexParser;
