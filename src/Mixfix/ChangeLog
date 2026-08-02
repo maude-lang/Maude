@@ -1,4 +1,57 @@
+2026-08-01  Saruman the White  <eker@eker10>
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeOtfTranslation()
+
+	* mixfixParser.cc (MixfixParser::parseSentence): clear otfKind
+	(MixfixParser::makeTerm): handle kind encoded using otfKind
+	(MixfixParser::makeOtfTranslations): use makeOtfTranslation() for
+	kinds
+	(MixfixParser::makeOtfTranslation): handle kind flag
+
+	* token.cc (Token::bubbleToPrefixNameCode): fix bug where we were
+	looking at opBubble[0] rather than opBubble[start] in the single
+	token case
+
+	* mixfixParser.hh (class MixfixParser): added decl for checkSortNames()
+	(class MixfixParser): added data member otfKind
+
+	* mixfixParser.cc (MixfixParser::checkSortNames): added
+
+	* sharedTokens.cc (SharedTokens::skip): handle multiple top level
+	instantiations and recognise rightBracket as a succcessful
+	conclusion
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslations): use skip()
+
+	* sharedTokens.cc (SharedTokens::skipKindName): use skip()
+
+	* sharedTokens.hh (class SharedTokens): skipSortName() -> skip();
+	added enum SkipType
+
+	* sharedTokens.cc (SharedTokens::skipSortName): becomes skip() and
+	takes SkipType argument
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeOtfTranslation()
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslation): take an
+	extra argument and check for potentially fake otf variables
+	(MixfixParser::makeOtfTranslations): use new makeOtfTranslation()
+	convention and fix some corner cases
+
+	* sharedTokens.hh (class SharedTokens): added decl for
+	skipKindName()
+
+	* sharedTokens.cc (SharedTokens::skipKindName): added
+
 2026-07-31  Saruman the White  <eker@eker10>
+
+	* sharedTokens.hh (class SharedTokens): skipInstantiation() ->
+	skipSortName()
+
+	* sharedTokens.cc (SharedTokens::skipInstantiation): becomes
+	skipSortName() and takes instantiation argument
 
 	* mixfixParser.cc (MixfixParser::makeOtfTranslation): added
 	(MixfixParser::makeOtfTranslations): disable this if bubbles are

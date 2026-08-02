@@ -1068,7 +1068,7 @@ Token::bubbleToPrefixNameCode(const Vector<Token>& opBubble, Index start, Index 
 {
   if (beyondEnd - start == 1)
     {
-      int code = opBubble[0].codeNr;
+      int code = opBubble[start].codeNr;
       //      if (specialProperties[code] == STRING)
       //        return code;  // NEED TO FIX QUOTED STRINGS
       if (!specialChar(stringTable.name(code)[0]))

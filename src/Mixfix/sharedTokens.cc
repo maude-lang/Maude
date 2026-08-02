@@ -49,12 +49,16 @@ SharedTokens::SharedTokens()
 }
 
 Index
-SharedTokens::skipInstantiation(const Vector<Token>& tokens, Index start, Index beyondEnd)
+SharedTokens::skip(SkipType type, const Vector<Token>& tokens, Index start, Index beyondEnd)
 {
   //
-  //	For a legal instantiation such as
+  //	For type == SORT_NAME we look for a legal sort name such as
+  //	  S { Foo { Bar , X } { Y } , Baz }
+  //	and return the index of the closing }, otherwise return NONE.
+  //	If instantiation is true, we instead look for an instatiation such as
   //	  { Foo { Bar , X } { Y } , Baz }
-  //	returns the index of the closing }, otherwise returns NONE.
+  //	In both cases, we succeed if we encounter end-of-tokens or anything other
+  //	than leftBrace while outside of {}s and in state EXPECT_COMMA_OR_BRACE
   //
   enum class State {
     EXPECT_LEFT_BRACE,
@@ -63,7 +67,7 @@ SharedTokens::skipInstantiation(const Vector<Token>& tokens, Index start, Index 
   };
 
   Index depth = 0;
-  State state = State::EXPECT_LEFT_BRACE;
+  State state = (type == SORT_NAME) ? State::EXPECT_SORT_NAME : State::EXPECT_LEFT_BRACE ;
 
   for (Index i = start; i < beyondEnd; ++i)
     {
@@ -72,16 +76,22 @@ SharedTokens::skipInstantiation(const Vector<Token>& tokens, Index start, Index 
 	{
 	case State::EXPECT_COMMA_OR_BRACE:
 	  {
-	    if (code == comma)
+	    if (depth == 0)
 	      {
+		if (code != leftBrace)
+		  return i - 1;
+		++depth;
 		state = State::EXPECT_SORT_NAME;
 		break;
 	      }
-	    else if (code == rightBrace)
+	    if (code == rightBrace)
 	      {
 		--depth;
-		if (depth == 0)
-		  return i;
+		break;
+	      }
+	    if (code == comma)
+	      {
+		state = State::EXPECT_SORT_NAME;
 		break;
 	      }
 	    // fall thru
@@ -99,6 +109,64 @@ SharedTokens::skipInstantiation(const Vector<Token>& tokens, Index start, Index 
 	    if (Token::auxProperty(code) != Token::AUX_SORT)
 	      return NONE;
 	    state = State::EXPECT_COMMA_OR_BRACE;
+	    break;
+	  }
+	}
+    }
+  //
+  //	Ran out of tokens.
+  //
+  if (state == State::EXPECT_COMMA_OR_BRACE && depth == 0)
+    return beyondEnd - 1;
+  return NONE;
+}
+
+Index
+SharedTokens::skipKindName(const Vector<Token>& tokens,
+			   Index start,
+			   Index beyondEnd,
+			   Vector<int>& sortNames)
+{
+  enum class State {
+    EXPECT_LEFT_BRACKET,
+    EXPECT_SORT_NAME,
+    EXPECT_COMMA_OR_RIGHT_BRACKET
+  };
+
+  State state = State::EXPECT_LEFT_BRACKET;
+
+  for (Index i = start; i < beyondEnd; ++i)
+    {
+      DebugInfo("token " << tokens[i]);
+      switch (state)
+	{
+	case State::EXPECT_LEFT_BRACKET:
+	  {
+	    if (tokens[i].code() != leftBracket)
+	      return NONE;
+	    state = State::EXPECT_SORT_NAME;
+	    break;
+	  }
+	case State::EXPECT_SORT_NAME:
+	  {
+	    Index last = skip(SORT_NAME, tokens, i, beyondEnd);
+	    if (last == NONE)
+	      return NONE;
+	    int singleTokenName = Token::bubbleToPrefixNameCode(tokens, i, last + 1);
+	    DebugInfo("single token name " << Token::name(singleTokenName));
+	    sortNames.push_back(singleTokenName);
+	    state = State::EXPECT_COMMA_OR_RIGHT_BRACKET;
+	    i = last;
+	    break;
+	  }
+	case State::EXPECT_COMMA_OR_RIGHT_BRACKET:
+	  {
+	    int code = tokens[i].code();
+	    if (code == rightBracket)
+	      return i;
+	    if (code != comma)
+	      return NONE;
+	    state = State::EXPECT_SORT_NAME;
 	    break;
 	  }
 	}

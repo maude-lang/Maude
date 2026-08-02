@@ -29,11 +29,22 @@
 class SharedTokens
 {
 public:
+  enum SkipType
+    {
+      SORT_NAME,
+      STRUCTURE
+    };
+
   SharedTokens();
   //
-  //	A helper function for inline variable declarations.
+  //	Helper functions for otf variable declarations.
   //
-  static Index skipInstantiation(const Vector<Token>& tokens, Index start, Index beyondEnd);
+  
+  static Index skip(SkipType type, const Vector<Token>& tokens, Index start, Index beyondEnd);
+  static Index skipKindName(const Vector<Token>& tokens,
+			    Index start,
+			    Index beyondEnd,
+			    Vector<int>& sortNames);
 
 protected:
 #define MACRO(Name, String) \

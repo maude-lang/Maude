@@ -204,7 +204,8 @@ public:
 
 private:
   typedef map<int,int> IntMap;
-  
+  typedef set<int> VarSet;
+
   enum Flags
   {
     NONEXEC = 1,
@@ -252,7 +253,8 @@ private:
   void makeTermDisjunction(int node, Vector<Term*>& terms);
   int translateSpecialToken(int code);
   void makeOtfTranslations();
-  void makeOtfTranslation(int varName, int variableTerminal);
+  ConnectedComponent* checkSortNames(const Vector<int>& sortNames);
+  void makeOtfTranslation(int code, int varName, int variableTerminal, bool kind = false);
 
   MixfixModule& client;
   const bool complexParser;
@@ -277,6 +279,7 @@ private:
   int currentOffset;			// start of parsed tokens
   int nrParses;
   IntMap otfTranslations;
+  VarSet otfKind;
 };
 
 inline int
