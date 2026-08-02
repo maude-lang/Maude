@@ -48,7 +48,7 @@ public:
     //
     //	Special kinds of terms.
     //
-    MAKE_VARIABLE,
+    MAKE_OTF_VARIABLE_KNOWN_SORT,
     MAKE_OTF_VARIABLE,
     MAKE_VARIABLE_FROM_ALIAS,
     MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET,
@@ -95,6 +95,7 @@ public:
     MAKE_EXTENSION_ATTRIBUTE,
     MAKE_DNT_ATTRIBUTE,
     MAKE_PRINT_ATTRIBUTE,
+    MAKE_PRINT_VARIABLE,
     MAKE_ATTRIBUTE_LIST,
     //
     //	Command construction actions.

@@ -684,7 +684,7 @@ MixfixModule::makeAttributeProductions()
   rhs[0] = STRING_NT;
   parser->insertProduction(PRINT_ITEM, rhs, 0, gatherAny, MixfixParser::MAKE_STRING);
   rhs[0] = VARIABLE;
-  parser->insertProduction(PRINT_ITEM, rhs, 0, gatherAny, MixfixParser::MAKE_VARIABLE);
+  parser->insertProduction(PRINT_ITEM, rhs, 0, gatherAny, MixfixParser::MAKE_PRINT_VARIABLE);
   //
   //	Print lists.
   //
@@ -908,14 +908,14 @@ MixfixModule::makeComponentProductions()
 	parser->insertProduction(termNt, rhsOne, 0, emptyGather, MixfixParser::MAKE_OTF_VARIABLE);
 	parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather, MixfixParser::MAKE_OTF_VARIABLE);
 	//
-	//	Syntax for on the fly kind variable:
+	//	Syntax for on-the-fly kind variable:
 	//	<FooTerm> ::= <ENDS_IN_COLON> [ <FooSortList> ]
 	//
 	rhsKindVariable[2] = sortListNt;
 	parser->insertProduction(termNt, rhsKindVariable, 0, gatherAnyAny,
-				 MixfixParser::MAKE_VARIABLE, kindIndex);
+				 MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, kindIndex);
 	parser->insertProduction(VARIABLE, rhsKindVariable, 0, gatherAnyAny,
-				 MixfixParser::MAKE_VARIABLE, kindIndex);
+				 MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, kindIndex);
       }
       int nrSorts = component->nrSorts();
       for (int j = 1; j < nrSorts; ++j)  // skip error sort
@@ -942,13 +942,13 @@ MixfixModule::makeComponentProductions()
 	      parts[0] = Token::dotNameCode(lead);
 	      parser->insertProduction(dotSortNt, parts, 0, emptyGather);
 	      //
-	      //	Syntax for unseen variable of multitoken sort.
+	      //	Syntax for on-the-fly  variable of structured sort.
 	      //
 	      parts[0] = leadTokens[lead];  // nonterminal
 	      parser->insertProduction(termNt, parts, 0, gatherAny,
-				       MixfixParser::MAKE_VARIABLE, sortIndex);
+				       MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, sortIndex);
 	      parser->insertProduction(VARIABLE, parts, 0, gatherAny,
-				       MixfixParser::MAKE_VARIABLE, sortIndex);
+				       MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, sortIndex);
 	    }
 	  //
 	  //	Syntax for yet unseen variables of our sort.
@@ -971,40 +971,14 @@ MixfixModule::makeComponentProductions()
 	      //	The point of having a nonterminal, is that it is used to
 	      //	parse X:Foo{...} whether the X:Foo in a new token or
 	      //	part of the user's syntax with its own mapping.
-	      //	Tokens like Y:Foo with out a mapping will be mapped to
-	      //	terminal.
+	      //	Tokens like Y:Foo without a mapping will be mapped to
+	      //	a kind terminal.
 	      //
 	      rhsOne[0] = p->second;
 	      parser->insertProduction(termNt, rhsOne, 0, gatherAny,
-				       MixfixParser::MAKE_VARIABLE, sortIndex);
+				       MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, sortIndex);
 	      parser->insertProduction(VARIABLE, rhsOne, 0, gatherAny,
-				       MixfixParser::MAKE_VARIABLE, sortIndex);
-	    }
-	  else
-	    {
-	      //
-	      //	Our sort could be unstructured like Foo or structured
-	      //	like Foo`{Bar`}
-	      //	We make a terminal for it to handle on-the-fly variables
-	      //	with
-	      //	  <FooTerm> ::= terminal
-	      //	If there is a token X:Foo`{Bar`} in the user's syntax
-	      //	we will add a production
-	      //	  <FooTerm> ::= X:Foo`{Bar`}
-	      //	in makeSpecialProductions()
-	      //	Tokens like X:Foo`{Bar`} without a mapping will be mapped
-	      //	to terminal.
-	      //
-	      /*
-	      string sortName(Token::name(sortNameCode));
-	      int t = Token::encode((sortName + " variable").c_str());
-	      parser->insertVariableTerminal(sortNameCode, t);
-	      rhsOne[0] = t;
-	      parser->insertProduction(termNt, rhsOne, 0, emptyGather,
-				       MixfixParser::MAKE_VARIABLE, sortIndex);
-	      parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather,
-				       MixfixParser::MAKE_VARIABLE, sortIndex);
-	      */
+				       MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, sortIndex);
 	    }
 	}
       //
@@ -1474,9 +1448,17 @@ MixfixModule::makeSpecialProductions()
 		int componentIndex = sort->component()->getIndexWithinModule();
 		rhs[0] = code;
 		parser->insertProduction(nonTerminal(componentIndex, TERM_TYPE),
-					 rhs, 0, emptyGather, MixfixParser::MAKE_VARIABLE, sortIndex);
+					 rhs,
+					 0,
+					 emptyGather,
+					 MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT,
+					 sortIndex);
 		parser->insertProduction(VARIABLE,
-					 rhs, 0, emptyGather, MixfixParser::MAKE_VARIABLE, sortIndex);
+					 rhs,
+					 0,
+					 emptyGather,
+					 MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT,
+					 sortIndex);
 	      }
 	    break;
 	  }

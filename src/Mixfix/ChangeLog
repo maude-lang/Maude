@@ -1,5 +1,23 @@
 2026-08-02  Saruman the White  <eker@eker10>
 
+	* makeGrammar.cc (MixfixModule::makeAttributeProductions):
+	MAKE_VARIABLE -> MAKE_PRINT_VARIABLE
+	(MixfixModule::makeComponentProductions): MAKE_VARIABLE ->
+	MAKE_OTF_VARIABLE_KNOWN_SORT
+	(MixfixModule::makeSpecialProductions): MAKE_VARIABLE ->
+	MAKE_OTF_VARIABLE_KNOWN_SORT
+
+	* mixfixParser.cc (MixfixParser::makeTerm): MAKE_VARIABLE ->
+	MAKE_OTF_VARIABLE_KNOWN_SORT
+	(MixfixParser::makePrintList): MAKE_VARIABLE ->
+	MAKE_PRINT_VARIABLE
+	(MixfixParser::makePrintListVariable): MAKE_VARIABLE ->
+	MAKE_OTF_VARIABLE_KNOWN_SORT
+
+	* mixfixParser.hh (enum SemanticActions): split MAKE_VARIABLE
+	action into MAKE_OTF_VARIABLE_KNOWN_SORT and MAKE_PRINT_VARIABLE
+	to avoid confusion
+
 	* mixfixParser.cc (MixfixParser::parseSentence): don't clear
 	otfKind
 

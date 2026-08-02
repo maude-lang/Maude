@@ -1092,16 +1092,19 @@ MixfixParser::makeTerm(int node)
 	t = client.instantiateSortTest(sort, a.data)->makeTerm(args);
 	break;
       }
-    case MAKE_VARIABLE:
+    case MAKE_OTF_VARIABLE_KNOWN_SORT:
       {
 	//
 	//	This case is for otf variables where we know the exact
-	//	sort from the action data. There are 3 cases:
+	//	sort from the action data attached to the production rule.
+	//	There are 3 cases:
 	//	  X: [ <sort list> ]
 	//	  X:Foo
 	//	  X:Foo { <structure> }
+	//	The second case arises because Foo is the lead token of
+	//	a structured sort, so X:Foo uses a special terminal for
+	//	otf variables of sort Foo.
 	//
-	Sort* sort = client.getSorts()[a.data];
 	int varName = (*currentSentence)[pos].code();
 	Assert(Token::specialProperty(varName) == Token::ENDS_IN_COLON ||
 	       Token::specialProperty(varName) == Token::CONTAINS_COLON,
@@ -1109,11 +1112,12 @@ MixfixParser::makeTerm(int node)
 	int baseName;
 	int sortName;
 	Token::split(varName, baseName, sortName);
+	Sort* sort = client.getSorts()[a.data];
 	Assert(sortName == NONE ||
 	       sortName == sort->id() ||
 	       Token::auxProperty(sort->id()) == Token::AUX_STRUCTURED_SORT,
 	       "sort name clash");
-	VariableSymbol* symbol = safeCast(VariableSymbol*, client.instantiateVariable(sort));
+	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
 	t = new VariableTerm(symbol, baseName);
 	break;
       }
@@ -1121,43 +1125,43 @@ MixfixParser::makeTerm(int node)
       {
 	//
 	//	This is an otf variable that was parsed using a kind terminal.
-	//	It is either X:Foo or is X within the scope of some X:Foo
-	//	We don't have any information in the action. We need to find the
+	//	It is either X:Foo or it is X within the scope of some X:Foo
+	//	We don't have any information from the action. We need to find the
 	//	name and sort.
 	//
 	int varName = (*currentSentence)[pos].code();
 	Sort* sort;
 	int sp = Token::specialProperty(varName);
-	if (sp == NONE)
-	  {
-	    //
-	    //	The X case. We must have an extended scope otf variable.
-	    //
-	    auto i = otfTranslations.find(varName);
-	    Assert(i != otfTranslations.end(), "missing translation for " << Token::name(varName));
-	    sort = client.getSorts()[i->second];
-	  }
-	else
+	if (sp == Token::CONTAINS_COLON)
 	  {
 	    //
 	    //	The X:Foo case.
 	    //
-	    Assert(sp == Token::CONTAINS_COLON, "unexpected special property " << sp);
 	    int baseName;
 	    int sortName;
 	    Token::split(varName, baseName, sortName);
 	    varName = baseName;
 	    sort = client.findSort(sortName);
-	    Assert(sort, "didn't find sort for " << Token::name(sortName));
+	    Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
 	  }
-	VariableSymbol* symbol = safeCast(VariableSymbol*, client.instantiateVariable(sort));
+	else
+	  {
+	    //
+	    //	The X case. We must have an extended scope otf variable.
+	    //
+	    Assert(sp == NONE, "unexpected special property " << sp);
+	    auto i = otfTranslations.find(varName);
+	    Assert(i != otfTranslations.end(), "missing translation for " << Token::name(varName));
+	    sort = client.getSorts()[i->second];
+	  }
+	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
 	t = new VariableTerm(symbol, varName);
 	break;	
       }
     case MAKE_VARIABLE_FROM_ALIAS:
       {
 	Sort* sort = client.getSorts()[a.data];
-	VariableSymbol* symbol = safeCast(VariableSymbol*, client.instantiateVariable(sort));
+	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
 	t = new VariableTerm(symbol, (*currentSentence)[pos].code());
 	break;
       }
@@ -1419,7 +1423,7 @@ MixfixParser::makePrintList(int node, Vector<int>& names, Vector<Sort*>& sorts)
 	    sorts.append(0);
 	    break;
 	  }
-	case MAKE_VARIABLE:
+	case MAKE_PRINT_VARIABLE:
 	  {
 	    makePrintListVariable(parser.getChild(printItemNode, 0), names, sorts);
 	    break;
@@ -1440,14 +1444,18 @@ MixfixParser::makePrintListVariable(int node, Vector<int>& names, Vector<Sort*>&
   int varName = (*currentSentence)[pos].code();
   switch (a.action)
     {
-    case MAKE_VARIABLE:
+    case MAKE_OTF_VARIABLE_KNOWN_SORT:
       {
 	//
 	//	This case is for otf variables where we know the exact
-	//	sort from the action data. There are 3 cases:
+	//	sort from the action data attached to the production rule.
+	//	There are 3 cases:
 	//	  X: [ <sort list> ]
 	//	  X:Foo
 	//	  X:Foo { <structure> }
+	//	The second case arises because Foo is the lead token of
+	//	a structured sort, so X:Foo uses a special terminal for
+	//	otf variables of sort Foo.
 	//
 	Assert(Token::specialProperty(varName) == Token::ENDS_IN_COLON ||
 	       Token::specialProperty(varName) == Token::CONTAINS_COLON,
@@ -1455,12 +1463,23 @@ MixfixParser::makePrintListVariable(int node, Vector<int>& names, Vector<Sort*>&
 	int baseName;
 	int sortName;
 	Token::split(varName, baseName, sortName);
+	Sort* sort = client.getSorts()[a.data];
+	Assert(sortName == NONE ||
+	       sortName == sort->id() ||
+	       Token::auxProperty(sort->id()) == Token::AUX_STRUCTURED_SORT,
+	       "sort name clash");
 	names.append(baseName);
-	sorts.append(client.getSorts()[a.data]);
+	sorts.append(sort);
 	break;
       }
     case MAKE_OTF_VARIABLE:
       {
+	//
+	//	This is an otf variable that was parsed using a kind terminal.
+	//	It is either X:Foo or it is X within the scope of some X:Foo
+	//	We don't have any information from the action. We need to find the
+	//	name and sort.
+	//
 	int sp = Token::specialProperty(varName);
 	if (sp == Token::CONTAINS_COLON)
 	  {
@@ -1470,9 +1489,9 @@ MixfixParser::makePrintListVariable(int node, Vector<int>& names, Vector<Sort*>&
 	    int baseName;
 	    int sortName;
 	    Token::split(varName, baseName, sortName);
-	    names.append(baseName);
 	    Sort* sort = client.findSort(sortName);
-	    Assert(sort, "didn't find sort for " << Token::name(sortName));
+	    Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
+	    names.append(baseName);
 	    sorts.append(sort);
 	  }
 	else
