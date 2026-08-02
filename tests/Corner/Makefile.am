@@ -7,7 +7,8 @@ TESTS = \
 	fakeParameterConstant \
 	attributeOverparsing \
 	ACU_TreeVariableSubproblem \
-	operatorNames
+	operatorNames \
+	otfVariables
 
 MAUDE_FILES = \
 	badOmod.maude \
@@ -18,7 +19,8 @@ MAUDE_FILES = \
 	fakeParameterConstant.maude \
 	attributeOverparsing.maude \
 	ACU_TreeVariableSubproblem.maude \
-	operatorNames.maude
+	operatorNames.maude \
+	otfVariables.maude
 
 RESULT_FILES = \
 	badOmod.expected \
@@ -29,6 +31,7 @@ RESULT_FILES = \
 	fakeParameterConstant.expected \
 	attributeOverparsing.expected \
 	ACU_TreeVariableSubproblem.expected \
-	operatorNames.expected
+	operatorNames.expected \
+	otfVariables.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

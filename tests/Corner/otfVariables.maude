@@ -1,0 +1,203 @@
+***
+***	Check handling of extended on-the-fly variable scope in tricky cases.
+***
+
+*** scope extends to print attribute
+fmod FOO1 is
+  pr NAT .
+  op f : Nat -> Nat .
+  eq f(0) = 1 .
+  eq f(s X:Nat) = f(X) * s X [print "X = " X] .
+endfm
+show desugared .
+
+*** still works if declaration is at the end
+fmod FOO2 is
+  pr NAT .
+  op f : Nat -> Nat .
+  eq f(0) = 1 .
+  eq f(s X) = f(X) * s X [print "X = " X:Nat] .
+endfm
+show desugared .
+
+*** works with structured sort names
+fmod FOO3 is
+  pr SET{@[NAT]} .
+  op f : Set{Nat} -> Set{Nat} .
+  eq f(empty) = empty .
+  eq f((N:Nat, S:Set{Nat})) = s N, f(S) .
+endfm
+show desugared .
+
+*** duplicates are harmless
+fmod FOO4 is
+  pr NAT .
+  op f : Nat Nat -> Nat .
+  eq f(Y:Nat, Y:Nat) = Y .
+endfm
+show desugared .
+
+*** conflicts disable extended scope
+fmod FOO5 is
+  pr NAT .
+
+  op f : Nat Nat -> Nat .
+  eq f(Y:Nat, Y:NzNat) = Y .
+endfm
+
+*** extended scope overridden by regular variable alias
+fmod FOO5a is
+  pr NAT .
+  op f : Nat Nat -> Nat .
+  var Y : Nat .
+  eq f(Y, Y:NzNat) = Y .
+endfm
+show desugared .
+
+*** extended scope overridden by regular variable alias of the wrong kind
+fmod FOO6 is
+  pr NAT .
+  op f : Nat Nat -> Nat .
+  var Y : Bool .
+  eq f(Y, Y:NzNat) = Y .
+endfm
+
+*** extended scope overridden by user syntax
+fmod FOO7 is
+  pr NAT .
+  op f : Nat Nat -> Nat .
+  op Y : -> Nat .
+  eq f(Y, Y:NzNat) = Y .
+endfm
+show desugared .
+
+*** extended scope disabled by user syntax
+fmod FOO8 is
+  pr NAT .
+  op f : Nat Nat -> Nat .
+  op Y : -> Bool .
+  eq f(Y:NzNat, Y:NzNat) = Y .
+endfm
+
+*** extended scope disabled by user syntax
+fmod FOO9 is
+  pr NAT .
+  op f : Nat -> Nat .
+  op [_X_] : Bool Bool -> Bool .
+  eq f(X:Nat) = X .
+endfm
+
+*** extended scope not allowed for tokens from the module syntax
+fmod FOO10 is
+  pr NAT .
+  op f : Nat -> Nat .
+  eq f(if:Nat) = if .
+  eq f(=>:Nat) = => .
+endfm
+
+*** extended scope not allowed for tokens with special handling
+fmod FOO11 is
+  pr NAT .
+  op f : Nat  -> Nat .
+  eq f("6":Nat) = "6" .
+  eq f(X::Nat) = X: .
+  eq f(X:Y:Nat) = X:Y .
+endfm
+
+*** complicated structured sort names work
+fmod FOO12 is
+  sort Foo{Bar{Baz}{X},Y} .
+  op f : Foo{Bar{Baz}{X},Y} -> Foo{Bar{Baz}{X},Y} .
+  eq f(Z:Foo{Bar{Baz}{X},Y}) = Z .
+endfm
+show desugared .
+
+*** including multiple outer instantiations
+fmod FOO13 is
+  sort Foo{Bar{Baz}}{Y} .
+  op f : Foo{Bar{Baz}}{Y} -> Foo{Bar{Baz}}{Y} .
+  eq f(Z:Foo{Bar{Baz}}{Y}) = Z .
+endfm
+show desugared .
+
+*** extended scope not allowed for tokens from sort names
+fmod FOO14 is
+  sort Foo{X} .
+  op f : Foo{X} -> Foo{X} .
+  eq f(X:Foo{X}) = X .
+  eq f(Foo:Foo{X}) = X .
+endfm
+
+*** if the base of a structured sort name is also a valid sort, extended scope
+*** only works for the base sort name
+fmod FOO15 is
+  subsort Foo < Foo{Bar} .
+  op f : Foo -> Foo .
+  eq f(X:Foo) = X .
+  eq f(Y:Foo{Bar}) = Y .
+endfm
+show desugared .
+
+*** if an otf variable of the base sort looks likes an otf variable of a valid
+*** structured sort, due to sufficiently perverse user defined syntax, extended
+*** scope is disabled
+fmod FOO16 is
+  sorts Foo Foo{Bar} .
+  op f : Foo -> Foo .
+  op _{Bar} : Foo -> Foo .
+  eq f(X:Foo{Bar}) = X .
+endfm
+
+*** if the structured sort name is not actually a sort, extended scope works
+fmod FOO17 is
+  sorts Foo Foo{Baz} .
+  op f : Foo -> Foo .
+  op _{Bar} : Foo -> Foo .
+  eq f(X:Foo{Bar}) = X .
+endfm
+show desugared .
+
+*** if X:Foo is part of the user's operator syntax, X:Foo does not have
+*** its scope extended.
+fmod FOO18 is
+  op X:Foo : -> Bool .
+  sorts Foo .
+  op f : Foo -> Foo .
+  eq f(X:Foo) = X .
+endfm
+
+*** if X:Bar is part of the user's operator syntax, and Bar is a sort, the
+*** occurrence of X:Bar in a statement prevents scope extension for any variable
+*** with base name X
+fmod FOO19 is
+  op X:Bar : -> Bool .
+  sorts Foo Bar .
+  op f : Foo -> Foo .
+  eq f(X:Foo) = if X:Bar then X else X fi .
+endfm
+
+*** however if Bar is not a sort, X:Bar doesn't look like an otf variable and
+*** there is no problem
+fmod FOO20 is
+  op X:Bar : -> Bool .
+  sort Foo .
+  op f : Foo -> Foo .
+  eq f(X:Foo) = if X:Bar then X else X fi .
+endfm
+show desugared .
+
+*** extended scope works with kind variables
+fmod BAR1 is
+  sort Foo .
+  op f : Foo  -> Foo .
+  eq f(X:[Foo]) = X .
+endfm
+show desugared .
+
+*** extended scope works with variables of complex kinds
+fmod BAR2 is
+  pr SET{@[NAT]} .
+  op f : Set{Nat} -> Set{Nat} .
+  eq f(X:[Set{Nat}, NeSet{Nat}]) = X .
+endfm
+show desugared .
