@@ -1,7 +1,7 @@
 Grammar:
 	nonterminals: 253
-	terminals: 868
-	productions: 2317
+	terminals: 764
+	productions: 2109
 
 Term rewriting system:
 	kinds: 44
@@ -16,8 +16,8 @@ Term rewriting system:
 	strategy definitions: 0
 Grammar:
 	nonterminals: 253
-	terminals: 868
-	productions: 2317
+	terminals: 764
+	productions: 2109
 
 Term rewriting system:
 	kinds: 44

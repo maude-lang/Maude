@@ -1,3 +1,52 @@
+2026-08-02  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::parseSentence): don't clear
+	otfKind
+
+	* mixfixParser.hh (class MixfixParser): deleted typedef VarSet and
+	data member otfKind
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken): handle
+	translation of otf extended scope variables using new mechanism
+	(MixfixParser::makeTerm): hanlde new otf extended scope mechanism
+	(MixfixParser::makePrintListVariable): hanlde new otf extended
+	scope mechanism
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeOtfTranslation()
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslation): rewritten
+	with 3 args
+
+	* mixfixParser.hh (class MixfixParser): added decl for
+	makePrintListVariable()
+
+	* mixfixParser.cc (MixfixParser::makeTerm): clean up MAKE_VARIABLE
+	case
+	(MixfixParser::makePrintListVariable): added
+	(MixfixParser::makePrintList): use makePrintListVariable()
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): clean
+	up kind variable code
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken): use
+	kindTerminals for otf variables whose srot is not a lead token
+
+	* mixfixParser.hh (enum SemanticActions): added MAKE_OTF_VARIABLE
+	to enum SemanticActions
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): make
+	and insert kind terminals
+	(MixfixModule::makeComponentProductions): don't make variable
+	terminals for sorts which are not lead tokens
+
+	* mixfixParser.hh (class MixfixParser): added data member
+	kindTerminals
+	(MixfixParser::insertKindTerminal): added
+	(MixfixParser::insertSpecialTerminal)
+	(MixfixParser::insertVariableTerminal)
+	(MixfixParser::insertIterSymbolTerminal): moved here
+
 2026-08-01  Saruman the White  <eker@eker10>
 
 	* mixfixParser.hh (class MixfixParser): updated decl for

@@ -892,8 +892,33 @@ MixfixModule::makeComponentProductions()
       int assocListNt = nonTerminal(i, ASSOC_LIST_TYPE);
       int sortListNt = nonTerminal(i, SORT_LIST_TYPE);
       const ConnectedComponent* component = components[i];
+      {
+	//
+	//	For each kind, we make a terminal that will be used
+	//	to map unseen variables having a sort from the kind,
+	//	if they doesn't have a more specific mapping.
+	//
+	Sort* kind = component->sort(Sort::KIND);
+	int kindIndex = kind->getIndexWithinModule();
+	string kindName(Token::name(kind->id()));
+	int t = Token::encode((kindName + " kind terminal").c_str());
+	parser->insertKindTerminal(kindIndex, t);
+	DebugInfo("inserted kind terminal " << t << " for kind " << kind);
+	rhsOne[0] = t;
+	parser->insertProduction(termNt, rhsOne, 0, emptyGather, MixfixParser::MAKE_OTF_VARIABLE);
+	parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather, MixfixParser::MAKE_OTF_VARIABLE);
+	//
+	//	Syntax for on the fly kind variable:
+	//	<FooTerm> ::= <ENDS_IN_COLON> [ <FooSortList> ]
+	//
+	rhsKindVariable[2] = sortListNt;
+	parser->insertProduction(termNt, rhsKindVariable, 0, gatherAnyAny,
+				 MixfixParser::MAKE_VARIABLE, kindIndex);
+	parser->insertProduction(VARIABLE, rhsKindVariable, 0, gatherAnyAny,
+				 MixfixParser::MAKE_VARIABLE, kindIndex);
+      }
       int nrSorts = component->nrSorts();
-      for (int j = 1; j < nrSorts; j++)  // skip error sort
+      for (int j = 1; j < nrSorts; ++j)  // skip error sort
 	{
 	  const Sort* sort = component->sort(j);
 	  int sortNameCode = sort->id();
@@ -970,6 +995,7 @@ MixfixModule::makeComponentProductions()
 	      //	Tokens like X:Foo`{Bar`} without a mapping will be mapped
 	      //	to terminal.
 	      //
+	      /*
 	      string sortName(Token::name(sortNameCode));
 	      int t = Token::encode((sortName + " variable").c_str());
 	      parser->insertVariableTerminal(sortNameCode, t);
@@ -978,18 +1004,9 @@ MixfixModule::makeComponentProductions()
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
 	      parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather,
 				       MixfixParser::MAKE_VARIABLE, sortIndex);
+	      */
 	    }
 	}
-      //
-      //	Syntax for on the fly kind variable:
-      //	<FooTerm> ::= <ENDS_IN_COLON> [ <FooSortList> ]
-      //
-      int sortIndex = component->sort(Sort::ERROR_SORT)->getIndexWithinModule();
-      rhsKindVariable[2] = sortListNt;
-      parser->insertProduction(termNt, rhsKindVariable, 0, gatherAnyAny,
-			       MixfixParser::MAKE_VARIABLE, sortIndex);
-      parser->insertProduction(VARIABLE, rhsKindVariable, 0, gatherAnyAny,
-			       MixfixParser::MAKE_VARIABLE, sortIndex);
       //
       //	Syntax for term from unknown component:
       //	<TERM> ::= <FooTerm>
