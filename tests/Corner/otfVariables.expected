@@ -136,4 +136,65 @@ fmod BAR2 is
   op f : Set{Nat} -> Set{Nat} .
   eq f(X:[Set{Nat}]) = X:[Set{Nat}] .
 endfm
+Warning: <standard input>, line 210 (fmod BAR3): bad token X.
+Warning: <standard input>, line 210 (fmod BAR3): no parse for statement
+eq f (X: [Foo], X:) = X .
+fmod BAR4 is
+  including BOOL .
+  sort Foo .
+  op X: : -> Foo .
+  op f : Foo Foo -> Foo .
+  eq f(X:Foo, X:) = X:Foo .
+endfm
+Warning: <standard input>, line 228 (fmod BAR5): bad token X.
+Warning: <standard input>, line 228 (fmod BAR5): no parse for statement
+eq f (X: [Foo], X: [Foo]) = X .
+Advisory: redefining module BAR5.
+fmod BAR5 is
+  including BOOL .
+  sorts Foo Bar .
+  op X:_ : Foo -> Bar [prec 15 gather (E)] .
+  op [Foo] : -> Foo .
+  op f : Foo Bar -> Foo .
+  eq f(Y:[Foo], X: [Foo]) = Y:[Foo] .
+endfm
+fmod BAZ1{X :: TRIV} is
+  including BOOL .
+  sorts Foo{X} Bar .
+  op f : [Foo{X}] [Foo{X}] [Bar] [Foo{X}] -> [Foo{X}] .
+  op g : [Foo{X}] [Foo{X}] [Bar] [Foo{X}] -> [Foo{X}] .
+  var A : Foo{X} .
+  eq f(A, B:Foo{X}, C:Bar, D:[Foo{X}]) = g(A, B:Foo{X}, C:Bar, D:[Foo{X}]) [
+    print A B:Foo{X} C:Bar D:[Foo{X}]] .
+endfm
+fmod BAZ2{X :: TRIV} is
+  including BOOL .
+  sorts Foo{X} Bar .
+  op f : [Foo{X}] [Foo{X}] [Bar] [Foo{X}] -> [Foo{X}] .
+  op g : [Foo{X}] [Foo{X}] [Bar] [Foo{X}] -> [Foo{X}] .
+  var A : Foo{X} .
+  eq f(A, B:Foo{X}, C:Bar, D:[Foo{X}]) = g(A, B:Foo{X}, C:Bar, D:[Foo{X}]) [
+    print A B:Foo{X} C:Bar D:[Foo{X}]] .
+endfm
+fmod BAZ3{X :: TRIV} is
+  including BOOL .
+  sorts Foo{X} Bar .
+  op f : [Foo{X}] [Foo{X}] [Bar] [Foo{X}] -> [Foo{X}] .
+  op g : [Foo{X}] [Foo{X}] [Bar] [Foo{X}] -> [Foo{X}] .
+  var A : Foo{X} .
+  eq f(A, B:Foo{X}, C:Bar, D:[Foo{X}]) = g(A, B:Foo{X}, C:Bar, D:[Foo{X}]) [
+    print A B:Foo{X} C:Bar D:[Foo{X}]] .
+endfm
+Warning: <standard input>, line 276 (fmod QUUX): didn't expect token N:
+eq f ( N:Nat ) = N <---*HERE*
+Warning: <standard input>, line 276 (fmod QUUX): no parse for statement
+eq f (N:Nat) = N + 1 .
+view V from T to M is
+  sort Elt to Foo .
+  op f(X:Elt) to term g(X:Foo, X:Foo) .
+endv
+==========================================
+reduce in NAT : X:Nat + X:Nat .
+rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+result Nat: X:Nat + X:Nat
 Bye.

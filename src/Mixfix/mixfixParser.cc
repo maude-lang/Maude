@@ -443,12 +443,22 @@ MixfixParser::translateSpecialToken(int code)
   int sp = Token::specialProperty(code);
   if (sp == Token::CONTAINS_COLON)
     {
+      //
+      //	We have an unrecognized token that looks like X:Foo
+      //
       int varName;
       int sortName;
       Token::split(code, varName, sortName);
-      auto i = variableTerminals.find(sortName);
-      if (i != variableTerminals.end())
+      //
+      //	If :Foo has its own lead terminal because Foo{...}
+      //	is a sort, use that.
+      //
+      auto i = leadTerminals.find(sortName);
+      if (i != leadTerminals.end())
 	return i->second;
+      //
+      //	Otherwise if Foo is a sort, use its component terminal.
+      //
       if (Sort* sort = client.findSort(sortName))
 	return componentTerminals[sort->component()->getIndexWithinModule()];
     }
@@ -478,8 +488,8 @@ MixfixParser::translateSpecialToken(int code)
       return componentTerminals[sort->component()->getIndexWithinModule()];
     }
   //
-  //	If we're parsing with bubbles, they can take anything so we map otherwise
-  //	unmapped tokens to a special out-of-band value.
+  //	If we're parsing with bubbles, they can take anything, so we map otherwise
+  //	unrecognized tokens to a special out-of-band value.
   //
   if (bubblesAllowed)
     return tokenSet.size();
@@ -495,6 +505,9 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 {
   currentSentence = &original;
   currentOffset = begin;
+  //
+  //	We only activate extended scope otf variable translations when needed.
+  //
   otfTranslations.clear();
   otfTranslationsMade = false;
   sentence.resize(nrTokens);
@@ -840,7 +853,7 @@ MixfixParser::makeStrategy(int node)
       }
     default:
       {
-	s = 0;  // to avoid uninitialized variable warning
+	s = nullptr;  // to avoid uninitialized variable warning
 	CantHappen("bad action " << a.action);
       }
     }
@@ -1043,7 +1056,7 @@ MixfixParser::makeTerm(int node)
 	char* s = new char[strlen(name) + 1];
 	strcpy(s, name);
 	char* p = index(s, '/');
-	Assert(p != 0, "no /");
+	Assert(p != nullptr, "no /");
 	*p = '\0';
 	mpz_class numerator(s, 10);
 	mpz_class denominator(p + 1, 10);
@@ -1203,7 +1216,6 @@ MixfixParser::makeTerm(int node)
 	t = new SMT_NumberTerm(symbol, rat);
 	break;
       }
-      //#ifdef BUBBLES
     case MAKE_BUBBLE:
       {
 	return client.makeBubble(a.data,
@@ -1211,11 +1223,10 @@ MixfixParser::makeTerm(int node)
 				 currentOffset + parser.getFirstPosition(node),
 				 currentOffset + parser.getLastPosition(node) - 1);  // HACK last position
       }
-      //#endif
     default:
       {
 	CantHappen("bad action");
-	return 0;  // to avoid uninitialized variable warning
+	return nullptr;  // to avoid uninitialized variable warning
       }
     }
   //
@@ -1287,7 +1298,7 @@ MixfixParser::makeConditionFragment(int node)
       }
     default:
       {
-	f = 0;  // to avoid uninitialized variable warning
+	f = nullptr;  // to avoid uninitialized variable warning
 	CantHappen("bad action");
       }
     }
@@ -1409,7 +1420,7 @@ MixfixParser::makePrintList(int node, Vector<int>& names, Vector<Sort*>& sorts)
 	    int code = (*currentSentence)[pos].code();
 	    DebugAdvisory("string = "  << (*currentSentence)[pos]);
 	    names.append(code);
-	    sorts.append(0);
+	    sorts.append(nullptr);
 	    break;
 	  }
 	case MAKE_PRINT_VARIABLE:

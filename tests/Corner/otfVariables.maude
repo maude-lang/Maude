@@ -201,3 +201,97 @@ fmod BAR2 is
   eq f(X:[Set{Nat}, NeSet{Nat}]) = X .
 endfm
 show desugared .
+
+*** extended scope is disabled by user syntax
+fmod BAR3 is
+  sort Foo .
+  op X: : -> Foo .
+  op f : Foo Foo -> Foo .
+  eq f(X:[Foo], X:) = X .
+endfm
+
+*** but not if it doesn't look like a kind variable
+fmod BAR4 is
+  sort Foo .
+  op X: : -> Foo .
+  op f : Foo Foo -> Foo .
+  eq f(X:Foo, X:) = X .
+endfm
+show desugared .
+
+*** disabled by deceptive syntax
+fmod BAR5 is
+  sorts Foo Bar .
+  op X:_ : Foo -> Bar .
+  op [Foo] : -> Foo .
+  op f : Foo Bar -> Foo .
+  eq f(X:[Foo], X:[Foo]) = X .
+endfm
+
+*** but not if it doesn't involve the variable in question
+fmod BAR5 is
+  sorts Foo Bar .
+  op X:_ : Foo -> Bar .
+  op [Foo] : -> Foo .
+  op f : Foo Bar -> Foo .
+  eq f(Y:[Foo], X:[Foo]) = Y .
+endfm
+show desugared .
+
+*** 4 types of variable declaration: alias, otf lead, otf non-lead, otf kind
+fmod BAZ1{X :: TRIV} is
+  sorts Foo{X} Bar .
+  var A : Foo{X} .
+  ops f g : Foo{X} Foo{X} Bar Foo{X} ~> Foo{X} .
+  eq f(A, B:Foo{X}, C:Bar, D:[Foo{X}]) = g(A, B, C, D) [print A B C D] .
+endfm
+show desugared .
+
+*** otf declarations can be duplicated
+fmod BAZ2{X :: TRIV} is
+  sorts Foo{X} Bar .
+  var A : Foo{X} .
+  ops f g : Foo{X} Foo{X} Bar Foo{X} ~> Foo{X} .
+  eq f(A, B:Foo{X}, C:Bar, D:[Foo{X}]) = g(A, B, C, D) [print A B:Foo{X} C:Bar D:[Foo{X}]] .
+endfm
+show desugared .
+
+*** otf declarations can appear after use
+fmod BAZ3{X :: TRIV} is
+  sorts Foo{X} Bar .
+  var A : Foo{X} .
+  ops f g : Foo{X} Foo{X} Bar Foo{X} ~> Foo{X} .
+  eq f(A, B, C, D) = g(A, B, C, D) [print A B:Foo{X} C:Bar D:[Foo{X}]] .
+endfm
+show desugared .
+
+*** bubbles are too wild a syntactic construct to co-exist with extended scope
+fmod QUUX is  
+  protecting QID .  
+  sorts Token  .  
+  op token : Qid -> Token  
+    [special (id-hook Bubble        (1 1)  
+              op-hook qidSymbol     (<Qids> : ~> Qid))] .
+  op f : Nat -> Nat .
+  eq f(N:Nat) = N + 1 .
+endfm
+
+*** otf extended scope works in the rhs of op->term mappings
+fth T is
+  sort Elt .
+  op f : Elt -> Elt .
+endfth
+
+fmod M is
+  sort Foo .
+  op g : Foo Foo -> Foo .
+endfm
+
+view V from T to M is
+  sort Elt to Foo .
+  op f(X:Elt) to term g(X:Foo, X) .
+endv
+show processed view .
+
+*** otf extended scope works in commands
+red in NAT : X:Nat + X .

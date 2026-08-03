@@ -1,4 +1,39 @@
+2026-08-03  Saruman the White  <eker@eker10>
+
+	* mixfixParser.hh (class MixfixParser): don't init
+	otfTranslationsMade here because it needs to be reset before each
+	parse
+
+	* makeGrammar.cc (MixfixModule::makeBubbleProductions): removed
+	commented out #ifdef BUBBLES
+
+	* mixfixParser.cc (MixfixParser::makeStrategy): use nullptr
+	(MixfixParser::makeTerm): use nullptr
+	(MixfixParser::makeTerm): removed commented out #ifdef BUBBLES
+	(MixfixParser::makeConditionFragment): use nullptr
+	(MixfixParser::makePrintList): use nullptr
+
+	* makeGrammar.cc (MixfixModule::makeParameterizedSortProductions):
+	insertVariableTerminal() becomes insertLeadTerminal()
+	(MixfixModule::makeGrammar): use nullptr
+	(MixfixModule::makePolymorphProductions): use nullptr
+
+	* mixfixParser.cc (MixfixParser::parseSentence): added comment
+	(MixfixParser::translateSpecialToken): added comments
+
+	* mixfixParser.hh (class MixfixParser): data member
+	variableTerminals becomes leadTerminals
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken):
+	variableTerminals -> leadTerminals
+
+	* mixfixParser.hh (MixfixParser::insertLeadTerminal): was
+	insertVariableTerminal()
+
 2026-08-02  Saruman the White  <eker@eker10>
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): code
+	cleaning
 
 	* mixfixParser.hh (MixfixParser::insertKindTerminal): deleted
 	(class MixfixParser): deleted data member kindTerminals

@@ -160,7 +160,7 @@ public:
 			      int bubbleSpecIndex);
   void insertSpecialTerminal(int tokenProperty, int codeToUse);
   void insertComponentTerminal(int componentIndex, int codeToUse);
-  void insertVariableTerminal(int sortNameCode, int codeToUse);
+  void insertLeadTerminal(int sortNameCode, int codeToUse);
   void insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse);
   //
   //	Function that parses a vector of tokens to a parse tree.
@@ -270,10 +270,10 @@ private:
   Vector<Action> actions;		// action associated with each production
   Vector<int> specialTerminals;		// special terminals for tokens with special properties
   Vector<int> componentTerminals;	// special terminals for regular otf variables
-  IntMap variableTerminals;		// special terminals for on-the-fly variables
+  IntMap leadTerminals;			// special terminals for X:Foo where Foo{...} is a sort
   IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
   bool bubblesAllowed;			// do we allow bubbles of unknown tokens
-  bool otfTranslationsMade = false;
+  bool otfTranslationsMade;
   //
   //	We store the tokens we are parsing here to avoid passing extra parameters
   //	when recursing down a parse tree.
@@ -352,9 +352,9 @@ MixfixParser::insertComponentTerminal(int componentIndex, int codeToUse)
 }
 
 inline void
-MixfixParser::insertVariableTerminal(int sortNameCode, int codeToUse)
+MixfixParser::insertLeadTerminal(int sortNameCode, int codeToUse)
 {
-  variableTerminals[sortNameCode] = tokenToIndex(codeToUse);
+  leadTerminals[sortNameCode] = tokenToIndex(codeToUse);
 }
 
 inline void

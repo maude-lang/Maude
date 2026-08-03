@@ -1,3 +1,7 @@
+2026-08-03  Saruman the White  <eker@eker10>
+
+	* tests/Corner/otfVariables.maude: added more examples
+
 2026-07-27  Saruman the White  <eker@eker10>
 
 	* tests/Transformer/defaultView.maude: use view generator from

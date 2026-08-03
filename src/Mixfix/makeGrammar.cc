@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ MixfixModule::makeGrammar(bool complexFlag)
 {
   DebugInfo("module = " << this << " (" << ((void*) this) << ")" <<
 	      "  complexFlag = " << complexFlag << "  parser = " << parser);
-  if (parser != 0)
+  if (parser != nullptr)
     {
       if (!complexFlag || parser->isComplex())
 	{
@@ -128,7 +128,7 @@ MixfixModule::makeParameterizedSortProductions()
 	      Vector<int> rhs(1);
 	      rhs[0] = t;
 	      parser->insertProduction(nt, rhs, 0, emptyGather);
-	      parser->insertVariableTerminal(lead, t);
+	      parser->insertLeadTerminal(lead, t);
 	    }
 	}
     }
@@ -894,16 +894,15 @@ MixfixModule::makeComponentProductions()
       const ConnectedComponent* component = components[i];
       {
 	//
-	//	For each kind, we make a terminal that will be used
-	//	to map unseen variables having a sort from the kind,
+	//	For each component, we make a terminal that will be used
+	//	to map unseen variables having a sort from the component,
 	//	if they doesn't have a more specific mapping.
 	//
 	Sort* kind = component->sort(Sort::KIND);
 	string kindName(Token::name(kind->id()));
 	int t = Token::encode((kindName + " kind terminal").c_str());
-	//parser->insertKindTerminal(kindIndex, t);
 	parser->insertComponentTerminal(i, t);
-	DebugInfo("inserted kind terminal " << t << " for kind " << kind);
+	DebugInfo("inserted component terminal " << t << " for component " << component);
 	rhsOne[0] = t;
 	parser->insertProduction(termNt, rhsOne, 0, emptyGather, MixfixParser::MAKE_OTF_VARIABLE);
 	parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather, MixfixParser::MAKE_OTF_VARIABLE);
@@ -973,7 +972,7 @@ MixfixModule::makeComponentProductions()
 	      //	parse X:Foo{...} whether the X:Foo in a new token or
 	      //	part of the user's syntax with its own mapping.
 	      //	Tokens like Y:Foo without a mapping will be mapped to
-	      //	a kind terminal.
+	      //	a component terminal.
 	      //
 	      rhsOne[0] = p->second;
 	      parser->insertProduction(termNt, rhsOne, 0, gatherAny,
@@ -1440,11 +1439,18 @@ MixfixModule::makeSpecialProductions()
 	    IntMap::const_iterator t = leadTokens.find(sortName);
 	    if (t != leadTokens.end())
 	      {
+		//
+		//	sortName is a lead token with its own nonterminal.
+		//
 		rhs[0] = code;
 		parser->insertProduction(t->second, rhs, 0, emptyGather);
 	      }
 	    else if (Sort* sort = findSort(sortName))
 	      {
+		//
+		//	sortName is a regular sort so just use the nonterminal
+		//	for its component.
+		//
 		int sortIndex = sort->getIndexWithinModule();
 		int componentIndex = sort->component()->getIndexWithinModule();
 		rhs[0] = code;
@@ -1621,7 +1627,7 @@ MixfixModule::makePolymorphProductions()
 		{
 		  gather[j] = PREFIX_GATHER;
 		  const Sort* s = p.domainAndRange[j];
-		  if (s != 0)
+		  if (s != nullptr)
 		    rhs[2 + 2 * j] = nonTerminal(s, TERM_TYPE);
 		  rhs[3 + 2 * j] = (j == nrArgs - 1) ? rightParen : comma;
 		}
@@ -1641,7 +1647,7 @@ MixfixModule::makePolymorphProductions()
 	      if (t == underscore)
 		{
 		  const Sort* s = p.domainAndRange[underscores.length()];
-		  if (s != 0)
+		  if (s != nullptr)
 		    mixfixRhs[j] = nonTerminal(s, TERM_TYPE);
 		  underscores.append(j);
 		}
@@ -1658,7 +1664,7 @@ MixfixModule::makePolymorphProductions()
 	    {
 	      int termNt = nonTerminal(j, TERM_TYPE);  // nonterminal for instantiation kind
 	      const Sort* s = p.domainAndRange[nrArgs];
-	      int rangeNt = (s == 0) ? termNt : nonTerminal(s, TERM_TYPE);
+	      int rangeNt = (s == nullptr) ? termNt : nonTerminal(s, TERM_TYPE);
 
 	      if (si.symbolType.hasFlag(SymbolType::ASSOC))
 		{
@@ -1682,7 +1688,7 @@ MixfixModule::makePolymorphProductions()
 		  //
 		  for (int k = 0; k < nrArgs; k++)
 		    {
-		      if (p.domainAndRange[k] == 0)
+		      if (p.domainAndRange[k] == nullptr)
 			rhs[2 + 2 * k] = termNt;
 		    }
 		  parser->insertProduction(rangeNt, rhs, 0, gather,
@@ -1695,7 +1701,7 @@ MixfixModule::makePolymorphProductions()
 		  //
 		  for (int k = 0; k < nrArgs; k++)
 		    {
-		      if (p.domainAndRange[k] == 0)
+		      if (p.domainAndRange[k] == nullptr)
 			mixfixRhs[underscores[k]] = termNt;
 		    }
 		  parser->insertProduction(rangeNt,
@@ -1717,7 +1723,6 @@ MixfixModule::makeBubbleProductions()
   cout << "<Bubble productions>\n";
 #endif
 
-  //#ifdef BUBBLES
   int nrBubbleSpecs = bubbleSpecs.length();
   for (int i = 0; i < nrBubbleSpecs; i++)
     {
@@ -1730,5 +1735,4 @@ MixfixModule::makeBubbleProductions()
 				     b.excludedTokens,
 				     i);
     }
-  //#endif
 }
