@@ -899,10 +899,10 @@ MixfixModule::makeComponentProductions()
 	//	if they doesn't have a more specific mapping.
 	//
 	Sort* kind = component->sort(Sort::KIND);
-	int kindIndex = kind->getIndexWithinModule();
 	string kindName(Token::name(kind->id()));
 	int t = Token::encode((kindName + " kind terminal").c_str());
-	parser->insertKindTerminal(kindIndex, t);
+	//parser->insertKindTerminal(kindIndex, t);
+	parser->insertComponentTerminal(i, t);
 	DebugInfo("inserted kind terminal " << t << " for kind " << kind);
 	rhsOne[0] = t;
 	parser->insertProduction(termNt, rhsOne, 0, emptyGather, MixfixParser::MAKE_OTF_VARIABLE);
@@ -912,6 +912,7 @@ MixfixModule::makeComponentProductions()
 	//	<FooTerm> ::= <ENDS_IN_COLON> [ <FooSortList> ]
 	//
 	rhsKindVariable[2] = sortListNt;
+	int kindIndex = kind->getIndexWithinModule();
 	parser->insertProduction(termNt, rhsKindVariable, 0, gatherAnyAny,
 				 MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, kindIndex);
 	parser->insertProduction(VARIABLE, rhsKindVariable, 0, gatherAnyAny,

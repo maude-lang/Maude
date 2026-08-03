@@ -116,7 +116,8 @@ MixfixParser::MixfixParser(MixfixModule& client,
     componentNonTerminalBase(componentNonTerminalBase),
     numberOfTypes(numberOfTypes),
     tokenSet(nrTokensGuess),
-    specialTerminals(Token::LAST_PROPERTY)
+    specialTerminals(Token::LAST_PROPERTY),
+    componentTerminals(client.getConnectedComponents().size())
 {
   nextNonTerminal = nextNonTerminalCode;
   bubblesAllowed = false;
@@ -442,7 +443,6 @@ MixfixParser::translateSpecialToken(int code)
   int sp = Token::specialProperty(code);
   if (sp == Token::CONTAINS_COLON)
     {
-      //DebugAlways("saw " << Token::name(code));
       int varName;
       int sortName;
       Token::split(code, varName, sortName);
@@ -450,15 +450,7 @@ MixfixParser::translateSpecialToken(int code)
       if (i != variableTerminals.end())
 	return i->second;
       if (Sort* sort = client.findSort(sortName))
-	{
-	  //DebugAlways("saw sort " << sort);
-	  Sort* kind = sort->component()->sort(Sort::KIND);
-	  //DebugAlways("saw kind " << kind);
-	  auto j = kindTerminals.find(kind->getIndexWithinModule());
-	  Assert(j != kindTerminals.end(), "didn't find kind terminal for " << kind);
-	  //DebugAlways("translated " << Token::name(code) << " to kind terminal " << j->second);
-          return j->second;
-	}
+	return componentTerminals[sort->component()->getIndexWithinModule()];
     }
   else if (sp == Token::ITER_SYMBOL)
     {
@@ -480,13 +472,10 @@ MixfixParser::translateSpecialToken(int code)
   if (i != otfTranslations.end() && i->second != NONE)
     {
       //
-      //	We want to translate code to a kind terminal.
+      //	We want to translate code to a component terminal.
       //
       Sort* sort = client.getSorts()[i->second];
-      Sort* kind = sort->component()->sort(Sort::KIND);
-      auto j = kindTerminals.find(kind->getIndexWithinModule());
-      Assert(j != kindTerminals.end(), "didn't find kind terminal for " << kind);
-      return j->second;
+      return componentTerminals[sort->component()->getIndexWithinModule()];
     }
   //
   //	If we're parsing with bubbles, they can take anything so we map otherwise
@@ -1124,7 +1113,7 @@ MixfixParser::makeTerm(int node)
      case MAKE_OTF_VARIABLE:
       {
 	//
-	//	This is an otf variable that was parsed using a kind terminal.
+	//	This is an otf variable that was parsed using a component terminal.
 	//	It is either X:Foo or it is X within the scope of some X:Foo
 	//	We don't have any information from the action. We need to find the
 	//	name and sort.
@@ -1475,7 +1464,7 @@ MixfixParser::makePrintListVariable(int node, Vector<int>& names, Vector<Sort*>&
     case MAKE_OTF_VARIABLE:
       {
 	//
-	//	This is an otf variable that was parsed using a kind terminal.
+	//	This is an otf variable that was parsed using a component terminal.
 	//	It is either X:Foo or it is X within the scope of some X:Foo
 	//	We don't have any information from the action. We need to find the
 	//	name and sort.

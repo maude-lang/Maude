@@ -159,8 +159,8 @@ public:
 			      const Vector<int>& excluded,
 			      int bubbleSpecIndex);
   void insertSpecialTerminal(int tokenProperty, int codeToUse);
+  void insertComponentTerminal(int componentIndex, int codeToUse);
   void insertVariableTerminal(int sortNameCode, int codeToUse);
-  void insertKindTerminal(int kindIndexWithinModule, int codeToUse);
   void insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse);
   //
   //	Function that parses a vector of tokens to a parse tree.
@@ -269,8 +269,8 @@ private:
   TokenSet tokenSet;			// mapping between token codes and terminal numbers
   Vector<Action> actions;		// action associated with each production
   Vector<int> specialTerminals;		// special terminals for tokens with special properties
+  Vector<int> componentTerminals;	// special terminals for regular otf variables
   IntMap variableTerminals;		// special terminals for on-the-fly variables
-  IntMap kindTerminals;
   IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
   bool bubblesAllowed;			// do we allow bubbles of unknown tokens
   bool otfTranslationsMade = false;
@@ -346,15 +346,15 @@ MixfixParser::insertSpecialTerminal(int tokenProperty, int codeToUse)
 }
 
 inline void
-MixfixParser::insertVariableTerminal(int sortNameCode, int codeToUse)
+MixfixParser::insertComponentTerminal(int componentIndex, int codeToUse)
 {
-  variableTerminals[sortNameCode] = tokenToIndex(codeToUse);
+  componentTerminals[componentIndex] = tokenToIndex(codeToUse);
 }
 
 inline void
-MixfixParser::insertKindTerminal(int kindIndexWithinModule, int codeToUse)
+MixfixParser::insertVariableTerminal(int sortNameCode, int codeToUse)
 {
-  kindTerminals[kindIndexWithinModule] = tokenToIndex(codeToUse);
+  variableTerminals[sortNameCode] = tokenToIndex(codeToUse);
 }
 
 inline void

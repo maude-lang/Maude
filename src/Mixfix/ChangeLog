@@ -1,5 +1,20 @@
 2026-08-02  Saruman the White  <eker@eker10>
 
+	* mixfixParser.hh (MixfixParser::insertKindTerminal): deleted
+	(class MixfixParser): deleted data member kindTerminals
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken): use
+	componentTerminals rahter than kindTerminals
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): use
+	insertComponentTerminal() rather than insertKindTerminal()
+
+	* mixfixParser.cc (MixfixParser::MixfixParser): init
+	componentTerminals
+
+	* mixfixParser.hh (MixfixParser::insertComponentTerminal): added
+	(class MixfixParser): added data member componentTerminals
+
 	* makeGrammar.cc (MixfixModule::makeAttributeProductions):
 	MAKE_VARIABLE -> MAKE_PRINT_VARIABLE
 	(MixfixModule::makeComponentProductions): MAKE_VARIABLE ->
