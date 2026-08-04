@@ -1,3 +1,5 @@
+set show timing off .
+
 ***
 ***	Check handling of extended on-the-fly variable scope in tricky cases.
 ***

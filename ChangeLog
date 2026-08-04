@@ -1,6 +1,7 @@
 2026-08-03  Saruman the White  <eker@eker10>
 
 	* tests/Corner/otfVariables.maude: added more examples
+	set show timing off .
 
 2026-07-27  Saruman the White  <eker@eker10>
 

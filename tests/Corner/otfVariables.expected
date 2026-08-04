@@ -25,8 +25,8 @@ fmod FOO4 is
   op f : Nat Nat -> Nat .
   eq f(Y:Nat, Y:Nat) = Y:Nat .
 endfm
-Warning: <standard input>, line 45 (fmod FOO5): bad token Y.
-Warning: <standard input>, line 45 (fmod FOO5): no parse for statement
+Warning: <standard input>, line 47 (fmod FOO5): bad token Y.
+Warning: <standard input>, line 47 (fmod FOO5): no parse for statement
 eq f (Y:Nat, Y:NzNat) = Y .
 fmod FOO5a is
   including BOOL .
@@ -35,9 +35,9 @@ fmod FOO5a is
   var Y : Nat .
   eq f(Y, Y:NzNat) = Y .
 endfm
-Warning: <standard input>, line 62 (fmod FOO6): didn't expect token Y:
+Warning: <standard input>, line 64 (fmod FOO6): didn't expect token Y:
 eq f ( Y <---*HERE*
-Warning: <standard input>, line 62 (fmod FOO6): no parse for statement
+Warning: <standard input>, line 64 (fmod FOO6): no parse for statement
 eq f (Y, Y:NzNat) = Y .
 fmod FOO7 is
   including BOOL .
@@ -46,30 +46,30 @@ fmod FOO7 is
   op Y : -> Nat .
   eq f(Y, Y:NzNat) = Y .
 endfm
-Warning: <standard input>, line 79 (fmod FOO8): didn't expect token Y:
+Warning: <standard input>, line 81 (fmod FOO8): didn't expect token Y:
 eq f ( Y:NzNat , Y:NzNat ) = Y <---*HERE*
-Warning: <standard input>, line 79 (fmod FOO8): no parse for statement
+Warning: <standard input>, line 81 (fmod FOO8): no parse for statement
 eq f (Y:NzNat, Y:NzNat) = Y .
-Warning: <standard input>, line 87 (fmod FOO9): didn't expect token X:
+Warning: <standard input>, line 89 (fmod FOO9): didn't expect token X:
 eq f ( X:Nat ) = X <---*HERE*
-Warning: <standard input>, line 87 (fmod FOO9): no parse for statement
+Warning: <standard input>, line 89 (fmod FOO9): no parse for statement
 eq f (X:Nat) = X .
-Warning: <standard input>, line 94 (fmod FOO10) : unexpected end of tokens.
-Warning: <standard input>, line 94 (fmod FOO10): no parse for statement
+Warning: <standard input>, line 96 (fmod FOO10) : unexpected end of tokens.
+Warning: <standard input>, line 96 (fmod FOO10): no parse for statement
 eq f (if:Nat) = if .
-Warning: <standard input>, line 95 (fmod FOO10): didn't expect token =>:
+Warning: <standard input>, line 97 (fmod FOO10): didn't expect token =>:
 eq f ( =>:Nat ) = => <---*HERE*
-Warning: <standard input>, line 95 (fmod FOO10): no parse for statement
+Warning: <standard input>, line 97 (fmod FOO10): no parse for statement
 eq f (=>:Nat) = => .
-Warning: <standard input>, line 102 (fmod FOO11): didn't expect token "6":
+Warning: <standard input>, line 104 (fmod FOO11): didn't expect token "6":
 eq f ( "6":Nat ) = "6" <---*HERE*
-Warning: <standard input>, line 102 (fmod FOO11): no parse for statement
-eq f ("6":Nat) = "6" .
-Warning: <standard input>, line 103 (fmod FOO11) : unexpected end of tokens.
-Warning: <standard input>, line 103 (fmod FOO11): no parse for statement
-eq f (X::Nat) = X: .
-Warning: <standard input>, line 104 (fmod FOO11): bad token X:Y.
 Warning: <standard input>, line 104 (fmod FOO11): no parse for statement
+eq f ("6":Nat) = "6" .
+Warning: <standard input>, line 105 (fmod FOO11) : unexpected end of tokens.
+Warning: <standard input>, line 105 (fmod FOO11): no parse for statement
+eq f (X::Nat) = X: .
+Warning: <standard input>, line 106 (fmod FOO11): bad token X:Y.
+Warning: <standard input>, line 106 (fmod FOO11): no parse for statement
 eq f (X:Y:Nat) = X:Y .
 fmod FOO12 is
   including BOOL .
@@ -83,16 +83,16 @@ fmod FOO13 is
   op f : Foo{Bar{Baz}}{Y} -> Foo{Bar{Baz}}{Y} .
   eq f(Z:Foo{Bar{Baz}}{Y}) = Z:Foo{Bar{Baz}}{Y} .
 endfm
-Warning: <standard input>, line 127 (fmod FOO14): didn't expect token X:
+Warning: <standard input>, line 129 (fmod FOO14): didn't expect token X:
 eq f ( X:Foo { X } ) = X <---*HERE*
-Warning: <standard input>, line 127 (fmod FOO14): no parse for statement
+Warning: <standard input>, line 129 (fmod FOO14): no parse for statement
 eq f (X:Foo {X}) = X .
-Warning: <standard input>, line 128 (fmod FOO14): didn't expect token X:
+Warning: <standard input>, line 130 (fmod FOO14): didn't expect token X:
 eq f ( Foo:Foo { X } ) = X <---*HERE*
-Warning: <standard input>, line 128 (fmod FOO14): no parse for statement
+Warning: <standard input>, line 130 (fmod FOO14): no parse for statement
 eq f (Foo:Foo {X}) = X .
-Warning: <standard input>, line 137 (fmod FOO15): bad token Y.
-Warning: <standard input>, line 137 (fmod FOO15): no parse for statement
+Warning: <standard input>, line 139 (fmod FOO15): bad token Y.
+Warning: <standard input>, line 139 (fmod FOO15): no parse for statement
 eq f (Y:Foo {Bar}) = Y .
 fmod FOO15 is
   including BOOL .
@@ -101,8 +101,8 @@ fmod FOO15 is
   op f : Foo -> Foo .
   eq f(X:Foo) = X:Foo .
 endfm
-Warning: <standard input>, line 148 (fmod FOO16): bad token X.
-Warning: <standard input>, line 148 (fmod FOO16): no parse for statement
+Warning: <standard input>, line 150 (fmod FOO16): bad token X.
+Warning: <standard input>, line 150 (fmod FOO16): no parse for statement
 eq f (X:Foo {Bar}) = X .
 fmod FOO17 is
   including BOOL .
@@ -111,11 +111,11 @@ fmod FOO17 is
   op _{Bar} : Foo -> Foo [prec 15 gather (E)] .
   eq f(X:Foo{Bar}) = X:Foo .
 endfm
-Warning: <standard input>, line 166 (fmod FOO18): bad token X.
-Warning: <standard input>, line 166 (fmod FOO18): no parse for statement
+Warning: <standard input>, line 168 (fmod FOO18): bad token X.
+Warning: <standard input>, line 168 (fmod FOO18): no parse for statement
 eq f (X:Foo) = X .
-Warning: <standard input>, line 176 (fmod FOO19): bad token X.
-Warning: <standard input>, line 176 (fmod FOO19): no parse for statement
+Warning: <standard input>, line 178 (fmod FOO19): bad token X.
+Warning: <standard input>, line 178 (fmod FOO19): no parse for statement
 eq f (X:Foo) = if X:Bar then X else X fi .
 fmod FOO20 is
   including BOOL .
@@ -136,8 +136,8 @@ fmod BAR2 is
   op f : Set{Nat} -> Set{Nat} .
   eq f(X:[Set{Nat}]) = X:[Set{Nat}] .
 endfm
-Warning: <standard input>, line 210 (fmod BAR3): bad token X.
-Warning: <standard input>, line 210 (fmod BAR3): no parse for statement
+Warning: <standard input>, line 212 (fmod BAR3): bad token X.
+Warning: <standard input>, line 212 (fmod BAR3): no parse for statement
 eq f (X: [Foo], X:) = X .
 fmod BAR4 is
   including BOOL .
@@ -146,8 +146,8 @@ fmod BAR4 is
   op f : Foo Foo -> Foo .
   eq f(X:Foo, X:) = X:Foo .
 endfm
-Warning: <standard input>, line 228 (fmod BAR5): bad token X.
-Warning: <standard input>, line 228 (fmod BAR5): no parse for statement
+Warning: <standard input>, line 230 (fmod BAR5): bad token X.
+Warning: <standard input>, line 230 (fmod BAR5): no parse for statement
 eq f (X: [Foo], X: [Foo]) = X .
 Advisory: redefining module BAR5.
 fmod BAR5 is
@@ -185,9 +185,9 @@ fmod BAZ3{X :: TRIV} is
   eq f(A, B:Foo{X}, C:Bar, D:[Foo{X}]) = g(A, B:Foo{X}, C:Bar, D:[Foo{X}]) [
     print A B:Foo{X} C:Bar D:[Foo{X}]] .
 endfm
-Warning: <standard input>, line 276 (fmod QUUX): didn't expect token N:
+Warning: <standard input>, line 278 (fmod QUUX): didn't expect token N:
 eq f ( N:Nat ) = N <---*HERE*
-Warning: <standard input>, line 276 (fmod QUUX): no parse for statement
+Warning: <standard input>, line 278 (fmod QUUX): no parse for statement
 eq f (N:Nat) = N + 1 .
 view V from T to M is
   sort Elt to Foo .
@@ -195,6 +195,6 @@ view V from T to M is
 endv
 ==========================================
 reduce in NAT : X:Nat + X:Nat .
-rewrites: 0 in 0ms cpu (0ms real) (~ rewrites/second)
+rewrites: 0
 result Nat: X:Nat + X:Nat
 Bye.
