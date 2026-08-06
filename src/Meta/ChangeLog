@@ -1,3 +1,17 @@
+2026-08-06  Saruman the White  <eker@eker10>
+
+	* ascentFunctions.cc (MetaLevelOpSymbol::metaUpModule): check for
+	nullptr returned from getFlatModule()
+	(MetaLevelOpSymbol::metaUpImports): ditto
+	(MetaLevelOpSymbol::metaUpSorts): ditto
+	(MetaLevelOpSymbol::metaUpSubsortDecls): ditto
+	(MetaLevelOpSymbol::metaUpOpDecls): ditto
+	(MetaLevelOpSymbol::metaUpMbs): ditto
+	(MetaLevelOpSymbol::metaUpEqs): ditto
+	(MetaLevelOpSymbol::metaUpRls): ditto
+	(MetaLevelOpSymbol::metaUpStratDecls): ditto
+	(MetaLevelOpSymbol::metaUpSds): ditto
+
 2026-07-27  Saruman the White  <eker@eker10>
 
 	* descentFunctions.cc (MetaLevelOpSymbol::metaTypeExists): added

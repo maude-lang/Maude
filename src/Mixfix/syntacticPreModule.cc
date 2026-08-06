@@ -154,24 +154,27 @@ SyntacticPreModule::getFlatModule()
   //	getFlatSignature() returns a module with its bad flag
   //	set if anything went wrong.
   //
-  if (!(m->isBad()) && m->getStatus() < Module::THEORY_CLOSED)
+  if (m != nullptr)
     {
-      //
-      //	Need to flatten in statements and compile.
-      //
-      m->importStatements();
-      Assert(!(m->isBad()), "importStatements() unexpectedly set bad flag in " << *m);
-      m->resetImports();
-      //
-      //	Compile  module.
-      //
-      m->closeTheory();
-      //
-      //	We don't allow reserved fresh variable names in variant
-      //	equations or narrowing rules. We can't do this until statements
-      //	have been compiled since it relied on VariableInfo being filled out.
-      //
-      m->checkFreshVariableNames();
+      if (!(m->isBad()) && m->getStatus() < Module::THEORY_CLOSED)
+	{
+	  //
+	  //	Need to flatten in statements and compile.
+	  //
+	  m->importStatements();
+	  Assert(!(m->isBad()), "importStatements() unexpectedly set bad flag in " << *m);
+	  m->resetImports();
+	  //
+	  //	Compile  module.
+	  //
+	  m->closeTheory();
+	  //
+	  //	We don't allow reserved fresh variable names in variant
+	  //	equations or narrowing rules. We can't do this until statements
+	  //	have been compiled since it relied on VariableInfo being filled out.
+	  //
+	  m->checkFreshVariableNames();
+	}
     }
   return m;
 }
@@ -188,7 +191,7 @@ SyntacticPreModule::getFlatSignature()
   else if (flatModule->getStatus() == Module::OPEN)
     {
       DebugNew("module " << this << " had flatModule status open");
-      return 0;  // we must already be in the middle of processing this module
+      return nullptr;  // we must already be in the middle of processing this module
     }
   return flatModule;
 }

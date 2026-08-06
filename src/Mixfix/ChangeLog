@@ -1,3 +1,9 @@
+2026-08-06  Saruman the White  <eker@eker10>
+
+	* syntacticPreModule.cc (SyntacticPreModule::getFlatModule): check
+	for nullptr returned from getFlatSignature()
+	(SyntacticPreModule::getFlatSignature): 0 -> nullptr
+
 2026-08-03  Saruman the White  <eker@eker10>
 
 	* mixfixParser.hh (class MixfixParser): don't init

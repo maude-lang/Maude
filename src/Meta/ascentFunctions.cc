@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,10 +44,13 @@ MetaLevelOpSymbol::metaUpModule(FreeDagNode* subject, RewritingContext& context)
 	  //	We check the status of the flattened module before proceeding
 	  //	since we don't have an easy way to back out if it is bad.
 	  //
-	  if (!(pm->getFlatModule()->isBad()))
+	  if (VisibleModule* vm = pm->getFlatModule())
 	    {
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upModule(flat, pm, qidMap));
+	      if (!(vm->isBad()))
+		{
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upModule(flat, pm, qidMap));
+		}
 	    }
 	}
     }
@@ -66,10 +69,13 @@ MetaLevelOpSymbol::metaUpImports(FreeDagNode* subject, RewritingContext& context
 	  //	We check the status of the flattened module before proceeding
 	  //	since we don't have an easy way to back out if it is bad.
 	  //
-	  if (!(pm->getFlatModule()->isBad()))
+	  if (VisibleModule* vm = pm->getFlatModule())
 	    {
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upImports(pm, qidMap));
+	      if (!(vm->isBad()))
+		{
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upImports(pm, qidMap));
+		}
 	    }
 	}
     }
@@ -86,11 +92,13 @@ MetaLevelOpSymbol::metaUpSorts(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
-	    { 
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upSorts(flat, vm, qidMap));
+	  if (VisibleModule* vm = pm->getFlatModule())
+	    {
+	      if (!(vm->isBad()))
+		{ 
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upSorts(flat, vm, qidMap));
+		}
 	    }
 	}
     }
@@ -107,11 +115,13 @@ MetaLevelOpSymbol::metaUpSubsortDecls(FreeDagNode* subject, RewritingContext& co
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
-	    { 
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upSubsortDecls(flat, vm, qidMap));
+	  if (VisibleModule* vm = pm->getFlatModule())
+	    {
+	      if (!(vm->isBad()))
+		{ 
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upSubsortDecls(flat, vm, qidMap));
+		}
 	    }
 	}
     }
@@ -128,11 +138,13 @@ MetaLevelOpSymbol::metaUpOpDecls(FreeDagNode* subject, RewritingContext& context
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
-	    { 
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upOpDecls(flat, vm, qidMap));
+	  if (VisibleModule* vm = pm->getFlatModule())
+	    {
+	      if (!(vm->isBad()))
+		{ 
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upOpDecls(flat, vm, qidMap));
+		}
 	    }
 	}
     }
@@ -149,11 +161,13 @@ MetaLevelOpSymbol::metaUpMbs(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
-	    { 
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upMbs(flat, vm, qidMap));
+	  if (VisibleModule* vm = pm->getFlatModule())
+	    {
+	      if (!(vm->isBad()))
+		{ 
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upMbs(flat, vm, qidMap));
+		}
 	    }
 	}
     }
@@ -170,11 +184,13 @@ MetaLevelOpSymbol::metaUpEqs(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
-	    { 
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upEqs(flat, vm, qidMap));
+	  if (VisibleModule* vm = pm->getFlatModule())
+	    {
+	      if (!(vm->isBad()))
+		{ 
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upEqs(flat, vm, qidMap));
+		}
 	    }
 	}
     }
@@ -191,11 +207,13 @@ MetaLevelOpSymbol::metaUpRls(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
+	  if (VisibleModule* vm = pm->getFlatModule())
 	    {
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upRls(flat, vm, qidMap));
+	      if (!(vm->isBad()))
+		{
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upRls(flat, vm, qidMap));
+		}
 	    }
 	}
     }
@@ -212,11 +230,13 @@ MetaLevelOpSymbol::metaUpStratDecls(FreeDagNode* subject, RewritingContext& cont
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
+	  if (VisibleModule* vm = pm->getFlatModule())
 	    {
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upStratDecls(flat, vm, qidMap));
+	      if (!(vm->isBad()))
+		{
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upStratDecls(flat, vm, qidMap));
+		}
 	    }
 	}
     }
@@ -233,11 +253,13 @@ MetaLevelOpSymbol::metaUpSds(FreeDagNode* subject, RewritingContext& context)
     {
       if (PreModule* pm = getPreModule(moduleName))
 	{
-	  VisibleModule* vm = pm->getFlatModule();
-	  if (!(vm->isBad()))
+	  if (VisibleModule* vm = pm->getFlatModule())
 	    {
-	      PointerMap qidMap;
-	      return context.builtInReplace(subject, metaLevel->upSds(flat, vm, qidMap));
+	      if (!(vm->isBad()))
+		{
+		  PointerMap qidMap;
+		  return context.builtInReplace(subject, metaLevel->upSds(flat, vm, qidMap));
+		}
 	    }
 	}
     }
