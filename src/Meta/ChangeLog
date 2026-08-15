@@ -1,3 +1,14 @@
+2026-08-15  Saruman the White  <eker@eker10>
+
+	* metaUpModule.cc (MetaLevel::upModule): deleted commented out
+	line
+
+	* metaLevel.hh (class MetaLevel): updated decls for upView() and
+	View* version of upHeader()
+
+	* metaUpView.cc (MetaLevel::upView): take and use replacementName
+	(MetaLevel::upHeader): take and use replacementName
+
 2026-08-06  Saruman the White  <eker@eker10>
 
 	* ascentFunctions.cc (MetaLevelOpSymbol::metaUpModule): check for

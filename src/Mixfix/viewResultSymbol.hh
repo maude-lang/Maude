@@ -24,7 +24,7 @@
 //      Class for view result symbols.
 //
 //	They don't have any special operational semantics but serve to
-//	identify kinds used for user-defined view generators and to
+//	identify kinds used for user-defined view transformers and to
 //	hold related data.
 //
 #ifndef _viewResultSymbol_hh_

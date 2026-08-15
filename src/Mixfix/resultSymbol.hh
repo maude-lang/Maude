@@ -15,7 +15,6 @@ public:
 
 protected:
   MetaLevel* getMetaLevel() const;
-  const ConnectedComponent* getModuleKind() const;
   Symbol* getTransformOp(const ConnectedComponent* qidKind);
   bool viewFailure(Symbol* s) const;
   bool multipleModules(Symbol* s) const;
@@ -24,7 +23,8 @@ protected:
   DagNode* upModuleList(bool flat,
 			const Vector<ImportModule*>& inputModules,
 			PointerMap& qidMap) const;
-  
+  DagNode* upViewList(const Vector<View*>& inputViews, PointerMap& qidMap) const;
+
 private:
   bool attachSymbol(const char* purpose, Symbol* symbol);
   void getSymbolAttachments(Vector<const char*>& purposes,

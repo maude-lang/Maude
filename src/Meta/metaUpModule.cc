@@ -24,7 +24,6 @@ DagNode*
 MetaLevel::upModule(bool flat, ImportModule* m, PointerMap& qidMap, int replacementName)
 {
   Vector<DagNode*> args;
-  //args.push_back(upQid(replacementName, qidMap));
   args.push_back(upHeader(m, qidMap, replacementName));
   if (flat)
     args.push_back(nilImportListSymbol->makeDagNode());

@@ -230,7 +230,7 @@ public:
 			       DagNode*& left,
 			       DagNode*& right);
 
-  DagNode* upView(View* view, PointerMap& qidMap);
+  DagNode* upView(View* view, PointerMap& qidMap, int replacementName = NONE);
   DagNode* upModule(bool flat, PreModule* pm, PointerMap& qidMap);
   DagNode* upModuleExpressionList(const Vector<ImportModule*>& modExprList,
 				  PointerMap& qidMap);
@@ -527,7 +527,7 @@ private:
   DagNode* upSortMappings(View* view, PointerMap& qidMap);
   DagNode* upOpMappings(View* view, PointerMap& qidMap);
   DagNode* upStratMappings(View* view, PointerMap& qidMap);
-  DagNode* upHeader(View* view, PointerMap& qidMap);
+  DagNode* upHeader(View* view, PointerMap& qidMap, int replacementName);
   DagNode* upParameterDecls(View* view, PointerMap& qidMap);
   DagNode* upParameterDecl(View* view, int index, PointerMap& qidMap);
   //

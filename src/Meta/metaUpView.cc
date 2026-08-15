@@ -21,12 +21,12 @@
 */
 
 DagNode*
-MetaLevel::upView(View* view, PointerMap& qidMap)
+MetaLevel::upView(View* view, PointerMap& qidMap, int replacementName)
 {
   Vector<DagNode*> args(6);
 
   view->evaluate();  // in case it became stale
-  args[0] = upHeader(view, qidMap);
+  args[0] = upHeader(view, qidMap, (replacementName == NONE) ? view->id() : replacementName);
   args[1] = upModuleExpression(view->getFrom(), qidMap);
   args[2] = upModuleExpression(view->getTo(), qidMap);
   args[3] = upSortMappings(view, qidMap);
@@ -36,9 +36,9 @@ MetaLevel::upView(View* view, PointerMap& qidMap)
 }
 
 DagNode*
-MetaLevel::upHeader(View* view, PointerMap& qidMap)
+MetaLevel::upHeader(View* view, PointerMap& qidMap, int replacementName)
 {
-  DagNode* name = upQid(view->id(), qidMap);
+  DagNode* name = upQid(replacementName, qidMap);
   if (view->getNrParameters() == 0)
     return name;
   Vector<DagNode*> args(2);

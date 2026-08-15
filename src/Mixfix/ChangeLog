@@ -1,3 +1,20 @@
+2026-08-15  Saruman the White  <eker@eker10>
+
+	* viewResultSymbol.hh: generators -> transformers in comment
+
+	* resultSymbol.hh (class ResultSymbol): added decl for
+	upViewList()
+
+	* resultSymbol.cc (ResultSymbol::upModuleList): added Assert()s
+	(ResultSymbol::upViewList): added
+
+	* resultSymbol.hh (class ResultSymbol): deleted decl for
+	getModuleKind()
+
+	* resultSymbol.cc (ResultSymbol::getModuleKind): deleted
+
+	* entity.hh (class Entity): set<> -> unordered_set<>
+
 2026-08-14  Saruman the White  <eker@eker10>
 
 	* viewResultSymbol.cc (ViewResultSymbol::generateView):

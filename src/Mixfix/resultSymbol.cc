@@ -228,18 +228,6 @@ ResultSymbol::getMetaLevel() const
   return shareWith->getMetaLevel();
 }
 
-const ConnectedComponent*
-ResultSymbol::getModuleKind() const
-{
-  Assert(shareWith, "no metalevel attached");
-  //
-  //	We require that we share the metalevel with an operator
-  //	that takes a module as its first argument, which is most
-  //	descent functions apart from the up*() family and downTerm().
-  //
-  return shareWith->domainComponent(0);
-}
-
 void
 ResultSymbol::handleMessageList(DagNode* messages, LineNumber lineNumber) const
 {
@@ -287,6 +275,9 @@ ResultSymbol::upModuleList(bool flat,
 			   const Vector<ImportModule*>& inputModules,
 			   PointerMap& qidMap) const
 {
+  Assert(nilModuleListSymbol != nullptr, "no nilModuleListSymbol op-hook");
+  Assert(moduleListSymbol != nullptr, "no moduleListSymbol op-hook");
+
   if (inputModules.empty())
     return nilModuleListSymbol->makeDagNode();
   Index index = 0;
@@ -300,6 +291,54 @@ ResultSymbol::upModuleList(bool flat,
   return (inputModules.size() == 1) ? metaModules[0] :
     moduleListSymbol->makeDagNode(metaModules);
 }
+
+DagNode*
+ResultSymbol::upViewList(const Vector<View*>& inputViews, PointerMap& qidMap) const
+{
+  Assert(nilViewListSymbol != nullptr, "no nilViewListSymbol op-hook");
+  Assert(viewListSymbol != nullptr, "no viewListSymbol op-hook");
+
+  if (inputViews.empty())
+    return nilViewListSymbol->makeDagNode();
+  Index index = 0;
+  Vector<DagNode*> metaViews(inputViews.size());
+  for (View* v : inputViews)
+    {
+      metaViews[index] = getMetaLevel()->upView(v, qidMap, Token::addQuotes(v->id()));
+      ++index;
+    }
+  return (inputViews.size() == 1) ? metaViews[0] :
+    viewListSymbol->makeDagNode(metaViews);
+}
+
+/*
+DagNode*
+ResultSymbol::makeStartDag(const Vector<ImportModule*>& inputModules,
+			   DagNode* metaOptions,
+			   const Vector<int>& inputViews,
+			   PointerMap qidMap)
+{
+  Assert(cachedTransformOp != nullptr, "no transform op");
+  Index nrArgs = transformOp->arity();
+  Vector<DagNode*> args(nrArgs);
+  switch (nrArgs)
+    {
+    case 6:
+      args[5] = upModuleList(true, inputModules, qidMap);
+    case 5:
+      args[4] = upModuleList(true, inputModules, qidMap);
+    case 4:
+      args[3] = upModuleList(true, inputModules, qidMap);
+    case 3:
+      args[2] = metaLevel->upModuleExpressionList(inputModules, qidMap);
+    case 2:
+      args[1] = metaOptions;
+    case 1:
+      args[0] = upModuleList(false, inputModules, qidMap);
+    }
+  return transformOp->makeDagNode(args);
+}
+*/
 
 Rope
 ResultSymbol::colorize(const Rope& text)
