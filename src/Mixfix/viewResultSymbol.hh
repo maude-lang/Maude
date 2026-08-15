@@ -51,8 +51,6 @@ private:
   void getDataAttachments(const Vector<Sort*>& opDeclaration,
 			  Vector<const char*>& purposes,
 			  Vector<Vector<const char*>>& data);
-
-  Symbol* cachedGeneratorOp = nullptr;
 };
 
 #endif

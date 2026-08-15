@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class ViewResultSymbol.
+//      Implementation for class ResultSymbol.
 //
 
 //      utility stuff
@@ -130,8 +130,7 @@ ResultSymbol::hasGoodDomain(Symbol* symbol, Vector<const ConnectedComponent*>& d
 }
 
 Symbol*
-ResultSymbol::getTransformOp(const ConnectedComponent* qidKind,
-			      const ConnectedComponent* rangeKind)
+ResultSymbol::getTransformOp(const ConnectedComponent* qidKind)
 {
   if (cachedTransformOp == nullptr)
     {
@@ -146,6 +145,9 @@ ResultSymbol::getTransformOp(const ConnectedComponent* qidKind,
       //	  view expression list
       //	But we allow any initial segment with the correct range.
       //
+      const ConnectedComponent* rangeKind = rangeComponent();
+      Assert(nilModuleListSymbol != nullptr, "no nilModuleListSymbol op-hook");
+      Assert(nilViewListSymbol != nullptr, "no nilViewListSymbol op-hook");
       Vector<const ConnectedComponent*> domain(6);
       domain[0] = nilModuleListSymbol->rangeComponent();
       domain[1] = qidKind;
@@ -208,16 +210,13 @@ ResultSymbol::getTransformOp(const ConnectedComponent* qidKind,
       if (conflictOp != nullptr)
 	{
 	  IssueWarning(*(getModule()) << ": unable to decide between transformer operators " <<
-		       QUOTE(cachedTransformOp) << " and " <<
-		       QUOTE(conflictOp) << " in module " << QUOTE(getModule()) << ".");
+		       QUOTE(cachedTransformOp) << " and " << QUOTE(conflictOp) << "." <<
+		       (cachedHasTransformFlag ? "" :
+			" Use metadata \"transformer\" attribute to indicate the correct one."));
 	  cachedTransformOp = nullptr;
 	}
       else if (cachedTransformOp == nullptr)
-	{
-	  IssueWarning(*(getModule()) <<
-		       ": didn't find suitable transformer operator in module " <<
-		       QUOTE(getModule()) << ".");
-	}
+	IssueWarning(*(getModule()) << ": did not find suitable transformer operator.");
     }
   return cachedTransformOp;
 }

@@ -1,5 +1,26 @@
 2026-08-14  Saruman the White  <eker@eker10>
 
+	* viewResultSymbol.cc (ViewResultSymbol::generateView):
+	generatorModule -> ourModule
+
+	* resultSymbol.hh (class ResultSymbol): initialize
+	cachedTransformOp
+
+	* viewResultSymbol.hh (class ViewResultSymbol): deleted data
+	member cachedGeneratorOp
+
+	* resultSymbol.hh (class ResultSymbol): updated decl for
+	getTransformOp()
+
+	* resultSymbol.cc (ResultSymbol::getTransformOp): don't take
+	rangeKind argument
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): use
+	getTransformOp()
+
+	* resultSymbol.cc (ResultSymbol::getTransformOp): improve warnings
+	(ResultSymbol::getTransformOp): added Assert()s
+
 	* resultSymbol.hh (class ResultSymbol): added decls for
 	getTransformOp(), hasTransformFlag(), hasGoodDomain()
 	(class ResultSymbol): added data member cachedTransformOp

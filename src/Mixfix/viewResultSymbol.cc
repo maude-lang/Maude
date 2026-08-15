@@ -84,67 +84,31 @@ ViewResultSymbol::generateView(int newViewName,
 			       LineNumber lineNumber)
 {
   DebugEnter("generating " << Token::name(newViewName));
-  ImportModule* generatorModule = safeCastNonNull<ImportModule*>(getModule());
+  ImportModule* ourModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();
   PointerMap qidMap;
   DagNode* metaOptions = metaLevel->upQidList(optionVec, qidMap);
-  if (cachedGeneratorOp == nullptr)
-    {
-      //
-      //	Need to find suitable operator.
-      //
-      const ConnectedComponent* moduleKind = getModuleKind();
-      const ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
-      const ConnectedComponent* viewResultKind = rangeComponent();
-      for (Symbol* s : generatorModule->getSymbols())
-	{
-	  Index nrArgs = s->arity();
-	  if (nrArgs == 3 || nrArgs == 4)
-	    {
-	      if (s->domainComponent(0) == moduleKind &&
-		  s->domainComponent(1) == qidKind &&
-		  s->domainComponent(2) == qidKind &&
-		  s->rangeComponent() == viewResultKind &&
-		  (nrArgs == 3 || s->domainComponent(3) == moduleKind))
-		{
-		  if (cachedGeneratorOp == nullptr)
-		    cachedGeneratorOp = s;
-		  else
-		    {
-		      IssueWarning(*generatorModule << ": multiple view generator operators " <<
-				   QUOTE(cachedGeneratorOp) << " and " <<
-				   QUOTE(s) << " in module " << QUOTE(generatorModule) << ".");
-		      cachedGeneratorOp = nullptr;
-		      return nullptr;
-		    }
-		}
-	    }
-	}
-      if (cachedGeneratorOp == nullptr)
-	{
-	  IssueWarning(*generatorModule <<
-		       ": didn't find suitable view generator operator in module " <<
-		       QUOTE(generatorModule) << ".");
-	  return nullptr;
-	}
-    }
+  Symbol* transformOp = getTransformOp(metaOptions->symbol()->rangeComponent());
+  if (transformOp == nullptr)
+    return nullptr;
+
   Verbose("Attempting to generate view " << Token::name(newViewName));
   //
   //	Make dag to be reduced.
   //
-  Index nrArgs = cachedGeneratorOp->arity();
+  Index nrArgs = transformOp->arity();
   Vector<DagNode*> args(nrArgs);
   args[0] = upModuleList(false, inputModules, qidMap);
   args[1] = metaOptions;
   args[2] = metaLevel->upModuleExpressionList(inputModules, qidMap);
   if (nrArgs == 4)
     args[3] = upModuleList(true, inputModules, qidMap);
-  DagNode* startDag = cachedGeneratorOp->makeDagNode(args);
+  DagNode* startDag = transformOp->makeDagNode(args);
   DebugAdvisory("Start dag = " << startDag);
   //
   //	Reduce it using user's code.
   //
-  generatorModule->finishFlattening();
+  ourModule->finishFlattening();
   UserLevelRewritingContext context(startDag);
   context.reduce();
   if (UserLevelRewritingContext::aborted())
@@ -180,23 +144,23 @@ ViewResultSymbol::generateView(int newViewName,
 	      //
 	      for (ImportModule* m : inputModules)
 		m->addUser(resultView);
-	      generatorModule->addUser(resultView);
-	      DebugInfo(resultView << " is user of " << generatorModule);
+	      ourModule->addUser(resultView);
+	      DebugInfo(resultView << " is user of " << ourModule);
 	      //
 	      //	We pass it all the information used to construct it, so it
 	      //	can remove itself as a dependency if it becomes stale and
 	      //	calls deepSelfDestruct(). This also enables us to reconstruct
 	      //	the view expression that built it.
 	      //
-	      resultView->setGenerationInfo(generatorModule, inputModules, optionVec);
+	      resultView->setGenerationInfo(ourModule, inputModules, optionVec);
 	      return resultView;
 	    }
-	  IssueWarning(*cachedGeneratorOp << ": view generator " << QUOTE(cachedGeneratorOp) <<
+	  IssueWarning(*transformOp << ": view generator " << QUOTE(transformOp) <<
 		       " returned bad view " << QUOTE(metaView) << ".");
 	}
     }
   else
-    IssueWarning(*cachedGeneratorOp << ": view generator " << QUOTE(cachedGeneratorOp) <<
+    IssueWarning(*transformOp << ": view generator " << QUOTE(transformOp) <<
 		 " returned bad result term " << QUOTE(result) << ".");
   return nullptr;
 }

@@ -16,8 +16,7 @@ public:
 protected:
   MetaLevel* getMetaLevel() const;
   const ConnectedComponent* getModuleKind() const;
-  Symbol* getTransformOp(const ConnectedComponent* qidKind,
-			 const ConnectedComponent* rangeKind);
+  Symbol* getTransformOp(const ConnectedComponent* qidKind);
   bool viewFailure(Symbol* s) const;
   bool multipleModules(Symbol* s) const;
   bool noModules(Symbol* s) const;
@@ -45,7 +44,7 @@ private:
 #include "resultSignature.cc"
 #undef MACRO
 
-  Symbol* cachedTransformOp;
+  Symbol* cachedTransformOp = nullptr;
 };
 
 inline bool
