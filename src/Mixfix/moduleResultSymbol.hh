@@ -27,8 +27,8 @@
 //	identify kinds used for user-defined module operations and to
 //	hold related data.
 //
-#ifndef _transformResultSymbol_hh_
-#define _transformResultSymbol_hh_
+#ifndef _moduleResultSymbol_hh_
+#define _moduleResultSymbol_hh_
 #include "resultSymbol.hh"
 
 class TransformResultSymbol : public ResultSymbol

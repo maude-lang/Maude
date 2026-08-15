@@ -1,3 +1,15 @@
+2026-08-14  Saruman the White  <eker@eker10>
+
+	* moduleCache.cc: transformResultSymbol.hh ->
+	moduleResultSymbol.hh
+
+	* moduleResultSymbol.hh: was transformResultSymbol.hh
+
+	* mixfixModule.cc: transformResultSymbol.hh ->
+	moduleResultSymbol.hh
+
+	* moduleResultSymbol.cc: was transformResultSymbol.cc
+
 2026-08-06  Saruman the White  <eker@eker10>
 
 	* syntacticPreModule.cc (SyntacticPreModule::getFlatModule): check

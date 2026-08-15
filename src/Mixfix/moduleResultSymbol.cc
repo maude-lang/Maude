@@ -52,7 +52,7 @@
 #include "metaLevel.hh"
 
 //	mixfix class definitions
-#include "transformResultSymbol.hh"
+#include "moduleResultSymbol.hh"
 
 TransformResultSymbol::TransformResultSymbol(int id)
   : ResultSymbol(id, 2)

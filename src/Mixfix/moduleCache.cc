@@ -42,7 +42,7 @@
 #include "fileTable.hh"
 #include "parameter.hh"
 #include "moduleCache.hh"
-#include "transformResultSymbol.hh"
+#include "moduleResultSymbol.hh"
 
 ModuleCache::ModuleCache()
 {

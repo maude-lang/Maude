@@ -81,7 +81,7 @@ libmixfix_a_SOURCES = \
 	objectConstructorSymbol.cc \
 	maudeLatexBuffer.cc \
 	resultSymbol.cc \
-	transformResultSymbol.cc \
+	moduleResultSymbol.cc \
 	viewResultSymbol.cc \
 	$(COMPILER_SRC)
 
@@ -255,5 +255,5 @@ noinst_HEADERS = \
 	maudeLatexBuffer.hh \
 	printSettings.hh \
 	resultSymbol.hh \
-	transformResultSymbol.hh \
+	moduleResultSymbol.hh \
 	viewResultSymbol.hh

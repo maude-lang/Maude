@@ -167,7 +167,7 @@
 #include "objectConstructorSymbol.hh"
 #include "commutativeDecomposeEqualitySymbol.hh"
 #include "importModule.hh"
-#include "transformResultSymbol.hh"
+#include "moduleResultSymbol.hh"
 #include "viewResultSymbol.hh"
 
 #include "interpreter.hh"
