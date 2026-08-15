@@ -101,6 +101,127 @@ ResultSymbol::copyAttachments(Symbol* original, SymbolMap* map)
   FreeSymbol::copyAttachments(original, map);
 }
 
+bool
+ResultSymbol::hasTransformFlag(Symbol* symbol)
+{
+  MixfixModule* ourModule = safeCastNonNull<MixfixModule*>(getModule());
+  Index nrOpDecls = symbol->getOpDeclarations().size();
+  for (Index i = 0; i < nrOpDecls; ++i)
+    {
+      int metadata = ourModule->getMetadata(symbol, i);
+      if (metadata != NONE && strcmp(Token::name(metadata), "\"transformer\"") == 0)
+	return true;
+    }
+  return false;
+}
+
+bool
+ResultSymbol::hasGoodDomain(Symbol* symbol, Vector<const ConnectedComponent*>& domain)
+{
+  Index nrArgs = symbol->arity();
+  if (nrArgs > 6)
+    return false;
+  for (Index i = 0; i < nrArgs; ++i)
+    {
+      if (symbol->domainComponent(i) != domain[i])
+	return false;
+    }
+  return true;
+}
+
+Symbol*
+ResultSymbol::getTransformOp(const ConnectedComponent* qidKind,
+			      const ConnectedComponent* rangeKind)
+{
+  if (cachedTransformOp == nullptr)
+    {
+      //
+      //	Need to search symbols for a suitable operator.
+      //	Full generality is:
+      //	  structured module list
+      //	  argument list
+      //	  module expression list
+      //	  flattened module list
+      //	  view list
+      //	  view expression list
+      //	But we allow any initial segment with the correct range.
+      //
+      Vector<const ConnectedComponent*> domain(6);
+      domain[0] = nilModuleListSymbol->rangeComponent();
+      domain[1] = qidKind;
+      domain[2] = qidKind;
+      domain[3] = nilModuleListSymbol->rangeComponent();
+      domain[4] = nilViewListSymbol->rangeComponent();
+      domain[5] = qidKind;
+
+      bool cachedHasTransformFlag = false;
+      Symbol* conflictOp = nullptr;
+      for (Symbol* s : getModule()->getSymbols())
+	{
+	  if (s->rangeComponent() == rangeKind && hasGoodDomain(s, domain))
+	    {
+	      bool transformFlag = hasTransformFlag(s);
+	      if (cachedTransformOp == nullptr)
+		{
+		  cachedTransformOp = s;
+		  cachedHasTransformFlag = transformFlag;
+		}
+	      else
+		{
+		  if (cachedHasTransformFlag)
+		    {
+		      if (transformFlag)
+			{
+			  //
+			  //	Equal claim to be the transform op and no
+			  //	resolution possible.
+			  //
+			  conflictOp = s;
+			  break;
+			}
+		    }
+		  else
+		    {
+		      if (transformFlag)
+			{
+			  //
+			  //	Quietly displace old candidate and resolve
+			  //	any conflict.
+			  //
+			  cachedTransformOp = s;
+			  cachedHasTransformFlag = true;
+			  conflictOp = nullptr;
+			}
+		      else
+			{
+			  //
+			  //	Equal claim to be the transform op and but
+			  //	conflict might be resolved by another symbol.
+			  //
+			  conflictOp = s;
+			}
+		    }
+		}
+
+	    }
+	}
+      if (conflictOp != nullptr)
+	{
+	  IssueWarning(*(getModule()) << ": unable to decide between transformer operators " <<
+		       QUOTE(cachedTransformOp) << " and " <<
+		       QUOTE(conflictOp) << " in module " << QUOTE(getModule()) << ".");
+	  cachedTransformOp = nullptr;
+	}
+      else if (cachedTransformOp == nullptr)
+	{
+	  IssueWarning(*(getModule()) <<
+		       ": didn't find suitable transformer operator in module " <<
+		       QUOTE(getModule()) << ".");
+	}
+    }
+  return cachedTransformOp;
+}
+
 MetaLevel*
 ResultSymbol::getMetaLevel() const
 {

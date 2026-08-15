@@ -1,5 +1,13 @@
 2026-08-14  Saruman the White  <eker@eker10>
 
+	* resultSymbol.hh (class ResultSymbol): added decls for
+	getTransformOp(), hasTransformFlag(), hasGoodDomain()
+	(class ResultSymbol): added data member cachedTransformOp
+
+	* resultSymbol.cc (ResultSymbol::hasTransformFlag): added
+	(ResultSymbol::hasGoodDomain): added
+	(ResultSymbol::getTransformOp): added
+
 	* resultSignature.cc: added viewListSymbol
 
 	* entry.cc (MixfixModule::addOpDeclaration):

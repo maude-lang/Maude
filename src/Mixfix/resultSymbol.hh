@@ -16,6 +16,8 @@ public:
 protected:
   MetaLevel* getMetaLevel() const;
   const ConnectedComponent* getModuleKind() const;
+  Symbol* getTransformOp(const ConnectedComponent* qidKind,
+			 const ConnectedComponent* rangeKind);
   bool viewFailure(Symbol* s) const;
   bool multipleModules(Symbol* s) const;
   bool noModules(Symbol* s) const;
@@ -30,6 +32,9 @@ private:
 			    Vector<Symbol*>& symbols);
   void copyAttachments(Symbol* original, SymbolMap* map);
 
+  bool hasTransformFlag(Symbol* symbol);
+  bool hasGoodDomain(Symbol* symbol, Vector<const ConnectedComponent*>& domain);
+
   void handleMessage(DagNode* message, LineNumber lineNumber) const;
   static Rope colorize(const Rope& text);
   //
@@ -39,6 +44,8 @@ private:
   SymbolClass* SymbolName = nullptr;
 #include "resultSignature.cc"
 #undef MACRO
+
+  Symbol* cachedTransformOp;
 };
 
 inline bool
