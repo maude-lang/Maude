@@ -56,7 +56,7 @@ ViewExpression::ViewExpression(ViewExpression* view, const Vector<ViewExpression
 ViewExpression::ViewExpression(Token name,
 			       const Vector<ModuleExpression*>& inputModules,
 			       const Vector<int>& options)
-  : type(GENERATION),
+  : type(TRANSFORMATION),
     name(name),
     inputModules(inputModules),
     options(options)
@@ -75,7 +75,7 @@ ViewExpression::deepSelfDestruct()
 	  v->deepSelfDestruct();
 	break;
       }
-    case GENERATION:
+    case TRANSFORMATION:
       {
 	for (ModuleExpression* m : inputModules)
 	  m->deepSelfDestruct();
@@ -113,12 +113,12 @@ operator<<(ostream& s, const ViewExpression* expr)
 	s << '}';
 	break;
       }
-    case ViewExpression::GENERATION:
+    case ViewExpression::TRANSFORMATION:
       {
 	const Vector<ModuleExpression*>& inputModules = expr->getInputModules();
 	const Vector<int>& options = expr->getOptions();
 	//
-	//	Generator specification.
+	//	Transformer specification.
 	//
 	s << expr->getName();
 	//
@@ -188,7 +188,7 @@ ViewExpression::latexPrint(ostream& s, const Module* enclosingModule) const
 	s << "\\maudeRightBrace";
 	break;
       }
-    case ViewExpression::GENERATION:
+    case ViewExpression::TRANSFORMATION:
       {
 	//
 	//	Transformer specification.

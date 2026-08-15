@@ -1,5 +1,8 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* metaUpModule.cc (MetaLevel::upArgument): GENERATION ->
+	TRANSFORMATION
+
 	* metaLevel.hh (class MetaLevel): added decl for
 	upViewExpressionList()
 

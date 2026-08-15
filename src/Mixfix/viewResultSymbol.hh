@@ -37,13 +37,14 @@ class ViewResultSymbol : public ResultSymbol
 
 public:
   ViewResultSymbol(int id);
-  
-  View* generateView(int newModuleName,
-		     const Vector<ImportModule*>& inputModules,
-		     const Vector<int>& optionVec,
-		     Interpreter* owner,
-		     LineNumber lineNumber);
 
+  View* makeTransformedView(int newViewName,
+			    const Vector<ImportModule*>& inputModules,
+			    const Vector<int>& optionVec,
+			    const Vector<View*>& inputViews,
+			    Interpreter* owner,
+			    LineNumber lineNumber);
+  
 private:
   bool attachData(const Vector<Sort*>& opDeclaration,
 		  const char* purpose,

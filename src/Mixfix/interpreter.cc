@@ -647,7 +647,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 {
   //
   //	An argument must be the name of a parameter from an enclosing object or the name of
-  //	a view or an instantiation of a view, or the generation of a view.
+  //	a view or an instantiation of a view, or the transformation of a view.
   //	In all cases the fromTheory of the view or the theory of the parameter must match
   //	requiredParameterTheory.
   //
@@ -799,16 +799,16 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	  }
 	return makeViewInstantiation(baseView, arguments);
       }
-    case ViewExpression::GENERATION:
+    case ViewExpression::TRANSFORMATION:
       {
 	Token name = expr->getName();
 	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.getLineNr()))
 	  {
 	    Assert(!(fm->hasBoundParameters()),
-		   "Generator module " << fm << " has bound parameters.");
+		   "Transformer module " << fm << " has bound parameters.");
 	    if (fm->hasFreeParameters())
 	      {
-		IssueWarning(name.getLineNr() << ": generator module " << fm <<
+		IssueWarning(name.getLineNr() << ": transformer module " << fm <<
 			     " has free parameters.");
 		break;
 	      }
@@ -828,14 +828,20 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		else
 		  return nullptr;
 	      }
-	    if (View* v = generateView(fm, inputModules, expr->getOptions(), this, name.getLineNr()))
+	    Vector<View*> inputViews;  // DUMMY
+	    if (View* v = makeTransformedView(fm,
+					      inputModules,
+					      expr->getOptions(),
+					      inputViews,
+					      this,
+					      name.getLineNr()))
 	      {
 		//
-		//	Make sure the generated view is good.
+		//	Make sure the transformed view is good.
 		//
 		if (!(v->evaluate()))
 		  {
-		    IssueWarning(name.getLineNr() << ": unusable generated view " << QUOTE(v) << '.');
+		    IssueWarning(name.getLineNr() << ": unusable transformed view " << QUOTE(v) << '.');
 		    break;
 		  }
 		//
@@ -1004,11 +1010,13 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		    inputModules.append(fm);
 		  }
 	      }
-	    return makeModuleTransformation(fm,
-					    inputModules,
-					    expr->getOptions(),
-					    this,
-					    name.getLineNr());
+	    Vector<View*> inputViews;  // DUMMY
+	    return makeTransformedModule(fm,
+					 inputModules,
+					 expr->getOptions(),
+					 inputViews,
+					 this,
+					 name.getLineNr());
 	  }
 	break;
       }

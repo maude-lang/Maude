@@ -38,11 +38,12 @@ class ModuleResultSymbol : public ResultSymbol
 public:
   ModuleResultSymbol(int id);
   
-  ImportModule* makeTransformation(int newModuleName,
-				   const Vector<ImportModule*>& inputModules,
-				   const Vector<int>& optionVec,
-				   Interpreter* owner,
-				   LineNumber lineNumber);
+  ImportModule* makeTransformedModule(int newModuleName,
+				      const Vector<ImportModule*>& inputModules,
+				      const Vector<int>& optionVec,
+				      const Vector<View*>& inputViews,
+				      Interpreter* owner,
+				      LineNumber lineNumber);
 
 private:
   bool attachData(const Vector<Sort*>& opDeclaration,

@@ -302,7 +302,7 @@ MetaLevel::upArgument(const ViewExpression* argument, PointerMap& qidMap)
 	args[1] = upArguments(argument->getArguments(), qidMap);
 	return instantiationSymbol->makeDagNode(args);
     }
-    case ViewExpression::GENERATION:
+    case ViewExpression::TRANSFORMATION:
       {
 	Vector<DagNode*> args(3);
 	args[0] = upQid(argument->getName().code(), qidMap);

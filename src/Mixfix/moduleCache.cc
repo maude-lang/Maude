@@ -308,11 +308,12 @@ ModuleCache::makeSummation(const Vector<ImportModule*>& modules)
 }
 
 ImportModule*
-ModuleCache::makeModuleTransformation(ImportModule* transformer,
-				      const Vector<ImportModule*>& inputModules,
-				      const Vector<int>& options,
-				      Interpreter* owner,
-				      LineNumber lineNumber)
+ModuleCache::makeTransformedModule(ImportModule* transformer,
+				   const Vector<ImportModule*>& inputModules,
+				   const Vector<int>& options,
+				   const Vector<View*>& inputViews,
+				   Interpreter* owner,
+				   LineNumber lineNumber)
 {
   ModuleResultSymbol* ts = transformer->getModuleResultSymbol();
   if (ts == nullptr)
@@ -350,24 +351,40 @@ ModuleCache::makeModuleTransformation(ImportModule* transformer,
 	}
       name += ")";
     }
-  int t = Token::ropeToCode(name);
+  if (!inputViews.empty())
+    {
+      const char* sep = "[";
+      for (View* v : inputViews)
+	{
+	  name += sep;
+	  name += Token::name(v->id());
+	  sep = ", ";
+	}
+      name += "]";
+    }
   //
   //	Check if it is already in cache.
   //
-  ModuleMap::const_iterator c = moduleMap.find(t);
+  int nameCode = Token::ropeToCode(name);
+  ModuleMap::const_iterator c = moduleMap.find(nameCode);
   if (c != moduleMap.end())
     {
-      DebugAdvisory("using existing copy of " << name);
+      DebugAdvisory("using existing copy of module " << name);
       return c->second;
     }
 
-  ImportModule* transformed = ts->makeTransformation(t, inputModules, options, owner, lineNumber);
-  if (transformed != nullptr)
+  ImportModule* resultModule = ts->makeTransformedModule(nameCode,
+							 inputModules,
+							 options,
+							 inputViews,
+							 owner,
+							 lineNumber);
+  if (resultModule != nullptr)
     {
-      moduleMap[t] = transformed;
-      transformed->addUser(this);
+      moduleMap[nameCode] = resultModule;
+      resultModule->addUser(this);
     }
-  return transformed;
+  return resultModule;
 }
 
 int

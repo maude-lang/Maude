@@ -39,7 +39,7 @@ public:
   {
     SIMPLE_NAME,
     INSTANTIATION,
-    GENERATION
+    TRANSFORMATION
   };
   //
   //	A view expression is the name of a view or parameter:
@@ -51,7 +51,7 @@ public:
   //
   ViewExpression(ViewExpression* view, const Vector<ViewExpression*>& arguments);
   //
-  //	OR a call to a user-defined view generator with a
+  //	OR a call to a user-defined view transformer with a
   //	a vector of input modules and a vector of options:
   //
   ViewExpression(Token name,
@@ -60,7 +60,7 @@ public:
 
   Type getType() const;
   //
-  //	For the simple view and generator cases only.
+  //	For the simple view and transformer cases only.
   //
   Token getName() const;
   //
@@ -69,7 +69,7 @@ public:
   ViewExpression* getView() const;
   const Vector<ViewExpression*>& getArguments() const;
   //
-  //	For the generator case only.
+  //	For the transformer case only.
   //
   const Vector<ModuleExpression*>& getInputModules() const;
   const Vector<int>& getOptions() const;
@@ -81,7 +81,7 @@ private:
   const Type type;
   //
   //	This is a view name, a parameter name or the name of the module
-  //	defining a view generator.
+  //	defining a view transformer.
   //
   Token name;
   //
@@ -90,7 +90,7 @@ private:
   ViewExpression* view;
   Vector<ViewExpression*> arguments;
   //
-  //	For the generator case only.
+  //	For the transformer case only.
   //
   Vector<ModuleExpression*> inputModules;
   Vector<int> options;
@@ -107,7 +107,7 @@ ostream& operator<<(ostream& s, const ViewExpression* expr);
 inline Token
 ViewExpression::getName() const
 {
-  Assert(type == SIMPLE_NAME || type == GENERATION, "instantiation " << this);
+  Assert(type == SIMPLE_NAME || type == TRANSFORMATION, "instantiation " << this);
   return name;
 }
 
@@ -128,14 +128,14 @@ ViewExpression::getArguments() const
 inline const Vector<ModuleExpression*>&
 ViewExpression::getInputModules() const
 {
-  Assert(type == GENERATION, "not a generation");
+  Assert(type == TRANSFORMATION, "not a transformation");
   return inputModules;
 }
 
 inline const Vector<int>&
 ViewExpression::getOptions() const
 {
-  Assert(type == GENERATION, "not a generation");
+  Assert(type == TRANSFORMATION, "not a transformation");
   return options;
 }
 

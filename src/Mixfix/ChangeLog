@@ -1,5 +1,50 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* interpreter.cc (Interpreter::makeModule): use
+	makeTransformedModule()
+
+	* moduleCache.hh (class ModuleCache): makeModuleTransformation(I)
+	-> makeTransformedModule()
+
+	* viewCache.cc (ViewCache::makeTransformedView): incorporate
+	inputViews into name
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation): becomes
+	makeTransformedModule()
+	(ModuleCache::makeTransformedModule): incorporate inputViews into
+	name
+
+	* moduleResultSymbol.hh (class ModuleResultSymbol):
+	makeTransformation() -> makeTransformedModule()
+
+	* moduleResultSymbol.cc (ModuleResultSymbol::makeTransformation):
+	becomes makeTransformedModule()
+	(ModuleResultSymbol::makeTransformedModule): resultModule becomes
+	a user of input views
+
+	* viewExpression.cc: GENERATION -> TRANSFORMATION throughout
+
+	* viewExpression.hh: GENERATION -> TRANSFORMATION throughout
+
+	* interpreter.cc (Interpreter::handleArgument): call
+	makeTransformedView() rather than generateView()
+	(Interpreter::handleArgument): change terminology from generator
+	to transformer
+
+	* viewCache.hh (class ViewCache): generateView() ->
+	makeTransformedView()
+
+	* viewCache.cc (ViewCache::generateView): becomes
+	makeTransformedView()
+
+	* viewResultSymbol.hh (class ViewResultSymbol): generateView()
+	becomes makeTransformedView()
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): becomes
+	makeTransformedView()
+	(ViewResultSymbol::makeTransformedView): transformed view is an
+	user of input views
+
 	* moduleResultSymbol.hh (class ModuleResultSymbol): deleted data
 	member cachedTransformOp
 

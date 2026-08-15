@@ -37,11 +37,12 @@ public:
   ~ViewCache();
 
   View* makeViewInstantiation(View* view, const Vector<Argument*>& arguments);
-  View* generateView(ImportModule* generator,
-		     const Vector<ImportModule*>& inputModules,
-		     const Vector<int>& options,
-		     Interpreter* owner,
-		     LineNumber lineNumber);
+  View* makeTransformedView(ImportModule* transformer,
+			    const Vector<ImportModule*>& inputModules,
+			    const Vector<int>& options,
+			    const Vector<View*>& inputViews,
+			    Interpreter* owner,
+			    LineNumber lineNumber);
 
   int destructUnusedViews();
   void showCreatedViews(ostream& s) const;

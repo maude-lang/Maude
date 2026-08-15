@@ -80,12 +80,14 @@ ModuleResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 }
 
 ImportModule*
-ModuleResultSymbol::makeTransformation(int newModuleName,
-				       const Vector<ImportModule*>& inputModules,
-				       const Vector<int>& optionVec,
-				       Interpreter* owner,
-				       LineNumber lineNumber)
+ModuleResultSymbol::makeTransformedModule(int newModuleName,
+					  const Vector<ImportModule*>& inputModules,
+					  const Vector<int>& optionVec,
+					  const Vector<View*>& inputViews,
+					  Interpreter* owner,
+					  LineNumber lineNumber)
 {
+  DebugEnter("making module " << Token::name(newModuleName));
   ImportModule* transformModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();
   PointerMap qidMap;
@@ -93,11 +95,11 @@ ModuleResultSymbol::makeTransformation(int newModuleName,
   Symbol* transformOp = getTransformOp(metaOptions->symbol()->rangeComponent());
   if (transformOp == nullptr)
     return nullptr;
+
   Verbose("Attempting to make transformed module " << Token::name(newModuleName));
   //
   //	Make dag to be reduced.
   //
-  Vector<View*> inputViews;
   DagNode* startDag = makeStartDag(inputModules, metaOptions, inputViews, qidMap);
   DebugAdvisory("Start dag = " << startDag);
   //
@@ -143,11 +145,13 @@ ModuleResultSymbol::makeTransformation(int newModuleName,
 				       newModuleName))
 	    {
 	      //
-	      //	Our result module becomes a user of all the input modules and
-	      //	the transform module. If any of these change, it becomes stale.
+	      //	Our result module becomes a user of all the input modules and views
+	      //	and the transform module. If any of these change, it becomes stale.
 	      //
 	      for (ImportModule* m : inputModules)
 		m->addUser(resultModule);
+	      for (View* v : inputViews)
+		v->addUser(resultModule);
 	      transformModule->addUser(resultModule);
 	      //
 	      //	We pass it all the information used to construct it, so it

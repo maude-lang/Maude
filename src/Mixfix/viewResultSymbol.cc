@@ -77,13 +77,14 @@ ViewResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 }
 
 View*
-ViewResultSymbol::generateView(int newViewName,
-			       const Vector<ImportModule*>& inputModules,
-			       const Vector<int>& optionVec,
-			       Interpreter* owner,
-			       LineNumber lineNumber)
+ViewResultSymbol::makeTransformedView(int newViewName,
+				      const Vector<ImportModule*>& inputModules,
+				      const Vector<int>& optionVec,
+				      const Vector<View*>& inputViews,
+				      Interpreter* owner,
+				      LineNumber lineNumber)
 {
-  DebugEnter("generating " << Token::name(newViewName));
+  DebugEnter("making view " << Token::name(newViewName));
   ImportModule* ourModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();
   PointerMap qidMap;
@@ -96,7 +97,6 @@ ViewResultSymbol::generateView(int newViewName,
   //
   //	Make dag to be reduced.
   //
-  Vector<View*> inputViews;
   DagNode* startDag = makeStartDag(inputModules, metaOptions, inputViews, qidMap);
   DebugAdvisory("Start dag = " << startDag);
   //
@@ -123,21 +123,23 @@ ViewResultSymbol::generateView(int newViewName,
       if (viewFailure(metaView->symbol()))
 	{
 	  //
-	  //	We assume view generator will have returned an appropriate warning.
+	  //	We assume view transformer will have returned an appropriate warning.
 	  //
-	  Verbose("Failed to make generate view " << Token::name(newViewName));
+	  Verbose("Failed to make transformed view " << Token::name(newViewName));
 	}
       else
 	{
-	  Verbose("Generated view " << Token::name(newViewName));
+	  Verbose("Made transformed view " << Token::name(newViewName));
 	  if (View* resultView = metaLevel->downView(metaView, owner, newViewName))
 	    {
 	      //
-	      //	Our result module becomes a user of all the input modules and
-	      //	the generator module. If any of these change, it becomes stale.
+	      //	Our result module becomes a user of all the input modules and views
+	      //	and the transformer module. If any of these change, it becomes stale.
 	      //
 	      for (ImportModule* m : inputModules)
 		m->addUser(resultView);
+	      for (View* v : inputViews)
+		v->addUser(resultView);
 	      ourModule->addUser(resultView);
 	      DebugInfo(resultView << " is user of " << ourModule);
 	      //
@@ -149,12 +151,12 @@ ViewResultSymbol::generateView(int newViewName,
 	      resultView->setGenerationInfo(ourModule, inputModules, optionVec);
 	      return resultView;
 	    }
-	  IssueWarning(*transformOp << ": view generator " << QUOTE(transformOp) <<
+	  IssueWarning(*transformOp << ": view transformer " << QUOTE(transformOp) <<
 		       " returned bad view " << QUOTE(metaView) << ".");
 	}
     }
   else
-    IssueWarning(*transformOp << ": view generator " << QUOTE(transformOp) <<
+    IssueWarning(*transformOp << ": view transformer " << QUOTE(transformOp) <<
 		 " returned bad result term " << QUOTE(result) << ".");
   return nullptr;
 }

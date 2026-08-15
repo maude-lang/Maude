@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2019-2022 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2019-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -168,16 +168,17 @@ ViewCache::makeViewInstantiation(View* view, const Vector<Argument*>& arguments)
 }
 
 View*
-ViewCache::generateView(ImportModule* generator,
-			const Vector<ImportModule*>& inputModules,
-			const Vector<int>& options,
-			Interpreter* owner,
-			LineNumber lineNumber)
+ViewCache::makeTransformedView(ImportModule* transformer,
+			       const Vector<ImportModule*>& inputModules,
+			       const Vector<int>& options,
+			       const Vector<View*>& inputViews,
+			       Interpreter* owner,
+			       LineNumber lineNumber)
 {
-  ViewResultSymbol* vs = generator->getViewResultSymbol();
+  ViewResultSymbol* vs = transformer->getViewResultSymbol();
   if (vs == nullptr)
     {
-      IssueWarning(*generator << ": view generator module " << QUOTE(generator) <<
+      IssueWarning(*transformer << ": view transformer module " << QUOTE(transformer) <<
 		   " does not have a symbol with the ViewResultSymbol special attribute.");
       return nullptr;
     }
@@ -186,7 +187,7 @@ ViewCache::generateView(ImportModule* generator,
   //
   Rope name;
   
-  name += Token::name(generator->id());
+  name += Token::name(transformer->id());
   if (!inputModules.empty())
     {
       const char* sep = "[";
@@ -210,6 +211,17 @@ ViewCache::generateView(ImportModule* generator,
 	}
       name += ")";
     }
+  if (!inputViews.empty())
+    {
+      const char* sep = "[";
+      for (View* v : inputViews)
+	{
+	  name += sep;
+	  name += Token::name(v->id());
+	  sep = ", ";
+	}
+      name += "]";
+    }
   //
   //	Now check if a view having our name is already in cache.
   //
@@ -220,13 +232,18 @@ ViewCache::generateView(ImportModule* generator,
       DebugAdvisory("using existing copy of view " << name);
       return c->second;
     }
-  View* generated = vs->generateView(nameCode, inputModules, options, owner, lineNumber);
-  if (generated != nullptr)
+  View* resultView = vs->makeTransformedView(nameCode,
+					     inputModules,
+					     options,
+					     inputViews,
+					     owner,
+					     lineNumber);
+  if (resultView != nullptr)
     {
-      viewMap[nameCode] = generated;
-      generated->addUser(this);
+      viewMap[nameCode] = resultView;
+      resultView->addUser(this);
     }
-  return generated;
+  return resultView;
 }
 
 int

@@ -40,11 +40,12 @@ public:
   ImportModule* makeSummation(const Vector<ImportModule*>& modules);
   ImportModule* makeParameterCopy(int parameterName, ImportModule* module);
   ImportModule* makeModuleInstantiation(ImportModule* module, const Vector<Argument*>& arguments);
-  ImportModule* makeModuleTransformation(ImportModule* transformer,
-					 const Vector<ImportModule*>& modules,
-					 const Vector<int>& options,
-					 Interpreter* owner,
-					 LineNumber lineNumber);
+  ImportModule* makeTransformedModule(ImportModule* transformer,
+				      const Vector<ImportModule*>& inputModules,
+				      const Vector<int>& options,
+				      const Vector<View*>& inputViews,
+				      Interpreter* owner,
+				      LineNumber lineNumber);
   int destructUnusedModules();
   void showCreatedModules(ostream& s) const;
   void latexShowCreatedModules(ostream& s) const;
