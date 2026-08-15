@@ -117,10 +117,17 @@ ViewResultSymbol::makeTransformedView(int newViewName,
       FreeDagNode* r = safeCastNonNull<FreeDagNode*>(result);
       handleMessageList(r->getArgument(1), lineNumber);
       //
-      //	Deal with view? result.
+      //	Deal with view list.
       //
       DagNode* metaView = r->getArgument(0);
-      if (viewFailure(metaView->symbol()))
+      Symbol* topSymbol = metaView->symbol();
+      if (multipleViews(topSymbol))
+	{
+	  IssueWarning(*transformOp <<
+		       ": expected view transformer " << QUOTE(transformOp) <<
+		       " to return a single view.");
+	}
+      else if (noViews(topSymbol))
 	{
 	  //
 	  //	We assume view transformer will have returned an appropriate warning.

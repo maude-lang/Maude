@@ -101,21 +101,23 @@ parenExpr	:	'(' moduleExpr ')'
 /*
  *	User-defined module transformations.
  */
-transformExpr	:	token transInput optTransOptions
+transformExpr	:	token transInput optTransOptions optInputViews
 			{
 			  Vector<int> options;
 			  for (Token t : lexerBubble)
 			    options.push_back(t.code());
-			  $$ = new ModuleExpression($1, *$2, options);
+			  $$ = new ModuleExpression($1, *$2, options, *$4);
 			  delete $2;
+			  delete $4;
 			}
-		|	token transOptions
+		|	token transOptions optInputViews
 			{
 			  Vector<int> options;
 			  for (Token t : lexerBubble)
 			    options.push_back(t.code());
 			  Vector<ModuleExpression*> empty;
-			  $$ = new ModuleExpression($1, empty, options);
+			  $$ = new ModuleExpression($1, empty, options, *$3);
+			  delete $3;
 			}
 		;
 
@@ -152,6 +154,16 @@ moduleExprList	:	moduleExprList ',' moduleExpr
 			}
 		;
 
+optInputViews	:	'[' instantArgs ']'
+			{
+			  $$ = $2;
+			}
+		|
+			{
+			  $$ = new Vector<ViewExpression*>;
+			}
+		;
+
 /*
  *	View expressions (parameters are treated as uninstantiated views for syntax purposes).
  */
@@ -164,21 +176,24 @@ viewExpr	:	viewExpr '{' instantArgs '}'
 			{
 			  $$ = new ViewExpression($1);
 			}
-		|	token transInput optTransOptions
+		|	token transInput optTransOptions optInputViews
 			{
 			  Vector<int> options;
 			  for (Token t : lexerBubble)
 			    options.push_back(t.code());
-			  $$ = new ViewExpression($1, *$2, options);
+			  $$ = new ViewExpression($1, *$2, options, *$4);
 			  delete $2;
+			  delete $4;
+
 			}
-		|	token transOptions
+		|	token transOptions optInputViews
 			{
 			  Vector<int> options;
 			  for (Token t : lexerBubble)
 			    options.push_back(t.code());
 			  Vector<ModuleExpression*> empty;
-			  $$ = new ViewExpression($1, empty, options);
+			  $$ = new ViewExpression($1, empty, options, *$3);
+			  delete $3;
 			}
 		;
 

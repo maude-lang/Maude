@@ -283,7 +283,7 @@ int yylex(YYSTYPE* lvalp);
 /*
  *	Nonterminals that return Vector<ViewExpression*>*.
  */
-%type <yyViewExpressionVector> instantArgs
+%type <yyViewExpressionVector> instantArgs optInputViews
 
 %start top
 

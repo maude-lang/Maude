@@ -52,11 +52,12 @@ public:
   ViewExpression(ViewExpression* view, const Vector<ViewExpression*>& arguments);
   //
   //	OR a call to a user-defined view transformer with a
-  //	a vector of input modules and a vector of options:
+  //	a vector of input modules, a vector of options and a vector of inputViews:
   //
   ViewExpression(Token name,
 		 const Vector<ModuleExpression*>& inputModules,
-		 const Vector<int>& options);
+		 const Vector<int>& options,
+		 const Vector<ViewExpression*>& inputViews);
 
   Type getType() const;
   //

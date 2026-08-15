@@ -1,7 +1,13 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* metaDownView.cc (MetaLevel::downModuleExpression): pass dummy
+	input views to ModuleExpression()
+	(MetaLevel::downViewExpression): pass dummy input views to
+	ViewExpression()
+
 	* metaUpModule.cc (MetaLevel::upArgument): GENERATION ->
 	TRANSFORMATION
+	(MetaLevel::upModuleExpression): TRANSFORM -> TRANSFORMATION
 
 	* metaLevel.hh (class MetaLevel): added decl for
 	upViewExpressionList()

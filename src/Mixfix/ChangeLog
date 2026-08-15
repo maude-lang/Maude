@@ -1,5 +1,44 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* viewExpression.hh (class ViewExpression): updated decl for
+	transformation ctor
+
+	* viewExpression.cc (ViewExpression::ViewExpression): take
+	inputViews
+
+	* moduleExpression.hh (class ModuleExpression): updated decl for
+	transformation ctor
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression): take
+	inputViews
+
+	* modules.yy (transformExpr): pass inputViews to
+	ModuleExpression()
+	(viewExpr): pass inputViews toViewExpression ()
+
+
+	* top.yy: added nonterminal optInputViews
+
+	* modules.yy (optInputViews): added
+	(transformExpr): added optInputViews
+	(viewExpr): added optInputViews
+
+	* moduleExpression.cc: TRANSFORM -> TRANSFORMATION throughout
+
+	* interpreter.cc (Interpreter::makeModule): TRANSFORM ->
+	TRANSFORMATION
+
+	* moduleExpression.hh: TRANSFORM -> TRANSFORMATION throughout
+
+	* viewResultSymbol.cc (ViewResultSymbol::makeTransformedView): use
+	multipleViews() and noViews()
+
+	* moduleResultSymbol.cc
+	(ModuleResultSymbol::makeTransformedModule): added {}s
+
+	* resultSymbol.hh (ResultSymbol::viewFailure): becomes noViews()
+	(ResultSymbol::multipleViews): added
+
 	* interpreter.cc (Interpreter::makeModule): use
 	makeTransformedModule()
 

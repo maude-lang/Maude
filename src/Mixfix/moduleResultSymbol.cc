@@ -125,9 +125,11 @@ ModuleResultSymbol::makeTransformedModule(int newModuleName,
       DagNode* modules = r->getArgument(0);
       Symbol* topSymbol = modules->symbol();
       if (multipleModules(topSymbol))
-	IssueWarning(*transformOp <<
-		     ": expected module transformer " << QUOTE(transformOp) <<
-		     " to return a single module.");
+	{
+	  IssueWarning(*transformOp <<
+		       ": expected module transformer " << QUOTE(transformOp) <<
+		       " to return a single module.");
+	}
       else if (noModules(topSymbol))
 	{
 	  //

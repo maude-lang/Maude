@@ -983,7 +983,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	  }
 	break;
       }
-    case ModuleExpression::TRANSFORM:
+    case ModuleExpression::TRANSFORMATION:
       {
 	Token name = expr->getModuleName();
 	if (ImportModule* fm = getModuleOrIssueWarning(name.code(), name.getLineNr()))

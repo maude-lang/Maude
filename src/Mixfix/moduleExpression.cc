@@ -81,8 +81,9 @@ ModuleExpression::ModuleExpression(ModuleExpression* module, const Vector<ViewEx
 
 ModuleExpression::ModuleExpression(Token moduleName,
 				   const Vector<ModuleExpression*>& inputModules,
-				   const Vector<int>& options)
-  : type(TRANSFORM),
+				   const Vector<int>& options,
+				   const Vector<ViewExpression*>& inputViews)
+  : type(TRANSFORMATION),
     moduleName(moduleName),
     inputModules(inputModules),
     options(options)
@@ -113,7 +114,7 @@ ModuleExpression::deepSelfDestruct()
 	  v->deepSelfDestruct();
 	break;
       }
-    case TRANSFORM:
+    case TRANSFORMATION:
       {
 	for (ModuleExpression* m : inputModules)
 	  m->deepSelfDestruct();
@@ -177,7 +178,7 @@ operator<<(ostream& s, const ModuleExpression* expr)
 	s << '}';
 	break;
       }
-    case ModuleExpression::TRANSFORM:
+    case ModuleExpression::TRANSFORMATION:
       {
 	const Vector<ModuleExpression*>& inputModules = expr->getInputModules();
 	const Vector<int>& options = expr->getOptions();
@@ -272,7 +273,7 @@ ModuleExpression::latexPrint(ostream& s, const Module* enclosingModule) const
 	s << "\\maudeRightBrace";
 	break;
       }
-    case TRANSFORM:
+    case TRANSFORMATION:
       {
 	//
 	//	Transformer specification.

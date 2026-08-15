@@ -244,7 +244,7 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
 	args[1] = upArguments(e->getArguments(), qidMap);
 	return instantiationSymbol->makeDagNode(args);
       }
-    case ModuleExpression::TRANSFORM:
+    case ModuleExpression::TRANSFORMATION:
       {
 	Vector<DagNode*> args(3);
 	args[0] = upQid(e->getModuleName().code(), qidMap);

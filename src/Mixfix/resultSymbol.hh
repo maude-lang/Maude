@@ -20,7 +20,8 @@ protected:
 			DagNode* metaOptions,
 			const Vector<View*>& inputViews,
 			PointerMap& qidMap);
-  bool viewFailure(Symbol* s) const;
+  bool multipleViews(Symbol* s) const;
+  bool noViews(Symbol* s) const;
   bool multipleModules(Symbol* s) const;
   bool noModules(Symbol* s) const;
   void handleMessageList(DagNode* messages, LineNumber lineNumber) const;
@@ -52,7 +53,13 @@ private:
 };
 
 inline bool
-ResultSymbol::viewFailure(Symbol* s) const
+ResultSymbol::multipleViews(Symbol* s) const
+{
+  return s == viewListSymbol;
+}
+
+inline bool
+ResultSymbol::noViews(Symbol* s) const
 {
   return s == nilViewListSymbol;
 }

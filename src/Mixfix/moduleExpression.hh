@@ -37,7 +37,7 @@ public:
     SUMMATION,
     RENAMING,
     INSTANTIATION,
-    TRANSFORM
+    TRANSFORMATION
   };
 
   ModuleExpression(Token moduleName);
@@ -46,7 +46,8 @@ public:
   ModuleExpression(ModuleExpression* module, const Vector<ViewExpression*>& arguments);
   ModuleExpression(Token moduleName,
 		   const Vector<ModuleExpression*>& inputModules,
-		   const Vector<int>& options);
+		   const Vector<int>& options,
+		   const Vector<ViewExpression*>& inputViews);
 
   Type getType() const;
   Token getModuleName() const;
@@ -101,7 +102,7 @@ ModuleExpression::getType() const
 inline Token
 ModuleExpression::getModuleName() const
 {
-  Assert(type == MODULE || type == TRANSFORM, "not a named module");
+  Assert(type == MODULE || type == TRANSFORMATION, "not a named module");
   return moduleName;
 }
 
@@ -138,14 +139,14 @@ ModuleExpression::getArguments() const
 inline const Vector<ModuleExpression*>&
 ModuleExpression::getInputModules() const
 {
-  Assert(type == TRANSFORM, "not a transform");
+  Assert(type == TRANSFORMATION, "not a transform");
   return inputModules;
 }
 
 inline const Vector<int>&
 ModuleExpression::getOptions() const
 {
-  Assert(type == TRANSFORM, "not a transform");
+  Assert(type == TRANSFORMATION, "not a transform");
   return options;
 }
 

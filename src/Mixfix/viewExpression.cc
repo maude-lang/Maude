@@ -55,7 +55,8 @@ ViewExpression::ViewExpression(ViewExpression* view, const Vector<ViewExpression
 
 ViewExpression::ViewExpression(Token name,
 			       const Vector<ModuleExpression*>& inputModules,
-			       const Vector<int>& options)
+			       const Vector<int>& options,
+			       const Vector<ViewExpression*>& inputViews)
   : type(TRANSFORMATION),
     name(name),
     inputModules(inputModules),
