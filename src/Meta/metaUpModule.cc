@@ -1391,6 +1391,16 @@ MetaLevel::upArgument(const Argument* argument, PointerMap& qidMap)
 }
 
 DagNode*
+MetaLevel::upViewExpressionList(const Vector<View*>& viewList, PointerMap& qidMap)
+{
+  Index nrArguments = viewList.size();
+  Vector<DagNode*> args(nrArguments);
+  for (Index i = 0; i < nrArguments; ++i)
+    args[i] = upViewExpression(viewList[i], qidMap);
+  return metaArgSymbol->makeDagNode(args);
+}
+
+DagNode*
 MetaLevel::upViewExpression(const View* view, PointerMap& qidMap)
 {
   if (const View* baseView = view->getBaseView())

@@ -137,12 +137,12 @@ ResultSymbol::getTransformOp(const ConnectedComponent* qidKind)
       //
       //	Need to search symbols for a suitable operator.
       //	Full generality is:
-      //	  structured module list
+      //	  nonflat module list
       //	  argument list
       //	  module expression list
-      //	  flattened module list
       //	  view list
       //	  view expression list
+      //	  flat module list
       //	But we allow any initial segment with the correct range.
       //
       const ConnectedComponent* rangeKind = rangeComponent();
@@ -152,9 +152,9 @@ ResultSymbol::getTransformOp(const ConnectedComponent* qidKind)
       domain[0] = nilModuleListSymbol->rangeComponent();
       domain[1] = qidKind;
       domain[2] = qidKind;
-      domain[3] = nilModuleListSymbol->rangeComponent();
-      domain[4] = nilViewListSymbol->rangeComponent();
-      domain[5] = qidKind;
+      domain[3] = nilViewListSymbol->rangeComponent();
+      domain[4] = qidKind;
+      domain[5] = nilModuleListSymbol->rangeComponent();
 
       bool cachedHasTransformFlag = false;
       Symbol* conflictOp = nullptr;
@@ -311,34 +311,69 @@ ResultSymbol::upViewList(const Vector<View*>& inputViews, PointerMap& qidMap) co
     viewListSymbol->makeDagNode(metaViews);
 }
 
-/*
+
 DagNode*
 ResultSymbol::makeStartDag(const Vector<ImportModule*>& inputModules,
 			   DagNode* metaOptions,
-			   const Vector<int>& inputViews,
-			   PointerMap qidMap)
+			   const Vector<View*>& inputViews,
+			   PointerMap& qidMap)
 {
   Assert(cachedTransformOp != nullptr, "no transform op");
-  Index nrArgs = transformOp->arity();
+
+  Index nrArgs = cachedTransformOp->arity();
   Vector<DagNode*> args(nrArgs);
   switch (nrArgs)
     {
     case 6:
-      args[5] = upModuleList(true, inputModules, qidMap);
+      {
+	//
+	//	List of flat modules.
+	//
+	args[5] = upModuleList(true, inputModules, qidMap);
+	// fall thru
+      }
     case 5:
-      args[4] = upModuleList(true, inputModules, qidMap);
+      {
+	//
+	//	List of view expressions.
+	//
+	args[4] = shareWith->getMetaLevel()->upViewExpressionList(inputViews, qidMap);
+	// fall thru
+      }
     case 4:
-      args[3] = upModuleList(true, inputModules, qidMap);
+      {
+	//
+	//	List of views.
+	//
+	args[3] = upViewList(inputViews, qidMap);
+	// fall thru
+      }
     case 3:
-      args[2] = metaLevel->upModuleExpressionList(inputModules, qidMap);
+      {
+	//
+	//	List of module expressions.
+	//
+	args[2] = shareWith->getMetaLevel()->upModuleExpressionList(inputModules, qidMap);
+	// fall thru
+      }
     case 2:
-      args[1] = metaOptions;
+      {
+	//
+	//	List of options.
+	//
+	args[1] = metaOptions;
+	// fall thru
+      }
     case 1:
-      args[0] = upModuleList(false, inputModules, qidMap);
+      {
+	//
+	//	List of nonflat modules.
+	//
+	args[0] = upModuleList(false, inputModules, qidMap);
+      }
     }
-  return transformOp->makeDagNode(args);
+  return cachedTransformOp->makeDagNode(args);
 }
-*/
 
 Rope
 ResultSymbol::colorize(const Rope& text)

@@ -90,57 +90,15 @@ ModuleResultSymbol::makeTransformation(int newModuleName,
   MetaLevel* metaLevel = getMetaLevel();
   PointerMap qidMap;
   DagNode* metaOptions = metaLevel->upQidList(optionVec, qidMap);
-  const ConnectedComponent* qidKind = metaOptions->symbol()->rangeComponent();
-  if (cachedTransformOp == nullptr)
-    {
-      //
-      //	Need to find suitable operator.
-      //
-      const ConnectedComponent* moduleKind = domainComponent(0);
-      const ConnectedComponent* transformResultKind = rangeComponent();
-      for (Symbol* s : transformModule->getSymbols())
-	{
-	  if (s->arity() == 2 && s->rangeComponent() == transformResultKind)
-	    {
-	      if ((s->domainComponent(0) == moduleKind &&
-		  s->domainComponent(1) == qidKind) ||
-		  (s->domainComponent(0) == qidKind &&
-		   s->domainComponent(1) == moduleKind))
-		{
-		  if (cachedTransformOp == nullptr)
-		    cachedTransformOp = s;
-		  else
-		    {
-		      IssueWarning(*transformModule << ": multiple transform operators " <<
-				   QUOTE(cachedTransformOp) << " and " <<
-				   QUOTE(s) << " in module " << QUOTE(transformModule) << ".");
-		      cachedTransformOp = nullptr;
-		      return nullptr;
-		    }
-		}
-	    }
-	}
-      if (cachedTransformOp == nullptr)
-	{
-	  IssueWarning(*transformModule <<
-		       ": didn't find suitable module transform operator in module " <<
-		       QUOTE(transformModule) << ".");
-	  return nullptr;
-	}
-    }
+  Symbol* transformOp = getTransformOp(metaOptions->symbol()->rangeComponent());
+  if (transformOp == nullptr)
+    return nullptr;
   Verbose("Attempting to make transformed module " << Token::name(newModuleName));
   //
   //	Make dag to be reduced.
   //
-  //	Put options first to use flattened modules.
-  //
-  bool flat = cachedTransformOp->domainComponent(0) == qidKind;
-  Vector<DagNode*> args(2);
-  args[0] = upModuleList(flat, inputModules, qidMap);
-  args[1] = metaOptions;
-  if (flat)
-    swap(args[0], args[1]);
-  DagNode* startDag = cachedTransformOp->makeDagNode(args);
+  Vector<View*> inputViews;
+  DagNode* startDag = makeStartDag(inputModules, metaOptions, inputViews, qidMap);
   DebugAdvisory("Start dag = " << startDag);
   //
   //	Reduce it using user's code.
@@ -165,8 +123,8 @@ ModuleResultSymbol::makeTransformation(int newModuleName,
       DagNode* modules = r->getArgument(0);
       Symbol* topSymbol = modules->symbol();
       if (multipleModules(topSymbol))
-	IssueWarning(*cachedTransformOp <<
-		     ": expected module transformer " << QUOTE(cachedTransformOp) <<
+	IssueWarning(*transformOp <<
+		     ": expected module transformer " << QUOTE(transformOp) <<
 		     " to return a single module.");
       else if (noModules(topSymbol))
 	{
@@ -200,12 +158,12 @@ ModuleResultSymbol::makeTransformation(int newModuleName,
 	      resultModule->setTransformInfo(transformModule, inputModules, optionVec);
 	      return resultModule;
 	    }
-	  IssueWarning(*cachedTransformOp << ": module transformer " << QUOTE(cachedTransformOp) <<
+	  IssueWarning(*transformOp << ": module transformer " << QUOTE(transformOp) <<
 		       " returned bad module " << QUOTE(modules) << ".");
 	}
     }
   else
-    IssueWarning(*cachedTransformOp << ": module transformer " << QUOTE(cachedTransformOp) <<
+    IssueWarning(*transformOp << ": module transformer " << QUOTE(transformOp) <<
 		 " returned bad result term " << QUOTE(result) << ".");
   return nullptr;
 }

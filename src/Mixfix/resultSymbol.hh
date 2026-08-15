@@ -16,6 +16,10 @@ public:
 protected:
   MetaLevel* getMetaLevel() const;
   Symbol* getTransformOp(const ConnectedComponent* qidKind);
+  DagNode* makeStartDag(const Vector<ImportModule*>& inputModules,
+			DagNode* metaOptions,
+			const Vector<View*>& inputViews,
+			PointerMap& qidMap);
   bool viewFailure(Symbol* s) const;
   bool multipleModules(Symbol* s) const;
   bool noModules(Symbol* s) const;

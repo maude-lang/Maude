@@ -1,7 +1,11 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* metaLevel.hh (class MetaLevel): added decl for
+	upViewExpressionList()
+
 	* metaUpModule.cc (MetaLevel::upModule): deleted commented out
 	line
+	(MetaLevel::upViewExpressionList): added
 
 	* metaLevel.hh (class MetaLevel): updated decls for upView() and
 	View* version of upHeader()

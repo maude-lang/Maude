@@ -1,5 +1,22 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* moduleResultSymbol.hh (class ModuleResultSymbol): deleted data
+	member cachedTransformOp
+
+	* moduleResultSymbol.cc (ModuleResultSymbol::makeTransformation):
+	use getTransformOp() and makeStartDag()
+
+	* viewResultSymbol.cc (ViewResultSymbol::generateView): use
+	makeStartDag()
+
+	* resultSymbol.cc (ResultSymbol::getTransformOp): move list of
+	flat modules to the end of the argument list
+
+	* resultSymbol.hh (class ResultSymbol): added decl for
+	makeStartDag()
+
+	* resultSymbol.cc (ResultSymbol::makeStartDag): added
+
 	* viewResultSymbol.hh: generators -> transformers in comment
 
 	* resultSymbol.hh (class ResultSymbol): added decl for

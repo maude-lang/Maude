@@ -92,18 +92,12 @@ ViewResultSymbol::generateView(int newViewName,
   if (transformOp == nullptr)
     return nullptr;
 
-  Verbose("Attempting to generate view " << Token::name(newViewName));
+  Verbose("Attempting to make transformed view " << Token::name(newViewName));
   //
   //	Make dag to be reduced.
   //
-  Index nrArgs = transformOp->arity();
-  Vector<DagNode*> args(nrArgs);
-  args[0] = upModuleList(false, inputModules, qidMap);
-  args[1] = metaOptions;
-  args[2] = metaLevel->upModuleExpressionList(inputModules, qidMap);
-  if (nrArgs == 4)
-    args[3] = upModuleList(true, inputModules, qidMap);
-  DagNode* startDag = transformOp->makeDagNode(args);
+  Vector<View*> inputViews;
+  DagNode* startDag = makeStartDag(inputModules, metaOptions, inputViews, qidMap);
   DebugAdvisory("Start dag = " << startDag);
   //
   //	Reduce it using user's code.
