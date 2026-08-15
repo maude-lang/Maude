@@ -2,6 +2,8 @@
 
 	* prelude.maude: id-hook TransformResultSymbol ->
 	ModuleResultSymbol
+	moved view lists from VIEW-GENERATOR to fmod EXTENDED-META-LEVEL
+	and completed them; added op-hook viewListSymbol
 
 2026-07-27  Saruman the White  <eker@eker10>
 

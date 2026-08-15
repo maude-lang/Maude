@@ -1,5 +1,7 @@
 2026-08-14  Saruman the White  <eker@eker10>
 
+	* resultSignature.cc: added viewListSymbol
+
 	* entry.cc (MixfixModule::addOpDeclaration):
 	TRANSFORM_RESULT_SYMBOL -> MODULE_RESULT_SYMBOL
 
