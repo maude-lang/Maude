@@ -3293,7 +3293,7 @@ fmod MODULE-TRANSFORMER is
   sort TransformResult .
   op {_,_} : ModuleList SystemMsgList -> TransformResult
     [special (
-      id-hook TransformResultSymbol
+      id-hook ModuleResultSymbol
       op-hook nilModuleListSymbol	(nil : ~> ModuleList)
       op-hook moduleListSymbol		(_,_ : ModuleList ModuleList ~> ModuleList)
       op-hook nilSystemMsgListSymbol	(nil : ~> SystemMsgList)

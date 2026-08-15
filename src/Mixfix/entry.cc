@@ -414,16 +414,16 @@ MixfixModule::addOpDeclaration(Token prefixName,
     }
   else
     {
-      if (symbolType.getBasicType() == SymbolType::TRANSFORM_RESULT_SYMBOL)
+      if (symbolType.getBasicType() == SymbolType::MODULE_RESULT_SYMBOL)
 	{
-	  if (transformResultSymbol == nullptr)
-	    transformResultSymbol = safeCastNonNull<TransformResultSymbol*>(symbol);
+	  if (moduleResultSymbol == nullptr)
+	    moduleResultSymbol = safeCastNonNull<ModuleResultSymbol*>(symbol);
 	  else
 	    {
 	      IssueWarning(LineNumber(prefixName.lineNumber()) <<
-			   ": cannot have both " << QUOTE(transformResultSymbol) <<
+			   ": cannot have both " << QUOTE(moduleResultSymbol) <<
 			   " and " << QUOTE(symbol) <<
-			   " with the TransformResultSymbol special attribute.");
+			   " with the ModuleResultSymbol special attribute.");
 	    }
 	}
         else if (symbolType.getBasicType() == SymbolType::VIEW_RESULT_SYMBOL)

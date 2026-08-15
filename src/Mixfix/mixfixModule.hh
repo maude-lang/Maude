@@ -235,7 +235,7 @@ public:
 			  Vector<Term*>& terms) const;
   Sort* getStrategyRangeSort() const;
   const NatSet& getObjectSymbols() const;
-  TransformResultSymbol* getTransformResultSymbol() const;
+  ModuleResultSymbol* getModuleResultSymbol() const;
   ViewResultSymbol* getViewResultSymbol() const;
   //
   //	Find functions.
@@ -1080,7 +1080,7 @@ private:
   SMT_Info smtInfo;
   SMT_Status smtStatus;
 
-  TransformResultSymbol* transformResultSymbol = nullptr;
+  ModuleResultSymbol* moduleResultSymbol = nullptr;
   ViewResultSymbol* viewResultSymbol = nullptr;
 
   static const char* latexRed;
@@ -1422,10 +1422,10 @@ MixfixModule::nonTerminal(const Sort* sort, NonTerminalType type)
   return nonTerminal(sort->component()->getIndexWithinModule(), type);
 }
 
-inline TransformResultSymbol*
-MixfixModule::getTransformResultSymbol() const
+inline ModuleResultSymbol*
+MixfixModule::getModuleResultSymbol() const
 {
-  return transformResultSymbol;
+  return moduleResultSymbol;
 }
 
 inline ViewResultSymbol*

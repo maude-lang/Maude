@@ -76,7 +76,7 @@ class MaudeLatexBuffer;
 class CommutativeDecomposeEqualitySymbol;
 class PrintSettings;
 class ResultSymbol;
-class TransformResultSymbol;
+class ModuleResultSymbol;
 class ViewResultSymbol;
 
 //

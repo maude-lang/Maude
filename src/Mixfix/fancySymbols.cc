@@ -193,8 +193,8 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new PrngManagerSymbol(name);
     case SymbolType::OBJECT_CONSTRUCTOR_SYMBOL:
       return new ObjectConstructorSymbol(name);
-    case SymbolType::TRANSFORM_RESULT_SYMBOL:
-      return new TransformResultSymbol(name);
+    case SymbolType::MODULE_RESULT_SYMBOL:
+      return new ModuleResultSymbol(name);
     case SymbolType::VIEW_RESULT_SYMBOL:
       return new ViewResultSymbol(name);
     }

@@ -21,7 +21,7 @@
 */
 
 //
-//      Class for transform result symbols.
+//      Class for module result symbols.
 //
 //	They don't have any special operational semantics but serve to
 //	identify kinds used for user-defined module operations and to
@@ -31,12 +31,12 @@
 #define _moduleResultSymbol_hh_
 #include "resultSymbol.hh"
 
-class TransformResultSymbol : public ResultSymbol
+class ModuleResultSymbol : public ResultSymbol
 {
-  NO_COPYING(TransformResultSymbol);
+  NO_COPYING(ModuleResultSymbol);
 
 public:
-  TransformResultSymbol(int id);
+  ModuleResultSymbol(int id);
   
   ImportModule* makeTransformation(int newModuleName,
 				   const Vector<ImportModule*>& inputModules,

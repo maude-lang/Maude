@@ -1,5 +1,39 @@
 2026-08-14  Saruman the White  <eker@eker10>
 
+	* entry.cc (MixfixModule::addOpDeclaration):
+	TRANSFORM_RESULT_SYMBOL -> MODULE_RESULT_SYMBOL
+
+	* symbolType.hh (enum BasicTypes): TRANSFORM_RESULT_SYMBOL ->
+	MODULE_RESULT_SYMBOL
+
+	* specialSymbolTypes.cc: TRANSFORM_RESULT_SYMBOL ->
+	MODULE_RESULT_SYMBOL; TransformResultSymbol -> ModuleResultSymbol
+
+	* moduleCache.cc (ModuleCache::makeModuleTransformation):
+	getTransformResultSymbol() -> getModuleResultSymbol()
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol):
+	TRANSFORM_RESULT_SYMBOL -> MODULE_RESULT_SYMBOL;
+	TransformResultSymbol -> ModuleResultSymbol
+
+	* entry.cc (MixfixModule::addOpDeclaration): transformResultSymbol
+	-> moduleResultSymbol
+
+	* mixfixModule.hh (class MixfixModule): class
+	TransformResultSymbol -> class ModuleResultSymbol;
+	transformResultSymbol -> moduleResultSymbol
+	(MixfixModule::getTransformResultSymbol): becomes
+	getModuleResultSymbol()
+
+	* mixfix.hh: class TransformResultSymbol -> class
+	ModuleResultSymbol
+
+	* moduleResultSymbol.cc: class TransformResultSymbol -> class
+	ModuleResultSymbol
+
+	* moduleResultSymbol.hh: class TransformResultSymbol -> class
+	ModuleResultSymbol
+
 	* moduleCache.cc: transformResultSymbol.hh ->
 	moduleResultSymbol.hh
 

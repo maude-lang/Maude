@@ -21,7 +21,7 @@
 */
 
 //
-//      Implementation for class TransformResultSymbol.
+//      Implementation for class ModuleResultSymbol.
 //
 
 //      utility stuff
@@ -54,37 +54,37 @@
 //	mixfix class definitions
 #include "moduleResultSymbol.hh"
 
-TransformResultSymbol::TransformResultSymbol(int id)
+ModuleResultSymbol::ModuleResultSymbol(int id)
   : ResultSymbol(id, 2)
 {
 }
 
 bool
-TransformResultSymbol::attachData(const Vector<Sort*>& opDeclaration,
+ModuleResultSymbol::attachData(const Vector<Sort*>& opDeclaration,
 				  const char* purpose,
 				  const Vector<const char*>& data)
 {
-  if (strcmp(purpose, "TransformResultSymbol") == 0)
+  if (strcmp(purpose, "ModuleResultSymbol") == 0)
     return true;
   return ResultSymbol::attachData(opDeclaration, purpose, data);
 }
 
 void
-TransformResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
+ModuleResultSymbol::getDataAttachments(const Vector<Sort*>& opDeclaration,
 					    Vector<const char*>& purposes,
 					    Vector<Vector<const char*>>& data)
 {
-  purposes.push_back("TransformResultSymbol");
+  purposes.push_back("ModuleResultSymbol");
   data.resize(data.size() + 1);
   ResultSymbol::getDataAttachments(opDeclaration, purposes, data);
 }
 
 ImportModule*
-TransformResultSymbol::makeTransformation(int newModuleName,
-					  const Vector<ImportModule*>& inputModules,
-					  const Vector<int>& optionVec,
-					  Interpreter* owner,
-					  LineNumber lineNumber)
+ModuleResultSymbol::makeTransformation(int newModuleName,
+				       const Vector<ImportModule*>& inputModules,
+				       const Vector<int>& optionVec,
+				       Interpreter* owner,
+				       LineNumber lineNumber)
 {
   ImportModule* transformModule = safeCastNonNull<ImportModule*>(getModule());
   MetaLevel* metaLevel = getMetaLevel();

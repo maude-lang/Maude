@@ -1,3 +1,8 @@
+2026-08-14  Saruman the White  <eker@eker10>
+
+	* prelude.maude: id-hook TransformResultSymbol ->
+	ModuleResultSymbol
+
 2026-07-27  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added typeExists() descent function; use

@@ -314,7 +314,7 @@ ModuleCache::makeModuleTransformation(ImportModule* transformer,
 				      Interpreter* owner,
 				      LineNumber lineNumber)
 {
-  TransformResultSymbol* ts = transformer->getTransformResultSymbol();
+  ModuleResultSymbol* ts = transformer->getModuleResultSymbol();
   if (ts == nullptr)
     {
       IssueWarning(*transformer << ": transformer module " << QUOTE(transformer) <<
