@@ -639,6 +639,29 @@ Interpreter::getModuleOrIssueWarning(int name, LineNumber lineNumber)
   return nullptr;
 }
 
+bool
+Interpreter::makeInputViews(const Vector<ViewExpression*>& arguments,
+			    EnclosingObject* enclosingObject,
+			    LineNumber lineNumber,
+			    Vector<View*>& inputViews)
+{
+  for (ViewExpression* ve : arguments)
+    {
+      Argument* a = handleArgument(ve, enclosingObject, nullptr, NONE);
+      if (a == nullptr)
+	return false;
+      View* v = safeCastNonNull<View*>(a);
+      if (v->hasBoundParameters())
+	{
+	  IssueWarning(lineNumber << ": input view to transformation " << v <<
+				     " has bound parameters.");
+	  return false;
+	}
+      inputViews.push_back(v);
+    }
+  return true;
+}
+
 Argument*
 Interpreter::handleArgument(const ViewExpression* expr,
 			    EnclosingObject* enclosingObject,
@@ -649,7 +672,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
   //	An argument must be the name of a parameter from an enclosing object or the name of
   //	a view or an instantiation of a view, or the transformation of a view.
   //	In all cases the fromTheory of the view or the theory of the parameter must match
-  //	requiredParameterTheory.
+  //	requiredParameterTheory unless the latter is nullptr
   //
   switch (expr->getType())
     {
@@ -674,7 +697,8 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		//
 		ImportModule* enclosingObjectParameterTheory =
 		  enclosingObject->getParameterTheory(index);
-		if (enclosingObjectParameterTheory != requiredParameterTheory)
+		if (requiredParameterTheory != nullptr &&
+		    enclosingObjectParameterTheory != requiredParameterTheory)
 		  {
 		    IssueWarning(name.getLineNr() << ": parameter " << QUOTE(name) <<
 				 " from enclosing " << enclosingObject->getObjectType() <<
@@ -701,7 +725,7 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		break;
 	      }
 	    ImportModule* fromTheory = v->getFromTheory();
-	    if (fromTheory != requiredParameterTheory)
+	    if (requiredParameterTheory != nullptr && fromTheory != requiredParameterTheory)
 	      {
 		IssueWarning(name.getLineNr() << ": view " << QUOTE(name) <<
 			     " is from theory " << QUOTE(fromTheory) <<
@@ -828,35 +852,39 @@ Interpreter::handleArgument(const ViewExpression* expr,
 		else
 		  return nullptr;
 	      }
-	    Vector<View*> inputViews;  // DUMMY
-	    if (View* v = makeTransformedView(fm,
-					      inputModules,
-					      expr->getOptions(),
-					      inputViews,
-					      this,
-					      name.getLineNr()))
+	    Vector<View*> inputViews;
+	    if (makeInputViews(expr->getArguments(), enclosingObject, name.getLineNr(), inputViews))
 	      {
-		//
-		//	Make sure the transformed view is good.
-		//
-		if (!(v->evaluate()))
+		if (View* v = makeTransformedView(fm,
+						  inputModules,
+						  expr->getOptions(),
+						  inputViews,
+						  this,
+						  name.getLineNr()))
 		  {
-		    IssueWarning(name.getLineNr() << ": unusable transformed view " << QUOTE(v) << '.');
-		    break;
+		    //
+		    //	Make sure the transformed view is good.
+		    //
+		    if (!(v->evaluate()))
+		      {
+			IssueWarning(name.getLineNr() << ": unusable transformed view " <<
+				     QUOTE(v) << '.');
+			break;
+		      }
+		    //
+		    //	Make sure it maps from the required theory.
+		    //
+		    ImportModule* fromTheory = v->getFromTheory();
+		    if (requiredParameterTheory != nullptr && fromTheory != requiredParameterTheory)
+		      {
+			IssueWarning(name.getLineNr() << ": view " << QUOTE(name) <<
+				     " is from theory " << QUOTE(fromTheory) <<
+				     " whereas theory " << QUOTE(requiredParameterTheory) <<
+				     " is required.");
+			break;
+		      }
+		    return v;
 		  }
-		//
-		//	Make sure it maps from the required theory.
-		//
-		ImportModule* fromTheory = v->getFromTheory();
-		if (fromTheory != requiredParameterTheory)
-		  {
-		    IssueWarning(name.getLineNr() << ": view " << QUOTE(name) <<
-				 " is from theory " << QUOTE(fromTheory) <<
-				 " whereas theory " << QUOTE(requiredParameterTheory) <<
-				 " is required.");
-		    break;
-		  }
-		return v;
 	      }
 	  }
 	break;
@@ -1010,13 +1038,16 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 		    inputModules.append(fm);
 		  }
 	      }
-	    Vector<View*> inputViews;  // DUMMY
-	    return makeTransformedModule(fm,
-					 inputModules,
-					 expr->getOptions(),
-					 inputViews,
-					 this,
-					 name.getLineNr());
+	    Vector<View*> inputViews;
+	    if (makeInputViews(expr->getArguments(), enclosingObject, name.getLineNr(), inputViews))
+	      {
+		return makeTransformedModule(fm,
+					     inputModules,
+					     expr->getOptions(),
+					     inputViews,
+					     this,
+					     name.getLineNr());
+	      }
 	  }
 	break;
       }

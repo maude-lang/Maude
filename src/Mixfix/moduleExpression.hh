@@ -65,7 +65,7 @@ public:
 private:
   const Type type;
   //
-  //	For named module and transform.
+  //	For named module and transformation.
   //
   Token moduleName;
   //
@@ -81,14 +81,14 @@ private:
   //
   Renaming* renaming;
   //
-  //	For instantiation.
-  //
-  Vector<ViewExpression*> arguments;
-  //
-  //	For transform.
+  //	For transformation.
   //
   Vector<ModuleExpression*> inputModules;
   Vector<int> options;
+  //
+  //	For instantiation and transformation.
+  //
+  Vector<ViewExpression*> arguments;
 };
 
 ostream& operator<<(ostream& s, const ModuleExpression* expr);
@@ -118,7 +118,7 @@ inline ModuleExpression*
 ModuleExpression::getModule() const
 {
   Assert(type == RENAMING || type == INSTANTIATION,
-	 "not a renaming, instantiation or transform");
+	 "not a renaming, instantiation or transformation");
   return module;
 }
 
@@ -132,21 +132,21 @@ ModuleExpression::getRenaming() const
 inline const Vector<ViewExpression*>&
 ModuleExpression::getArguments() const
 {
-  Assert(type == INSTANTIATION, "not instantiation");
+  Assert(type == INSTANTIATION || type == TRANSFORMATION, "not instantiation or transformation");
   return arguments;
 }
 
 inline const Vector<ModuleExpression*>&
 ModuleExpression::getInputModules() const
 {
-  Assert(type == TRANSFORMATION, "not a transform");
+  Assert(type == TRANSFORMATION, "not a transformation");
   return inputModules;
 }
 
 inline const Vector<int>&
 ModuleExpression::getOptions() const
 {
-  Assert(type == TRANSFORMATION, "not a transform");
+  Assert(type == TRANSFORMATION, "not a transformation");
   return options;
 }
 

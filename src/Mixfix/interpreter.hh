@@ -246,6 +246,11 @@ private:
 		      EnclosingObject* enclosingObject,
 		      ImportModule* requiredParameterTheory,
 		      int argNr);
+  bool makeInputViews(const Vector<ViewExpression*>& arguments,
+		      EnclosingObject* enclosingObject,
+		      LineNumber lineNumber,
+		      Vector<View*>& inputViews);
+
   void clearContinueInfo();
   DagNode* makeDag(const Vector<Token>& subject);
   void startUsingModule(VisibleModule* module);

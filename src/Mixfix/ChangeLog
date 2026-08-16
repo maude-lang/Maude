@@ -1,5 +1,31 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* viewExpression.cc (<<): handle inputViews
+
+	* moduleExpression.cc (<<): handle inputViews
+
+	* interpreter.cc (Interpreter::handleArgument): don't check
+	requiredParameterTheory if it is nullptr
+
+	* interpreter.hh (class Interpreter): added decl for
+	makeInputViews()
+
+	* interpreter.cc (Interpreter::makeInputViews): added stub
+	(Interpreter::handleArgument): use makeInputViews()
+	(Interpreter::makeModule): use makeInputViews()
+
+	* viewExpression.hh (ViewExpression::getArguments): allow
+	arguments to be read in TRANSFORMATION case
+
+	* moduleExpression.hh (ModuleExpression::getArguments): allow
+	arguments to be read in TRANSFORMATION case
+
+	* moduleExpression.cc (ModuleExpression::ModuleExpression): store
+	inputViews in arguments
+
+	* viewExpression.cc (ViewExpression::ViewExpression): store
+	inputViews in arguments
+
 	* viewExpression.hh (class ViewExpression): updated decl for
 	transformation ctor
 

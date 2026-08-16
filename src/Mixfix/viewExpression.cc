@@ -60,7 +60,8 @@ ViewExpression::ViewExpression(Token name,
   : type(TRANSFORMATION),
     name(name),
     inputModules(inputModules),
-    options(options)
+    options(options),
+    arguments(inputViews)
 {
 }
 
@@ -118,6 +119,7 @@ operator<<(ostream& s, const ViewExpression* expr)
       {
 	const Vector<ModuleExpression*>& inputModules = expr->getInputModules();
 	const Vector<int>& options = expr->getOptions();
+	const Vector<ViewExpression*>& inputViews = expr->getArguments();
 	//
 	//	Transformer specification.
 	//
@@ -148,6 +150,19 @@ operator<<(ostream& s, const ViewExpression* expr)
 		sep = " ";
 	      }
 	    s << ')';
+	  }
+	//
+	//	Input views.
+	//
+	if (!inputViews.empty())
+	  {
+	    const char* sep = "[";
+	    for (ViewExpression* ve : inputViews)
+	      {
+		s << sep << ve;
+		sep = ", ";
+	      }
+	    s << ']';
 	  }
 	break;
       }

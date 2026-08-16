@@ -68,9 +68,12 @@ public:
   //	For the instantiation case only.
   //
   ViewExpression* getView() const;
+  //
+  //	For the instantiation and transformation.
+  //
   const Vector<ViewExpression*>& getArguments() const;
   //
-  //	For the transformer case only.
+  //	For the transformation case only.
   //
   const Vector<ModuleExpression*>& getInputModules() const;
   const Vector<int>& getOptions() const;
@@ -89,12 +92,15 @@ private:
   //	For the instantiation case only.
   //
   ViewExpression* view;
-  Vector<ViewExpression*> arguments;
   //
   //	For the transformer case only.
   //
   Vector<ModuleExpression*> inputModules;
   Vector<int> options;
+  //
+  //	For the instantiation and transformation.
+  //
+  Vector<ViewExpression*> arguments;
 };
 
 inline ViewExpression::Type
@@ -122,7 +128,8 @@ ViewExpression::getView() const
 inline const Vector<ViewExpression*>&
 ViewExpression::getArguments() const
 {
-  Assert(type == INSTANTIATION, "not an instantiation " << this);
+  Assert(type == INSTANTIATION || type == TRANSFORMATION, "not an instantiation or transformation "
+	 << this);
   return arguments;
 }
 
