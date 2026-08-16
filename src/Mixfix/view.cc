@@ -78,7 +78,7 @@ View::View(Token viewName, Interpreter* owner)
 }
 
 //
-//	Version for metaview/generated view.
+//	Version for metaview/transformed view.
 //
 View::View(Token viewName, int cleanName, Interpreter* owner)
   : Argument(viewName.code()),
@@ -132,7 +132,7 @@ View::~View()
   clearOpTermMap();
   clearStratExprMap();
   //
-  //	Remove ourselves as users of our baseView, fromTheory, toModule and generatorModule and
+  //	Remove ourselves as users of our baseView, fromTheory, toModule and transformModule and
   //	deepSelfDestruct() from/to expressions.
   //
   if (baseView != nullptr)
@@ -152,11 +152,12 @@ View::~View()
     fromTheory->removeUser(this);
   if (toModule != nullptr)
     toModule->removeUser(this);
-  if (generatorModule != nullptr)
-    generatorModule->removeUser(this);
+  if (transformModule != nullptr)
+    transformModule->removeUser(this);
   for (ImportModule* m : inputModules)
     m->removeUser(this);
-
+  for (View* v : inputViews)
+    v->removeUser(this);
   //
   //	deepSelfDestruct() from/to expressions.
   //
@@ -288,13 +289,13 @@ View::regretToInform(Entity* doomedEntity)
       delete this;
       return;
     }
-  if (doomedEntity == generatorModule)
+  if (doomedEntity == transformModule)
     {
       //
-      //	We're a generated view and our generator just disappeared
+      //	We're a transformed view and our transformer just disappeared
       //	so we just self-destruct.
       //
-      DebugAdvisory("generated view " << this << " self-destructs");
+      DebugAdvisory("transformed view " << this << " self-destructs");
       delete this;
       return;
     }
@@ -303,10 +304,10 @@ View::regretToInform(Entity* doomedEntity)
       if (doomedEntity == m)
 	{
 	  //
-	  //	We're a generated view and one of our input modules just disappeared
+	  //	We're a transformed view and one of our input modules just disappeared
 	  //	so we just self-destruct.
 	  //
-	  DebugAdvisory("generated view " << this << " self-destructs");
+	  DebugAdvisory("transform view " << this << " self-destructs");
 	  delete this;
 	  return;
 	}
@@ -829,8 +830,8 @@ View::evaluate()
     case INITIAL:
       {
 	//
-	//	If we're a generated view then the true name, id() will look
-	//	something like VG[...](...) and the clean name will have been
+	//	If we're a transformed view then the true name, id() will look
+	//	something like VT[...](...)[...] and the clean name will have been
 	//	checked by downView() and will look completely different.
 	//	In this case, we don't require that either be a valid user
 	//	entered view name, since we will need to generate clean names
@@ -1210,13 +1211,13 @@ View::latexViewExpression(bool parameterBrackets) const
       result += "\\maudeRightBrace";
       return result;
     }
-  if (generatorModule != nullptr)
+  if (transformModule != nullptr)
     {
       //
-      //	We're a generated view.
+      //	We're a transformed view.
       //
       string result("\\maudeModule{");
-      result += Token::latexName(generatorModule->id());
+      result += Token::latexName(transformModule->id());
       result += "}";
       //
       //	Input modules.
@@ -1235,11 +1236,11 @@ View::latexViewExpression(bool parameterBrackets) const
       //
       //	Options.
       //
-      if (!generationOptions.empty() || inputModules.empty())
+      if (!transformOptions.empty() || inputModules.empty())
 	{
 	  result += "\\maudeLeftParen";
 	  const char* sep = "";
-	  for (int a : generationOptions)
+	  for (int a : transformOptions)
 	    {
 	      result += sep;
 	      result += "\\maudeQid{";

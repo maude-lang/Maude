@@ -1419,7 +1419,7 @@ MetaLevel::upViewExpression(const View* view, PointerMap& qidMap)
       args[1] = upArguments(view->getArguments(), qidMap);
       return instantiationSymbol->makeDagNode(args);
     }
-  else if (const ImportModule* genModule = view->getGeneratorModule())
+  else if (const ImportModule* genModule = view->getTransformModule())
     {
       //
       //	Generated view.
@@ -1427,7 +1427,7 @@ MetaLevel::upViewExpression(const View* view, PointerMap& qidMap)
       Vector<DagNode*> args(3);
       args[0] = upQid(genModule->id(), qidMap);
       args[1] = upModuleExpressionList(view->getInputModules(), qidMap);
-      args[2] = upQidList(view->getGenerationOptions(), qidMap);
+      args[2] = upQidList(view->getTransformOptions(), qidMap);
       return transformationSymbol->makeDagNode(args);
     }
   return upQid(view->id(), qidMap);

@@ -1,3 +1,37 @@
+2026-08-16  Saruman the White  <eker@eker10>
+
+	* viewResultSymbol.cc (ViewResultSymbol::makeTransformedView): use
+	setTransformInfo() rather than setGenerationInfo()
+
+	* view.hh (class View): data member generationOptions ->
+	transformOptions
+
+	* view.cc (View::~View): generatorModule -> transformModule;
+	remove ourself as a user of our input views
+	(View::regretToInform): generatorModule -> transformModule
+	(View::latexViewExpression): generatorModule -> transformModule
+	(View::latexViewExpression): generationOptions -> transformOptions
+
+	* view.hh (class View): data member generatorModule ->
+	transformModule; added data member inputViews
+	(View::getGeneratorModule, View::getInputModules)
+	(View::getGenerationOptions): deleted
+	(View::setGenerationInfo): deleted
+	(View::setTransformInfo, View::getTransformModule)
+	(View::getInputModules, View::getTransformOptions)
+	(View::getInputViews): added
+
+	* importModule.cc (ImportModule::deepSelfDestruct): remove ourself
+	as a user of our input views
+
+	* moduleResultSymbol.cc
+	(ModuleResultSymbol::makeTransformedModule): pass inputViews to
+	setTransformInfo()
+
+	* importModule.hh (ImportModule::setTransformInfo): take and store
+	inputViews
+	(ImportModule::getInputViews): added
+
 2026-08-15  Saruman the White  <eker@eker10>
 
 	* viewExpression.cc (<<): handle inputViews

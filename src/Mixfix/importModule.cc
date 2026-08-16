@@ -368,6 +368,8 @@ ImportModule::deepSelfDestruct()
     m->removeUser(this);
   for (ImportModule* m : inputModules)
     m->removeUser(this);
+  for (View* v : inputViews)
+    v->removeUser(this);
   if (transformModule != nullptr)
     transformModule->removeUser(this);
   for (Argument* arg : savedArguments)

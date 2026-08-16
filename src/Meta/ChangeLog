@@ -1,3 +1,10 @@
+2026-08-16  Saruman the White  <eker@eker10>
+
+	* metaUpModule.cc (MetaLevel::upViewExpression):
+	getGeneratorModule() -> getTransformModule()
+	(MetaLevel::upViewExpression): getGenerationOptions() ->
+	getTransformOptions()
+
 2026-08-15  Saruman the White  <eker@eker10>
 
 	* metaUpModule.cc (MetaLevel::upViewExpressionList): handle the

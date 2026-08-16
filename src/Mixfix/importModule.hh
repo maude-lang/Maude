@@ -79,7 +79,8 @@ public:
 		    ImportModule* parameterTheory);
   void setTransformInfo(ImportModule* transModule,
 			const Vector<ImportModule*>& inModules,
-			const Vector<int>& transOptions);
+			const Vector<int>& transOptions,
+			const Vector<View*>& inViews);
   void closeSortSet();
   void closeSignature();
   void deepSelfDestruct();
@@ -140,6 +141,7 @@ public:
   ImportModule* getTransformModule() const;
   const Vector<ImportModule*>& getInputModules() const;
   const Vector<int>& getTransformOptions() const;
+  const Vector<View*>& getInputViews() const;
   //
   //	Needed for EnclosingObject base.
   //
@@ -336,6 +338,7 @@ private:
   ImportModule* transformModule = nullptr;
   Vector<ImportModule*> inputModules;
   Vector<int> transformOptions;
+  Vector<View*> inputViews;
   //
   //	Because for sorts, symbols, and polymorphs, stuff from parameter
   //	theories is inserted first we can keep track of what came from
@@ -695,12 +698,14 @@ ImportModule::getParameterTheoryCopy(int index) const
 inline void
 ImportModule::setTransformInfo(ImportModule* transModule,
 			       const Vector<ImportModule*>& inModules,
-			       const Vector<int>& transOptions)
+			       const Vector<int>& transOptions,
+			       const Vector<View*>& inViews)
 {
   Assert(origin == TRANSFORMATION, "called on origin = " << origin << " for " << this);
   transformModule = transModule;
   inputModules = inModules;
   transformOptions = transOptions;
+  inputViews = inViews;
 }
 
 inline ImportModule*
@@ -737,6 +742,13 @@ ImportModule::getTransformOptions() const
 {
   Assert(origin == TRANSFORMATION, "called on origin = " << origin << " for " << this);
   return transformOptions;
+}
+
+inline const Vector<View*>&
+ImportModule::getInputViews() const
+{
+  Assert(origin == TRANSFORMATION, "called on origin = " << origin << " for " << this);
+  return inputViews;
 }
 
 #endif

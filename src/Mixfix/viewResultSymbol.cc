@@ -155,7 +155,7 @@ ViewResultSymbol::makeTransformedView(int newViewName,
 	      //	calls deepSelfDestruct(). This also enables us to reconstruct
 	      //	the view expression that built it.
 	      //
-	      resultView->setGenerationInfo(ourModule, inputModules, optionVec);
+	      resultView->setTransformInfo(ourModule, inputModules, optionVec, inputViews);
 	      return resultView;
 	    }
 	  IssueWarning(*transformOp << ": view transformer " << QUOTE(transformOp) <<

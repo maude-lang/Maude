@@ -161,7 +161,7 @@ ModuleResultSymbol::makeTransformedModule(int newModuleName,
 	      //	calls deepSelfDestruct(). This also enables us to reconstruct
 	      //	the module expression that built it.
 	      //
-	      resultModule->setTransformInfo(transformModule, inputModules, optionVec);
+	      resultModule->setTransformInfo(transformModule, inputModules, optionVec, inputViews);
 	      return resultModule;
 	    }
 	  IssueWarning(*transformOp << ": module transformer " << QUOTE(transformOp) <<
