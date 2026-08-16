@@ -1360,6 +1360,7 @@ MetaLevel::upModuleExpressionList(const Vector<ImportModule*>& modExprList,
     return emptyTermListSymbol->makeDagNode();  // because we share a kind with TermList
   if (nrModExprs == 1)
     return upModuleExpression(modExprList[0], qidMap);
+
   Vector<DagNode*> args(nrModExprs);
   for (int i = 0; i < nrModExprs; ++i)
     args[i] = upModuleExpression(modExprList[i], qidMap);
@@ -1393,9 +1394,14 @@ MetaLevel::upArgument(const Argument* argument, PointerMap& qidMap)
 DagNode*
 MetaLevel::upViewExpressionList(const Vector<View*>& viewList, PointerMap& qidMap)
 {
-  Index nrArguments = viewList.size();
-  Vector<DagNode*> args(nrArguments);
-  for (Index i = 0; i < nrArguments; ++i)
+  Index nrViewExprs = viewList.size();
+  if (nrViewExprs == 0)
+    return emptyTermListSymbol->makeDagNode();  // because we share a kind with TermList
+  if (nrViewExprs == 1)
+    return upViewExpression(viewList[0], qidMap);
+
+  Vector<DagNode*> args(nrViewExprs);
+  for (Index i = 0; i < nrViewExprs; ++i)
     args[i] = upViewExpression(viewList[i], qidMap);
   return metaArgSymbol->makeDagNode(args);
 }

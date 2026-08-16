@@ -1,5 +1,8 @@
 2026-08-15  Saruman the White  <eker@eker10>
 
+	* metaUpModule.cc (MetaLevel::upViewExpressionList): handle the
+	empty and singleton cases
+
 	* metaDownView.cc (MetaLevel::downModuleExpression): pass dummy
 	input views to ModuleExpression()
 	(MetaLevel::downViewExpression): pass dummy input views to
