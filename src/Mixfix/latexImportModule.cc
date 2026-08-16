@@ -132,6 +132,20 @@ ImportModule::latexModuleExpression(bool parameterBrackets) const
 	      }
 	    result +=  "\\maudeRightParen";
 	  }
+	//
+	//	Input views.
+	//
+	if (!inputViews.empty())
+	  {
+	    const char* sep = "\\maudeLeftBracket ";
+	    for (const View* v : inputViews)
+	      {
+		result += sep;
+		result += v->latexViewExpression(parameterBrackets);
+		sep = "\\maudeComma ";
+	      }
+	    result += "\\maudeRightBracket";
+	  }
 	break;
       }
     }

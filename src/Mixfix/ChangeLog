@@ -1,5 +1,16 @@
 2026-08-16  Saruman the White  <eker@eker10>
 
+	* view.cc (View::latexViewExpression): handle inputViews
+
+	* latexImportModule.cc (ImportModule::latexModuleExpression):
+	handle inputViews
+
+	* viewExpression.cc (ViewExpression::latexPrint): handle input
+	views in transformer expressions
+
+	* moduleExpression.cc (ModuleExpression::latexPrint): handle input
+	views in transformer expressions
+
 	* top.yy: added %destructor for <yyIntVector>; added types for
 	optTransOptions, transOptions
 

@@ -238,6 +238,21 @@ ViewExpression::latexPrint(ostream& s, const Module* enclosingModule) const
 	      }
 	    s << "\\maudeRightParen";
 	  }
+	//
+	//	Input views.
+	//
+	const Vector<ViewExpression*>& inputViews = getArguments();
+	if (!inputViews.empty())
+	  {
+	    const char* sep = "\\maudeLeftBracket ";
+	    for (ViewExpression* ve : inputViews)
+	      {
+		s << sep;
+		ve->latexPrint(s, enclosingModule);
+		sep = "\\maudeComma ";
+	      }
+	    s << "\\maudeRightBracket";
+	  }
 	break;
       }
     }

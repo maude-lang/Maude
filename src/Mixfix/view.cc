@@ -1250,6 +1250,20 @@ View::latexViewExpression(bool parameterBrackets) const
 	    }
 	  result +=  "\\maudeRightParen";
 	}
+      //
+      //	Input views.
+      //
+      if (!inputViews.empty())
+	{
+	  const char* sep = "\\maudeLeftBracket ";
+	  for (const View* v : inputViews)
+	    {
+	      result += sep;
+	      result += v->latexViewExpression(parameterBrackets);
+	      sep = "\\maudeComma ";
+	      }
+	  result += "\\maudeRightBracket";
+	}
       return result;
     }
   //
@@ -1296,7 +1310,8 @@ View::printViewExpression(ostream& s, bool parameterBrackets) const
   else
     {
       //
-      //	ViewCache name is OK in the generation case because we can't have parameter brackets.
+      //	ViewCache name is OK in the transformation case because we can't
+      //	have parameter brackets.
       //
       s << Token::name(id());
     }
