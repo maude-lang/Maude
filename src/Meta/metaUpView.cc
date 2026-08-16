@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,8 +27,10 @@ MetaLevel::upView(View* view, PointerMap& qidMap, int replacementName)
 
   view->evaluate();  // in case it became stale
   args[0] = upHeader(view, qidMap, (replacementName == NONE) ? view->id() : replacementName);
-  args[1] = upModuleExpression(view->getFrom(), qidMap);
-  args[2] = upModuleExpression(view->getTo(), qidMap);
+  args[1] = upModuleExpression(view->getFromTheory(), qidMap);
+  args[2] = upModuleExpression(view->getToModule(), qidMap);
+  //  args[1] = upModuleExpression(view->getFrom(), qidMap);
+  //  args[2] = upModuleExpression(view->getTo(), qidMap);
   args[3] = upSortMappings(view, qidMap);
   args[4] = upOpMappings(view, qidMap);
   args[5] = upStratMappings(view, qidMap);
