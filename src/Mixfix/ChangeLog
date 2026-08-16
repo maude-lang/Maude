@@ -1,5 +1,17 @@
 2026-08-16  Saruman the White  <eker@eker10>
 
+	* top.yy: added %destructor for <yyIntVector>; added types for
+	optTransOptions, transOptions
+
+	* modules.yy (transOptions): return a Vector<int>*
+	(optTransOptions): return a Vector<int>*
+	(transformExpr): use new optTransOptions convention
+	(transformExpr): use new transOptions convention
+	(viewExpr): use new optTransOptions convention
+	(viewExpr): use new transOptions convention
+
+	* top.yy: added yyIntVector to %union
+
 	* viewResultSymbol.cc (ViewResultSymbol::makeTransformedView): use
 	setTransformInfo() rather than setGenerationInfo()
 

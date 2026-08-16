@@ -103,20 +103,16 @@ parenExpr	:	'(' moduleExpr ')'
  */
 transformExpr	:	token transInput optTransOptions optInputViews
 			{
-			  Vector<int> options;
-			  for (Token t : lexerBubble)
-			    options.push_back(t.code());
-			  $$ = new ModuleExpression($1, *$2, options, *$4);
+			  $$ = new ModuleExpression($1, *$2, *$3, *$4);
 			  delete $2;
+			  delete $3;
 			  delete $4;
 			}
 		|	token transOptions optInputViews
 			{
-			  Vector<int> options;
-			  for (Token t : lexerBubble)
-			    options.push_back(t.code());
 			  Vector<ModuleExpression*> empty;
-			  $$ = new ModuleExpression($1, empty, options, *$3);
+			  $$ = new ModuleExpression($1, empty, *$2, *$3);
+			  delete $2;
 			  delete $3;
 			}
 		;
@@ -128,9 +124,12 @@ transInput	:	'[' moduleExprList ']'
 		;
 
 optTransOptions	:	transOptions
+			{
+			  $$ = $1;
+			}
 		|
 			{
-			  lexerBubble.clear();
+			  $$ = new Vector<int>;
 			}
 		;
 
@@ -139,6 +138,13 @@ transOptions	:	'('
 			  lexBubble(BAR_RIGHT_PAREN, 0);
 			}
 			')'
+			{
+			  Vector<int>* options = new Vector<int>;
+			  for (Token t : lexerBubble)
+			    options->push_back(t.code());
+			  $$ = options;
+			}
+
 		;
 
 moduleExprList	:	moduleExprList ',' moduleExpr
@@ -178,21 +184,16 @@ viewExpr	:	viewExpr '{' instantArgs '}'
 			}
 		|	token transInput optTransOptions optInputViews
 			{
-			  Vector<int> options;
-			  for (Token t : lexerBubble)
-			    options.push_back(t.code());
-			  $$ = new ViewExpression($1, *$2, options, *$4);
+			  $$ = new ViewExpression($1, *$2, *$3, *$4);
 			  delete $2;
+			  delete $3;
 			  delete $4;
-
 			}
 		|	token transOptions optInputViews
 			{
-			  Vector<int> options;
-			  for (Token t : lexerBubble)
-			    options.push_back(t.code());
 			  Vector<ModuleExpression*> empty;
-			  $$ = new ViewExpression($1, empty, options, *$3);
+			  $$ = new ViewExpression($1, empty, *$2, *$3);
+			  delete $2;
 			  delete $3;
 			}
 		;
