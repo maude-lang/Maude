@@ -156,7 +156,7 @@
      MACRO(sumSymbol, Symbol, SymbolType::ASSOC | SymbolType::COMM, 2)
      MACRO(renamingSymbol, FreeSymbol, 0, 2)
      MACRO(instantiationSymbol, FreeSymbol, 0, 2)
-     MACRO(transformationSymbol, FreeSymbol, 0, 3)
+     MACRO(transformationSymbol, FreeSymbol, 0, 4)
      //
      //	Hook constructors.
      //

@@ -441,8 +441,11 @@ MetaLevel::downModuleExpression(DagNode* metaExpr)
 	      Vector<ModuleExpression*> inputModules;
 	      if (downModuleExpressionList(f->getArgument(1), inputModules))
 		{
-		  Vector<ViewExpression*> DUMMY;
-		  return new ModuleExpression(moduleName, inputModules, options, DUMMY);
+		  Vector<ViewExpression*> inputViews;
+		  if (downViewExpressionList(f->getArgument(3), inputViews))
+		    return new ModuleExpression(moduleName, inputModules, options, inputViews);
+		  for (ModuleExpression* me : inputModules)
+		    me->deepSelfDestruct();
 		}
 	    }
 	}
@@ -475,6 +478,38 @@ MetaLevel::downModuleExpressionList(DagNode* metaModExprList,
   else if (ModuleExpression* modExpr = downModuleExpression(metaModExprList))
     {
       modExprList.push_back(modExpr);
+      return true;
+    }
+  return false;
+}
+
+bool
+MetaLevel::downViewExpressionList(DagNode* metaViewExprList, Vector<ViewExpression*>& viewExprList)
+{
+  //
+  //	Almost the same as downInstantiationArguments() but we allow an empty list.
+  //
+  Assert(viewExprList.empty(), "nonempty arg list");
+  if (metaViewExprList->symbol() == metaArgSymbol)  // shared kind with TermList
+    {
+      for (DagArgumentIterator i(metaViewExprList); i.valid(); i.next())
+	{
+	  if (ViewExpression* viewExpr = downViewExpression(i.argument()))
+	    viewExprList.push_back(viewExpr);
+	  else
+	    {
+	      for (ViewExpression* ve : viewExprList)
+		ve->deepSelfDestruct();
+	      return false;
+	    }
+	}
+      return true;
+    }
+  else if (metaViewExprList->symbol() == emptyTermListSymbol)  // shared kind with TermList
+    return true;
+  else if (ViewExpression* viewExpr = downViewExpression(metaViewExprList))
+    {
+      viewExprList.push_back(viewExpr);
       return true;
     }
   return false;
@@ -548,8 +583,11 @@ MetaLevel::downViewExpression(DagNode* metaViewExpr)
 	      Vector<ModuleExpression*> inputModules;
 	      if (downModuleExpressionList(f->getArgument(1), inputModules))
 		{
-		  Vector<ViewExpression*> DUMMY;
-		  return new ViewExpression(moduleName, inputModules, options, DUMMY);
+		  Vector<ViewExpression*> inputViews;
+		  if (downViewExpressionList(f->getArgument(3), inputViews))
+		    return new ViewExpression(moduleName, inputModules, options, inputViews);
+		  for (ModuleExpression* me : inputModules)
+		    me->deepSelfDestruct();
 		}
 	    }
 	}

@@ -476,8 +476,8 @@ op '_`,_ : 'UsingPairSet 'UsingPairSet -> 'UsingPairSet [assoc comm ctor prec(
 op '_`[_`] : 'Qid 'NeCTermList -> 'Context [ctor] .
 op '_`[_`] : 'Qid 'NeGroundTermList -> 'GroundTerm [ctor] .
 op '_`[_`] : 'Qid 'NeTermList -> 'Term [ctor] .
-op '_`[_`]`(_`) : 'Qid 'ModuleExpression 'QidList -> 'Expression [ctor prec(
-    35)] .
+op '_`[_`]`(_`)`[_`] : 'Qid 'ModuleExpression 'QidList 'ParameterList ->
+    'Expression [ctor prec(35)] .
 op '_`[_`]`{_`} : 'Qid 'Substitution 'StrategyList -> 'RuleApplication [ctor
     prec(21)] .
 op '_`[`[_`]`] : 'Qid 'TermList -> 'CallStrategy [ctor prec(21)] .
@@ -1017,8 +1017,8 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     'ModuleExpression) 
     op-hook('instantiationSymbol, '_`{_`}, 'Expression 'NeParameterList,
     'Expression) 
-    op-hook('transformationSymbol, '_`[_`]`(_`), 'Qid 'ModuleExpression
-    'QidList, 'Expression) 
+    op-hook('transformationSymbol, '_`[_`]`(_`)`[_`], 'Qid 'ModuleExpression
+    'QidList 'ParameterList, 'Expression) 
     op-hook('termHookSymbol, 'term-hook, 'Qid 'Term, 'Hook) 
     op-hook('hookListSymbol, '__, 'HookList 'HookList, 'HookList) 
     op-hook('idHookSymbol, 'id-hook, 'Qid 'QidList, 'Hook) 
@@ -1939,8 +1939,8 @@ op 'metaReduce : '`[Module`] '`[ModuleExpression`,ParameterList`,GTermList`,QidS
     'ModuleExpression) 
     op-hook('instantiationSymbol, '_`{_`}, 'Expression 'NeParameterList,
     'Expression) 
-    op-hook('transformationSymbol, '_`[_`]`(_`), 'Qid 'ModuleExpression
-    'QidList, 'Expression) 
+    op-hook('transformationSymbol, '_`[_`]`(_`)`[_`], 'Qid 'ModuleExpression
+    'QidList 'ParameterList, 'Expression) 
     op-hook('termHookSymbol, 'term-hook, 'Qid 'Term, 'Hook) 
     op-hook('hookListSymbol, '__, 'HookList 'HookList, 'HookList) 
     op-hook('idHookSymbol, 'id-hook, 'Qid 'QidList, 'Hook) 
@@ -2730,8 +2730,8 @@ result FModule: fmod 'META-LEVEL is
   op '_`[_`] : 'Qid 'NeCTermList -> 'Context [ctor] .
   op '_`[_`] : 'Qid 'NeGroundTermList -> 'GroundTerm [ctor] .
   op '_`[_`] : 'Qid 'NeTermList -> 'Term [ctor] .
-  op '_`[_`]`(_`) : 'Qid 'ModuleExpression 'QidList -> 'Expression [ctor prec(
-    35)] .
+  op '_`[_`]`(_`)`[_`] : 'Qid 'ModuleExpression 'QidList 'ParameterList ->
+    'Expression [ctor prec(35)] .
   op '_`[_`]`{_`} : 'Qid 'Substitution 'StrategyList -> 'RuleApplication [ctor
     prec(21)] .
   op '_`[`[_`]`] : 'Qid 'TermList -> 'CallStrategy [ctor prec(21)] .
@@ -3275,8 +3275,8 @@ result FModule: fmod 'META-LEVEL is
     'ModuleExpression) 
     op-hook('instantiationSymbol, '_`{_`}, 'Expression 'NeParameterList,
     'Expression) 
-    op-hook('transformationSymbol, '_`[_`]`(_`), 'Qid 'ModuleExpression
-    'QidList, 'Expression) 
+    op-hook('transformationSymbol, '_`[_`]`(_`)`[_`], 'Qid 'ModuleExpression
+    'QidList 'ParameterList, 'Expression) 
     op-hook('termHookSymbol, 'term-hook, 'Qid 'Term, 'Hook) 
     op-hook('hookListSymbol, '__, 'HookList 'HookList, 'HookList) 
     op-hook('idHookSymbol, 'id-hook, 'Qid 'QidList, 'Hook) 
@@ -4756,8 +4756,8 @@ result FModule: fmod 'META-LEVEL is
     'ModuleExpression) 
     op-hook('instantiationSymbol, '_`{_`}, 'Expression 'NeParameterList,
     'Expression) 
-    op-hook('transformationSymbol, '_`[_`]`(_`), 'Qid 'ModuleExpression
-    'QidList, 'Expression) 
+    op-hook('transformationSymbol, '_`[_`]`(_`)`[_`], 'Qid 'ModuleExpression
+    'QidList 'ParameterList, 'Expression) 
     op-hook('termHookSymbol, 'term-hook, 'Qid 'Term, 'Hook) 
     op-hook('hookListSymbol, '__, 'HookList 'HookList, 'HookList) 
     op-hook('idHookSymbol, 'id-hook, 'Qid 'QidList, 'Hook) 
@@ -6048,8 +6048,8 @@ result FModule: fmod 'META-LEVEL is
   op '_`[_`] : 'Qid 'NeCTermList -> 'Context [ctor] .
   op '_`[_`] : 'Qid 'NeGroundTermList -> 'GroundTerm [ctor] .
   op '_`[_`] : 'Qid 'NeTermList -> 'Term [ctor] .
-  op '_`[_`]`(_`) : 'Qid 'ModuleExpression 'QidList -> 'Expression [ctor prec(
-    35)] .
+  op '_`[_`]`(_`)`[_`] : 'Qid 'ModuleExpression 'QidList 'ParameterList ->
+    'Expression [ctor prec(35)] .
   op '_`[_`]`{_`} : 'Qid 'Substitution 'StrategyList -> 'RuleApplication [ctor
     prec(21)] .
   op '_`[`[_`]`] : 'Qid 'TermList -> 'CallStrategy [ctor prec(21)] .
@@ -6593,8 +6593,8 @@ result FModule: fmod 'META-LEVEL is
     'ModuleExpression) 
     op-hook('instantiationSymbol, '_`{_`}, 'Expression 'NeParameterList,
     'Expression) 
-    op-hook('transformationSymbol, '_`[_`]`(_`), 'Qid 'ModuleExpression
-    'QidList, 'Expression) 
+    op-hook('transformationSymbol, '_`[_`]`(_`)`[_`], 'Qid 'ModuleExpression
+    'QidList 'ParameterList, 'Expression) 
     op-hook('termHookSymbol, 'term-hook, 'Qid 'Term, 'Hook) 
     op-hook('hookListSymbol, '__, 'HookList 'HookList, 'HookList) 
     op-hook('idHookSymbol, 'id-hook, 'Qid 'QidList, 'Hook) 
@@ -8329,27 +8329,28 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'op_:_->_`[_`].[''_`[_`].Qid, '__[''Qid.Sort, ''NeGroundTermList.Sort],
     ''GroundTerm.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''_`[_`].Qid, '__[
     ''Qid.Sort, ''NeTermList.Sort], ''Term.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''_`[_`]`(_`).Qid, '__[''Qid.Sort, ''ModuleExpression.Sort,
-    ''QidList.Sort], ''Expression.Sort, '__['ctor.Attr, 'prec['s_^35[
-    '0.Zero]]]], 'op_:_->_`[_`].[''_`[_`]`{_`}.Qid, '__[''Qid.Sort,
-    ''Substitution.Sort, ''StrategyList.Sort], ''RuleApplication.Sort, '__[
-    'ctor.Attr, 'prec['s_^21['0.Zero]]]], 'op_:_->_`[_`].[''_`[`[_`]`].Qid,
-    '__[''Qid.Sort, ''TermList.Sort], ''CallStrategy.Sort, '__['ctor.Attr,
-    'prec['s_^21['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[
-    ''Expression.Sort, ''NeParameterList.Sort], ''Expression.Sort, '__[
-    'ctor.Attr, 'prec['s_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[
-    ''ModuleExpression.Sort, ''NeParameterList.Sort], ''ModuleExpression.Sort,
-    '__['ctor.Attr, 'prec['s_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort,
-    '__[''Qid.Sort, ''ParameterDeclList.Sort], ''Header.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''_`{_`}.Sort, '__[''ViewExpression.Sort,
-    ''NeParameterList.Sort], ''ViewExpression.Sort, '__['ctor.Attr, 'prec[
-    's_^37['0.Zero]]]], 'op_:_->_`[_`].[''_and-then_.Sort, '__[''Bool.Sort,
-    ''Bool.Sort], ''Bool.Sort, '__['gather['__[''e.Sort, ''E.Sort]], 'prec[
-    's_^55['0.Zero]], 'strat['__['s_['0.Zero], '0.Zero]]]], 'op_:_->_`[_`].[
-    ''_and_.Sort, '__[''Bool.Sort, ''Bool.Sort], ''Bool.Sort, '__['assoc.Attr,
-    'comm.Attr, 'prec['s_^55['0.Zero]]]], 'op_:_->_`[_`].[''_divides_.Sort,
-    '__[''NzNat.Sort, ''Nat.Sort], ''Bool.Sort, '__['prec['s_^51['0.Zero]],
-    'special['__['id-hook[''NumberOpSymbol.Sort, ''divides.Sort], 'op-hook[
+    ''_`[_`]`(_`)`[_`].Qid, '__[''Qid.Sort, ''ModuleExpression.Sort,
+    ''QidList.Sort, ''ParameterList.Sort], ''Expression.Sort, '__['ctor.Attr,
+    'prec['s_^35['0.Zero]]]], 'op_:_->_`[_`].[''_`[_`]`{_`}.Qid, '__[
+    ''Qid.Sort, ''Substitution.Sort, ''StrategyList.Sort],
+    ''RuleApplication.Sort, '__['ctor.Attr, 'prec['s_^21['0.Zero]]]],
+    'op_:_->_`[_`].[''_`[`[_`]`].Qid, '__[''Qid.Sort, ''TermList.Sort],
+    ''CallStrategy.Sort, '__['ctor.Attr, 'prec['s_^21['0.Zero]]]],
+    'op_:_->_`[_`].[''_`{_`}.Sort, '__[''Expression.Sort,
+    ''NeParameterList.Sort], ''Expression.Sort, '__['ctor.Attr, 'prec['s_^37[
+    '0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''ModuleExpression.Sort,
+    ''NeParameterList.Sort], ''ModuleExpression.Sort, '__['ctor.Attr, 'prec[
+    's_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''Qid.Sort,
+    ''ParameterDeclList.Sort], ''Header.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''_`{_`}.Sort, '__[''ViewExpression.Sort, ''NeParameterList.Sort],
+    ''ViewExpression.Sort, '__['ctor.Attr, 'prec['s_^37['0.Zero]]]],
+    'op_:_->_`[_`].[''_and-then_.Sort, '__[''Bool.Sort, ''Bool.Sort],
+    ''Bool.Sort, '__['gather['__[''e.Sort, ''E.Sort]], 'prec['s_^55['0.Zero]],
+    'strat['__['s_['0.Zero], '0.Zero]]]], 'op_:_->_`[_`].[''_and_.Sort, '__[
+    ''Bool.Sort, ''Bool.Sort], ''Bool.Sort, '__['assoc.Attr, 'comm.Attr, 'prec[
+    's_^55['0.Zero]]]], 'op_:_->_`[_`].[''_divides_.Sort, '__[''NzNat.Sort,
+    ''Nat.Sort], ''Bool.Sort, '__['prec['s_^51['0.Zero]], 'special['__[
+    'id-hook[''NumberOpSymbol.Sort, ''divides.Sort], 'op-hook[
     ''succSymbol.Sort, ''s_.Sort, ''Nat.Sort, ''NzNat.Sort], 'term-hook[
     ''trueTerm.Sort, ''true.Bool.Constant], 'term-hook[''falseTerm.Sort,
     ''false.Bool.Constant]]]]], 'op_:_->_`[_`].[''_implies_.Sort, '__[
@@ -8989,48 +8990,48 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '__[''ModuleExpression.Sort, ''RenamingSet.Sort], ''ModuleExpression.Sort],
     'op-hook[''instantiationSymbol.Sort, ''_`{_`}.Sort, '__[''Expression.Sort,
     ''NeParameterList.Sort], ''Expression.Sort], 'op-hook[
-    ''transformationSymbol.Sort, ''_`[_`]`(_`).Qid, '__[''Qid.Sort,
-    ''ModuleExpression.Sort, ''QidList.Sort], ''Expression.Sort], 'op-hook[
-    ''termHookSymbol.Sort, ''term-hook.Sort, '__[''Qid.Sort, ''Term.Sort],
-    ''Hook.Sort], 'op-hook[''hookListSymbol.Sort, ''__.Sort, '__[
-    ''HookList.Sort, ''HookList.Sort], ''HookList.Sort], 'op-hook[
-    ''idHookSymbol.Sort, ''id-hook.Sort, '__[''Qid.Sort, ''QidList.Sort],
-    ''Hook.Sort], 'op-hook[''opHookSymbol.Sort, ''op-hook.Sort, '__[''Qid.Sort,
-    ''Qid.Sort, ''QidList.Sort, ''Qid.Sort], ''Hook.Sort], 'op-hook[
-    ''assocSymbol.Sort, ''assoc.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''commSymbol.Sort, ''comm.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''idemSymbol.Sort, ''idem.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''iterSymbol.Sort, ''iter.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''idSymbol.Sort, ''id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''leftIdSymbol.Sort, ''left-id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''rightIdSymbol.Sort, ''right-id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''stratSymbol.Sort, ''strat.Sort, ''NeNatList.Sort, ''Attr.Sort], 'op-hook[
-    ''memoSymbol.Sort, ''memo.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''precSymbol.Sort, ''prec.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
-    ''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
-    ''formatSymbol.Sort, ''format.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
-    ''latexSymbol.Sort, ''latex.Sort, ''String.Sort, ''Attr.Sort], 'op-hook[
-    ''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''frozenSymbol.Sort, ''frozen.Sort, ''NeNatList.Sort, ''Attr.Sort],
-    'op-hook[''polySymbol.Sort, ''poly.Sort, ''NeNatList.Sort, ''Attr.Sort],
-    'op-hook[''configSymbol.Sort, ''config.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''objectSymbol.Sort, ''object.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''msgSymbol.Sort, ''msg.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''portalSymbol.Sort, ''portal.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''pconstSymbol.Sort, ''pconst.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''rpoSymbol.Sort, ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
-    ''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort, ''Attr.Sort],
-    'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort],
-    'op-hook[''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort,
-    ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList,
-    ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort, ''variant.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort,
-    ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''printSymbol.Sort, ''print.Sort, ''QidList.Sort, ''Attr.Sort],
-    'op-hook[''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
-    ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[
-    ''AttrSet.Sort, ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[
+    ''transformationSymbol.Sort, ''_`[_`]`(_`)`[_`].Qid, '__[''Qid.Sort,
+    ''ModuleExpression.Sort, ''QidList.Sort, ''ParameterList.Sort],
+    ''Expression.Sort], 'op-hook[''termHookSymbol.Sort, ''term-hook.Sort, '__[
+    ''Qid.Sort, ''Term.Sort], ''Hook.Sort], 'op-hook[''hookListSymbol.Sort,
+    ''__.Sort, '__[''HookList.Sort, ''HookList.Sort], ''HookList.Sort],
+    'op-hook[''idHookSymbol.Sort, ''id-hook.Sort, '__[''Qid.Sort,
+    ''QidList.Sort], ''Hook.Sort], 'op-hook[''opHookSymbol.Sort,
+    ''op-hook.Sort, '__[''Qid.Sort, ''Qid.Sort, ''QidList.Sort, ''Qid.Sort],
+    ''Hook.Sort], 'op-hook[''assocSymbol.Sort, ''assoc.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''commSymbol.Sort, ''comm.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''idemSymbol.Sort, ''idem.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''iterSymbol.Sort, ''iter.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''idSymbol.Sort, ''id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''leftIdSymbol.Sort, ''left-id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''rightIdSymbol.Sort, ''right-id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''stratSymbol.Sort, ''strat.Sort, ''NeNatList.Sort,
+    ''Attr.Sort], 'op-hook[''memoSymbol.Sort, ''memo.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''precSymbol.Sort, ''prec.Sort, ''Nat.Sort,
+    ''Attr.Sort], 'op-hook[''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort,
+    ''Attr.Sort], 'op-hook[''formatSymbol.Sort, ''format.Sort, ''QidList.Sort,
+    ''Attr.Sort], 'op-hook[''latexSymbol.Sort, ''latex.Sort, ''String.Sort,
+    ''Attr.Sort], 'op-hook[''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''frozenSymbol.Sort, ''frozen.Sort,
+    ''NeNatList.Sort, ''Attr.Sort], 'op-hook[''polySymbol.Sort, ''poly.Sort,
+    ''NeNatList.Sort, ''Attr.Sort], 'op-hook[''configSymbol.Sort,
+    ''config.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''objectSymbol.Sort,
+    ''object.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''msgSymbol.Sort,
+    ''msg.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''portalSymbol.Sort,
+    ''portal.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''pconstSymbol.Sort,
+    ''pconst.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''rpoSymbol.Sort,
+    ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[''specialSymbol.Sort,
+    ''special.Sort, ''NeHookList.Sort, ''Attr.Sort], 'op-hook[
+    ''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort], 'op-hook[
+    ''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort, ''Attr.Sort],
+    'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList, ''Attr.Sort],
+    'op-hook[''variantAttrSymbol.Sort, ''variant.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort, ''narrowing.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''printSymbol.Sort, ''print.Sort,
+    ''QidList.Sort, ''Attr.Sort], 'op-hook[''emptyAttrSetSymbol.Sort,
+    ''none.Sort, 'nil.TypeList, ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort,
+    ''__.Sort, '__[''AttrSet.Sort, ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[
     ''opDeclSymbol.Sort, ''op_:_->_`[_`]..Qid, '__[''Qid.Sort, ''TypeList.Sort,
     ''Type.Sort, ''AttrSet.Sort], ''OpDecl.Sort], 'op-hook[
     ''opDeclSetSymbol.Sort, ''__.Sort, '__[''OpDeclSet.Sort, ''OpDeclSet.Sort],
@@ -11031,23 +11032,24 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''Context.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''_`[_`].Qid, '__[''Qid.Sort,
     ''NeGroundTermList.Sort], ''GroundTerm.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''_`[_`].Qid, '__[''Qid.Sort, ''NeTermList.Sort], ''Term.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''_`[_`]`(_`).Qid, '__[''Qid.Sort, ''ModuleExpression.Sort,
-    ''QidList.Sort], ''Expression.Sort, '__['ctor.Attr, 'prec['s_^35[
-    '0.Zero]]]], 'op_:_->_`[_`].[''_`[_`]`{_`}.Qid, '__[''Qid.Sort,
-    ''Substitution.Sort, ''StrategyList.Sort], ''RuleApplication.Sort, '__[
-    'ctor.Attr, 'prec['s_^21['0.Zero]]]], 'op_:_->_`[_`].[''_`[`[_`]`].Qid,
-    '__[''Qid.Sort, ''TermList.Sort], ''CallStrategy.Sort, '__['ctor.Attr,
-    'prec['s_^21['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[
-    ''Expression.Sort, ''NeParameterList.Sort], ''Expression.Sort, '__[
-    'ctor.Attr, 'prec['s_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[
-    ''ModuleExpression.Sort, ''NeParameterList.Sort], ''ModuleExpression.Sort,
-    '__['ctor.Attr, 'prec['s_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort,
-    '__[''Qid.Sort, ''ParameterDeclList.Sort], ''Header.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''_`{_`}.Sort, '__[''ViewExpression.Sort,
-    ''NeParameterList.Sort], ''ViewExpression.Sort, '__['ctor.Attr, 'prec[
-    's_^37['0.Zero]]]], 'op_:_->_`[_`].[''_and-then_.Sort, '__[''Bool.Sort,
-    ''Bool.Sort], ''Bool.Sort, '__['strat['__['s_['0.Zero], '0.Zero]], 'prec[
-    's_^55['0.Zero]], 'gather['__[''e.Sort, ''E.Sort]]]], 'op_:_->_`[_`].[
+    'op_:_->_`[_`].[''_`[_`]`(_`)`[_`].Qid, '__[''Qid.Sort,
+    ''ModuleExpression.Sort, ''QidList.Sort, ''ParameterList.Sort],
+    ''Expression.Sort, '__['ctor.Attr, 'prec['s_^35['0.Zero]]]],
+    'op_:_->_`[_`].[''_`[_`]`{_`}.Qid, '__[''Qid.Sort, ''Substitution.Sort,
+    ''StrategyList.Sort], ''RuleApplication.Sort, '__['ctor.Attr, 'prec['s_^21[
+    '0.Zero]]]], 'op_:_->_`[_`].[''_`[`[_`]`].Qid, '__[''Qid.Sort,
+    ''TermList.Sort], ''CallStrategy.Sort, '__['ctor.Attr, 'prec['s_^21[
+    '0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''Expression.Sort,
+    ''NeParameterList.Sort], ''Expression.Sort, '__['ctor.Attr, 'prec['s_^37[
+    '0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''ModuleExpression.Sort,
+    ''NeParameterList.Sort], ''ModuleExpression.Sort, '__['ctor.Attr, 'prec[
+    's_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''Qid.Sort,
+    ''ParameterDeclList.Sort], ''Header.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''_`{_`}.Sort, '__[''ViewExpression.Sort, ''NeParameterList.Sort],
+    ''ViewExpression.Sort, '__['ctor.Attr, 'prec['s_^37['0.Zero]]]],
+    'op_:_->_`[_`].[''_and-then_.Sort, '__[''Bool.Sort, ''Bool.Sort],
+    ''Bool.Sort, '__['strat['__['s_['0.Zero], '0.Zero]], 'prec['s_^55[
+    '0.Zero]], 'gather['__[''e.Sort, ''E.Sort]]]], 'op_:_->_`[_`].[
     ''_and_.Sort, '__[''Bool.Sort, ''Bool.Sort], ''Bool.Sort, '__['assoc.Attr,
     'comm.Attr, 'prec['s_^55['0.Zero]]]], 'op_:_->_`[_`].[''_divides_.Sort,
     '__[''NzNat.Sort, ''Nat.Sort], ''Bool.Sort, '__['prec['s_^51['0.Zero]],
@@ -11691,48 +11693,48 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '__[''ModuleExpression.Sort, ''RenamingSet.Sort], ''ModuleExpression.Sort],
     'op-hook[''instantiationSymbol.Sort, ''_`{_`}.Sort, '__[''Expression.Sort,
     ''NeParameterList.Sort], ''Expression.Sort], 'op-hook[
-    ''transformationSymbol.Sort, ''_`[_`]`(_`).Qid, '__[''Qid.Sort,
-    ''ModuleExpression.Sort, ''QidList.Sort], ''Expression.Sort], 'op-hook[
-    ''termHookSymbol.Sort, ''term-hook.Sort, '__[''Qid.Sort, ''Term.Sort],
-    ''Hook.Sort], 'op-hook[''hookListSymbol.Sort, ''__.Sort, '__[
-    ''HookList.Sort, ''HookList.Sort], ''HookList.Sort], 'op-hook[
-    ''idHookSymbol.Sort, ''id-hook.Sort, '__[''Qid.Sort, ''QidList.Sort],
-    ''Hook.Sort], 'op-hook[''opHookSymbol.Sort, ''op-hook.Sort, '__[''Qid.Sort,
-    ''Qid.Sort, ''QidList.Sort, ''Qid.Sort], ''Hook.Sort], 'op-hook[
-    ''assocSymbol.Sort, ''assoc.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''commSymbol.Sort, ''comm.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''idemSymbol.Sort, ''idem.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''iterSymbol.Sort, ''iter.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''idSymbol.Sort, ''id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''leftIdSymbol.Sort, ''left-id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''rightIdSymbol.Sort, ''right-id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''stratSymbol.Sort, ''strat.Sort, ''NeNatList.Sort, ''Attr.Sort], 'op-hook[
-    ''memoSymbol.Sort, ''memo.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''precSymbol.Sort, ''prec.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
-    ''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
-    ''formatSymbol.Sort, ''format.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
-    ''latexSymbol.Sort, ''latex.Sort, ''String.Sort, ''Attr.Sort], 'op-hook[
-    ''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''frozenSymbol.Sort, ''frozen.Sort, ''NeNatList.Sort, ''Attr.Sort],
-    'op-hook[''polySymbol.Sort, ''poly.Sort, ''NeNatList.Sort, ''Attr.Sort],
-    'op-hook[''configSymbol.Sort, ''config.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''objectSymbol.Sort, ''object.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''msgSymbol.Sort, ''msg.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''portalSymbol.Sort, ''portal.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''pconstSymbol.Sort, ''pconst.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''rpoSymbol.Sort, ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
-    ''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort, ''Attr.Sort],
-    'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort],
-    'op-hook[''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort,
-    ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList,
-    ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort, ''variant.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort,
-    ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''printSymbol.Sort, ''print.Sort, ''QidList.Sort, ''Attr.Sort],
-    'op-hook[''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
-    ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[
-    ''AttrSet.Sort, ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[
+    ''transformationSymbol.Sort, ''_`[_`]`(_`)`[_`].Qid, '__[''Qid.Sort,
+    ''ModuleExpression.Sort, ''QidList.Sort, ''ParameterList.Sort],
+    ''Expression.Sort], 'op-hook[''termHookSymbol.Sort, ''term-hook.Sort, '__[
+    ''Qid.Sort, ''Term.Sort], ''Hook.Sort], 'op-hook[''hookListSymbol.Sort,
+    ''__.Sort, '__[''HookList.Sort, ''HookList.Sort], ''HookList.Sort],
+    'op-hook[''idHookSymbol.Sort, ''id-hook.Sort, '__[''Qid.Sort,
+    ''QidList.Sort], ''Hook.Sort], 'op-hook[''opHookSymbol.Sort,
+    ''op-hook.Sort, '__[''Qid.Sort, ''Qid.Sort, ''QidList.Sort, ''Qid.Sort],
+    ''Hook.Sort], 'op-hook[''assocSymbol.Sort, ''assoc.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''commSymbol.Sort, ''comm.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''idemSymbol.Sort, ''idem.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''iterSymbol.Sort, ''iter.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''idSymbol.Sort, ''id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''leftIdSymbol.Sort, ''left-id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''rightIdSymbol.Sort, ''right-id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''stratSymbol.Sort, ''strat.Sort, ''NeNatList.Sort,
+    ''Attr.Sort], 'op-hook[''memoSymbol.Sort, ''memo.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''precSymbol.Sort, ''prec.Sort, ''Nat.Sort,
+    ''Attr.Sort], 'op-hook[''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort,
+    ''Attr.Sort], 'op-hook[''formatSymbol.Sort, ''format.Sort, ''QidList.Sort,
+    ''Attr.Sort], 'op-hook[''latexSymbol.Sort, ''latex.Sort, ''String.Sort,
+    ''Attr.Sort], 'op-hook[''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''frozenSymbol.Sort, ''frozen.Sort,
+    ''NeNatList.Sort, ''Attr.Sort], 'op-hook[''polySymbol.Sort, ''poly.Sort,
+    ''NeNatList.Sort, ''Attr.Sort], 'op-hook[''configSymbol.Sort,
+    ''config.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''objectSymbol.Sort,
+    ''object.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''msgSymbol.Sort,
+    ''msg.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''portalSymbol.Sort,
+    ''portal.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''pconstSymbol.Sort,
+    ''pconst.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''rpoSymbol.Sort,
+    ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[''specialSymbol.Sort,
+    ''special.Sort, ''NeHookList.Sort, ''Attr.Sort], 'op-hook[
+    ''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort], 'op-hook[
+    ''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort, ''Attr.Sort],
+    'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList, ''Attr.Sort],
+    'op-hook[''variantAttrSymbol.Sort, ''variant.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort, ''narrowing.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''printSymbol.Sort, ''print.Sort,
+    ''QidList.Sort, ''Attr.Sort], 'op-hook[''emptyAttrSetSymbol.Sort,
+    ''none.Sort, 'nil.TypeList, ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort,
+    ''__.Sort, '__[''AttrSet.Sort, ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[
     ''opDeclSymbol.Sort, ''op_:_->_`[_`]..Qid, '__[''Qid.Sort, ''TypeList.Sort,
     ''Type.Sort, ''AttrSet.Sort], ''OpDecl.Sort], 'op-hook[
     ''opDeclSetSymbol.Sort, ''__.Sort, '__[''OpDeclSet.Sort, ''OpDeclSet.Sort],
@@ -13732,23 +13734,24 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     ''Context.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''_`[_`].Qid, '__[''Qid.Sort,
     ''NeGroundTermList.Sort], ''GroundTerm.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
     ''_`[_`].Qid, '__[''Qid.Sort, ''NeTermList.Sort], ''Term.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''_`[_`]`(_`).Qid, '__[''Qid.Sort, ''ModuleExpression.Sort,
-    ''QidList.Sort], ''Expression.Sort, '__['ctor.Attr, 'prec['s_^35[
-    '0.Zero]]]], 'op_:_->_`[_`].[''_`[_`]`{_`}.Qid, '__[''Qid.Sort,
-    ''Substitution.Sort, ''StrategyList.Sort], ''RuleApplication.Sort, '__[
-    'ctor.Attr, 'prec['s_^21['0.Zero]]]], 'op_:_->_`[_`].[''_`[`[_`]`].Qid,
-    '__[''Qid.Sort, ''TermList.Sort], ''CallStrategy.Sort, '__['ctor.Attr,
-    'prec['s_^21['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[
-    ''Expression.Sort, ''NeParameterList.Sort], ''Expression.Sort, '__[
-    'ctor.Attr, 'prec['s_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[
-    ''ModuleExpression.Sort, ''NeParameterList.Sort], ''ModuleExpression.Sort,
-    '__['ctor.Attr, 'prec['s_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort,
-    '__[''Qid.Sort, ''ParameterDeclList.Sort], ''Header.Sort, 'ctor.Attr],
-    'op_:_->_`[_`].[''_`{_`}.Sort, '__[''ViewExpression.Sort,
-    ''NeParameterList.Sort], ''ViewExpression.Sort, '__['ctor.Attr, 'prec[
-    's_^37['0.Zero]]]], 'op_:_->_`[_`].[''_and-then_.Sort, '__[''Bool.Sort,
-    ''Bool.Sort], ''Bool.Sort, '__['strat['__['s_['0.Zero], '0.Zero]], 'prec[
-    's_^55['0.Zero]], 'gather['__[''e.Sort, ''E.Sort]]]], 'op_:_->_`[_`].[
+    'op_:_->_`[_`].[''_`[_`]`(_`)`[_`].Qid, '__[''Qid.Sort,
+    ''ModuleExpression.Sort, ''QidList.Sort, ''ParameterList.Sort],
+    ''Expression.Sort, '__['ctor.Attr, 'prec['s_^35['0.Zero]]]],
+    'op_:_->_`[_`].[''_`[_`]`{_`}.Qid, '__[''Qid.Sort, ''Substitution.Sort,
+    ''StrategyList.Sort], ''RuleApplication.Sort, '__['ctor.Attr, 'prec['s_^21[
+    '0.Zero]]]], 'op_:_->_`[_`].[''_`[`[_`]`].Qid, '__[''Qid.Sort,
+    ''TermList.Sort], ''CallStrategy.Sort, '__['ctor.Attr, 'prec['s_^21[
+    '0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''Expression.Sort,
+    ''NeParameterList.Sort], ''Expression.Sort, '__['ctor.Attr, 'prec['s_^37[
+    '0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''ModuleExpression.Sort,
+    ''NeParameterList.Sort], ''ModuleExpression.Sort, '__['ctor.Attr, 'prec[
+    's_^37['0.Zero]]]], 'op_:_->_`[_`].[''_`{_`}.Sort, '__[''Qid.Sort,
+    ''ParameterDeclList.Sort], ''Header.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
+    ''_`{_`}.Sort, '__[''ViewExpression.Sort, ''NeParameterList.Sort],
+    ''ViewExpression.Sort, '__['ctor.Attr, 'prec['s_^37['0.Zero]]]],
+    'op_:_->_`[_`].[''_and-then_.Sort, '__[''Bool.Sort, ''Bool.Sort],
+    ''Bool.Sort, '__['strat['__['s_['0.Zero], '0.Zero]], 'prec['s_^55[
+    '0.Zero]], 'gather['__[''e.Sort, ''E.Sort]]]], 'op_:_->_`[_`].[
     ''_and_.Sort, '__[''Bool.Sort, ''Bool.Sort], ''Bool.Sort, '__['assoc.Attr,
     'comm.Attr, 'prec['s_^55['0.Zero]]]], 'op_:_->_`[_`].[''_divides_.Sort,
     '__[''NzNat.Sort, ''Nat.Sort], ''Bool.Sort, '__['prec['s_^51['0.Zero]],
@@ -14392,48 +14395,48 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     '__[''ModuleExpression.Sort, ''RenamingSet.Sort], ''ModuleExpression.Sort],
     'op-hook[''instantiationSymbol.Sort, ''_`{_`}.Sort, '__[''Expression.Sort,
     ''NeParameterList.Sort], ''Expression.Sort], 'op-hook[
-    ''transformationSymbol.Sort, ''_`[_`]`(_`).Qid, '__[''Qid.Sort,
-    ''ModuleExpression.Sort, ''QidList.Sort], ''Expression.Sort], 'op-hook[
-    ''termHookSymbol.Sort, ''term-hook.Sort, '__[''Qid.Sort, ''Term.Sort],
-    ''Hook.Sort], 'op-hook[''hookListSymbol.Sort, ''__.Sort, '__[
-    ''HookList.Sort, ''HookList.Sort], ''HookList.Sort], 'op-hook[
-    ''idHookSymbol.Sort, ''id-hook.Sort, '__[''Qid.Sort, ''QidList.Sort],
-    ''Hook.Sort], 'op-hook[''opHookSymbol.Sort, ''op-hook.Sort, '__[''Qid.Sort,
-    ''Qid.Sort, ''QidList.Sort, ''Qid.Sort], ''Hook.Sort], 'op-hook[
-    ''assocSymbol.Sort, ''assoc.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''commSymbol.Sort, ''comm.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''idemSymbol.Sort, ''idem.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''iterSymbol.Sort, ''iter.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''idSymbol.Sort, ''id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''leftIdSymbol.Sort, ''left-id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''rightIdSymbol.Sort, ''right-id.Sort, ''Term.Sort, ''Attr.Sort], 'op-hook[
-    ''stratSymbol.Sort, ''strat.Sort, ''NeNatList.Sort, ''Attr.Sort], 'op-hook[
-    ''memoSymbol.Sort, ''memo.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''precSymbol.Sort, ''prec.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
-    ''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
-    ''formatSymbol.Sort, ''format.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
-    ''latexSymbol.Sort, ''latex.Sort, ''String.Sort, ''Attr.Sort], 'op-hook[
-    ''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''frozenSymbol.Sort, ''frozen.Sort, ''NeNatList.Sort, ''Attr.Sort],
-    'op-hook[''polySymbol.Sort, ''poly.Sort, ''NeNatList.Sort, ''Attr.Sort],
-    'op-hook[''configSymbol.Sort, ''config.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''objectSymbol.Sort, ''object.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''msgSymbol.Sort, ''msg.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''portalSymbol.Sort, ''portal.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''pconstSymbol.Sort, ''pconst.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''rpoSymbol.Sort, ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[
-    ''specialSymbol.Sort, ''special.Sort, ''NeHookList.Sort, ''Attr.Sort],
-    'op-hook[''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort],
-    'op-hook[''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort,
-    ''Attr.Sort], 'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList,
-    ''Attr.Sort], 'op-hook[''variantAttrSymbol.Sort, ''variant.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort,
-    ''narrowing.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[
-    ''nonexecSymbol.Sort, ''nonexec.Sort, 'nil.TypeList, ''Attr.Sort],
-    'op-hook[''printSymbol.Sort, ''print.Sort, ''QidList.Sort, ''Attr.Sort],
-    'op-hook[''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
-    ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[
-    ''AttrSet.Sort, ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[
+    ''transformationSymbol.Sort, ''_`[_`]`(_`)`[_`].Qid, '__[''Qid.Sort,
+    ''ModuleExpression.Sort, ''QidList.Sort, ''ParameterList.Sort],
+    ''Expression.Sort], 'op-hook[''termHookSymbol.Sort, ''term-hook.Sort, '__[
+    ''Qid.Sort, ''Term.Sort], ''Hook.Sort], 'op-hook[''hookListSymbol.Sort,
+    ''__.Sort, '__[''HookList.Sort, ''HookList.Sort], ''HookList.Sort],
+    'op-hook[''idHookSymbol.Sort, ''id-hook.Sort, '__[''Qid.Sort,
+    ''QidList.Sort], ''Hook.Sort], 'op-hook[''opHookSymbol.Sort,
+    ''op-hook.Sort, '__[''Qid.Sort, ''Qid.Sort, ''QidList.Sort, ''Qid.Sort],
+    ''Hook.Sort], 'op-hook[''assocSymbol.Sort, ''assoc.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''commSymbol.Sort, ''comm.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''idemSymbol.Sort, ''idem.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''iterSymbol.Sort, ''iter.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''idSymbol.Sort, ''id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''leftIdSymbol.Sort, ''left-id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''rightIdSymbol.Sort, ''right-id.Sort, ''Term.Sort,
+    ''Attr.Sort], 'op-hook[''stratSymbol.Sort, ''strat.Sort, ''NeNatList.Sort,
+    ''Attr.Sort], 'op-hook[''memoSymbol.Sort, ''memo.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''precSymbol.Sort, ''prec.Sort, ''Nat.Sort,
+    ''Attr.Sort], 'op-hook[''gatherSymbol.Sort, ''gather.Sort, ''QidList.Sort,
+    ''Attr.Sort], 'op-hook[''formatSymbol.Sort, ''format.Sort, ''QidList.Sort,
+    ''Attr.Sort], 'op-hook[''latexSymbol.Sort, ''latex.Sort, ''String.Sort,
+    ''Attr.Sort], 'op-hook[''ctorSymbol.Sort, ''ctor.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''frozenSymbol.Sort, ''frozen.Sort,
+    ''NeNatList.Sort, ''Attr.Sort], 'op-hook[''polySymbol.Sort, ''poly.Sort,
+    ''NeNatList.Sort, ''Attr.Sort], 'op-hook[''configSymbol.Sort,
+    ''config.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''objectSymbol.Sort,
+    ''object.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''msgSymbol.Sort,
+    ''msg.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''portalSymbol.Sort,
+    ''portal.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''pconstSymbol.Sort,
+    ''pconst.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''rpoSymbol.Sort,
+    ''rpo.Sort, ''Nat.Sort, ''Attr.Sort], 'op-hook[''specialSymbol.Sort,
+    ''special.Sort, ''NeHookList.Sort, ''Attr.Sort], 'op-hook[
+    ''labelSymbol.Sort, ''label.Sort, ''Qid.Sort, ''Attr.Sort], 'op-hook[
+    ''metadataSymbol.Sort, ''metadata.Sort, ''String.Sort, ''Attr.Sort],
+    'op-hook[''owiseSymbol.Sort, ''owise.Sort, 'nil.TypeList, ''Attr.Sort],
+    'op-hook[''variantAttrSymbol.Sort, ''variant.Sort, 'nil.TypeList,
+    ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort, ''narrowing.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort,
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''printSymbol.Sort, ''print.Sort,
+    ''QidList.Sort, ''Attr.Sort], 'op-hook[''emptyAttrSetSymbol.Sort,
+    ''none.Sort, 'nil.TypeList, ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort,
+    ''__.Sort, '__[''AttrSet.Sort, ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[
     ''opDeclSymbol.Sort, ''op_:_->_`[_`]..Qid, '__[''Qid.Sort, ''TypeList.Sort,
     ''Type.Sort, ''AttrSet.Sort], ''OpDecl.Sort], 'op-hook[
     ''opDeclSetSymbol.Sort, ''__.Sort, '__[''OpDeclSet.Sort, ''OpDeclSet.Sort],

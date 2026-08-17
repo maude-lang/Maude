@@ -1878,7 +1878,7 @@ fmod META-MODULE is
     [ctor prec 39 format (d d s n++i n--i d)] .
 
 *** fake declaration to enable op-hook
-  op _[_](_) : Qid ModuleExpression QidList -> Expression [ctor prec 35] .
+  op _[_](_)[_] : Qid ModuleExpression QidList ParameterList -> Expression [ctor prec 35] .
 
 *** parameter lists
   sort EmptyCommaList NeParameterList ParameterList .
@@ -2551,7 +2551,7 @@ fmod META-LEVEL is
 	op-hook oneStratSymbol		(one : Strategy ~> Strategy)
 	op-hook starStratSymbol		(_* : Strategy ~> Strategy)
 	op-hook normalizationStratSymbol
-			(_! : Strategy ~> Strategy)
+		(_! : Strategy ~> Strategy)
 	op-hook notStratSymbol		(not : Strategy ~> Strategy)
 	op-hook testStratSymbol		(test : Strategy ~> Strategy)
 	op-hook tryStratSymbol		(try : Strategy ~> Strategy)
@@ -2578,7 +2578,8 @@ fmod META-LEVEL is
         op-hook sumSymbol		(_+_ : ModuleExpression ModuleExpression ~> ModuleExpression)
         op-hook renamingSymbol		(_*(_) : ModuleExpression RenamingSet ~> ModuleExpression)
         op-hook instantiationSymbol	(_{_} : Expression ParameterList ~> Expression)
-	op-hook transformationSymbol	(_[_](_) : Qid ModuleExpression QidList ~> Expression)
+	op-hook transformationSymbol
+	        (_[_](_)[_] : Qid ModuleExpression QidList ParameterList ~> Expression)
 
         op-hook protectingSymbol	(protecting_. : ModuleExpression ~> Import)
         op-hook extendingSymbol		(extending_. : ModuleExpression ~> Import)
@@ -3227,7 +3228,7 @@ fmod EXTENDED-META-LEVEL is
   op _,_ : ExpressionList NeExpressionList -> NeExpressionList [ctor ditto] .
 
 *** the real declaration for the module transformation / view generation operator
-  op _[_](_) : Qid ModuleExpressionList QidList -> Expression [ctor ditto] .
+  op _[_](_)[_] : Qid ModuleExpressionList QidList ParameterList -> Expression [ctor ditto] .
 endfm
 
 fmod SYSTEM-MESSAGE is
@@ -3318,10 +3319,10 @@ fmod MODULE-TRANSFORMER is
   var OPT : QidList .
   var ME : ModuleExpression .
   var IL : ImportList .
-  eq T(OPT)[protecting(ME) . IL] = protecting(T[ME](OPT)) . T(OPT)[IL] .
-  eq T(OPT)[extending(ME) . IL] = extending(T[ME](OPT)) . T(OPT)[IL] .
-  eq T(OPT)[generated-by(ME) . IL] = generated-by(T[ME](OPT)) . T(OPT)[IL] .
-  eq T(OPT)[including(ME) . IL] = including(T[ME](OPT)) . T(OPT)[IL] .
+  eq T(OPT)[protecting(ME) . IL] = protecting(T[ME](OPT)[empty]) . T(OPT)[IL] .
+  eq T(OPT)[extending(ME) . IL] = extending(T[ME](OPT)[empty]) . T(OPT)[IL] .
+  eq T(OPT)[generated-by(ME) . IL] = generated-by(T[ME](OPT)[empty]) . T(OPT)[IL] .
+  eq T(OPT)[including(ME) . IL] = including(T[ME](OPT)[empty]) . T(OPT)[IL] .
   eq T(OPT)[(nil).ImportList] = nil .
 endfm
 
@@ -3428,7 +3429,7 @@ fmod POWER is
   op makePower : ModuleList QidList -> TransformResult .
   ceq makePower(nil, Q) = {
     fmod 'DUMMY{ 'X :: 'TRIV } is
-      including ('TUPLE[empty](Q)){paramList(NzN)} .
+      including ('TUPLE[empty](Q)[empty]){paramList(NzN)} .
       sorts none .
       none
       none

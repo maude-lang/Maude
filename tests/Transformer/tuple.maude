@@ -39,7 +39,7 @@ fmod Tuple is
   
   op makeTuple : ModuleList QidList ModuleExpressionList -> ViewResult .
   ceq makeTuple(nil, Q, empty) = {
-    view 'Tuple{ paramDecls(NZ) } from 'TRIV to ('TUPLE[empty](Q)){paramList(NZ)} is
+    view 'Tuple{ paramDecls(NZ) } from 'TRIV to ('TUPLE[empty](Q)[empty]){paramList(NZ)} is
       sort 'Elt to S:Sort .
       none
       none

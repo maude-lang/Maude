@@ -1,3 +1,7 @@
+2026-08-16  Saruman the White  <eker@eker10>
+
+	* tests/Transformer/tuple.maude: use new transformSymbol syntax
+
 2026-08-03  Saruman the White  <eker@eker10>
 
 	* tests/Corner/otfVariables.maude: added more examples

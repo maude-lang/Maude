@@ -246,10 +246,11 @@ MetaLevel::upModuleExpression(const ModuleExpression* e, PointerMap& qidMap)
       }
     case ModuleExpression::TRANSFORMATION:
       {
-	Vector<DagNode*> args(3);
+	Vector<DagNode*> args(4);
 	args[0] = upQid(e->getModuleName().code(), qidMap);
 	args[1] = upModuleExpressionList(e->getInputModules(), qidMap);
 	args[2] = upQidList(e->getOptions(), qidMap);
+	args[3] = upArguments(e->getArguments(), qidMap);
 	return transformationSymbol->makeDagNode(args);
       }
     default:
@@ -304,10 +305,11 @@ MetaLevel::upArgument(const ViewExpression* argument, PointerMap& qidMap)
     }
     case ViewExpression::TRANSFORMATION:
       {
-	Vector<DagNode*> args(3);
+	Vector<DagNode*> args(4);
 	args[0] = upQid(argument->getName().code(), qidMap);
 	args[1] = upModuleExpressionList(argument->getInputModules(), qidMap);
 	args[2] = upQidList(argument->getOptions(), qidMap);
+	args[3] = upArguments(argument->getArguments(), qidMap);
 	return transformationSymbol->makeDagNode(args);
       }
     default:
@@ -1339,10 +1341,11 @@ MetaLevel::upModuleExpression(ImportModule* m, PointerMap& qidMap)
       }
     case ImportModule::TRANSFORMATION:
       {
-	Vector<DagNode*> args(3);
+	Vector<DagNode*> args(4);
 	args[0] = upModuleExpression(m->getTransformModule(), qidMap);  // should be a Qid
 	args[1] = upModuleExpressionList(m->getInputModules(), qidMap);
 	args[2] = upQidList(m->getTransformOptions(), qidMap);
+	args[3] = upViewExpressionList(m->getInputViews(), qidMap);
 	return transformationSymbol->makeDagNode(args);
       }
     default:
@@ -1422,12 +1425,13 @@ MetaLevel::upViewExpression(const View* view, PointerMap& qidMap)
   else if (const ImportModule* genModule = view->getTransformModule())
     {
       //
-      //	Generated view.
+      //	Transformed view.
       //
-      Vector<DagNode*> args(3);
+      Vector<DagNode*> args(4);
       args[0] = upQid(genModule->id(), qidMap);
       args[1] = upModuleExpressionList(view->getInputModules(), qidMap);
       args[2] = upQidList(view->getTransformOptions(), qidMap);
+      args[3] = upViewExpressionList(view->getInputViews(), qidMap);
       return transformationSymbol->makeDagNode(args);
     }
   return upQid(view->id(), qidMap);

@@ -574,6 +574,7 @@ private:
 
   ModuleExpression* downModuleExpression(DagNode* metaExpr);
   bool downModuleExpressionList(DagNode* metaModExprList, Vector<ModuleExpression*>& modExprList);
+  bool downViewExpressionList(DagNode* metaViewExprList, Vector<ViewExpression*>& viewExprList);
   bool downInstantiationArguments(DagNode* metaArguments, Vector<ViewExpression*>& arguments);
   ViewExpression* downViewExpression(DagNode* metaViewExpr);
   bool downInstantiationArgument(DagNode* metaArgument, ViewExpression*& argument);

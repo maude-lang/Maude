@@ -1,5 +1,26 @@
 2026-08-16  Saruman the White  <eker@eker10>
 
+	* metaLevel.hh (class MetaLevel): added decl for
+	downViewExpressionList()
+
+	* metaDownView.cc (MetaLevel::downModuleExpression): handle
+	inputViews
+	(MetaLevel::downViewExpression): handle inputViews
+	(MetaLevel::downViewExpressionList): added
+	(MetaLevel::downModuleExpression): use downViewExpressionList()
+	(MetaLevel::downViewExpression): use downViewExpressionList()
+
+	* metaUpModule.cc (MetaLevel::upModuleExpression): (ImportModule*
+	version) handle inputViews
+	(MetaLevel::upViewExpression): (View* version) handle inputViews
+	(MetaLevel::upArgument): (ViewExpression* version) handle
+	inputViews
+	(MetaLevel::upModuleExpression): (ModuleExpression* version)
+	handle inputViews
+
+	* metaLevelSignature.cc: transformationSymbol now takes 4
+	arguments
+
 	* metaUpModule.cc (MetaLevel::upViewExpression):
 	getGeneratorModule() -> getTransformModule()
 	(MetaLevel::upViewExpression): getGenerationOptions() ->
