@@ -1,3 +1,10 @@
+2026-08-19  Saruman the White  <eker@eker10>
+
+	* metaUpView.cc (MetaLevel::upParameterDecl): use
+	getParameterTheory() rather than getParameterTheoryExpression()
+	because the theory expression won't exist if the view is a partial
+	instantiation
+
 2026-08-16  Saruman the White  <eker@eker10>
 
 	* metaLevel.hh (class MetaLevel): added decl for

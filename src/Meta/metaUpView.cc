@@ -66,7 +66,8 @@ MetaLevel::upParameterDecl(View* view, int index, PointerMap& qidMap)
 {
   Vector<DagNode*> args(2);
   args[0] = upQid(view->getParameterName(index), qidMap);
-  args[1] = upModuleExpression(view->getParameterTheoryExpression(index), qidMap);
+  args[1] = upModuleExpression(view->getParameterTheory(index), qidMap);
+  //args[1] = upModuleExpression(view->getParameterTheoryExpression(index), qidMap);
   return parameterDeclSymbol->makeDagNode(args);
 }
 
