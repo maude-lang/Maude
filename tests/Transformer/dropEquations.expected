@@ -1,11 +1,11 @@
 Grammar:
 	nonterminals: 253
-	terminals: 768
-	productions: 2116
+	terminals: 770
+	productions: 2118
 
 Term rewriting system:
 	kinds: 44
-	sorts: 150
+	sorts: 151
 	user symbols: 462
 	total symbols: 527
 	polymorphic operators: 5
@@ -16,12 +16,12 @@ Term rewriting system:
 	strategy definitions: 0
 Grammar:
 	nonterminals: 253
-	terminals: 768
-	productions: 2116
+	terminals: 770
+	productions: 2118
 
 Term rewriting system:
 	kinds: 44
-	sorts: 150
+	sorts: 151
 	user symbols: 462
 	total symbols: 462
 	polymorphic operators: 5

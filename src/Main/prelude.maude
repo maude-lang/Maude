@@ -3216,9 +3216,11 @@ fmod EXTENDED-META-LEVEL is
   eq getNames(M, ML) = getName(M) getNames(ML) .
 
 *** module expression lists
-  sort ModuleExpressionList .
+  subsort NeModuleExpressionList < ModuleExpressionList .
   subsort ModuleExpression EmptyCommaList < ModuleExpressionList .
   op _,_ : ModuleExpressionList ModuleExpressionList -> ModuleExpressionList [ctor ditto] .
+  op _,_ : NeModuleExpressionList ModuleExpressionList -> NeModuleExpressionList [ctor ditto] .
+  op _,_ : ModuleExpressionList NeModuleExpressionList -> NeModuleExpressionList [ctor ditto] .
 
 *** for preregularity, expression lists
   subsort EmptyCommaList < ExpressionList < ModuleExpressionList ParameterList .
@@ -3298,8 +3300,8 @@ fmod MODULE-TRANSFORMER is
   protecting EXTENDED-META-LEVEL .
   protecting SYSTEM-MESSAGE .
 
-  sort TransformResult .
-  op {_,_} : ModuleList SystemMsgList -> TransformResult
+  sort ModuleResult .
+  op {_,_} : ModuleList SystemMsgList -> ModuleResult
     [special (
       id-hook ModuleResultSymbol
       op-hook nilModuleListSymbol	(nil : ~> ModuleList)
@@ -3326,7 +3328,7 @@ fmod MODULE-TRANSFORMER is
   eq T(OPT)[(nil).ImportList] = nil .
 endfm
 
-fmod VIEW-GENERATOR is
+fmod VIEW-TRANSFORMER is
   protecting EXTENDED-META-LEVEL .
   protecting SYSTEM-MESSAGE .
 
@@ -3363,7 +3365,7 @@ fmod TUPLE is
   var Var : Term .
   vars Args Vars : TermList .
 
-  op makeTuple : ModuleList QidList -> TransformResult .
+  op makeTuple : ModuleList QidList -> ModuleResult .
   ceq makeTuple(nil, Q) = {
     fmod 'DUMMY{ paramDecls(NzN) } is
       nil
@@ -3426,7 +3428,7 @@ fmod POWER is
   var QL : QidList .
   var NeML : NeModuleList .
 
-  op makePower : ModuleList QidList -> TransformResult .
+  op makePower : ModuleList QidList -> ModuleResult .
   ceq makePower(nil, Q) = {
     fmod 'DUMMY{ 'X :: 'TRIV } is
       including ('TUPLE[empty](Q)[empty]){paramList(NzN)} .
@@ -3451,7 +3453,7 @@ fmod POWER is
 endfm
 
 fmod @ is
-  pr VIEW-GENERATOR .
+  pr VIEW-TRANSFORMER .
   pr CONVERSION .
   var M : Module .
   var NeML : NeModuleList .

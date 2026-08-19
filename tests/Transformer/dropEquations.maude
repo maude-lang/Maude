@@ -6,7 +6,7 @@ set show timing off .
 
 fmod DROP-EQNS is
   pr MODULE-TRANSFORMER .
-  op dropEqns : ModuleList QidList -> TransformResult .
+  op dropEqns : ModuleList QidList -> ModuleResult .
   eq dropEqns(fmod H:Header is
       I:ImportList
       sorts S:SortSet .

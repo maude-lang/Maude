@@ -1,3 +1,9 @@
+2026-08-19  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added NeModuleExpressionList
+	VIEW-GENERATOR -> VIEW-TRANSFORMER
+	TransformResult -> ModuleResult
+
 2026-08-16  Saruman the White  <eker@eker10>
 
 	* prelude.maude: transformer metasyntax, _[_](_) -> _[_](_)[_]

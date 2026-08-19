@@ -31,7 +31,7 @@ red p3(4, 5, 6) .
 ***
 
 fmod Tuple is
-  pr VIEW-GENERATOR .
+  pr VIEW-TRANSFORMER .
   pr CONVERSION .
   var N : Nat .
   var NZ : NzNat .

@@ -1,3 +1,16 @@
+2026-08-19  Saruman the White  <eker@eker10>
+
+	* tests/Transformer/badModuleAdd.maude: TransformResult ->
+	ModuleResult
+
+	* tests/Transformer/badViewAdd.maude: TransformResult ->
+	ModuleResult
+
+	* tests/Transformer/dropEquations.maude: TransformResult ->
+	ModuleResult
+
+	* tests/Transformer/tuple.maude: VIEW-GENERATOR -> TRANSFORMER
+
 2026-08-16  Saruman the White  <eker@eker10>
 
 	* tests/Transformer/tuple.maude: use new transformSymbol syntax
