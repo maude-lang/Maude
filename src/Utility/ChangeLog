@@ -1,3 +1,7 @@
+2026-08-17  Saruman the White  <eker@eker10>
+
+	* graph.hh (class Graph): use unordered_set<> in place of set
+
 2025-12-03  Saruman the White  <eker@eker10>
 
 	* vector.hh (==): added

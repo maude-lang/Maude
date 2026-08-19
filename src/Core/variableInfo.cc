@@ -146,8 +146,10 @@ VariableInfo::computeIndexRemapping()
   //
   //	We now use graph coloring to remap the remaining construction indices.
   //
+  //cerr << "nrConstructionIndices = " << nrConstructionIndices << endl;
   Vector<int> coloring;
   int nrColors = conflicts.color(coloring);
+  //cerr << "nrColors = " << nrColors << endl;
   for (int i = 0; i < nrConstructionIndices; ++i)
     {
       if (constructionIndices[i].assignedFragment ==

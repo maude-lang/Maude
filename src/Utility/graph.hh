@@ -25,7 +25,7 @@
 //
 #ifndef _graph_hh_
 #define _graph_hh_
-#include <set>
+#include <unordered_set>
 
 class Graph
 {
@@ -40,7 +40,7 @@ private:
   void colorNode(int i, int& maxColor, Vector<int>& coloring);
   void visit(int i, Vector<int>& component, NatSet& visited);
 
-  typedef set<int> AdjSet;
+  typedef unordered_set<int> AdjSet;
 
   Vector<AdjSet> adjSets;
 };

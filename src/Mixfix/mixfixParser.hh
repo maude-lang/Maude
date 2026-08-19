@@ -25,7 +25,7 @@
 //
 #ifndef _mixfixParser_hh_
 #define _mixfixParser_hh_
-#include <map>
+#include <unordered_map>
 #include "intSet.hh"
 #include "parser.hh"
 #include "token.hh"
@@ -206,7 +206,7 @@ public:
   int getNrTerminals() const;
 
 private:
-  typedef map<int,int> IntMap;
+  typedef unordered_map<int,int> IntMap;
 
   enum Flags
   {
