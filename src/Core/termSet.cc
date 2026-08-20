@@ -38,6 +38,9 @@
 //	core class definitions
 #include "termSet.hh"
 
+
+#ifdef USE_POINTER_SET
+
 int
 TermSet::insert(Term* t)
 {
@@ -51,7 +54,7 @@ TermSet::term2Index(Term* t) const
 }
 
 unsigned int
-TermSet::hash(void* /* pointer */) const
+TermSet::hash(void* pointer ) const
 {
   CantHappen("should never be called");
   return 0;
@@ -64,3 +67,34 @@ TermSet::isEqual(void* pointer1, void* pointer2) const
   Term* t2 = static_cast<Term*>(pointer2);
   return t1->hasEagerContext() == t2->hasEagerContext() && t1->equal(t2);
 }
+
+#else
+
+std::size_t
+TermSet::TermHash::operator()(const TermPtr& t) const
+{
+  return t->getHashValue();
+}
+
+bool
+TermSet::TermEqual::operator()(const TermPtr& t1, const TermPtr& t2) const
+{
+  return t1->hasEagerContext() == t2->hasEagerContext() && t1->equal(t2);
+}
+
+Index
+TermSet::insert(Term* t)
+{
+  Index index = termMap.size();
+  auto p = termMap.insert(TermMap::value_type(t, index));
+  return p.first->second;
+}
+
+Index
+TermSet::term2Index(Term* t) const
+{
+  auto i = termMap.find(t);
+  return i == termMap.end() ? NONE : i->second;
+}
+
+#endif

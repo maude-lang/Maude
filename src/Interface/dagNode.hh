@@ -727,13 +727,15 @@ DagNode::fastLeq(const Sort* sort) const
 inline size_t
 DagNode::hash(size_t v1, size_t v2)
 {
-  return (v1 * v1) ^ (v1 >> 16) ^ v2;  // best function to date on empirical measurement
+  return v1 ^ (v2 + 0x9e3779b9 + (v1 << 6) + (v1 >> 2));
+  //return (v1 * v1) ^ (v1 >> 16) ^ v2;  // best function to date on empirical measurement
 }
 
 inline size_t
 DagNode::hash(size_t v1, size_t v2, size_t v3)
 {
-  return (v1 * v1) ^ (v1 >> 16) ^ (v2 * v3);
+  return hash(hash(v1, v2), v3);
+  //return (v1 * v1) ^ (v1 >> 16) ^ (v2 * v3);
 }
 
 #endif

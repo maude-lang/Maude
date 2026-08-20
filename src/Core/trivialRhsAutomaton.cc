@@ -63,7 +63,6 @@ TrivialRhsAutomaton::recordInfo(StackMachineRhsCompiler& compiler)
   return true;
 }
 
-
 DagNode*
 TrivialRhsAutomaton::construct(Substitution& matcher)
 {

@@ -46,6 +46,7 @@
 #include "rhsBuilder.hh"
 #include "trivialRhsAutomaton.hh"
 #include "copyRhsAutomaton.hh"
+#include "groundRhsAutomaton.hh"
 #include "symbolMap.hh"
 #include "stackMachineRhsCompiler.hh"
 
@@ -154,6 +155,18 @@ Term::compileTopRhs(RhsBuilder& rhsBuilder,
 		    VariableInfo& variableInfo,
 		    TermBag& availableTerms)
 {
+  if (ground() && computeSize() > GROUND_TERM_COMPILE_THRESHOLD)
+    {
+      //
+      //	We have a ground term that is large enough that the nonlinear 
+      //	compilation time is of concern, so instead we store a pointer
+      //	to the term, and convert it to a dag at runtime, which is slow 
+      //	(because identical subterms have to be discovered, and deep
+      //	recursion) but expected linear time.
+      //
+      rhsBuilder.addRhsAutomaton(new GroundRhsAutomaton(this));
+      return;
+    }
   int index = compileRhs(rhsBuilder, variableInfo, availableTerms, true);
   variableInfo.useIndex(index);
   //
