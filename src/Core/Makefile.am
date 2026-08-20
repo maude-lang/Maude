@@ -15,6 +15,7 @@ libcore_a_SOURCES = \
 	bindingLhsAutomaton.cc \
 	trivialRhsAutomaton.cc \
 	copyRhsAutomaton.cc \
+	groundRhsAutomaton.cc \
 	variableInfo.cc \
 	narrowingVariableInfo.cc \
 	termSet.cc \
@@ -77,6 +78,7 @@ noinst_HEADERS = \
 	conditionState.hh \
 	connectedComponent.hh \
 	copyRhsAutomaton.hh \
+	groundRhsAutomaton.hh \
 	core.hh \
 	dagArgumentIterator.hh \
 	dagNodeSet.hh \

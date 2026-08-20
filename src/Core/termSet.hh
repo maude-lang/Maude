@@ -25,6 +25,10 @@
 //
 #ifndef _termSet_hh_
 #define _termSet_hh_
+#define USE_POINTER_SET
+
+#ifdef USE_POINTER_SET
+
 #include "pointerSet.hh"
 
 class TermSet : private PointerSet
@@ -39,5 +43,48 @@ private:
   unsigned int hash(void* pointer) const;
   bool isEqual(void* pointer1, void* pointer2) const;
 };
+
+#else
+
+#include <unordered_map>
+
+class TermSet
+{
+public:
+  Index insert(Term* t);
+  Index term2Index(Term* t) const;  // returns NULL if t not in set or index otherwise
+  Index cardinality() const;
+  void makeEmpty();
+
+private:
+  typedef Term* TermPtr;
+
+  struct TermHash
+  {
+    std::size_t operator()(const TermPtr& t) const;
+  };
+  
+  struct TermEqual
+  {
+    bool operator()(const TermPtr& t1, const TermPtr& t2) const;
+  };
+  
+  typedef unordered_map<TermPtr, Index, TermHash, TermEqual> TermMap;
+
+  TermMap termMap;
+};
+
+inline Index
+TermSet::cardinality() const
+{
+  return termMap.size();
+}
+inline void
+TermSet::makeEmpty()
+{
+  termMap.clear();
+}
+
+#endif
 
 #endif

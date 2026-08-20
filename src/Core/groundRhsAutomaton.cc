@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,47 +40,34 @@
 //	core class definitions
 #include "variableInfo.hh"
 #include "substitution.hh"
-#include "stackMachineRhsCompiler.hh"
-#include "trivialRhsAutomaton.hh"
+#include "groundRhsAutomaton.hh"
 
-TrivialRhsAutomaton::TrivialRhsAutomaton(int index)
-  : index(index)
+GroundRhsAutomaton::GroundRhsAutomaton(Term* groundTerm)
+  : groundTerm(groundTerm)
 {
-}
-
-void
-TrivialRhsAutomaton::remapIndices(VariableInfo& variableInfo)
-{
-  index = variableInfo.remapIndex(index);
-}
-
-bool
-TrivialRhsAutomaton::recordInfo(StackMachineRhsCompiler& compiler)
-{
-  Vector<int> sources(1);
-  sources[0] = index;
-  compiler.recordFunctionEval(0, -1, sources);
-  return true;
+  NatSet eagerVariables;
+  Vector<int> problemVariables;
+  groundTerm->markEager(0, eagerVariables, problemVariables);
 }
 
 DagNode*
-TrivialRhsAutomaton::construct(Substitution& matcher)
+GroundRhsAutomaton::construct(Substitution& /* matcher */ )
 {
-  return matcher.value(index);
+  return groundTerm->term2Dag();
 }
 
 void
-TrivialRhsAutomaton::replace(DagNode* old, Substitution& matcher)
+GroundRhsAutomaton::replace(DagNode* old, Substitution& /* matcher */)
 {
-  matcher.value(index)->overwriteWithClone(old);
+  groundTerm->term2Dag()->overwriteWithClone(old);
 }
 
 #ifdef DUMP
 void
-TrivialRhsAutomaton::dump(ostream& s, const VariableInfo& variableInfo, int indentLevel)
+GroundRhsAutomaton::dump(ostream& s, const VariableInfo& variableInfo, int indentLevel)
 {
-  s << Indent(indentLevel) << "Begin{TrivialRhsAutomaton}\n";
-  s << Indent(indentLevel + 1) << "index = " << index << "\n";
-  s << Indent(indentLevel) << "End{TrivialRhsAutomaton}\n";
+  s << Indent(indentLevel) << "Begin{GroundRhsAutomaton}\n";
+  s << Indent(indentLevel + 1) << "groundTerm = " << groundTerm << "\n";
+  s << Indent(indentLevel) << "End{GroundRhsAutomaton}\n";
 }
 #endif
