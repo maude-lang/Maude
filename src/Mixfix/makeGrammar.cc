@@ -992,6 +992,17 @@ MixfixModule::makeComponentProductions()
 	  parser->insertProduction(TERM, rhsOne, 0, gatherAny, MixfixParser::PASS_THRU);
 	}
       //
+      //	Syntax for wildcard:
+      //	<FooTerm> ::= wildcard
+      //	We don't support this if there are any bubbles in the grammar.
+      //
+      if (bubbleSpecs.empty())
+	{
+	  rhsOne[0] = wildcard;
+	  parser->insertProduction(termNt, rhsOne, 0, gatherAny,
+				   MixfixParser::MAKE_WILDCARD_VARIABLE, i);
+	}
+      //
       //	Syntax for equality, assign and arrow pairs:
       //	<EQUALITY_PAIR> ::= <FooTerm> = <FooTerm>
       //	<ASSIGN_PAIR> ::= <FooTerm> := <FooTerm>
@@ -1555,6 +1566,8 @@ MixfixModule::makeSpecialProductions()
       rhs[0] = t;
       parser->insertProduction(i.second, rhs, 0, emptyGather);
     }
+  if (bubbleSpecs.empty())
+    parser->setWildcard(wildcard);
 }
 
 void

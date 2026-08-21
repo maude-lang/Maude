@@ -493,6 +493,13 @@ MixfixParser::translateSpecialToken(int code)
   //
   if (bubblesAllowed)
     return tokenSet.size();
+    //
+  //	We can't use Token::specialProperty() for starting with '_' because
+  //	is could coincide with other special properties; e.g. _X:Foo
+  //	We only recognize a wildcard if there is absolutely no other interpretation.
+  //
+  if (Token::name(code)[0] == '_')
+    return wildcardTerminal;  // could be NONE if we're not supporting wildcards
   return NONE;
 }
 
@@ -1165,6 +1172,13 @@ MixfixParser::makeTerm(int node)
 	Sort* sort = client.getSorts()[a.data];
 	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
 	t = new VariableTerm(symbol, (*currentSentence)[pos].code());
+	break;
+      }
+    case MAKE_WILDCARD_VARIABLE:
+      {
+	Sort* kind = client.getConnectedComponents()[a.data]->sort(Sort::KIND);
+	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(kind));
+	t = new VariableTerm(symbol, (*currentSentence)[pos].code());  // FIXME: freshness
 	break;
       }
     case MAKE_POLYMORPH:

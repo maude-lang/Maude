@@ -51,6 +51,7 @@ public:
     MAKE_OTF_VARIABLE_KNOWN_SORT,
     MAKE_OTF_VARIABLE,
     MAKE_VARIABLE_FROM_ALIAS,
+    MAKE_WILDCARD_VARIABLE,
     MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET,
     MAKE_NATURAL,
     MAKE_INTEGER,
@@ -162,6 +163,7 @@ public:
   void insertComponentTerminal(int componentIndex, int codeToUse);
   void insertLeadTerminal(int sortNameCode, int codeToUse);
   void insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse);
+  void setWildcard(int codeToUse);
   //
   //	Function that parses a vector of tokens to a parse tree.
   //
@@ -272,6 +274,7 @@ private:
   Vector<int> componentTerminals;	// special terminals for regular otf variables
   IntMap leadTerminals;			// special terminals for X:Foo where Foo{...} is a sort
   IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
+  int wildcardTerminal = NONE;			// special terminal for wildcards
   bool bubblesAllowed;			// do we allow bubbles of unknown tokens
   bool otfTranslationsMade;
   //
@@ -361,6 +364,12 @@ inline void
 MixfixParser::insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse)
 {
   iterSymbolTerminals[iterSymbolNameCode] = tokenToIndex(codeToUse);
+}
+
+inline void
+MixfixParser::setWildcard(int codeToUse)
+{
+  wildcardTerminal = tokenToIndex(codeToUse);
 }
 
 #endif
