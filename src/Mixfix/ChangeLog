@@ -1,3 +1,25 @@
+2026-08-21  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::makeTerm): partly implemented
+	MAKE_WILDCARD_VARIABLE case
+
+	* makeGrammar.cc (MixfixModule::makeSpecialProductions): call
+	setWildcard()
+
+	* mixfixParser.hh (MixfixParser::setWildcard): added
+	(class MixfixParser): added data member wildcardTerminal
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken): translate
+	wildcards
+
+	* mixfixParser.hh (enum SemanticActions): added
+	MAKE_WILDCARD_VARIABLE
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): added
+	syntax for <FooTerm> ::= wildcard
+
+	* specialTokens.cc: added wildcard
+
 2026-08-17  Saruman the White  <eker@eker10>
 
 	* mixfixParser.hh (class MixfixParser): use unordered_map rather

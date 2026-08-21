@@ -151,3 +151,4 @@
   MACRO(quotedIdentifier, "[ QUOTED_IDENTIFIER ]")
   MACRO(stringToken, "[ STRING ]")
   MACRO(endsInColon, "[ ENDS_IN_COLON ]")
+  MACRO(wildcard, "[ WILDCARD ]")
