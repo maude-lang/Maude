@@ -1,5 +1,26 @@
 2026-08-21  Saruman the White  <eker@eker10>
 
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): use
+	emptyGather for wildcard productions
+
+	* mixfixParser.cc (MixfixParser::makeTerms): clear usedNames
+	before making a second term
+	(MixfixParser::makeStrategyExprs): clear usedNames before making a
+	second strategy expression
+	(MixfixParser::translateSpecialToken): only allow wildcards that
+	are valid view names
+
+	* mixfixParser.hh (class MixfixParser): added decls for
+	makeFreshVariableName() and guaranteedFresh()
+
+	* mixfixParser.cc (MixfixParser::makeTerm): use makeFreshVariableName()
+	for wildcard variables
+	(MixfixParser::guaranteedFresh): added
+	(MixfixParser::makeFreshVariableName): added
+	(MixfixParser::parseSentence): clear usedNames
+
+	* mixfixParser.hh (class MixfixParser): added data member usedNames
+
 	* mixfixParser.cc (MixfixParser::makeTerm): partly implemented
 	MAKE_WILDCARD_VARIABLE case
 

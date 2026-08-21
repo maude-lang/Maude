@@ -493,12 +493,14 @@ MixfixParser::translateSpecialToken(int code)
   //
   if (bubblesAllowed)
     return tokenSet.size();
-    //
+  //
   //	We can't use Token::specialProperty() for starting with '_' because
   //	is could coincide with other special properties; e.g. _X:Foo
   //	We only recognize a wildcard if there is absolutely no other interpretation.
+  //	We limit named wildcards to tokens that are valid view names to
+  //	rule out edge cases.
   //
-  if (Token::name(code)[0] == '_')
+  if (Token::name(code)[0] == '_' && Token::isValidViewName(code))
     return wildcardTerminal;  // could be NONE if we're not supporting wildcards
   return NONE;
 }
@@ -517,6 +519,10 @@ MixfixParser::parseSentence(const Vector<Token>& original,
   //
   otfTranslations.clear();
   otfTranslationsMade = false;
+  //
+  //	Wildcard variable names are fresh with respect to sentence.
+  //
+  usedNames.clear();
   sentence.resize(nrTokens);
   for (int i = 0; i < nrTokens; ++i)
     {
@@ -551,6 +557,69 @@ MixfixParser::parseSentence(const Vector<Token>& original,
   return nrParses;
 }
 
+bool
+MixfixParser::guaranteedFresh(int code) const
+{
+  if (usedNames.find(code) != usedNames.end())
+    {
+      //
+      //	Name already used for a wildcard variable.
+      //
+      return false;
+    }
+  if (tokenSet.find(code) != NONE)
+    {
+      //
+      //	This covers the variable alias case.
+      //	It also rejects other tokens that ended up in the user's
+      //	grammar and might be confusing to use as a fresh variable
+      //	name.
+      //
+      return false;
+    }
+  if (otfTranslations.find(code) != otfTranslations.end())
+    {
+      //
+      //	Because we only translate wildcards if all else fails,
+      //	we will have called makeOtfTranslations() and anything
+      //	that looks like an otf variable will be in otfTranslations,
+      //	perhaps blocked, if it didn't qualify for extended scope.
+      //
+      return false;
+    }
+  return true;
+}
+		
+int
+MixfixParser::makeFreshVariableName(int code)
+{
+  //
+  //	We want to make a name for a variable based on code, that is guaranteed fresh.
+  //	In particular:
+  //	(1) We didn't already make a fresh variable with this name.
+  //	(2) It isn't a declared variable alias.
+  //	(3) It isn't an otf variable in the current sentence.
+  //
+  if (!guaranteedFresh(code))
+    {
+      //
+      //	Make names _<num> or _Foo_<num> until we hit a guaranteed fresh one.
+      //	We don't expect this to take many tries.
+      //
+      Rope baseName(Token::name(code));
+      if (baseName[baseName.length() - 1] != '_')
+	baseName += '_';
+      for (Index index = 1;; ++index)
+	{
+	  code = Token::ropeToCode(baseName + int64ToString(index));
+	  if (guaranteedFresh(code))
+	    break;
+	}
+    }
+  usedNames.insert(code);
+  return code;
+}
+
 void
 MixfixParser::makeTerms(Term*& first, Term*& second)
 {
@@ -562,6 +631,7 @@ MixfixParser::makeTerms(Term*& first, Term*& second)
     {
       DebugSave(success, parser.extractNextParse());
       Assert(success, "didn't find 2nd parse for ambigous sentence");
+      usedNames.clear();
       second  = makeTerm(node);
     }
 }
@@ -577,6 +647,7 @@ MixfixParser::makeStrategyExprs(StrategyExpression*& first, StrategyExpression*&
     {
       DebugSave(success, parser.extractNextParse());
       Assert(success, "didn't find 2nd parse for ambigous sentence");
+      usedNames.clear();
       second = makeStrategy(node);
     }
 }
@@ -1178,7 +1249,7 @@ MixfixParser::makeTerm(int node)
       {
 	Sort* kind = client.getConnectedComponents()[a.data]->sort(Sort::KIND);
 	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(kind));
-	t = new VariableTerm(symbol, (*currentSentence)[pos].code());  // FIXME: freshness
+	t = new VariableTerm(symbol, makeFreshVariableName((*currentSentence)[pos].code()));
 	break;
       }
     case MAKE_POLYMORPH:

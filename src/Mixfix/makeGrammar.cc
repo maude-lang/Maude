@@ -999,7 +999,7 @@ MixfixModule::makeComponentProductions()
       if (bubbleSpecs.empty())
 	{
 	  rhsOne[0] = wildcard;
-	  parser->insertProduction(termNt, rhsOne, 0, gatherAny,
+	  parser->insertProduction(termNt, rhsOne, 0, emptyGather,
 				   MixfixParser::MAKE_WILDCARD_VARIABLE, i);
 	}
       //

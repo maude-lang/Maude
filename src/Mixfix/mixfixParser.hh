@@ -26,6 +26,7 @@
 #ifndef _mixfixParser_hh_
 #define _mixfixParser_hh_
 #include <unordered_map>
+#include <unordered_set>
 #include "intSet.hh"
 #include "parser.hh"
 #include "token.hh"
@@ -209,6 +210,7 @@ public:
 
 private:
   typedef unordered_map<int,int> IntMap;
+  typedef unordered_set<int> NameSet;
 
   enum Flags
   {
@@ -260,7 +262,9 @@ private:
   void makeOtfTranslations();
   ConnectedComponent* checkSortNames(const Vector<int>& sortNames);
   void makeOtfTranslation(int code, int varName, int sortIndex);
-
+  bool guaranteedFresh(int code) const;
+  int makeFreshVariableName(int code);
+  
   MixfixModule& client;
   const bool complexParser;
   const int componentNonTerminalBase;
@@ -286,6 +290,7 @@ private:
   int currentOffset;			// start of parsed tokens
   int nrParses;
   IntMap otfTranslations;
+  NameSet usedNames;			// names already used for wildcard variables
 };
 
 inline int
