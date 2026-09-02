@@ -21,3 +21,4 @@ src/Mixfix/tokenizer.cc
 src/Mixfix/deserializer.cc
 src/Mixfix/surface.yy
 src/Mixfix/surface.cc
+build/

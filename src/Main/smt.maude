@@ -99,4 +99,20 @@ fmod REAL-INTEGER is
   op isInteger : Real -> Boolean [special (id-hook SMT_Symbol (isInteger))] .
 endfm
 
+ mod SMT-SET is
+   protecting BOOLEAN .
+   protecting INTEGER .
+   sort Set .
+   op setMembership : Integer Set -> Boolean [special (id-hook SMT_Symbol (setMembership))] .
+   op setUnion : Set Set -> Set [special (id-hook SMT_Symbol (setUnion))] .
+   op setIntersection : Set Set -> Set [special (id-hook SMT_Symbol (setIntersection))] .
+   op setDifference : Set Set -> Set [special (id-hook SMT_Symbol (setDifference))] .
+   op setSubset : Set Set -> Boolean [special (id-hook SMT_Symbol (setSubset))] .
+   op setEmpty : -> Set [special (id-hook SMT_Symbol (setEmpty))] .
+   op setCardinality : Set -> Integer [special (id-hook SMT_Symbol (setCardinality))] .
+ endm
+
+
+
+
 set include BOOLEAN on .

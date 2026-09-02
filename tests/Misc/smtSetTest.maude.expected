@@ -1,0 +1,51 @@
+		     \||||||||||||||||||/
+		   --- Welcome to Maude ---
+		     /||||||||||||||||||\
+	   Maude alpha165 built: Sep  2 2026 10:38:38
+	     Copyright 1997-2026 SRI International
+		   Wed Sep  2 11:44:58 2026
+==========================================
+check in TEST-SET : setMembership(I, S) and setMembership(J, S) and I =/== J .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : not (setMembership(I, S) and setMembership(J, S) and I =/==
+    J and setCardinality(S) === 1) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, S) implies setMembership(I, setUnion(S,
+    T)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, T) implies setMembership(I, setUnion(S,
+    T)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setIntersection(S, T)) implies
+    setMembership(I, S) and setMembership(I, T) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setDifference(S, T)) implies
+    setMembership(I, S) and not setMembership(I, T) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setSubset(S, T) implies setMembership(I, S) implies
+    setMembership(I, T) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, S) and setMembership(J, S) and I =/== J
+    implies setCardinality(S) >= 2 .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setEmpty) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setSubset(S, T) and setMembership(I, S) and not
+    setMembership(I, T) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setCardinality(S) === 1 and setMembership(I, S) and
+    setMembership(J, S) and I =/== J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setCardinality(setEmpty) === 1 .
+Result from sat solver is: unsat

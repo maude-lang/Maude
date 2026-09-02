@@ -221,6 +221,12 @@ VariableGenerator::makeVariable(VariableDagNode* v)
 	DebugAdvisory("made Real variable " << static_cast<DagNode*>(v));
 	break;
       }
+    case SMT_Info::SET:
+      {
+	type = termManager.mkSetSort(termManager.getIntegerSort());
+	DebugAdvisory("made Set variable " << static_cast<DagNode*>(v));
+	break;
+      }
     }
   //
   //	Get the name as a C string, make the new variable and cache it under the pair.
@@ -439,6 +445,39 @@ VariableGenerator::dagToCvc5(DagNode* dag)
 	  {
 	    return termManager.mkTerm(kind::IS_INTEGER, exprs);
 	  }
+	  //
+	  //	Set stuff.
+	  //
+	case SMT_Symbol::SET_MEMBERSHIP:
+	  {
+	    return termManager.mkTerm(kind::SET_MEMBER, exprs);
+	  }
+	case SMT_Symbol::SET_UNION:
+	  {
+	    return termManager.mkTerm(kind::SET_UNION, exprs);
+	  }
+	case SMT_Symbol::SET_INTERSECTION:
+	  {
+	    return termManager.mkTerm(kind::SET_INTER, exprs);
+	  }
+	case SMT_Symbol::SET_DIFFERENCE:
+	  {
+	    return termManager.mkTerm(kind::SET_MINUS, exprs);
+	  }
+	case SMT_Symbol::SET_SUBSET:
+	  {
+	    return termManager.mkTerm(kind::SET_SUBSET, exprs);
+	  }
+	case SMT_Symbol::SET_EMPTY:
+	  {
+	    return termManager.mkEmptySet(termManager.mkSetSort(termManager.getIntegerSort()));
+	  }
+	case SMT_Symbol::SET_CARDINALITY:
+	  {
+	    return termManager.mkTerm(kind::SET_CARD, exprs);
+	  }
+
+
 	}
     }
   IssueWarning("term " << QUOTE(dag) << " is not a valid SMT term.");

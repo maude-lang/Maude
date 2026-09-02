@@ -72,7 +72,17 @@ public:
       REAL_DIVISION,
       TO_REAL,
       TO_INTEGER,
-      IS_INTEGER
+      IS_INTEGER,
+      //
+      //	Set stuff.
+      //
+      SET_MEMBERSHIP,
+      SET_UNION,
+      SET_INTERSECTION,
+      SET_DIFFERENCE,
+      SET_SUBSET,
+      SET_EMPTY,
+      SET_CARDINALITY
     };
 
   SMT_Symbol(int id, int arity);

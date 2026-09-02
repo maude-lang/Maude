@@ -96,6 +96,17 @@ const char* SMT_Symbol::operatorNames[] =
     "toReal",
     "toInteger",
     "isInteger",
+    //
+    //	Set stuff.
+    //
+    "setMembership",
+    "setUnion",
+    "setIntersection",
+    "setDifference",
+    "setSubset",
+    "setEmpty",
+    "setCardinality",
+
     0
   };
 
@@ -181,6 +192,12 @@ SMT_Symbol::fillOutSMT_Info(SMT_Info& info)
 	break;
       }
     default:
-      break;
+      {
+	if (op == SET_EMPTY)
+	  {
+	    info.setType(getRangeSort(), SMT_Info::SET);
+	  }
+	break;
+      }
     }
 }

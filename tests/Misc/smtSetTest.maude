@@ -1,0 +1,26 @@
+set show timing off .
+
+load smt
+
+mod TEST-SET is
+  pr SMT-SET .
+  pr INTEGER .
+  vars S T U : Set .
+  vars I J K : Integer .
+endm
+
+*** SAT Examples
+check setMembership(I, S) and setMembership(J, S) and I =/== J .
+check not(setMembership(I, S) and setMembership(J, S) and I =/== J and setCardinality(S) === 1) .
+check setMembership(I, S) implies setMembership(I, setUnion(S, T)) .
+check setMembership(I, T) implies setMembership(I, setUnion(S, T)) .
+check setMembership(I, setIntersection(S, T)) implies (setMembership(I, S) and setMembership(I, T)) .
+check setMembership(I, setDifference(S, T)) implies (setMembership(I, S) and not setMembership(I, T)) .
+check setSubset(S, T) implies (setMembership(I, S) implies setMembership(I, T)) .
+check setMembership(I, S) and setMembership(J, S) and I =/== J implies setCardinality(S) >= 2 .
+
+*** UNSAT Examples
+check setMembership(I, setEmpty) .
+check setSubset(S, T) and setMembership(I, S) and not setMembership(I, T) .
+check setCardinality(S) === 1 and setMembership(I, S) and setMembership(J, S) and I =/== J .
+check setCardinality(setEmpty) === 1 .

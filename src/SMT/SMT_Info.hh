@@ -35,7 +35,8 @@ public:
       NOT_SMT = -1,
       BOOLEAN = 0,
       INTEGER = 1,
-      REAL = 2
+      REAL = 2,
+      SET = 3
     };
 
   SMT_Info();
