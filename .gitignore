@@ -22,3 +22,14 @@ src/Mixfix/deserializer.cc
 src/Mixfix/surface.yy
 src/Mixfix/surface.cc
 build/
+Makefile
+config.h
+config.log
+config.status
+*.o
+*.a
+.deps/
+**/.deps/
+**/*.o
+**/*.a
+*.out

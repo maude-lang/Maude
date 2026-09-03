@@ -19,8 +19,6 @@ fi
 MAUDE_LIB=$srcdir/../../src/Main
 export MAUDE_LIB
 
-../../src/Main/maude \\
-  < $srcdir/smtSetTest.maude -no-banner -no-advise \\
-  > smtSetTest.out 2>&1
+../../src/Main/maude < $srcdir/smtSetTest.maude -no-banner -no-advise > smtSetTest.out 2>&1
 
 diff $srcdir/smtSetTest.expected smtSetTest.out > /dev/null 2>&1

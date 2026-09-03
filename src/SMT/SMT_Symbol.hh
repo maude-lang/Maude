@@ -82,7 +82,11 @@ public:
       SET_DIFFERENCE,
       SET_SUBSET,
       SET_EMPTY,
-      SET_CARDINALITY
+      SET_CARDINALITY,
+      SET_SINGLETON,
+      SET_INSERT,
+      SET_COMPLEMENT,
+      SET_UNIVERSE
     };
 
   SMT_Symbol(int id, int arity);

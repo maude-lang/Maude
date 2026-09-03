@@ -99,18 +99,28 @@ fmod REAL-INTEGER is
   op isInteger : Real -> Boolean [special (id-hook SMT_Symbol (isInteger))] .
 endfm
 
- mod SMT-SET is
-   protecting BOOLEAN .
-   protecting INTEGER .
-   sort Set .
-   op setMembership : Integer Set -> Boolean [special (id-hook SMT_Symbol (setMembership))] .
-   op setUnion : Set Set -> Set [special (id-hook SMT_Symbol (setUnion))] .
-   op setIntersection : Set Set -> Set [special (id-hook SMT_Symbol (setIntersection))] .
-   op setDifference : Set Set -> Set [special (id-hook SMT_Symbol (setDifference))] .
-   op setSubset : Set Set -> Boolean [special (id-hook SMT_Symbol (setSubset))] .
-   op setEmpty : -> Set [special (id-hook SMT_Symbol (setEmpty))] .
-   op setCardinality : Set -> Integer [special (id-hook SMT_Symbol (setCardinality))] .
- endm
+fmod SMT-SET is
+  protecting BOOLEAN .
+  protecting INTEGER .
+  protecting REAL .
+  sort Element .
+  subsort Boolean < Element .
+  subsort Integer < Element .
+  subsort Real < Element .
+  sort SmtSet .
+  op setMembership : Element SmtSet -> Boolean [special (id-hook SMT_Symbol (setMembership))] .
+  op setUnion : SmtSet SmtSet -> SmtSet [special (id-hook SMT_Symbol (setUnion))] .
+  op setIntersection : SmtSet SmtSet -> SmtSet [special (id-hook SMT_Symbol (setIntersection))] .
+  op setDifference : SmtSet SmtSet -> SmtSet [special (id-hook SMT_Symbol (setDifference))] .
+  op setSubset : SmtSet SmtSet -> Boolean [special (id-hook SMT_Symbol (setSubset))] .
+  op setEmpty : Element -> SmtSet [special (id-hook SMT_Symbol (setEmpty))] .
+  op setCardinality : SmtSet -> Integer [special (id-hook SMT_Symbol (setCardinality))] .
+  op setSingleton : Element -> SmtSet [special (id-hook SMT_Symbol (setSingleton))] .
+  op setInsert : Element SmtSet -> SmtSet [special (id-hook SMT_Symbol (setInsert))] .
+  op setComplement : SmtSet -> SmtSet [special (id-hook SMT_Symbol (setComplement))] .
+  op setUniverse : Element -> SmtSet [special (id-hook SMT_Symbol (setUniverse))] .
+endfm
+
 
 
 

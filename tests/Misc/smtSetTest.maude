@@ -1,26 +1,33 @@
 set show timing off .
 
-load smt
+load "src/Main/smt.maude"
 
-mod TEST-SET is
+fmod TEST-SET is
   pr SMT-SET .
   pr INTEGER .
-  vars S T U : Set .
-  vars I J K : Integer .
-endm
+  pr REAL .
+  vars I J : Integer .
+  vars R1 R2 : Real .
+endfm
 
-*** SAT Examples
-check setMembership(I, S) and setMembership(J, S) and I =/== J .
-check not(setMembership(I, S) and setMembership(J, S) and I =/== J and setCardinality(S) === 1) .
-check setMembership(I, S) implies setMembership(I, setUnion(S, T)) .
-check setMembership(I, T) implies setMembership(I, setUnion(S, T)) .
-check setMembership(I, setIntersection(S, T)) implies (setMembership(I, S) and setMembership(I, T)) .
-check setMembership(I, setDifference(S, T)) implies (setMembership(I, S) and not setMembership(I, T)) .
-check setSubset(S, T) implies (setMembership(I, S) implies setMembership(I, T)) .
-check setMembership(I, S) and setMembership(J, S) and I =/== J implies setCardinality(S) >= 2 .
+*** SAT Examples (Integer)
+check in TEST-SET : setMembership(I, setSingleton(I)) .
+check in TEST-SET : setMembership(I, setUnion(setSingleton(I), setSingleton(J))) .
+check in TEST-SET : setMembership(I, setIntersection(setSingleton(I), setSingleton(I))) .
+check in TEST-SET : setMembership(I, setDifference(setSingleton(I), setSingleton(J))) and I =/== J .
+check in TEST-SET : setMembership(I, setInsert(I, setSingleton(J))) .
+check in TEST-SET : setMembership(I, setComplement(setSingleton(J))) and I =/== J .
+check in TEST-SET : setMembership(I, setUniverse(I)) .
+
+*** SAT Examples (Real)
+check in TEST-SET : setMembership(R1, setSingleton(R1)) .
+check in TEST-SET : setMembership(R1, setUnion(setSingleton(R1), setSingleton(R2))) .
+check in TEST-SET : setMembership(R1, setIntersection(setSingleton(R1), setSingleton(R1))) .
+check in TEST-SET : setMembership(R1, setDifference(setSingleton(R1), setSingleton(R2))) and R1 =/== R2 .
+check in TEST-SET : setMembership(R1, setInsert(R1, setSingleton(R2))) .
+check in TEST-SET : setMembership(R1, setComplement(setSingleton(R2))) and R1 =/== R2 .
+check in TEST-SET : setMembership(R1, setUniverse(R1)) .
 
 *** UNSAT Examples
-check setMembership(I, setEmpty) .
-check setSubset(S, T) and setMembership(I, S) and not setMembership(I, T) .
-check setCardinality(S) === 1 and setMembership(I, S) and setMembership(J, S) and I =/== J .
-check setCardinality(setEmpty) === 1 .
+check in TEST-SET : setMembership(I, setEmpty(I)) .
+check in TEST-SET : setMembership(R1, setEmpty(R1)) .

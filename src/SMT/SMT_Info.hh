@@ -1,5 +1,4 @@
 /*
-
     This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
@@ -17,7 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
-
 */
 
 //
@@ -50,22 +48,17 @@ public:
   Symbol* getTrueSymbol() const;
   void setEqualityOperator(Symbol* symbol);
   Symbol* getEqualityOperator(DagNode* lhs, DagNode* rhs) const;
- 
-private:
-  //
-  //	We keep track of which Maude sort corresponds to which SMT type
-  //	by mapping the index of the sort within its module to our enum.
-  //
+  void setSetElementSort(const Sort* setSort, const Sort* elementSort);
+  const Sort* getSetElementSort(const Sort* setSort) const;
+  
+ private:
   typedef map<int, SMT_Type> SortIndexToSMT_TypeMap;
-  //
-  //	We keep track of Maude symbols that correspond to equality
-  //	operators on various kinds by mapping the index of the kind
-  //	within  its module to the symbol pointer.
-  //
   typedef map<int, Symbol*> EqualityOperatorMap;
+  typedef map<int, const Sort*> SetElementSortMap;
 
   SortIndexToSMT_TypeMap typeMap;
   EqualityOperatorMap equalityOperatorMap;
+  SetElementSortMap setElementSortMap;
   Symbol* conjunctionOperator;
   Symbol* trueSymbol;
 };
@@ -112,6 +105,19 @@ inline Symbol*
 SMT_Info::getTrueSymbol() const
 {
   return trueSymbol;
+}
+
+inline void
+SMT_Info::setSetElementSort(const Sort* setSort, const Sort* elementSort)
+{
+  setElementSortMap.insert(SetElementSortMap::value_type(setSort->getIndexWithinModule(), elementSort));
+}
+
+inline const Sort*
+SMT_Info::getSetElementSort(const Sort* setSort) const
+{
+  SetElementSortMap::const_iterator i = setElementSortMap.find(setSort->getIndexWithinModule());
+  return (i == setElementSortMap.end()) ? 0 : i->second;
 }
 
 #endif
