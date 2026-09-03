@@ -526,7 +526,6 @@ VariableGenerator::dagToCvc5(DagNode* dag)
 	  {
 	    return termManager.mkTerm(kind::SET_CARD, exprs);
 	  }
-
 	}
     }
   IssueWarning("term " << QUOTE(dag) << " is not a valid SMT term.");

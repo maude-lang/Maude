@@ -21,6 +21,8 @@ src/Mixfix/tokenizer.cc
 src/Mixfix/deserializer.cc
 src/Mixfix/surface.yy
 src/Mixfix/surface.cc
+src/Mixfix/surface.h
+src/Mixfix/surface.output
 build/
 Makefile
 config.h
@@ -33,3 +35,10 @@ config.status
 **/*.o
 **/*.a
 *.out
+
+# Binaries
+src/Main/maude
+
+# Build stamps
+stamp-*
+

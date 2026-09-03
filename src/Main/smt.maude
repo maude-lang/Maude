@@ -121,8 +121,4 @@ fmod SMT-SET is
   op setUniverse : Element -> SmtSet [special (id-hook SMT_Symbol (setUniverse))] .
 endfm
 
-
-
-
-
 set include BOOLEAN on .

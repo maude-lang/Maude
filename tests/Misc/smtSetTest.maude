@@ -1,6 +1,8 @@
 set show timing off .
 
-load "src/Main/smt.maude"
+*** This test requires cvc5 andwill not work with yices2 or cvc4
+
+load smt
 
 fmod TEST-SET is
   pr SMT-SET .

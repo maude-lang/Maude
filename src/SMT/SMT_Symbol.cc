@@ -110,8 +110,6 @@ const char* SMT_Symbol::operatorNames[] =
     "setInsert",
     "setComplement",
     "setUniverse",
-
-
     0
   };
 

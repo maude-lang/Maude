@@ -1,4 +1,5 @@
 /*
+
     This file is part of the Maude 3 interpreter.
 
     Copyright 1997-2014 SRI International, Menlo Park, CA 94025, USA.
@@ -16,6 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+
 */
 
 //
