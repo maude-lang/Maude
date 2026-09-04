@@ -1,6 +1,6 @@
 set show timing off .
 
-*** This test requires cvc5 andwill not work with yices2 or cvc4
+*** This test requires cvc5 and will not work with yices2 or cvc4
 
 load smt
 

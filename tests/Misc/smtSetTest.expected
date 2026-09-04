@@ -50,8 +50,8 @@ check in TEST-SET : setMembership(R1, setUniverse(R1)) .
 Result from sat solver is: sat
 ==========================================
 check in TEST-SET : setMembership(I, setEmpty(I)) .
-Result from sat solver is: sat
+Result from sat solver is: unsat
 ==========================================
 check in TEST-SET : setMembership(R1, setEmpty(R1)) .
-Result from sat solver is: sat
+Result from sat solver is: unsat
 Bye.
