@@ -1,3 +1,10 @@
+2026-09-11  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslations): quick hack
+	to allow overloading with existing translations
+	(MixfixParser::parseSentence): quick hack to try alternative
+	translation after parse failure
+
 2026-08-21  Saruman the White  <eker@eker10>
 
 	* makeGrammar.cc (MixfixModule::makeComponentProductions): use
