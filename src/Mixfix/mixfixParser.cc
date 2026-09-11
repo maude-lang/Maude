@@ -244,7 +244,7 @@ MixfixParser::makeOtfTranslations()
 	  //	and doesn't have any special properties, such as being a
 	  //	number, that would give it a special translation.
 	  //
-	  if (tokenSet.find(varName) == NONE && Token::specialProperty(varName) == NONE)
+	  if (/*tokenSet.find(varName) == NONE &&*/ Token::specialProperty(varName) == NONE)
 	    {
 	      //
 	      //	X appearing in the sentence will cause a bad token syntax error
@@ -541,6 +541,8 @@ MixfixParser::parseSentence(const Vector<Token>& original,
       sentence[i] = terminal;
     }
 
+  int previousBad = -1;
+ retry:
 #if PARSER_DEBUG
   cout << "parse: ";
   for (int i = 0; i < sentence.length(); i++)
@@ -549,8 +551,29 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 #endif
   nrParses = parser.parseSentence(sentence, root);
   DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
+
   if (nrParses == 0)  // no parse
-    firstBad = begin + parser.getErrorPosition();
+    {
+      firstBad = begin + parser.getErrorPosition();
+      if (firstBad > previousBad)
+	{
+	  //
+	  //	Try to patch up with otf scope extension.
+	  //
+	  int badCode = original[firstBad].code();
+	  makeOtfTranslations();
+	  auto i = otfTranslations.find(badCode);
+	  if (i != otfTranslations.end() && i->second != NONE)
+	    {
+	      //
+	      //	We want to translate code to a component terminal.
+	      //
+	      Sort* sort = client.getSorts()[i->second];
+	      sentence[firstBad] = componentTerminals[sort->component()->getIndexWithinModule()];
+	      goto retry;
+	    }
+	}
+    }
 #if PARSER_DEBUG
   parser.printCurrentParse();
 #endif
