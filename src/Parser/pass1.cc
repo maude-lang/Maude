@@ -446,9 +446,69 @@ Parser::expandCalls(int tokenNr)
 }
 
 void
+Parser::scanCallsWithTokenList(int tokenNr, const Vector<int>& sentence)
+{
+  const Vector<int>& tokenList = (*tokenLists)[flip(sentence[tokenNr])];
+  int nextTokenNr = tokenNr + 1;
+  for (Index i = firstCalls[tokenNr]; i != NONE;)
+    {
+      Call& call = calls[i];
+      int maxPrec = call.maxPrec;
+      i = call.nextCall;
+      Index root = terminalDecisionTrees[flip(call.nonTerminal)];
+      for (int currentToken : tokenList)
+	{
+	  //
+	  //	For each token in the list, we descend the decision tree.
+	  //
+	  Index r = root;
+	  while (r != NONE)
+	    {
+	      Rule* rule = &(rules[r]);
+	      int t = currentToken - rule->rhs[0].symbol;
+	      if (t == 0)
+		{
+		  //
+		  //	Start of rule matches our token.
+		  //
+		  if (rule->prec <= maxPrec)
+		    {
+		      //
+		      //	Rule prec is low enough for our call.
+		      //
+		      if (nextTokenNr > badTokenIndex)
+			badTokenIndex = nextTokenNr;
+		      //
+		      //	Keep applying rules until we run out or
+		      //	prec is too high for our call.
+		      //
+		      do
+			{
+			  advanceRule(r, 1, tokenNr, nextTokenNr, sentence);
+			  r = rule->equal;
+			  if (r == NONE)
+			    break;
+			  rule = &(rules[r]);
+			}
+		      while (rule->prec <= maxPrec);
+		    }
+		  break;
+		}
+	      r = (t > 0) ? rule->bigger : rule->smaller;
+	    }
+	}
+    }
+}
+
+void
 Parser::scanCalls(int tokenNr, const Vector<int>& sentence)
 {
   int currentToken = sentence[tokenNr];
+  if (currentToken < 0)
+    {
+      scanCallsWithTokenList(tokenNr, sentence);
+      return;
+    }
   int nextTokenNr = tokenNr + 1;
   for (int i = firstCalls[tokenNr]; i != NONE;)
     {
@@ -510,8 +570,22 @@ Parser::advanceRule(int ruleNr,
 	  return;
 	}
       int token = sentence[tokenNr];
-      if (symbol != token)
-	return; // die
+      if (token >= 0)
+	{
+	  //
+	  //	Regular token.
+	  //
+	  if (symbol != token)
+	    return; // die
+	}
+      else
+	{
+	  //
+	  //	Token list.
+	  //
+	  if (!symbolInTokenList(symbol, flip(token)))
+	    return; // die
+	}
       ++tokenNr;
       //
       //	Successful match of token. All previous tokens must be part of at least

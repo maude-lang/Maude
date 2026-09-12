@@ -151,12 +151,15 @@ Parser::insertProd(int nonTerminal,
 }
 
 int
-Parser::parseSentence(const Vector<int>& sentence, int root)
+Parser::parseSentence(const Vector<int>& sentence,
+		      int root,
+		      const Vector<Vector<int>>& tokenDisjunctions)
 {
   Assert(flip(root) < firstTerminalRules.length(),
 	 "bad root nonterminal " << root << " only " <<
 	 firstTerminalRules.length() << " nonterminals in grammar");
 
+  tokenLists = &tokenDisjunctions;
   if (expansions.empty())
     {
       buildExpansionTables();

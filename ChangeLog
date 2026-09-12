@@ -1,3 +1,9 @@
+2026-09-11  Saruman the White  <eker@eker10>
+
+	* tests/Corner/otfVariables.maude: updated now that we allow
+	overloading between otf variables and user sorts and operations
+	and module syntax
+
 2026-08-19  Saruman the White  <eker@eker10>
 
 	* tests/Transformer/badModuleAdd.maude: TransformResult ->

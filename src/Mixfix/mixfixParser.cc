@@ -209,12 +209,7 @@ MixfixParser::insertBubbleProduction(int lhs,
 void
 MixfixParser::makeOtfTranslations()
 {
-  //
-  //	Bubbles allow arbitrary syntax that can confound this analysis.
-  //
-  if (bubblesAllowed || otfTranslationsMade)
-    return;
-  otfTranslationsMade = true;
+  otfTranslations.clear();
   //
   //	We scan through the original tokens, looking for things that
   //	are on-the-fly variables of known sort, and make these
@@ -236,15 +231,12 @@ MixfixParser::makeOtfTranslations()
 	  int sortName;
 	  Token::split(code, varName, sortName);
 	  //
-	  //	Make sure that X is not
-	  //	* an existing variable alias,
-	  //	* part of the statement syntax
-	  //	* part of the user's operator syntax
-	  //	* part of a sort name
-	  //	and doesn't have any special properties, such as being a
-	  //	number, that would give it a special translation.
+	  //	Make sure that X  doesn't have any special properties, such as
+	  //	being a number, that would give it a special translation.
+	  //	The big problem we want to avoid is X:Y:Z where X:Y could
+	  //	be both an otf declaration and an otf scop extension.
 	  //
-	  if (/*tokenSet.find(varName) == NONE &&*/ Token::specialProperty(varName) == NONE)
+	  if (Token::specialProperty(varName) == NONE)
 	    {
 	      //
 	      //	X appearing in the sentence will cause a bad token syntax error
@@ -474,35 +466,144 @@ MixfixParser::translateSpecialToken(int code)
   else if (sp != NONE)
     return specialTerminals[sp];
   //
-  //	We have a token that doesn't have standard or special translations; see
-  //	if we can avoid a syntax error with an extended scope otf variable translation.
-  //
-  makeOtfTranslations();
-  auto i = otfTranslations.find(code);
-  if (i != otfTranslations.end() && i->second != NONE)
-    {
-      //
-      //	We want to translate code to a component terminal.
-      //
-      Sort* sort = client.getSorts()[i->second];
-      return componentTerminals[sort->component()->getIndexWithinModule()];
-    }
-  //
   //	If we're parsing with bubbles, they can take anything, so we map otherwise
   //	unrecognized tokens to a special out-of-band value.
   //
   if (bubblesAllowed)
     return tokenSet.size();
-  //
-  //	We can't use Token::specialProperty() for starting with '_' because
-  //	is could coincide with other special properties; e.g. _X:Foo
-  //	We only recognize a wildcard if there is absolutely no other interpretation.
-  //	We limit named wildcards to tokens that are valid view names to
-  //	rule out edge cases.
-  //
-  if (Token::name(code)[0] == '_' && Token::isValidViewName(code))
-    return wildcardTerminal;  // could be NONE if we're not supporting wildcards
   return NONE;
+}
+
+int
+MixfixParser::classicParse(int root, int& firstBad, int nrTokens)
+{
+  //
+  //	Translate tokens into terminals.
+  //
+  for (Index i = 0; i < nrTokens; ++i)
+    {
+      Index j = currentOffset + i;
+      int code = (*currentSentence)[j].code();
+      int terminal = tokenSet.find(code);
+      if (terminal == NONE)
+	{
+	  terminal = translateSpecialToken(code);
+	  if (terminal == NONE)
+	    {
+	      firstBad = j;
+	      return -1;  // bad token
+	    }
+	}
+      sentence[i] = terminal;
+    }
+  
+#if PARSER_DEBUG
+  cout << "classic parse: ";
+  for (int i = 0; i < sentence.length(); i++)
+    cout << sentence[i] << ' ';
+  cout << ", " << root << '\n';
+#endif
+
+  nrParses = parser.parseSentence(sentence, root);
+  DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
+  if (nrParses == 0)  // no parse
+    firstBad = currentOffset + parser.getErrorPosition();
+  
+#if PARSER_DEBUG
+  parser.printCurrentParse();
+#endif
+  
+  return nrParses;
+}
+
+int
+MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
+{
+  makeOtfTranslations();
+  terminalLists.clear();
+  //
+  //	Wildcard variable names are fresh with respect to sentence.
+  //
+  usedNames.clear();
+  //
+  //	Translate tokens into terminals.
+  //
+  Vector<int> translations;
+  for (Index i = 0; i < nrTokens; ++i)
+    {
+      translations.clear();
+      Index j = currentOffset + i;
+      int code = (*currentSentence)[j].code();
+      //
+      //	First do standard translation.
+      //
+      int terminal = tokenSet.find(code);
+      if (terminal == NONE)
+	terminal = translateSpecialToken(code);
+      if (terminal != NONE)
+	translations.push_back(terminal);
+      //
+      //	Then check for otf variable extended scope translations.
+      //
+      auto t = otfTranslations.find(code);
+      if (t != otfTranslations.end() && t->second != NONE)
+	{
+	  //
+	  //	We want to translate code to a component terminal.
+	  //
+	  Sort* sort = client.getSorts()[t->second];
+	  int otfTerminal = componentTerminals[sort->component()->getIndexWithinModule()];
+	  translations.push_back(otfTerminal);
+	}
+      //
+      //	Check if we have one or more translations.
+      //
+      Index nrTranslations = translations.size();
+      if (nrTranslations == 1)
+	sentence[i] = translations[0];
+      else if (nrTranslations > 1)
+	{
+	  sentence[i] = Parser::flip(terminalLists.size());
+	  terminalLists.push_back(std::move(translations));
+	}
+      else
+	{
+	  //
+	  //	We can't use Token::specialProperty() for starting with '_' because
+	  //	is could coincide with other special properties; e.g. _X:Foo
+	  //	We only recognize a wildcard if there is no other translation.
+	  //	We limit named wildcards to tokens that are valid view names to
+	  //	rule out edge cases.
+	  //
+	  if (wildcardTerminal != NONE &&
+	      Token::name(code)[0] == '_' &&
+	      Token::isValidViewName(code))
+	    sentence[i] = wildcardTerminal;
+	  else
+	    {
+	      firstBad = j;
+	      return -1;  // bad token
+	    }
+	}
+    }
+
+#if PARSER_DEBUG
+  cout << "extended parse: ";
+  for (int i = 0; i < sentence.length(); i++)
+    cout << sentence[i] << ' ';
+  cout << ", " << root << '\n';
+#endif
+
+  nrParses = parser.parseSentence(sentence, root, terminalLists);
+  DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
+  if (nrParses == 0)  // no parse
+    firstBad = currentOffset + parser.getErrorPosition();
+  
+#if PARSER_DEBUG
+  parser.printCurrentParse();
+#endif
+  
+  return nrParses;
 }
 
 int
@@ -514,70 +615,11 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 {
   currentSentence = &original;
   currentOffset = begin;
-  //
-  //	We only activate extended scope otf variable translations when needed.
-  //
-  otfTranslations.clear();
-  otfTranslationsMade = false;
-  //
-  //	Wildcard variable names are fresh with respect to sentence.
-  //
-  usedNames.clear();
   sentence.resize(nrTokens);
-  for (int i = 0; i < nrTokens; ++i)
-    {
-      int j = begin + i;
-      int code = original[j].code();
-      int terminal = tokenSet.find(code);
-      if (terminal == NONE)
-	{
-	  terminal = translateSpecialToken(code);
-	  if (terminal == NONE)
-	    {
-	      firstBad = j;
-	      return -1;
-	    }
-	}
-      sentence[i] = terminal;
-    }
 
-  int previousBad = -1;
- retry:
-#if PARSER_DEBUG
-  cout << "parse: ";
-  for (int i = 0; i < sentence.length(); i++)
-    cout << sentence[i] << ' ';
-  cout << ", " << root << '\n';
-#endif
-  nrParses = parser.parseSentence(sentence, root);
-  DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
-
-  if (nrParses == 0)  // no parse
-    {
-      firstBad = begin + parser.getErrorPosition();
-      if (firstBad > previousBad)
-	{
-	  //
-	  //	Try to patch up with otf scope extension.
-	  //
-	  int badCode = original[firstBad].code();
-	  makeOtfTranslations();
-	  auto i = otfTranslations.find(badCode);
-	  if (i != otfTranslations.end() && i->second != NONE)
-	    {
-	      //
-	      //	We want to translate code to a component terminal.
-	      //
-	      Sort* sort = client.getSorts()[i->second];
-	      sentence[firstBad] = componentTerminals[sort->component()->getIndexWithinModule()];
-	      goto retry;
-	    }
-	}
-    }
-#if PARSER_DEBUG
-  parser.printCurrentParse();
-#endif
-  return nrParses;
+  if (classicParse(root, firstBad, nrTokens) > 0 || bubblesAllowed)
+    return nrParses;
+  return extendedParse(root, firstBad, nrTokens);
 }
 
 bool
@@ -1252,7 +1294,7 @@ MixfixParser::makeTerm(int node)
 	    //
 	    //	The X case. We must have an extended scope otf variable.
 	    //
-	    Assert(sp == NONE, "unexpected special property " << sp);
+	    //Assert(sp == NONE, "unexpected special property " << sp);
 	    auto i = otfTranslations.find(varName);
 	    Assert(i != otfTranslations.end(), "missing translation for " << Token::name(varName));
 	    sort = client.getSorts()[i->second];
