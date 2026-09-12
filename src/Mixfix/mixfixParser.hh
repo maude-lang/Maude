@@ -264,7 +264,9 @@ private:
   void makeOtfTranslation(int code, int varName, int sortIndex);
   bool guaranteedFresh(int code) const;
   int makeFreshVariableName(int code);
-  
+  int classicParse(int root, int& firstBad, int nrTokens);
+  int extendedParse(int root, int& firstBad, int nrTokens);
+
   MixfixModule& client;
   const bool complexParser;
   const int componentNonTerminalBase;
@@ -278,9 +280,8 @@ private:
   Vector<int> componentTerminals;	// special terminals for regular otf variables
   IntMap leadTerminals;			// special terminals for X:Foo where Foo{...} is a sort
   IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
-  int wildcardTerminal = NONE;			// special terminal for wildcards
+  int wildcardTerminal = NONE;		// special terminal for wildcards
   bool bubblesAllowed;			// do we allow bubbles of unknown tokens
-  bool otfTranslationsMade;
   //
   //	We store the tokens we are parsing here to avoid passing extra parameters
   //	when recursing down a parse tree.
@@ -291,6 +292,7 @@ private:
   int nrParses;
   IntMap otfTranslations;
   NameSet usedNames;			// names already used for wildcard variables
+  Vector<Vector<int>> terminalLists;
 };
 
 inline int

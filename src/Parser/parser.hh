@@ -50,7 +50,9 @@ public:
 		  int rightParen,
 		  const Vector<int>& excludedTerminals);
 
-  int parseSentence(const Vector<int>& sentence, int root);
+  int parseSentence(const Vector<int>& sentence,
+		    int root,
+		    const Vector<Vector<int>>& tokenDisjunctions = Vector<Vector<int>>());
   bool extractNextParse();
   int getProductionNumber(int node);
   int getChild(int node, int sonNr);
@@ -60,6 +62,7 @@ public:
 
   int getNumberOfChildren(int node);
 
+  static int flip(int i);
 //
 //	If no parses are found, this returns the index of the first token at which
 //	no legal parse is possible, or sentence.size() if we ran out of tokens
@@ -174,7 +177,6 @@ private:
     int nextSibling;
   };
 
-  static int flip(int i);
   static bool ruleLt(Rule* const& r1, Rule* const& r2);
 
   typedef pair<int, int> IntPair;
@@ -199,11 +201,13 @@ private:
   void processReturn(int tokenNr, int startTokenNr, int ruleNr, const Vector<int>& sentence);
   void expandCalls(int tokenNr);
   void scanCalls(int tokenNr, const Vector<int>& sentence);
+  void scanCallsWithTokenList(int tokenNr, const Vector<int>& sentence);
   void advanceRule(int ruleNr,
 		   int pos,
 		   int startTokenNr,
 		   int tokenNr,
 		   const Vector<int>& sentence);
+  bool symbolInTokenList(int symbol, Index tokenListIndex);
   void makeCall(int tokenNr, int ruleNr, int rhsPosition, int startTokenNr);
   bool makeReturn(int tokenNr, int ruleNr, int startTokenNr);
   IntPair chaseDeterministicReductionPath(int ruleNr, int startTokenNr);
@@ -262,12 +266,27 @@ private:
   Vector<Return> returns;
   Vector<MemoItem> memoItems;
   Vector<ParseNode> parseTree;
+  //
+  //	Pointers to input.
+  //
+  const Vector<Vector<int>>* tokenLists = nullptr;
 };
 
 inline int
 Parser::flip(int i)
 {
   return ~i;  // map nonTerminal number <-> vector index
+}
+
+inline bool
+Parser::symbolInTokenList(int symbol, Index tokenListIndex)
+{
+  for (int token : (*tokenLists)[tokenListIndex])
+    {
+      if (token == symbol)
+	return true;
+    }
+  return false;
 }
 
 inline bool

@@ -1,3 +1,17 @@
+2026-09-11  Saruman the White  <eker@eker10>
+
+	* parser.hh (Parser::symbolInTokenList): added
+	(class Parser): make flip() public
+
+	* pass1.cc (Parser::advanceRule): handle tokenLists
+
+	* parser.hh (class Parser): updated decl for parseSentence();
+	added decl for scanCallsWithTokenList()
+
+	* pass1.cc (Parser::scanCallsWithTokenList): added
+
+	* parser.cc (Parser::parseSentence): take tokenSets argument
+
 2023-04-12  Steven Eker  <eker@pup>
 
 	* pass2.cc (Parser::extractNextParse): use empty()

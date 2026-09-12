@@ -1,9 +1,33 @@
 2026-09-11  Saruman the White  <eker@eker10>
 
+	* mixfixParser.cc (MixfixParser::makeOtfTranslations): clear
+	otfTranslations here
+	(MixfixParser::extendedParse): don't clear otfTranslations here
+
+	* mixfixParser.hh (class MixfixParser): deleted data member
+	otfTranslationsMade
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslations): don't check
+	bubblesAllowed or otfTranslationsMade; don't set
+	otfTranslationsMade
+
+	* mixfixParser.hh (class MixfixParser): added data member
+	terminalLists
+
+	* mixfixParser.cc (MixfixParser::translateSpecialToken): don't
+	handle otf variable extended scope or wildcards here
+
+	* mixfixParser.hh (class MixfixParser): added decls for
+	classicParse() and extendedParse()
+
 	* mixfixParser.cc (MixfixParser::makeOtfTranslations): quick hack
 	to allow overloading with existing translations
 	(MixfixParser::parseSentence): quick hack to try alternative
 	translation after parse failure
+	(MixfixParser::classicParse): added
+	(MixfixParser::extendedParse): added
+	(MixfixParser::parseSentence): use classicParse() and
+	extendedParse()
 
 2026-08-21  Saruman the White  <eker@eker10>
 

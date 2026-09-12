@@ -47,7 +47,7 @@ fmod FOO5 is
   eq f(Y:Nat, Y:NzNat) = Y .
 endfm
 
-*** extended scope overridden by regular variable alias
+*** extended scope not used if there is a classic parse
 fmod FOO5a is
   pr NAT .
   op f : Nat Nat -> Nat .
@@ -56,15 +56,16 @@ fmod FOO5a is
 endfm
 show desugared .
 
-*** extended scope overridden by regular variable alias of the wrong kind
+*** extended scope overloads with variable alias of the wrong kind
 fmod FOO6 is
   pr NAT .
   op f : Nat Nat -> Nat .
   var Y : Bool .
   eq f(Y, Y:NzNat) = Y .
 endfm
+show desugared .
 
-*** extended scope overridden by user syntax
+*** extended scope not used if there is a classic parse
 fmod FOO7 is
   pr NAT .
   op f : Nat Nat -> Nat .
@@ -73,29 +74,32 @@ fmod FOO7 is
 endfm
 show desugared .
 
-*** extended scope disabled by user syntax
+*** extended scope *not* disabled by user syntax
 fmod FOO8 is
   pr NAT .
   op f : Nat Nat -> Nat .
   op Y : -> Bool .
   eq f(Y:NzNat, Y:NzNat) = Y .
 endfm
+show desugared .
 
-*** extended scope disabled by user syntax
+*** extended scope *not* disabled by user syntax
 fmod FOO9 is
   pr NAT .
   op f : Nat -> Nat .
   op [_X_] : Bool Bool -> Bool .
   eq f(X:Nat) = X .
 endfm
+show desugared .
 
-*** extended scope not allowed for tokens from the module syntax
+*** extended scope *allowed* for tokens from the module syntax
 fmod FOO10 is
   pr NAT .
   op f : Nat -> Nat .
   eq f(if:Nat) = if .
   eq f(=>:Nat) = => .
 endfm
+show desugared .
 
 *** extended scope not allowed for tokens with special handling
 fmod FOO11 is
@@ -122,13 +126,14 @@ fmod FOO13 is
 endfm
 show desugared .
 
-*** extended scope not allowed for tokens from sort names
+*** extended scope *allowed* for tokens from sort names
 fmod FOO14 is
   sort Foo{X} .
   op f : Foo{X} -> Foo{X} .
   eq f(X:Foo{X}) = X .
-  eq f(Foo:Foo{X}) = X .
+  eq f(Foo:Foo{X}) = Foo .
 endfm
+show desugared .
 
 *** if the base of a structured sort name is also a valid sort, extended scope
 *** only works for the base sort name
