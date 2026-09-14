@@ -1,3 +1,23 @@
+2026-09-14  Saruman the White  <eker@eker10>
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeOtfTranslation()
+
+	* mixfixParser.cc (MixfixParser::extendedParse): use new
+	otfTranslations convention
+	(MixfixParser::makeTerm): use new otfTranslations convention
+	(MixfixParser::makeOtfTranslations): use new otfTranslations
+	convention 
+	(MixfixParser::makeOtfTranslation): use new otfTranslations
+	convention
+	(MixfixParser::makeOtfTranslations): pass location to
+	makeOtfTranslation() (many places)
+	(MixfixParser::makeOtfTranslation): take location argument and
+	store it in successful mapping
+
+	* mixfixParser.hh (struct OtfDef): added struct OtfDef, typedef
+	OtfDefMap, use OtfDefMap for otfTranslations
+
 2026-09-11  Saruman the White  <eker@eker10>
 
 	* mixfixParser.cc (MixfixParser::makeOtfTranslations): clear
@@ -461,7 +481,7 @@
 	up kind variable code
 
 	* mixfixParser.cc (MixfixParser::translateSpecialToken): use
-	kindTerminals for otf variables whose srot is not a lead token
+	kindTerminals for otf variables whose sort is not a lead token
 
 	* mixfixParser.hh (enum SemanticActions): added MAKE_OTF_VARIABLE
 	to enum SemanticActions

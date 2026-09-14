@@ -209,8 +209,15 @@ public:
   int getNrTerminals() const;
 
 private:
+  struct OtfDef
+  {
+    int location;
+    int sortIndex;
+  };
+  
   typedef unordered_map<int,int> IntMap;
   typedef unordered_set<int> NameSet;
+  typedef unordered_map<int,OtfDef> OtfDefMap;
 
   enum Flags
   {
@@ -261,7 +268,7 @@ private:
   int translateSpecialToken(int code);
   void makeOtfTranslations();
   ConnectedComponent* checkSortNames(const Vector<int>& sortNames);
-  void makeOtfTranslation(int code, int varName, int sortIndex);
+  void makeOtfTranslation(int code, int varName, int location, int sortIndex);
   bool guaranteedFresh(int code) const;
   int makeFreshVariableName(int code);
   int classicParse(int root, int& firstBad, int nrTokens);
@@ -290,7 +297,7 @@ private:
   Vector<int> sentence;			// sentence translated into terminal numbers
   int currentOffset;			// start of parsed tokens
   int nrParses;
-  IntMap otfTranslations;
+  OtfDefMap otfTranslations;
   NameSet usedNames;			// names already used for wildcard variables
   Vector<Vector<int>> terminalLists;
 };
