@@ -234,7 +234,7 @@ MixfixParser::makeOtfTranslations()
 	  //	Make sure that X  doesn't have any special properties, such as
 	  //	being a number, that would give it a special translation.
 	  //	The big problem we want to avoid is X:Y:Z where X:Y could
-	  //	be both an otf declaration and an otf scop extension.
+	  //	be both an otf declaration and an otf scope extension.
 	  //
 	  if (Token::specialProperty(varName) == NONE)
 	    {
@@ -243,9 +243,9 @@ MixfixParser::makeOtfTranslations()
 	      //	so it is safe to make a translation for it.
 	      //
 	      Index last = SharedTokens::skip(SharedTokens::STRUCTURE,
-					     *currentSentence,
-					     i + 1,
-					     beyondEnd);
+					      *currentSentence,
+					      i + 1,
+					      beyondEnd);
 	      if (last == NONE)
 		{
 		  //
@@ -256,7 +256,7 @@ MixfixParser::makeOtfTranslations()
 		      //
 		      //	It's a real sort.
 		      //
-		      makeOtfTranslation(code, varName, sort->getIndexWithinModule());
+		      makeOtfTranslation(code, varName, i, sort->getIndexWithinModule());
 		    }
 		}
 	      else
@@ -288,7 +288,7 @@ MixfixParser::makeOtfTranslations()
 			  //	Base sort name isn't a real sort, so we can trust
 			  //	the structured version.
 			  //
-			  makeOtfTranslation(code, varName, sort->getIndexWithinModule());
+			  makeOtfTranslation(code, varName, i, sort->getIndexWithinModule());
 			}
 		      else
 			{
@@ -301,7 +301,7 @@ MixfixParser::makeOtfTranslations()
 			  DebugInfo("killed otf variable translation for " <<
 				    Token::name(varName) << " because sort imlied by " <<
 				    Token::name(code) << " is uncertain");
-			  otfTranslations[varName] = NONE;
+			  otfTranslations[varName] = {NONE, NONE};
 			}
 		    }
 		  else
@@ -315,7 +315,7 @@ MixfixParser::makeOtfTranslations()
 			  //
 			  //	The base sort is real.
 			  //
-			  makeOtfTranslation(code, varName, sort->getIndexWithinModule());
+			  makeOtfTranslation(code, varName, i, sort->getIndexWithinModule());
 			}
 		      else
 			{
@@ -344,7 +344,7 @@ MixfixParser::makeOtfTranslations()
 		  if (ConnectedComponent* component = checkSortNames(sortNames))
 		    {
 		      Sort* kind = component->sort(Sort::KIND);
-		      makeOtfTranslation(code, varName, kind->getIndexWithinModule());
+		      makeOtfTranslation(code, varName, i, kind->getIndexWithinModule());
 		    }
 		}
 	    }
@@ -374,7 +374,7 @@ MixfixParser::checkSortNames(const Vector<int>& sortNames)
 }
 
 void
-MixfixParser::makeOtfTranslation(int code, int varName, int sortIndex)
+MixfixParser::makeOtfTranslation(int code, int varName, int location, int sortIndex)
 {
   //
   //	We saw a valid otf variable, but is this faked by the user signature?
@@ -387,7 +387,7 @@ MixfixParser::makeOtfTranslation(int code, int varName, int sortIndex)
       auto k = otfTranslations.find(varName);
       if (k != otfTranslations.end())
 	{
-	  if (k->second == sortIndex)
+	  if (k->second.sortIndex == sortIndex)
 	    {
 	      //
 	      //	A duplicate translation is harmless.
@@ -405,8 +405,8 @@ MixfixParser::makeOtfTranslation(int code, int varName, int sortIndex)
 	      DebugInfo("killed otf variable translation for " <<
 			Token::name(varName) << " because of conflicting " <<
 			Token::name(code) << " with existing " <<
-			client.getSorts()[k->second]);
-	      otfTranslations[varName] = NONE;
+			client.getSorts()[k->second.sortIndex]);
+	      otfTranslations[varName] = {NONE, NONE};
 	    }
 	}
       else
@@ -414,7 +414,7 @@ MixfixParser::makeOtfTranslation(int code, int varName, int sortIndex)
 	  DebugInfo("made otf variable translation for " <<
 		    Token::name(varName) << " because of " <<
 		    Token::name(code));
-	  otfTranslations[varName] = sortIndex;
+	  otfTranslations[varName] = {location, sortIndex};
 	}
     }
   else
@@ -425,7 +425,7 @@ MixfixParser::makeOtfTranslation(int code, int varName, int sortIndex)
       DebugInfo("killed otf variable translation for " <<
 		Token::name(varName) << " because of " <<
 		Token::name(code) << " is part of the users syntax");
-      otfTranslations[varName] = NONE;
+      otfTranslations[varName] = {NONE, NONE};
     }
 }
 
@@ -546,12 +546,12 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
       //	Then check for otf variable extended scope translations.
       //
       auto t = otfTranslations.find(code);
-      if (t != otfTranslations.end() && t->second != NONE)
+      if (t != otfTranslations.end() && t->second.sortIndex != NONE && t->second.location < i)
 	{
 	  //
 	  //	We want to translate code to a component terminal.
 	  //
-	  Sort* sort = client.getSorts()[t->second];
+	  Sort* sort = client.getSorts()[t->second.sortIndex];
 	  int otfTerminal = componentTerminals[sort->component()->getIndexWithinModule()];
 	  translations.push_back(otfTerminal);
 	}
@@ -1297,7 +1297,7 @@ MixfixParser::makeTerm(int node)
 	    //Assert(sp == NONE, "unexpected special property " << sp);
 	    auto i = otfTranslations.find(varName);
 	    Assert(i != otfTranslations.end(), "missing translation for " << Token::name(varName));
-	    sort = client.getSorts()[i->second];
+	    sort = client.getSorts()[i->second.sortIndex];
 	  }
 	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
 	t = new VariableTerm(symbol, varName);
@@ -1650,7 +1650,7 @@ MixfixParser::makePrintListVariable(int node, Vector<int>& names, Vector<Sort*>&
 	    auto i = otfTranslations.find(varName);
 	    Assert(i != otfTranslations.end(), "missing translation for " << Token::name(varName));
 	    names.append(varName);
-	    sorts.append(client.getSorts()[i->second]);
+	    sorts.append(client.getSorts()[i->second.sortIndex]);
 	  }
 	break;
       }

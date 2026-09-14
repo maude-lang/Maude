@@ -13,14 +13,13 @@ fmod FOO1 is
 endfm
 show desugared .
 
-*** still works if declaration is at the end
+*** declaration must appear before use
 fmod FOO2 is
   pr NAT .
   op f : Nat -> Nat .
   eq f(0) = 1 .
   eq f(s X) = f(X) * s X [print "X = " X:Nat] .
 endfm
-show desugared .
 
 *** works with structured sort names
 fmod FOO3 is
@@ -52,7 +51,7 @@ fmod FOO5a is
   pr NAT .
   op f : Nat Nat -> Nat .
   var Y : Nat .
-  eq f(Y, Y:NzNat) = Y .
+  eq f(Y:NzNat, Y) = Y .
 endfm
 show desugared .
 
@@ -61,7 +60,7 @@ fmod FOO6 is
   pr NAT .
   op f : Nat Nat -> Nat .
   var Y : Bool .
-  eq f(Y, Y:NzNat) = Y .
+  eq f(Y:NzNat, Y) = Y .
 endfm
 show desugared .
 
@@ -263,7 +262,7 @@ fmod BAZ2{X :: TRIV} is
 endfm
 show desugared .
 
-*** otf declarations can appear after use
+*** otf declarations must appear before use
 fmod BAZ3{X :: TRIV} is
   sorts Foo{X} Bar .
   var A : Foo{X} .
