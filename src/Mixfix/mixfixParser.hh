@@ -51,6 +51,7 @@ public:
     //
     MAKE_OTF_VARIABLE_KNOWN_SORT,
     MAKE_OTF_VARIABLE,
+    MAKE_BARE_OTF_VARIABLE,
     MAKE_VARIABLE_FROM_ALIAS,
     MAKE_WILDCARD_VARIABLE,
     MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET,
@@ -162,6 +163,7 @@ public:
 			      int bubbleSpecIndex);
   void insertSpecialTerminal(int tokenProperty, int codeToUse);
   void insertComponentTerminal(int componentIndex, int codeToUse);
+  void insertBareOtfVariableTerminal(int componentIndex, int codeToUse);
   void insertLeadTerminal(int sortNameCode, int codeToUse);
   void insertIterSymbolTerminal(int iterSymbolNameCode, int codeToUse);
   void setWildcard(int codeToUse);
@@ -285,6 +287,7 @@ private:
   Vector<Action> actions;		// action associated with each production
   Vector<int> specialTerminals;		// special terminals for tokens with special properties
   Vector<int> componentTerminals;	// special terminals for regular otf variables
+  Vector<int> bareOtfVariableTerminals;	// special terminals for bare otf variables
   IntMap leadTerminals;			// special terminals for X:Foo where Foo{...} is a sort
   IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
   int wildcardTerminal = NONE;		// special terminal for wildcards
@@ -366,6 +369,12 @@ inline void
 MixfixParser::insertComponentTerminal(int componentIndex, int codeToUse)
 {
   componentTerminals[componentIndex] = tokenToIndex(codeToUse);
+}
+
+inline void
+MixfixParser::insertBareOtfVariableTerminal(int sortIndex, int codeToUse)
+{
+  bareOtfVariableTerminals[sortIndex] = tokenToIndex(codeToUse);
 }
 
 inline void

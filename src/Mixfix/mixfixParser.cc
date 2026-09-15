@@ -117,7 +117,8 @@ MixfixParser::MixfixParser(MixfixModule& client,
     numberOfTypes(numberOfTypes),
     tokenSet(nrTokensGuess),
     specialTerminals(Token::LAST_PROPERTY),
-    componentTerminals(client.getConnectedComponents().size())
+    componentTerminals(client.getConnectedComponents().size()),
+    bareOtfVariableTerminals(client.getSorts().size())
 {
   nextNonTerminal = nextNonTerminalCode;
   bubblesAllowed = false;
@@ -549,10 +550,9 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
       if (t != otfTranslations.end() && t->second.sortIndex != NONE && t->second.location < i)
 	{
 	  //
-	  //	We want to translate code to a component terminal.
+	  //	We want to translate code to a bare otf variable terminal.
 	  //
-	  Sort* sort = client.getSorts()[t->second.sortIndex];
-	  int otfTerminal = componentTerminals[sort->component()->getIndexWithinModule()];
+	  int otfTerminal = bareOtfVariableTerminals[t->second.sortIndex];
 	  translations.push_back(otfTerminal);
 	}
       //
@@ -1269,40 +1269,23 @@ MixfixParser::makeTerm(int node)
      case MAKE_OTF_VARIABLE:
       {
 	//
-	//	This is an otf variable that was parsed using a component terminal.
-	//	It is either X:Foo or it is X within the scope of some X:Foo
+	//	This is an otf variable X:Foo that was parsed using a component terminal.
 	//	We don't have any information from the action. We need to find the
 	//	name and sort.
 	//
 	int varName = (*currentSentence)[pos].code();
-	Sort* sort;
-	int sp = Token::specialProperty(varName);
-	if (sp == Token::CONTAINS_COLON)
-	  {
-	    //
-	    //	The X:Foo case.
-	    //
-	    int baseName;
-	    int sortName;
-	    Token::split(varName, baseName, sortName);
-	    varName = baseName;
-	    sort = client.findSort(sortName);
-	    Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
-	  }
-	else
-	  {
-	    //
-	    //	The X case. We must have an extended scope otf variable.
-	    //
-	    //Assert(sp == NONE, "unexpected special property " << sp);
-	    auto i = otfTranslations.find(varName);
-	    Assert(i != otfTranslations.end(), "missing translation for " << Token::name(varName));
-	    sort = client.getSorts()[i->second.sortIndex];
-	  }
+	Assert(Token::specialProperty(varName) == Token::CONTAINS_COLON,
+	       "bad otf variable token " << Token::name(varName));
+	int baseName;
+	int sortName;
+	Token::split(varName, baseName, sortName);
+	Sort* sort = client.findSort(sortName);
+	Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
 	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
-	t = new VariableTerm(symbol, varName);
+	t = new VariableTerm(symbol, baseName);
 	break;	
       }
+    case MAKE_BARE_OTF_VARIABLE:
     case MAKE_VARIABLE_FROM_ALIAS:
       {
 	Sort* sort = client.getSorts()[a.data];
@@ -1625,35 +1608,22 @@ MixfixParser::makePrintListVariable(int node, Vector<int>& names, Vector<Sort*>&
     case MAKE_OTF_VARIABLE:
       {
 	//
-	//	This is an otf variable that was parsed using a component terminal.
-	//	It is either X:Foo or it is X within the scope of some X:Foo
+	//	This is an otf variable X:Foo that was parsed using a component terminal.
 	//	We don't have any information from the action. We need to find the
 	//	name and sort.
 	//
-	int sp = Token::specialProperty(varName);
-	if (sp == Token::CONTAINS_COLON)
-	  {
-	    //
-	    //	The X:Foo case.
-	    //
-	    int baseName;
-	    int sortName;
-	    Token::split(varName, baseName, sortName);
-	    Sort* sort = client.findSort(sortName);
-	    Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
-	    names.append(baseName);
-	    sorts.append(sort);
-	  }
-	else
-	  {
-	    Assert(sp == NONE, "unexpected special property " << sp);
-	    auto i = otfTranslations.find(varName);
-	    Assert(i != otfTranslations.end(), "missing translation for " << Token::name(varName));
-	    names.append(varName);
-	    sorts.append(client.getSorts()[i->second.sortIndex]);
-	  }
-	break;
+	Assert(Token::specialProperty(varName) == Token::CONTAINS_COLON,
+	       "bad otf variable token " << Token::name(varName));
+	int baseName;
+	int sortName;
+	Token::split(varName, baseName, sortName);
+	Sort* sort = client.findSort(sortName);
+	Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
+	names.append(baseName);
+	sorts.append(sort);
+	break;	
       }
+    case MAKE_BARE_OTF_VARIABLE:
     case MAKE_VARIABLE_FROM_ALIAS:
       {
 	names.append(varName);
@@ -1685,7 +1655,6 @@ MixfixParser::makeStatementPart(int node,
       label = actions[parser.getProductionNumber(pairNode)].data;
       pairNode = parser.getChild(bodyNode, 1);
     }
-
   //
   //	Get line number of statement keyword.
   //
@@ -1738,7 +1707,8 @@ MixfixParser::makeStatementPart(int node,
 	    if (condition.empty())
 	      eq->setVariant();
 	    else
-	      IssueWarning(LineNumber(lineNumber) << ": variant attribute not allowed for conditional equations.");
+	      IssueWarning(LineNumber(lineNumber) <<
+			   ": variant attribute not allowed for conditional equations.");
 	  }
 	if (flags.getFlag(EXTENSION))
 	  {
@@ -1778,7 +1748,8 @@ MixfixParser::makeStatementPart(int node,
 	    if (condition.empty())
 	      rl->setNarrowing();
 	    else
-	      IssueWarning(LineNumber(lineNumber) << ": narrowing attribute not allowed for conditional rules.");
+	      IssueWarning(LineNumber(lineNumber) <<
+			   ": narrowing attribute not allowed for conditional rules.");
 	  }
 	if (flags.getFlag(EXTENSION))
 	  {
