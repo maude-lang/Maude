@@ -1,3 +1,10 @@
+2026-09-14  Saruman the White  <eker@eker10>
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): rewritten to
+	avoid excess iterator copies
+	(StringOpSymbol::eqRewrite): moved reduce() calls to outer
+	eqRewrite() function to avoid pile up of huge stack frames
+
 2026-03-26  Saruman the White  <eker@eker10>
 
 	* sortTestSymbol.hh (class SortTestSymbol): deleted decl for 2 arg

@@ -225,7 +225,17 @@ StringOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& co
 {
   Assert(symbol == subject->symbol(), "bad symbol");
   StringOpSymbol* s = safeCastNonNull<StringOpSymbol*>(symbol);
-  //  This is a hack; eventually we'll inline this function.
+  //
+  //	Evaluate our arguments, which may include recursive calls
+  //
+  int nrArgs = symbol->arity();
+  FreeDagNode* d = safeCastNonNull<FreeDagNode*>(subject);
+  for (int i = 0; i < nrArgs; ++i)
+    d->getArgument(i)->reduce(context);
+  //
+  //	We don't want to inline this because Rope::const_iterator locals make
+  //	for huge stack frames.
+  //
   return s->eqRewrite(subject, context);
 }
 
@@ -235,15 +245,7 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
   Assert(this == subject->symbol(), "bad symbol");
   DebugAdvisory("StringOpSymbol::eqRewrite() called on " << subject);
   int nrArgs = arity();
-  FreeDagNode* d = safeCast(FreeDagNode*, subject);
-  //
-  //	Evaluate our arguments.
-  //
-  for (int i = 0; i < nrArgs; i++)
-    {
-      DagNode* a = d->getArgument(i);
-      a->reduce(context);
-    }
+  FreeDagNode* d = safeCastNonNull<FreeDagNode*>(subject);
   DagNode* a0 = d->getArgument(0);
   if (a0->symbol() == stringSymbol)
     {
@@ -323,7 +325,8 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 			  if (!isspace(static_cast<unsigned char>(*j)))
 			    {
 			      Index nrCharsWanted = len - i;
-			      for (Rope::const_iterator e = left.end() - 1;
+			      Rope::const_iterator e = left.end();  // avoid generating temporary with -
+			      for (--e;
 				   nrCharsWanted > 1 && isspace(static_cast<unsigned char>(*e));
 				   --nrCharsWanted, --e)
 				;
@@ -463,7 +466,9 @@ StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		      else
 			{
 			  r = true;
-			  Rope::const_iterator leftIter = (op == CODE3('s', 't', 'a')) ? left.begin() : left.begin() + (leftLen - rightLen);
+			  Rope::const_iterator leftIter = left.begin();
+			  if (op == CODE3('e', 'n', 'd'))
+			    leftIter += (leftLen - rightLen);
 			  Rope::const_iterator rightIter = right.begin();
 			  for (Index i = 0; i < rightLen; ++i, ++leftIter, ++rightIter)
 			    {
