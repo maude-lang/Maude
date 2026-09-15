@@ -1,3 +1,25 @@
+2026-09-15  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::MixfixParser): init
+	bareOtfVariableTerminals()
+	(MixfixParser::makeTerm): add action for MAKE_BARE_OTF_VARIABLE
+	(MixfixParser::extendedParse): use bareOtfVariableTerminals
+	(MixfixParser::makeTerm): simplified MAKE_OTF_VARIABLE case
+	(MixfixParser::makePrintListVariable): handle
+	MAKE_BARE_OTF_VARIABLE
+	(MixfixParser::makePrintListVariable): simplified
+	MAKE_OTF_VARIABLE case
+
+	* mixfixParser.hh (enum SemanticActions): added
+	MAKE_BARE_OTF_VARIABLE
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): make
+	and insert terminals for bare otf variables
+
+	* mixfixParser.hh (class MixfixParser): added
+	bareOtfVariableTerminals data member
+	(MixfixParser::insertBareOtfVariableTerminal): added
+
 2026-09-14  Saruman the White  <eker@eker10>
 
 	* mixfixParser.hh (class MixfixParser): updated decl for
@@ -7,7 +29,7 @@
 	otfTranslations convention
 	(MixfixParser::makeTerm): use new otfTranslations convention
 	(MixfixParser::makeOtfTranslations): use new otfTranslations
-	convention 
+	convention
 	(MixfixParser::makeOtfTranslation): use new otfTranslations
 	convention
 	(MixfixParser::makeOtfTranslations): pass location to

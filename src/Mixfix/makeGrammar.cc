@@ -918,11 +918,21 @@ MixfixModule::makeComponentProductions()
 				 MixfixParser::MAKE_OTF_VARIABLE_KNOWN_SORT, kindIndex);
       }
       int nrSorts = component->nrSorts();
-      for (int j = 1; j < nrSorts; ++j)  // skip error sort
+      for (Index j = 0; j < nrSorts; ++j)
 	{
 	  const Sort* sort = component->sort(j);
-	  int sortNameCode = sort->id();
 	  int sortIndex = sort->getIndexWithinModule();
+	  string sortNum(to_string(sortIndex));  // name might clash with kind
+	  int t = Token::encode((sortNum + " bare otf terminal").c_str());
+	  parser->insertBareOtfVariableTerminal(sortIndex, t);
+	  rhsOne[0] = t;
+	  parser->insertProduction(termNt, rhsOne, 0, emptyGather,
+				   MixfixParser::MAKE_BARE_OTF_VARIABLE, sortIndex);
+	  parser->insertProduction(VARIABLE, rhsOne, 0, emptyGather,
+				   MixfixParser::MAKE_BARE_OTF_VARIABLE, sortIndex);
+	  if (j == 0)
+	    continue;  // skip error sort
+	  int sortNameCode = sort->id();
 	  //
 	  //	Terminals for sorts and dotted sorts.
 	  //
