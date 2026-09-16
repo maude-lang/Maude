@@ -1,3 +1,7 @@
+2026-09-16  Saruman the White  <eker@eker10>
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): force no inlining
+
 2026-09-14  Saruman the White  <eker@eker10>
 
 	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): rewritten to
