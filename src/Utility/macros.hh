@@ -203,9 +203,17 @@ enum SpecialConstants
 #endif
 };
 
-#ifdef NO_IMPLEMENT_INLINES
-//#define inline extern __inline__
+//
+//	From Google search AI mode:
+//
+#if defined(_MSC_VER)
+    #define NOINLINE_PORTABLE __declspec(noinline)
+#else
+    // 'weak' forces the compiler/linker to assume the function might be 
+    // overridden at runtime, permanently shattering Clang's single-caller LTO inlining optimizations.
+    #define NOINLINE_PORTABLE __attribute__((noinline, weak))
 #endif
+
 //
 //	For functions local to a compilation unit that can be inlined
 //	in that compilation unit and discarded.

@@ -1,3 +1,8 @@
+2026-09-16  Saruman the White  <eker@eker10>
+
+	* macros.hh: deleted commented out #ifdef NO_IMPLEMENT_INLINES
+	macro; added NOINLINE_PORTABLE suggested by Google search AI mode
+
 2026-08-17  Saruman the White  <eker@eker10>
 
 	* graph.hh (class Graph): use unordered_set<> in place of set
