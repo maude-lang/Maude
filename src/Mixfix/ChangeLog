@@ -1,5 +1,31 @@
 2026-09-15  Saruman the White  <eker@eker10>
 
+	* mixfixParser.cc (MixfixParser::checkParse): handle firstBad
+	(MixfixParser::checkSubparse): handle firstBad
+	(MixfixParser::extendedParse): set firstBad in inexact case
+
+	* makeParse.cc (MixfixParser::makeStrategyExprs)
+	(MixfixParser::makeTerms): use swapParse() to get saved consistent
+	parse
+
+	* mixfixParser.cc (MixfixParser::extendedParse): check for
+	ambiguous parses in inexact case
+
+	* mixfixParser.hh (class MixfixParser): added data member inexact
+
+	* mixfixParser.cc (MixfixParser::parseSentence): clear inexact
+
+	* mixfixParser.hh (class MixfixParser): added decls for
+	checkParse(), checkSubparse()
+
+	* mixfixParser.cc (MixfixParser::checkSubparse): added
+	(MixfixParser::checkParse): added
+
+	* mixfixParser.hh (class MixfixParser): added typedef VarDeclSet
+	and data member seenSet;
+
+	* makeParse.cc: moved all the parse tree making functionality here
+
 	* mixfixParser.cc (MixfixParser::extendedParse): track uncertain
 
 	* mixfixParser.hh (class MixfixParser): updated decl for

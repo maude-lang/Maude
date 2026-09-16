@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ Parser::extractNextParse()
       //
       //	Make root node.
       //
-      Return& r = returns[i];
+      const Return& r = returns[i];
       parseTree.resize(1);
       ParseNode& p = parseTree[0];
       p.ruleNr = r.ruleNr;
@@ -81,7 +81,7 @@ Parser::extractNextParse()
   //
   //	Remake root node.
   //
-  Return& r = returns[i];
+  const Return& r = returns[i];
   p.ruleNr = r.ruleNr;
   //p.startTokenNr = 0;  // no change
   p.nextReturnToCheck = r.nextReturn;
@@ -102,7 +102,7 @@ Parser::extractFirstSubparseToTheLeft(int nodeNr, int rightPos, int rightSibling
   ParseNode& p = parseTree[nodeNr];
   int startTokenNr = p.startTokenNr;
   int ruleNr = p.ruleNr;
-  Rule& rule = rules[p.ruleNr];
+  const Rule& rule = rules[p.ruleNr];
 
   int lastSibling = rightSibling;
   int tokenNr = parseTree[lastSibling].startTokenNr;
@@ -130,7 +130,7 @@ Parser::extractFirstSubparseToTheLeft(int nodeNr, int rightPos, int rightSibling
       //
       //	Make a parse tree node for this return.
       //
-      Return& r = returns[returnIndex];
+      const Return& r = returns[returnIndex];
       int newNodeIndex = parseTree.size();
       parseTree.push_back({r.ruleNr, r.startTokenNr, r.nextReturn, tokenNr, NONE, lastSibling});
       ParserLog("set nextSibling of node " << nodeNr << " to " << lastSibling);
@@ -152,7 +152,7 @@ Parser::extractFirstSubparse(int nodeNr)
   ParseNode& p = parseTree[nodeNr];
   int ruleNr = p.ruleNr;
   int startTokenNr = p.startTokenNr;
-  Rule& rule = rules[ruleNr];
+  const Rule& rule = rules[ruleNr];
   if (rule.rhs[0].symbol == BUBBLE_TERMINAL)
     return;  // we don't expand the single son of a bubble rule
   int nrSons = rule.nrNonTerminals;
@@ -204,7 +204,7 @@ Parser::extractFirstSubparse(int nodeNr)
 	      //
 	      //	First we recover a sequence of (mostly) virtual returns for the DRP.
 	      //
-	      Return& r = returns[returnIndex];
+	      const Return& r = returns[returnIndex];
 	      Vector<DeferredReturn> drp;
 	      extractDeterministicReductionPath(r.ruleNr, r.startTokenNr, drp);
 	      //
@@ -258,7 +258,7 @@ Parser::extractFirstSubparse(int nodeNr)
       //
       //	Make a parse tree node for this return.
       //
-      Return& r = returns[returnIndex];
+      const Return& r = returns[returnIndex];
       int nodeIndex = parseTree.size();
       parseTree.push_back({r.ruleNr, r.startTokenNr, r.nextReturn, tokenNr, NONE, lastSibling});
       ParserLog("set nextSibling of node " << nodeIndex << " to " << lastSibling);
@@ -280,7 +280,7 @@ Parser::extractNextSubparse(int nodeNr)
   //	subparse exists.
   //
   ParseNode& p = parseTree[nodeNr];
-  Rule& rule = rules[p.ruleNr];
+  const Rule& rule = rules[p.ruleNr];
   int nrSons = rule.nrNonTerminals;
   if (rule.rhs[0].symbol == BUBBLE_TERMINAL)
     return false;  // we don't expand the single son of a bubble rule
@@ -353,7 +353,7 @@ Parser::extractNextSubparse(int nodeNr)
 	      //
 	      //	First we recover a sequence of (mostly) virtual returns for the DRP.
 	      //
-	      Return& r = returns[returnIndex];
+	      const Return& r = returns[returnIndex];
 	      Vector<DeferredReturn> drp;
 	      extractDeterministicReductionPath(r.ruleNr, r.startTokenNr, drp);
 	      //
@@ -363,7 +363,7 @@ Parser::extractNextSubparse(int nodeNr)
 	      //	right-recursive) return for the parse node we are currently expanding.
 	      //
 #ifdef PARSER_DEBUG
-	      for (auto& k : drp)
+	      for (const auto& k : drp)
 		cout << "DRP link (" << k.ruleNr << ", " << k.startTokenNr << ")" << endl;
 #endif
 	      int drpSize = drp.size();
@@ -403,7 +403,7 @@ Parser::extractNextSubparse(int nodeNr)
       //
       //	Make a parse tree node for this return.
       //
-      Return& r = returns[returnIndex];
+      const Return& r = returns[returnIndex];
       int newNodeIndex = parseTree.size();
       parseTree.push_back({r.ruleNr, r.startTokenNr, r.nextReturn, endTokenNr, NONE, son});
       ParserLog("set nextSibling of node " << newNodeIndex << " to " << son);
@@ -435,7 +435,7 @@ Parser::buildDeterministicReductionPathParseTree(int endTokenNr,
       //
       //	End of DRP reached - build parse tree node for trigger return.
       //
-      Return& r = returns[triggerReturnIndex];
+      const Return& r = returns[triggerReturnIndex];
       int nodeIndex = parseTree.size();
       parseTree.push_back({r.ruleNr, r.startTokenNr, NONE, endTokenNr, NONE, NONE});  // nothing to the right of us in parent
       extractFirstSubparse(nodeIndex);
@@ -472,14 +472,14 @@ Parser::buildDeterministicReductionPathParseTree(int endTokenNr,
 }
 
 int
-Parser::findRootReturn(int i, int nonTerminal)
+Parser::findRootReturn(int i, int nonTerminal) const
 {
   //
   //	Find return for root nonterminal.
   //
   while (i != NONE)
     {
-      Return& ret = returns[i];
+      const Return& ret = returns[i];
       if (ret.startTokenNr == 0 && rules[ret.ruleNr].nonTerminal == nonTerminal)
 	break;
       i = ret.nextReturn;
@@ -488,7 +488,7 @@ Parser::findRootReturn(int i, int nonTerminal)
 }
 
 inline bool
-Parser::existsCall(int parseListNr, int ruleNr, int rhsPosition, int startTokenNr)
+Parser::existsCall(int parseListNr, int ruleNr, int rhsPosition, int startTokenNr) const
 {
   //
   //	Check that a call (ruleNr, rhsPosition, startTokenNr) actually
@@ -512,12 +512,12 @@ Parser::existsCall(int parseListNr, int ruleNr, int rhsPosition, int startTokenN
   int nonTerminal = rules[ruleNr].rhs[rhsPosition].symbol;
   for (int i = firstCalls[parseListNr]; i != NONE; i = calls[i].nextCall)
     {
-      Call& call = calls[i];
+      const Call& call = calls[i];
       if (call.nonTerminal == nonTerminal)
 	{
 	  for (int j = call.firstContinuation; j != NONE;)
 	    {
-	      Continuation& cont = continuations[j];
+	      const Continuation& cont = continuations[j];
 	      if (cont.ruleNr == ruleNr && cont.rhsPosition == rhsPosition &&
 		  cont.startTokenNr == startTokenNr)
 		return true;
@@ -530,7 +530,7 @@ Parser::existsCall(int parseListNr, int ruleNr, int rhsPosition, int startTokenN
 }
 
 int
-Parser::findReturn(int i, int ruleNr, int rhsPosition, int startTokenNr)
+Parser::findReturn(int i, int ruleNr, int rhsPosition, int startTokenNr) const
 {
   //
   //	Starting with returns[i], find a return that deals with the
@@ -540,7 +540,7 @@ Parser::findReturn(int i, int ruleNr, int rhsPosition, int startTokenNr)
   int prec = rules[ruleNr].rhs[rhsPosition].prec;
   while (i != NONE)
     {
-      Return& ret = returns[i];
+      const Return& ret = returns[i];
       if (rules[ret.ruleNr].nonTerminal == nonTerminal &&
 	  rules[ret.ruleNr].prec <= prec &&
 	  existsCall(ret.startTokenNr, ruleNr, rhsPosition, startTokenNr))

@@ -1,3 +1,23 @@
+2026-09-15  Saruman the White  <eker@eker10>
+
+	* parser.cc (Parser::parseSentence): clear savedParseTree
+
+	* parser.hh (saveParse): added
+	(swapParse): added
+	(class Parser): added data member savedParseTree
+
+	* pass2.cc (Parser::findRootReturn): made const
+	(Parser::buildDeterministicReductionPathParseTree): const Return&
+	(Parser::extractNextSubparse): const Return&, const Rule&
+	(Parser::extractNextParse): const correctness
+	(Parser::extractFirstSubparseToTheLeft): const correctness
+
+	* parser.hh (class Parser): updated decls for findReturn(),
+	existsCall()
+
+	* pass2.cc (Parser::existsCall): made const
+	(Parser::findReturn): made const
+
 2026-09-11  Saruman the White  <eker@eker10>
 
 	* parser.hh (Parser::symbolInTokenList): added

@@ -216,6 +216,7 @@ Parser::parseSentence(const Vector<int>& sentence,
  
   ambiguous = false;
   parseTree.clear();
+  savedParseTree.clear();
   int t = extractNextParse() ? (ambiguous ? 2 : 1) : 0;
   ParserLog("\n parseSentence() returns " << t << "\n\n");
   return t;
