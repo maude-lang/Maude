@@ -1,5 +1,28 @@
 2026-09-15  Saruman the White  <eker@eker10>
 
+	* mixfixParser.cc (MixfixParser::extendedParse): track uncertain
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeOtfTranslation()
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslation): handle
+	uncertain argument
+	(MixfixParser::makeOtfTranslations): handle chains of prefixed
+	sorts
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	makeOtfTranslation()
+	(struct OtfDef): added uncertain field to struct OtfDef
+
+	* mixfixParser.cc  (MixfixParser::makeOtfTranslations): greatly
+	simplified now that we add all suspected otf variables to
+	otfTranslations
+	(MixfixParser::makeOtfTranslation): greatly simiplified; don't
+	take code arg
+
+	* mixfixParser.hh (class MixfixParser): OtfDefMap now holds
+	Vector<>s of OtfDef structs
+
 	* mixfixParser.cc (MixfixParser::MixfixParser): init
 	bareOtfVariableTerminals()
 	(MixfixParser::makeTerm): add action for MAKE_BARE_OTF_VARIABLE

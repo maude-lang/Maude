@@ -215,11 +215,12 @@ private:
   {
     int location;
     int sortIndex;
+    bool uncertain;
   };
   
   typedef unordered_map<int,int> IntMap;
   typedef unordered_set<int> NameSet;
-  typedef unordered_map<int,OtfDef> OtfDefMap;
+  typedef unordered_map<int,Vector<OtfDef>> OtfDefMap;
 
   enum Flags
   {
@@ -270,7 +271,7 @@ private:
   int translateSpecialToken(int code);
   void makeOtfTranslations();
   ConnectedComponent* checkSortNames(const Vector<int>& sortNames);
-  void makeOtfTranslation(int code, int varName, int location, int sortIndex);
+  void makeOtfTranslation(int varName, int location, int sortIndex, bool uncertain);
   bool guaranteedFresh(int code) const;
   int makeFreshVariableName(int code);
   int classicParse(int root, int& firstBad, int nrTokens);

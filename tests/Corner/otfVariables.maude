@@ -38,13 +38,13 @@ fmod FOO4 is
 endfm
 show desugared .
 
-*** conflicts disable extended scope
+*** overloaded otf variable declarations are allowed
 fmod FOO5 is
   pr NAT .
-
-  op f : Nat Nat -> Nat .
-  eq f(Y:Nat, Y:NzNat) = Y .
+  op f : Nat Bool -> Nat .
+  eq f(Y:Nat, Y:Bool) = Y .
 endfm
+show desugared .
 
 *** extended scope not used if there is a classic parse
 fmod FOO5a is
@@ -100,7 +100,7 @@ fmod FOO10 is
 endfm
 show desugared .
 
-*** extended scope not allowed for tokens with special handling
+*** extended scope *allowed* for tokens with special handling
 fmod FOO11 is
   pr NAT .
   op f : Nat  -> Nat .
@@ -108,6 +108,7 @@ fmod FOO11 is
   eq f(X::Nat) = X: .
   eq f(X:Y:Nat) = X:Y .
 endfm
+show desugared .
 
 *** complicated structured sort names work
 fmod FOO12 is
@@ -134,8 +135,7 @@ fmod FOO14 is
 endfm
 show desugared .
 
-*** if the base of a structured sort name is also a valid sort, extended scope
-*** only works for the base sort name
+*** scope extension works with overlapping sort names
 fmod FOO15 is
   subsort Foo < Foo{Bar} .
   op f : Foo -> Foo .
@@ -146,13 +146,14 @@ show desugared .
 
 *** if an otf variable of the base sort looks likes an otf variable of a valid
 *** structured sort, due to sufficiently perverse user defined syntax, extended
-*** scope is disabled
+*** scope is *not* disabled
 fmod FOO16 is
   sorts Foo Foo{Bar} .
   op f : Foo -> Foo .
   op _{Bar} : Foo -> Foo .
   eq f(X:Foo{Bar}) = X .
 endfm
+show desugared .
 
 *** if the structured sort name is not actually a sort, extended scope works
 fmod FOO17 is
@@ -163,7 +164,7 @@ fmod FOO17 is
 endfm
 show desugared .
 
-*** if X:Foo is part of the user's operator syntax, X:Foo does not have
+*** if X:Foo is part of the user's operator syntax, X:Foo *still* has
 *** its scope extended.
 fmod FOO18 is
   op X:Foo : -> Bool .
@@ -171,16 +172,18 @@ fmod FOO18 is
   op f : Foo -> Foo .
   eq f(X:Foo) = X .
 endfm
+show desugared .
 
 *** if X:Bar is part of the user's operator syntax, and Bar is a sort, the
-*** occurrence of X:Bar in a statement prevents scope extension for any variable
-*** with base name X
+*** occurrence of X:Bar in a statement *does not* prevents scope extension for any
+*** variable with base name X
 fmod FOO19 is
   op X:Bar : -> Bool .
   sorts Foo Bar .
   op f : Foo -> Foo .
   eq f(X:Foo) = if X:Bar then X else X fi .
 endfm
+show desugared .
 
 *** however if Bar is not a sort, X:Bar doesn't look like an otf variable and
 *** there is no problem
@@ -208,13 +211,14 @@ fmod BAR2 is
 endfm
 show desugared .
 
-*** extended scope is disabled by user syntax
+*** extended scope is *not* disabled by user syntax
 fmod BAR3 is
   sort Foo .
   op X: : -> Foo .
   op f : Foo Foo -> Foo .
   eq f(X:[Foo], X:) = X .
 endfm
+show desugared .
 
 *** but not if it doesn't look like a kind variable
 fmod BAR4 is
@@ -225,7 +229,7 @@ fmod BAR4 is
 endfm
 show desugared .
 
-*** disabled by deceptive syntax
+*** extended scope is *not* disabled by deceptive syntax
 fmod BAR5 is
   sorts Foo Bar .
   op X:_ : Foo -> Bar .
@@ -233,6 +237,7 @@ fmod BAR5 is
   op f : Foo Bar -> Foo .
   eq f(X:[Foo], X:[Foo]) = X .
 endfm
+show desugared .
 
 *** but not if it doesn't involve the variable in question
 fmod BAR5 is
