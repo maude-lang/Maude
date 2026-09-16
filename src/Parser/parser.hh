@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,7 +61,13 @@ public:
   void dump();
 
   int getNumberOfChildren(int node);
-
+  //
+  //	This to functions allow us to save a parse we like and find another
+  //	parse we like and swap between the two.
+  //
+  void saveParse();
+  void swapParse();
+  
   static int flip(int i);
 //
 //	If no parses are found, this returns the index of the first token at which
@@ -220,9 +226,9 @@ private:
   //
   //	Pass 2.
   //
-  int findRootReturn(int i, int nonTerminal);
-  int findReturn(int i, int ruleNr, int rhsPosition, int startTokenNr);
-  bool existsCall(int parseListNr, int ruleNr, int rhsPosition, int startTokenNr);
+  int findRootReturn(int i, int nonTerminal) const;
+  int findReturn(int i, int ruleNr, int rhsPosition, int startTokenNr) const;
+  bool existsCall(int parseListNr, int ruleNr, int rhsPosition, int startTokenNr) const;
   bool existsMemo(int startTokenNr, int nonTerminal, int prec, int ruleNrToFind, int startTokenNrToFind);
   IntBoolPair findReturnOrDeterministicReductionPath(int i, int ruleNr, int startTokenNr, int endTokenNr);
   void extractFirstSubparse(int nodeNr);
@@ -266,11 +272,24 @@ private:
   Vector<Return> returns;
   Vector<MemoItem> memoItems;
   Vector<ParseNode> parseTree;
+  Vector<ParseNode> savedParseTree;
   //
   //	Pointers to input.
   //
   const Vector<Vector<int>>* tokenLists = nullptr;
 };
+
+inline void
+Parser::saveParse()
+{
+  savedParseTree = parseTree;
+}
+
+inline void
+Parser::swapParse()
+{
+  parseTree.swap(savedParseTree);
+}
 
 inline int
 Parser::flip(int i)

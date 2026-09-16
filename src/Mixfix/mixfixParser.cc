@@ -105,6 +105,9 @@
 
 #define ROOT_NODE	(0)
 
+//	our stuff
+#include "makeParse.cc"
+
 MixfixParser::MixfixParser(MixfixModule& client,
 			   bool complexFlag,
 			   int componentNonTerminalBase,
@@ -450,7 +453,6 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
   //	Translate tokens into terminals.
   //
   Vector<int> translations;
-  bool uncertain = false;
   for (Index i = 0; i < nrTokens; ++i)
     {
       translations.clear();
@@ -477,7 +479,7 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 		  int otfTerminal = bareOtfVariableTerminals[d.sortIndex];
 		  translations.push_back(otfTerminal);
 		  if (d.uncertain)
-		    uncertain = true;
+		    inexact = true;
 		}
 	    }
 	}
@@ -512,9 +514,7 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 	    }
 	}
     }
-  //if (uncertain)
-  // cerr << Tty(Tty::BLUE) << "uncertain grammar" << Tty(Tty::RESET) << endl;
-
+  
 #if PARSER_DEBUG
   cout << "extended parse: ";
   for (int i = 0; i < sentence.length(); i++)
@@ -526,11 +526,58 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
   DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
   if (nrParses == 0)  // no parse
     firstBad = currentOffset + parser.getErrorPosition();
-  
-#if PARSER_DEBUG
-  parser.printCurrentParse();
-#endif
-  
+  else if (inexact)
+    {
+      //cerr << Tty(Tty::BLUE) << "inexact parse" << Tty(Tty::RESET) << endl;
+      //cerr << "nrParses = " << nrParses << endl;
+      firstBad = -1;
+      if (nrParses == 1)
+	{
+	  if (!checkParse(firstBad))
+	    {
+	      nrParses = 0;  // no consistent parses
+	    }
+	}
+      else
+	{
+	  //
+	  //	Ambiguous parse in bigger grammar.
+	  //	Find first consistent parse.
+	  //
+	  while (!checkParse(firstBad))
+	    {
+	      //cerr << Tty(Tty::BLUE) << "parse failed check" << Tty(Tty::RESET) << endl;
+	      if (!parser.extractNextParse())
+		{
+		  nrParses = 0;  // no consistent parses
+		  return nrParses;
+		}
+	    }
+	  //cerr << "found first consistent" << endl;
+	  //
+	  //	Save our consistent parse and see if there is another one for
+	  //	ambiguity in the smaller grammar.
+	  //
+	  parser.saveParse();
+	  while (parser.extractNextParse())
+	    {
+	      if (checkParse(firstBad))
+		{
+		  //
+		  //	Found a second consistent parse.
+		  //	Swap it with the first one.
+		  //
+		  parser.swapParse();
+		  nrParses = 2;  // ambiguous
+		  //cerr << "found second consistent" << endl;
+		  return nrParses;
+		}
+	    }
+	  //cerr << "no more consistent" << endl;
+	  parser.swapParse();  // restore consistent parse
+	  nrParses = 1;  // only found a single consistent parse.
+	}
+    }
   return nrParses;
 }
 
@@ -544,6 +591,7 @@ MixfixParser::parseSentence(const Vector<Token>& original,
   currentSentence = &original;
   currentOffset = begin;
   sentence.resize(nrTokens);
+  inexact = false;
 
   if (classicParse(root, firstBad, nrTokens) > 0 || bubblesAllowed)
     return nrParses;
@@ -551,1176 +599,63 @@ MixfixParser::parseSentence(const Vector<Token>& original,
 }
 
 bool
-MixfixParser::guaranteedFresh(int code) const
+MixfixParser::checkParse(int& firstBad)
 {
-  if (usedNames.find(code) != usedNames.end())
-    {
-      //
-      //	Name already used for a wildcard variable.
-      //
-      return false;
-    }
-  if (tokenSet.find(code) != NONE)
-    {
-      //
-      //	This covers the variable alias case.
-      //	It also rejects other tokens that ended up in the user's
-      //	grammar and might be confusing to use as a fresh variable
-      //	name.
-      //
-      return false;
-    }
-  if (otfTranslations.find(code) != otfTranslations.end())
-    {
-      //
-      //	Because we only translate wildcards if all else fails,
-      //	we will have called makeOtfTranslations() and anything
-      //	that looks like an otf variable will be in otfTranslations,
-      //	perhaps blocked, if it didn't qualify for extended scope.
-      //
-      return false;
-    }
+  seenSet.clear();
+  if (!checkSubparse(ROOT_NODE, firstBad))
+    return false;
   return true;
 }
-		
-int
-MixfixParser::makeFreshVariableName(int code)
+
+bool
+MixfixParser::checkSubparse(int node, int& firstBad)
 {
-  //
-  //	We want to make a name for a variable based on code, that is guaranteed fresh.
-  //	In particular:
-  //	(1) We didn't already make a fresh variable with this name.
-  //	(2) It isn't a declared variable alias.
-  //	(3) It isn't an otf variable in the current sentence.
-  //
-  if (!guaranteedFresh(code))
-    {
-      //
-      //	Make names _<num> or _Foo_<num> until we hit a guaranteed fresh one.
-      //	We don't expect this to take many tries.
-      //
-      Rope baseName(Token::name(code));
-      if (baseName[baseName.length() - 1] != '_')
-	baseName += '_';
-      for (Index index = 1;; ++index)
-	{
-	  code = Token::ropeToCode(baseName + int64ToString(index));
-	  if (guaranteedFresh(code))
-	    break;
-	}
-    }
-  usedNames.insert(code);
-  return code;
-}
-
-void
-MixfixParser::makeTerms(Term*& first, Term*& second)
-{
-  Assert(nrParses > 0, "no parses");
-  int node = ROOT_NODE;
-  first = makeTerm(node);
-  second = 0;
-  if (nrParses > 1)
-    {
-      DebugSave(success, parser.extractNextParse());
-      Assert(success, "didn't find 2nd parse for ambigous sentence");
-      usedNames.clear();
-      second  = makeTerm(node);
-    }
-}
-
-void
-MixfixParser::makeStrategyExprs(StrategyExpression*& first, StrategyExpression*& second)
-{
-  Assert(nrParses > 0, "no parses");
-  int node = ROOT_NODE;
-  first = makeStrategy(node);
-  second = 0;
-  if (nrParses > 1)
-    {
-      DebugSave(success, parser.extractNextParse());
-      Assert(success, "didn't find 2nd parse for ambigous sentence");
-      usedNames.clear();
-      second = makeStrategy(node);
-    }
-}
-
-void
-MixfixParser::insertStatement()
-{
-  Assert(nrParses > 0, "no parses");
-  makeStatement(ROOT_NODE);
-}
-
-void
-MixfixParser::makeMatchCommand(Term*& pattern,
-			       Term*& subject,
-			       Vector<ConditionFragment*>& condition)
-{
-  Assert(nrParses > 0, "no parses");
-  int node = ROOT_NODE;
-  int matchPair = parser.getChild(node, 0);
-  pattern = makeTerm(parser.getChild(matchPair, 0));
-  subject = makeTerm(parser.getChild(matchPair, 1));
-
-  if (actions[parser.getProductionNumber(node)].action == CONDITIONAL_COMMAND)
-    makeCondition(parser.getChild(node, 2), condition);
-}
-
-void
-MixfixParser::makeUnifyCommand(Vector<Term*>& lhs, Vector<Term*>& rhs)
-{
-  Assert(nrParses > 0, "no parses");
-  Assert(lhs.empty() && rhs.empty(), "return vectors should be empty");
-
-  for (int node = ROOT_NODE;; node = parser.getChild(node, 1))
-    {
-      int unifyPair = parser.getChild(node, 0);
-      lhs.append(makeTerm(parser.getChild(unifyPair, 0)));
-      rhs.append(makeTerm(parser.getChild(unifyPair, 1)));
-      if (actions[parser.getProductionNumber(node)].action != PAIR_LIST)
-	break;
-    }
-}
-
-void
-MixfixParser::makeTermDisjunction(int node, Vector<Term*>& terms)
-{
-  for (;; node = parser.getChild(node, 1))
-    {
-      terms.push_back(makeTerm(parser.getChild(node, 0)));
-      if (actions[parser.getProductionNumber(node)].action != MAKE_TERM_DISJUNCTION)
-	break;
-    }
-}
-
-void
-MixfixParser::makeSearchCommand(Vector<Term*>& initial,
-				int& searchType,
-				Term*& target,
-				Vector<ConditionFragment*>& condition)
-{
-  Assert(nrParses > 0, "no parses");
-  int node = ROOT_NODE;
-  int searchPair = parser.getChild(node, 0);
-
-  makeTermDisjunction(parser.getChild(searchPair, 0), initial);
-
-  //initial.push_back(makeTerm(parser.getChild(searchPair, 0)));  // FIXME
-  
-  int arrowType = parser.getChild(searchPair, 1);
-  searchType = actions[parser.getProductionNumber(arrowType)].data;
-  target = makeTerm(parser.getChild(searchPair, 2));
-
-  if (actions[parser.getProductionNumber(node)].action == CONDITIONAL_COMMAND)
-    makeCondition(parser.getChild(node, 2), condition);
-}
-
-void
-MixfixParser::makeGetVariantsCommand(Term*& initial, Vector<Term*>& constraint)
-{
-  Assert(nrParses > 0, "no parses");
-  int node = ROOT_NODE;
-  initial = makeTerm(parser.getChild(node, 0));
-  if (actions[parser.getProductionNumber(node)].action == MAKE_TERM_LIST)
-    makeTermList(parser.getChild(node, 2), constraint);
-}
-
-void
-MixfixParser::makeVariantUnifyOrMatchCommand(Vector<Term*>& lhs,
-					     Vector<Term*>& rhs,
-					     Vector<Term*>& constraint)
-{
-  //
-  //	This also handles variant match commands which have the same form.
-  //
-  Assert(nrParses > 0, "no parses");
-  Assert(lhs.empty() && rhs.empty() && constraint.empty(), "return vectors should be empty");
-
-  for (int node = parser.getChild(ROOT_NODE, 0);; node = parser.getChild(node, 1))
-    {
-      int unifyPair = parser.getChild(node, 0);
-      lhs.append(makeTerm(parser.getChild(unifyPair, 0)));
-      rhs.append(makeTerm(parser.getChild(unifyPair, 1)));
-      if (actions[parser.getProductionNumber(node)].action != PAIR_LIST)
-	break;
-    }
-
-  if (actions[parser.getProductionNumber(ROOT_NODE)].action == MAKE_TERM_LIST)
-    makeTermList(parser.getChild(ROOT_NODE, 2), constraint);
-}
-
-void
-MixfixParser::makeStrategyCommand(Term*& subject, StrategyExpression*& strategy)
-{
-  Assert(nrParses > 0, "no parses");
-  int node = ROOT_NODE;
-  int term = parser.getChild(node, 0);
-  int strat = parser.getChild(node, 1);
-  subject = makeTerm(term);
-  strategy = makeStrategy(strat);
-}
-
-void
-MixfixParser::makeAssignment(int node, Vector<Term*>& variables, Vector<Term*>& values)
-{
-  Term* var = makeTerm(parser.getChild(node, 0));
-  if (dynamic_cast<VariableTerm*>(var))
-    {
-      Term* val = makeTerm(parser.getChild(node, 1));
-      variables.append(var);
-      values.append(val);
-    }
-  else
-    {
-      IssueWarning(*var << ": " << var << " is not a variable - ignoring assignment.");
-      var->deepSelfDestruct();
-    }
-}
-
-void
-MixfixParser::makeSubstitution(int node, Vector<Term*>& variables, Vector<Term*>& values)
-{
-  while (actions[parser.getProductionNumber(node)].action == MAKE_SUBSTITUTION)
-    {
-      makeAssignment(parser.getChild(node, 0), variables, values);
-      node = parser.getChild(node, 1);
-    }
-  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU, "unexpected action");
-  makeAssignment(parser.getChild(node, 0), variables, values);
-}
-
-StrategyExpression*
-MixfixParser::makeStrategy(int node)
-{
-  StrategyExpression* s;
   Action& a = actions[parser.getProductionNumber(node)];
   switch (a.action)
     {
-    case PASS_THRU:
-      {
-	return makeStrategy(parser.getChild(node, 0));
-      }
-    case MAKE_TRIVIAL:
-      {
-	s = new TrivialStrategy(a.data);
-	break;
-      }
-    case MAKE_ALL:
-      {
-	Vector<Term*> variables;
-	Vector<Term*> values;
-	Vector<StrategyExpression*> strategies;
-	s = new ApplicationStrategy(UNDEFINED, variables, values, strategies);
-	break;
-      }
-    case MAKE_APPLICATION:
-      {
-	int label = actions[parser.getProductionNumber(parser.getChild(node, 0))].data;
-	Vector<Term*> variables;
-	Vector<Term*> values;
-	Vector<StrategyExpression*> strategies;
-	int child = 1;
-	if (a.data)
-	  {
-	    makeSubstitution(parser.getChild(node, 1), variables, values);
-	    ++child;
-	  }
-	if (a.data2)
-	  makeStrategyList(parser.getChild(node, child), strategies);
-	s = new ApplicationStrategy(label, variables, values, strategies);
-	break;
-      }
-    case MAKE_CALL:
-      {
-	pair<RewriteStrategy*, Term*> call = makeStrategyCall(parser.getChild(node, 0));
-	s = new CallStrategy(call.first, call.second);
-	break;
-      }
-    case MAKE_TOP:
-      {
-	s = makeStrategy(parser.getChild(node, 0));
-	if (ApplicationStrategy* a = dynamic_cast<ApplicationStrategy*>(s))
-	  a->setTop();
-	else
-	  {
-	    int pos = currentOffset + parser.getFirstPosition(node);
-	    IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
-			 ": use of top strategy modifier on a non-application strategy ignored.");
-	  }
-	break;
-      }
-    case MAKE_ONE:
-      {
-	StrategyExpression* child = makeStrategy(parser.getChild(node, 0));
-	s = new OneStrategy(child);
-	break;
-      }
-    case MAKE_CONCATENATION:
-    case MAKE_UNION:
-      {
-	Vector<StrategyExpression*> strategies;
-	do
-	  {
-	    strategies.append(makeStrategy(parser.getChild(node, 0)));
-	    node = parser.getChild(node, 1);
-	  }
-	while (actions[parser.getProductionNumber(node)].action == a.action);
-	strategies.append(makeStrategy(node));
-	if (a.action == MAKE_CONCATENATION)
-	  s = new ConcatenationStrategy(strategies);
-	else
-	  s = new UnionStrategy(strategies);
-	break;
-      }
-    case MAKE_ITERATION:
-      {
-	s = new IterationStrategy(makeStrategy(parser.getChild(node, 0)),
-				  actions[parser.getProductionNumber(node)].data);
-	break;
-      }
-    case MAKE_BRANCH:
-      {
-	BranchStrategy::Action successAction = static_cast<BranchStrategy::Action>(actions[parser.getProductionNumber(node)].data);
-	BranchStrategy::Action failureAction = static_cast<BranchStrategy::Action>(actions[parser.getProductionNumber(node)].data2);
-	int child = 0;
-	StrategyExpression* successStrategy =
-	  (successAction == BranchStrategy::NEW_STRATEGY) ? makeStrategy(parser.getChild(node, ++child)) : 0;
-	StrategyExpression* failureStrategy =
-	  (failureAction == BranchStrategy::NEW_STRATEGY) ? makeStrategy(parser.getChild(node, ++child)) : 0;
-	s = new BranchStrategy(makeStrategy(parser.getChild(node, 0)),
-			       successAction,
-			       successStrategy,
-			       failureAction,
-			       failureStrategy);
-	break;
-      }
-    case MAKE_TEST:
-      {
-	Vector<ConditionFragment*> condition;
-	if (parser.getNumberOfChildren(node) > 1)  // such that clause
-	  makeCondition(parser.getChild(node, 2), condition);
-	s = new TestStrategy(makeTerm(parser.getChild(node, 0)), actions[parser.getProductionNumber(node)].data, condition);
-	break;
-      }
-    case MAKE_REW:
-      {
-	Vector<ConditionFragment*> condition;
-	int listIndex = 1;
-	if (parser.getNumberOfChildren(node) > 2)  // such that clause
-	  {
-	    makeCondition(parser.getChild(node, 2), condition);
-	    listIndex = 3;
-	  }
-	Vector<Term*> subterms;
-	Vector<StrategyExpression*> strategies;
-	makeUsingList(parser.getChild(node, listIndex), subterms, strategies);
-	s = new SubtermStrategy(makeTerm(parser.getChild(node, 0)),
-				actions[parser.getProductionNumber(node)].data,
-				condition,
-				subterms,
-				strategies);
-	break;
-      }
-    default:
-      {
-	s = nullptr;  // to avoid uninitialized variable warning
-	CantHappen("bad action " << a.action);
-      }
-    }
-  return s;
-}
-
-pair<RewriteStrategy*, Term*>
-MixfixParser::makeStrategyCall(int node)
-{
-  int index = actions[parser.getProductionNumber(node)].data;
-
-  // Gets the symbol
-  RewriteStrategy* strategy = client.getStrategies()[index];
-
-  int nrChildren = parser.getNumberOfChildren(node);
-  Vector<Term*> values(nrChildren);
-
-  for (int i = 0; i < nrChildren; i++)
-    values[i] = makeTerm(parser.getChild(node, i));
-
-  Term* result = strategy->makeAuxiliaryTerm(values);
-
-  result->setLineNumber((*currentSentence)[currentOffset
-    + parser.getFirstPosition(node)].lineNumber());
-
-  return make_pair(strategy, result);
-}
-
-void
-MixfixParser::appendUsingPair(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies)
-{
-  Assert(actions[parser.getProductionNumber(node)].action == MAKE_USING_PAIR,
-	 "unexpected action: " << actions[parser.getProductionNumber(node)].action);
-  terms.append(makeTerm(parser.getChild(node, 0)));
-  strategies.append(makeStrategy(parser.getChild(node, 1)));
-}
-
-void
-MixfixParser::makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies)
-{
-  while (actions[parser.getProductionNumber(node)].action == MAKE_USING_LIST)
-    {
-      appendUsingPair(parser.getChild(node, 0), terms, strategies);
-      node = parser.getChild(node, 1);
-    }
-  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU,
-	 "unexpected action: " << actions[parser.getProductionNumber(node)].action);
-  appendUsingPair(parser.getChild(node, 0), terms, strategies);
-}
-
-void
-MixfixParser::makeTermList(int node, Vector<Term*>& termList)
-{
-  while (actions[parser.getProductionNumber(node)].action == MAKE_TERM_LIST)
-    {
-      termList.append(makeTerm(parser.getChild(node, 0)));
-      node = parser.getChild(node, 1);
-    }
-  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU,
-	 "unexpected action: " << actions[parser.getProductionNumber(node)].action);
-  termList.append(makeTerm(parser.getChild(node, 0)));
-}
-
-void
-MixfixParser::makeStrategyList(int node, Vector<StrategyExpression*>& strategies)
-{
-  while (actions[parser.getProductionNumber(node)].action == MAKE_STRATEGY_LIST)
-    {
-      strategies.append(makeStrategy(parser.getChild(node, 0)));
-      node = parser.getChild(node, 1);
-    }
-  Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU, "unexpected action");
-  strategies.append(makeStrategy(parser.getChild(node, 0)));
-}
-
-Sort*
-MixfixParser::getSort(int node)
-{
-  return client.getSorts()[actions[parser.getProductionNumber(node)].data];
-}
-
-void
-MixfixParser::makeAssocList(int node, Vector<Term*>& args)
-{
-  /*
-    do
-    {
-    args.append(makeTerm(parser.getChild(t, 0)));
-    t = parser.getChild(t, 1);
-    }
-    while (actions[parser.getProductionNumber(t)] == ASSOC_LIST);
-    args.append(makeTerm(t));
-  */
-  do
-    {
-      args.append(makeTerm(parser.getChild(node, 1)));
-      node = parser.getChild(node, 0);
-    }
-  while (actions[parser.getProductionNumber(node)].action == ASSOC_LIST);
-  args.append(makeTerm(node));
-  //
-  //	Reverse order of args.
-  //
-  int n = args.length() - 1;
-  for (int i = n / 2; i >= 0; i--)
-    {
-      Term* t = args[i];
-      args[i] = args[n - i];
-      args[n - i] = t;
-    }
-}
-
-Term*
-MixfixParser::makeTerm(int node)
-{
-  Term* t;
-  Vector<Term*> args;
-
-  int pos = currentOffset + parser.getFirstPosition(node);
-  Action& a = actions[parser.getProductionNumber(node)];
-
-  switch (a.action)
-    {
-    case PASS_THRU:
-      {
-	return makeTerm(parser.getChild(node, 0));
-      }
-    case MAKE_TERM:
-      {
-	Symbol* symbol = client.getSymbols()[a.data];
-	int nrArgs = symbol->arity();
-	if (nrArgs > 0)
-	  {
-	    int t = parser.getChild(node, 0);
-	    if (actions[parser.getProductionNumber(t)].action == ASSOC_LIST)
-	      makeAssocList(t, args);
-	    else
-	      {  
-		for (int i = 0; i < nrArgs; i++)
-		  args.append(makeTerm(parser.getChild(node, i)));
-	      }
-	  }
-	t = symbol->makeTerm(args);
-	break;
-      }
-    case MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET:
-      {
-	ObjectConstructorSymbol* symbol = safeCast(ObjectConstructorSymbol*, client.getSymbols()[a.data]);
-	if (client.getStatus() == Module::SIGNATURE_CLOSED)
-	  {
-	    //
-	    //	We haven't completed fix-ups, so identity need not exist.
-	    //
-	    int pos = currentOffset + parser.getFirstPosition(node);
-	    IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
-			 ": empty attribute set syntax is not allowed in operator declarations.");
-	    client.markAsBad();
-	    //
-	    //	Because the sentence parsed ok, none of the code that calls makeTerm() is prepared
-	    //	to deal with failure so we need make a fake subterm so that the module can be deleted
-	    //	without dereferencing null.
-	    //
-	    Sort* sort = symbol->getRangeSort();
-	    VariableSymbol* vs = safeCast(VariableSymbol*, client.instantiateVariable(sort));
-	    t = new VariableTerm(vs, Token::encode("error"));
-	  }
-	else
-	  {
-	    //
-	    //	We shouldn't be parsing statements or commands if the identity could not be set.
-	    //
-	    ACU_Symbol* attributeSetSymbol = symbol->getAttributeSetSymbol();
-	    Term* identity = attributeSetSymbol->getIdentity();
-	    Assert(identity != 0, "null identity");
-	    for (int i = 0; i < 2; i++)
-	      args.append(makeTerm(parser.getChild(node, i)));
-	    args.append(identity->deepCopy());
-	    t = symbol->makeTerm(args);
-	  }
-	break;
-      }
-    case MAKE_NATURAL:
-      {
-	SuccSymbol* symbol = safeCast(SuccSymbol*, client.getSymbols()[a.data]);
-	mpz_class nat((*currentSentence)[pos].name(), 10);
-	t = symbol->makeNatTerm(nat);
-	break;
-      }
-    case MAKE_INTEGER:
-      {
-	MinusSymbol* symbol = safeCast(MinusSymbol*, client.getSymbols()[a.data]);
-	mpz_class integer((*currentSentence)[pos].name(), 10);
-	t = symbol->makeIntTerm(integer);
-	break;
-      }
-    case MAKE_RATIONAL:
-      {
-	DivisionSymbol* symbol = safeCast(DivisionSymbol*, client.getSymbols()[a.data]);
-	const char* name = (*currentSentence)[pos].name();
-	char* s = new char[strlen(name) + 1];
-	strcpy(s, name);
-	char* p = index(s, '/');
-	Assert(p != nullptr, "no /");
-	*p = '\0';
-	mpz_class numerator(s, 10);
-	mpz_class denominator(p + 1, 10);
-	delete [] s;
-	t = symbol->makeRatTerm(numerator, denominator);
-	break;
-      }
-    case MAKE_FLOAT:
-      {
-	FloatSymbol* symbol =
-	  static_cast<FloatSymbol*>(client.getSymbols()[a.data]);
-	double value = Token::codeToDouble((*currentSentence)[pos].code());
-	t = new FloatTerm(symbol, value);
-	break;
-      }
-    case MAKE_STRING:
-      {
-	StringSymbol* symbol = static_cast<StringSymbol*>(client.getSymbols()[a.data]);
-	t = new StringTerm(symbol, Token::codeToRope((*currentSentence)[pos].code()));
-	break;
-      }
-    case MAKE_QUOTED_IDENTIFIER:
-      {
-	QuotedIdentifierSymbol* symbol =
-	  static_cast<QuotedIdentifierSymbol*>(client.getSymbols()[a.data]);
-	const char* name = (*currentSentence)[pos].name();
-	t = new QuotedIdentifierTerm(symbol, Token::encode(name + 1));  // strip the quote
-	break;
-      }
-    case MAKE_SORT_TEST:
-      {
-	int colonPair = parser.getChild(node, 0);
-	args.append(makeTerm(parser.getChild(colonPair, 0)));
-	Sort* sort = getSort(parser.getChild(colonPair, 1));
-	t = client.instantiateSortTest(sort, a.data)->makeTerm(args);
-	break;
-      }
     case MAKE_OTF_VARIABLE_KNOWN_SORT:
       {
-	//
-	//	This case is for otf variables where we know the exact
-	//	sort from the action data attached to the production rule.
-	//	There are 3 cases:
-	//	  X: [ <sort list> ]
-	//	  X:Foo
-	//	  X:Foo { <structure> }
-	//	The second case arises because Foo is the lead token of
-	//	a structured sort, so X:Foo uses a special terminal for
-	//	otf variables of sort Foo.
-	//
+	int pos = currentOffset + parser.getFirstPosition(node);
 	int varName = (*currentSentence)[pos].code();
-	Assert(Token::specialProperty(varName) == Token::ENDS_IN_COLON ||
-	       Token::specialProperty(varName) == Token::CONTAINS_COLON,
-	       "unexpected special property");
 	int baseName;
 	int sortName;
 	Token::split(varName, baseName, sortName);
-	Sort* sort = client.getSorts()[a.data];
-	Assert(sortName == NONE ||
-	       sortName == sort->id() ||
-	       Token::auxProperty(sort->id()) == Token::AUX_STRUCTURED_SORT,
-	       "sort name clash");
-	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
-	t = new VariableTerm(symbol, baseName);
+	seenSet.insert({baseName, a.data});
 	break;
       }
      case MAKE_OTF_VARIABLE:
       {
-	//
-	//	This is an otf variable X:Foo that was parsed using a component terminal.
-	//	We don't have any information from the action. We need to find the
-	//	name and sort.
-	//
+	int pos = currentOffset + parser.getFirstPosition(node);
 	int varName = (*currentSentence)[pos].code();
-	Assert(Token::specialProperty(varName) == Token::CONTAINS_COLON,
-	       "bad otf variable token " << Token::name(varName));
 	int baseName;
 	int sortName;
 	Token::split(varName, baseName, sortName);
 	Sort* sort = client.findSort(sortName);
 	Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
-	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
-	t = new VariableTerm(symbol, baseName);
+	seenSet.insert({baseName, sort->getIndexWithinModule()});
 	break;	
       }
     case MAKE_BARE_OTF_VARIABLE:
-    case MAKE_VARIABLE_FROM_ALIAS:
       {
-	Sort* sort = client.getSorts()[a.data];
-	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
-	t = new VariableTerm(symbol, (*currentSentence)[pos].code());
-	break;
-      }
-    case MAKE_WILDCARD_VARIABLE:
-      {
-	Sort* kind = client.getConnectedComponents()[a.data]->sort(Sort::KIND);
-	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(kind));
-	t = new VariableTerm(symbol, makeFreshVariableName((*currentSentence)[pos].code()));
-	break;
-      }
-    case MAKE_POLYMORPH:
-      {
-	Symbol* symbol = client.instantiatePolymorph(a.data2, a.data);
-	int nrArgs = symbol->arity();
-	if (nrArgs > 0)
+	int pos = currentOffset + parser.getFirstPosition(node);
+	int varName = (*currentSentence)[pos].code();
+	if (seenSet.find({varName, a.data}) == seenSet.end())
 	  {
-	    int t = parser.getChild(node, 0);
-	    if (actions[parser.getProductionNumber(t)].action == ASSOC_LIST)
-	      makeAssocList(t, args);
-	    else
-	      {  
-		for (int i = 0; i < nrArgs; i++)
-		  args.append(makeTerm(parser.getChild(node, i)));
-	      }
+	    if (pos > firstBad)
+	      firstBad = pos;  // got further
+	    return false;
 	  }
-	t = symbol->makeTerm(args);
-	break;
-      }
-    case MAKE_ITER:
-      {
-	S_Symbol* symbol = safeCast(S_Symbol*, client.getSymbols()[a.data]);
-	int opName;
-	mpz_class number;
-	Token::split((*currentSentence)[pos].code(), opName, number);
-	Assert(opName == symbol->id(), "iter symbol name clash");
-	Term* arg = makeTerm(parser.getChild(node, 1));
-	t = new S_Term(symbol, number, arg);
-	break;
-      }
-    case MAKE_POLYMORPH_ITER:
-      {
-	S_Symbol* symbol = safeCast(S_Symbol*, client.instantiatePolymorph(a.data2, a.data));
-	int opName;
-	mpz_class number;
-	Token::split((*currentSentence)[pos].code(), opName, number);
-	Assert(opName == symbol->id(), "iter symbol name clash");
-	Term* arg = makeTerm(parser.getChild(node, 1));
-	t = new S_Term(symbol, number, arg);
-	break;
-      }
-    case MAKE_SMT_NUMBER:
-      {
-	SMT_NumberSymbol* symbol = safeCast(SMT_NumberSymbol*, client.getSymbols()[a.data]);
-	const char* name = (*currentSentence)[pos].name();
-	mpq_class rat(name);
-	rat.canonicalize();  // we don't compute with these ourself but SMT solver might require canonical form
-	t = new SMT_NumberTerm(symbol, rat);
-	break;
-      }
-    case MAKE_BUBBLE:
-      {
-	return client.makeBubble(a.data,
-				 *currentSentence,
-				 currentOffset + parser.getFirstPosition(node),
-				 currentOffset + parser.getLastPosition(node) - 1);  // HACK last position
-      }
-    default:
-      {
-	CantHappen("bad action");
-	return nullptr;  // to avoid uninitialized variable warning
-      }
-    }
-  //
-  //	It's possible our production matched zero tokens at the end of the sentence if
-  //	the production rhs contained only empty bubbles. Thus pos might be outside
-  //	of the sentence.
-  //
-  int lastPos = currentSentence->size() - 1;
-  t->setLineNumber((*currentSentence)[(pos > lastPos) ? lastPos : pos].lineNumber());
-  return t;
-}
-
-void
-MixfixParser::makeCondition(int node, Vector<ConditionFragment*>& condition)
-{
-  while (actions[parser.getProductionNumber(node)].action == FRAGMENT_LIST)
-    {
-      condition.append(makeConditionFragment(parser.getChild(node, 0)));
-      node = parser.getChild(node, 1);
-    }
-  condition.append(makeConditionFragment(parser.getChild(node, 0)));
-}
-
-ConditionFragment*
-MixfixParser::makeConditionFragment(int node)
-{
-  ConditionFragment* f;
-  Action& a = actions[parser.getProductionNumber(node)];
-  switch (a.action)
-    {
-    case PASS_THRU:
-      {
-	f = makeConditionFragment(parser.getChild(node, 0));
-	break;
-      }
-    case MAKE_TRUE:
-      {
-	f = new EqualityConditionFragment(makeTerm(parser.getChild(node, 0)),
-					  client.makeTrueTerm());
-	break;
-      }
-    case MAKE_EQUALITY:
-      {
-	int equalityPair = parser.getChild(node, 0);
-	f = new EqualityConditionFragment(makeTerm(parser.getChild(equalityPair, 0)),
-					  makeTerm(parser.getChild(equalityPair, 1)));
-	break;
-      }
-    case MAKE_SORT_TEST:
-      {
-	int colonPair = parser.getChild(node, 0);
-	f = new SortTestConditionFragment(makeTerm(parser.getChild(colonPair, 0)),
-					  getSort(parser.getChild(colonPair, 1)));
-	break;
-      }
-    case MAKE_ASSIGNMENT:
-      {
-	int assignPair = parser.getChild(node, 0);
-	f = new AssignmentConditionFragment(makeTerm(parser.getChild(assignPair, 0)),
-					    makeTerm(parser.getChild(assignPair, 1)));
-	break;
-      }
-    case MAKE_REWRITE:
-      {
-	int arrowPair = parser.getChild(node, 0);
-	f = new RewriteConditionFragment(makeTerm(parser.getChild(arrowPair, 0)),
-					 makeTerm(parser.getChild(arrowPair, 1)));
 	break;
       }
     default:
       {
-	f = nullptr;  // to avoid uninitialized variable warning
-	CantHappen("bad action");
+	int nrChildren = parser.getNumberOfChildren(node);
+	for (int i = 0; i < nrChildren; ++i)
+	  {
+	    if (!checkSubparse(parser.getChild(node, i), firstBad))
+	      return false;
+	  }
       }
     }
-  return f;
-}
-
-void
-MixfixParser::makeStatement(int node)
-{
-  int label = NONE;
-  int metadata = NONE;
-  FlagSet flags;
-  Vector<int> printNames;
-  Vector<Sort*> printSorts;
-  if (actions[parser.getProductionNumber(node)].action == MAKE_ATTRIBUTE_PART)
-    makeAttributePart(parser.getChild(node, 1), label, metadata, flags, printNames, printSorts);
-  makeStatementPart(parser.getChild(node, 0), label, metadata, flags, printNames, printSorts);
-}
-
-void
-MixfixParser::makeAttributePart(int node,
-				int& label,
-				int& metadata,
-				FlagSet& flags,
-				Vector<int>& printNames,
-				Vector<Sort*>& printSorts)
-{
-  for (int listNode = parser.getChild(node, 0);; listNode = parser.getChild(listNode, 1))
-    {
-      int attrNode = parser.getChild(listNode, 0);
-      switch (actions[parser.getProductionNumber(attrNode)].action)
-	{
-	case MAKE_LABEL_ATTRIBUTE:
-	  {
-	    int labelNode = parser.getChild(attrNode, 0);
-	    label = actions[parser.getProductionNumber(labelNode)].data;
-	    break;
-	  }
-	case MAKE_METADATA_ATTRIBUTE:
-	  {
-	    int metaDataNode = parser.getChild(attrNode, 0);
-	    int pos = currentOffset + parser.getFirstPosition(metaDataNode);
-	    metadata = (*currentSentence)[pos].code();
-	    break;
-	  }
-	case MAKE_NONEXEC_ATTRIBUTE:
-	  {
-	    flags.setFlags(NONEXEC);
-	    break;
-	  }
-	case MAKE_OWISE_ATTRIBUTE:
-	  {
-	    flags.setFlags(OWISE);
-	    break;
-	  }
-	case MAKE_VARIANT_ATTRIBUTE:
-	  {
-	    flags.setFlags(VARIANT);
-	    break;
-	  }
-	case MAKE_NARROWING_ATTRIBUTE:
-	  {
-	    flags.setFlags(NARROWING);
-	    break;
-	  }
-	case MAKE_EXTENSION_ATTRIBUTE:
-	  {
-	    flags.setFlags(EXTENSION);
-	    break;
-	  }
-	case MAKE_DNT_ATTRIBUTE:
-	  {
-	    if (client.isObjectOriented())
-	      flags.setFlags(DNT);
-	    else
-	      {
-		int pos = currentOffset + parser.getFirstPosition(node);
-		IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
-			     ": dnt attribute is only allowed in omods/oths.");
-	      }
-	    break;
-	  }
-	case MAKE_PRINT_ATTRIBUTE:
-	  {
-	    flags.setFlags(PRINT);
-	    if (parser.getNumberOfChildren(attrNode) > 0)  // nonempty
-	      makePrintList(parser.getChild(attrNode, 0), printNames, printSorts);
-	    break;
-	  }
-	}
-      if (actions[parser.getProductionNumber(listNode)].action != MAKE_ATTRIBUTE_LIST)
-	break;
-    }
-}
-
-void
-MixfixParser::makePrintList(int node, Vector<int>& names, Vector<Sort*>& sorts)
-{
-  for (int listNode = node;; listNode = parser.getChild(listNode, 1))
-    {
-      //
-      //	listNode is either
-      //	  <PRINT_LIST> ::= <PRINT_ITEM>
-      //	or
-      //	  <PRINT_LIST> ::= <PRINT_ITEM> <PRINT_LIST>
-      //
-      //	printItemNode is either
-      //	  <PRINT_ITEM> ::= <STRING_NT>
-      //	or
-      //	  <PRINT_ITEM> ::= <VARIABLE>
-      //
-      int printItemNode = parser.getChild(listNode, 0);
-
-      switch (actions[parser.getProductionNumber(printItemNode)].action)
-	{
-	case MAKE_STRING:
-	  {
-	    int pos = currentOffset + parser.getFirstPosition(printItemNode);
-	    int code = (*currentSentence)[pos].code();
-	    DebugAdvisory("string = "  << (*currentSentence)[pos]);
-	    names.append(code);
-	    sorts.append(nullptr);
-	    break;
-	  }
-	case MAKE_PRINT_VARIABLE:
-	  {
-	    makePrintListVariable(parser.getChild(printItemNode, 0), names, sorts);
-	    break;
-	  }
-	default:
-	  CantHappen("unexpected item in print list");
-	}
-      if (actions[parser.getProductionNumber(listNode)].action != MAKE_PRINT_LIST)
-	break;
-    }
-}
-
-void
-MixfixParser::makePrintListVariable(int node, Vector<int>& names, Vector<Sort*>& sorts)
-{
-  Action& a = actions[parser.getProductionNumber(node)];
-  int pos = currentOffset + parser.getFirstPosition(node);
-  int varName = (*currentSentence)[pos].code();
-  switch (a.action)
-    {
-    case MAKE_OTF_VARIABLE_KNOWN_SORT:
-      {
-	//
-	//	This case is for otf variables where we know the exact
-	//	sort from the action data attached to the production rule.
-	//	There are 3 cases:
-	//	  X: [ <sort list> ]
-	//	  X:Foo
-	//	  X:Foo { <structure> }
-	//	The second case arises because Foo is the lead token of
-	//	a structured sort, so X:Foo uses a special terminal for
-	//	otf variables of sort Foo.
-	//
-	Assert(Token::specialProperty(varName) == Token::ENDS_IN_COLON ||
-	       Token::specialProperty(varName) == Token::CONTAINS_COLON,
-	       "unexpected special property");
-	int baseName;
-	int sortName;
-	Token::split(varName, baseName, sortName);
-	Sort* sort = client.getSorts()[a.data];
-	Assert(sortName == NONE ||
-	       sortName == sort->id() ||
-	       Token::auxProperty(sort->id()) == Token::AUX_STRUCTURED_SORT,
-	       "sort name clash");
-	names.append(baseName);
-	sorts.append(sort);
-	break;
-      }
-    case MAKE_OTF_VARIABLE:
-      {
-	//
-	//	This is an otf variable X:Foo that was parsed using a component terminal.
-	//	We don't have any information from the action. We need to find the
-	//	name and sort.
-	//
-	Assert(Token::specialProperty(varName) == Token::CONTAINS_COLON,
-	       "bad otf variable token " << Token::name(varName));
-	int baseName;
-	int sortName;
-	Token::split(varName, baseName, sortName);
-	Sort* sort = client.findSort(sortName);
-	Assert(sort != nullptr, "didn't find sort for " << Token::name(sortName));
-	names.append(baseName);
-	sorts.append(sort);
-	break;	
-      }
-    case MAKE_BARE_OTF_VARIABLE:
-    case MAKE_VARIABLE_FROM_ALIAS:
-      {
-	names.append(varName);
-	sorts.append(client.getSorts()[a.data]);
-	break;
-      }
-    default:
-      CantHappen("not a variable");
-    }
-}
-
-void
-MixfixParser::makeStatementPart(int node,
-				int label,
-				int metadata,
-				FlagSet& flags,
-				const Vector<int>& printNames,
-				const Vector<Sort*>& printSorts)
-{
-  Vector<ConditionFragment*> condition;
-  int action = actions[parser.getProductionNumber(node)].action;
-  if (action == MAKE_CMB || action == MAKE_CEQ || action == MAKE_CRL || action == MAKE_CSD)
-    makeCondition(parser.getChild(node, 1), condition);
-
-  int bodyNode = parser.getChild(node, 0);
-  int pairNode = parser.getChild(bodyNode, 0);
-  if (actions[parser.getProductionNumber(bodyNode)].action == MAKE_LABEL)
-    {
-      label = actions[parser.getProductionNumber(pairNode)].data;
-      pairNode = parser.getChild(bodyNode, 1);
-    }
-  //
-  //	Get line number of statement keyword.
-  //
-  int lineNumber = (*currentSentence)[currentOffset].lineNumber();
-
-  switch (action)
-    {
-    case MAKE_MB:
-    case MAKE_CMB:
-      {
-	WarningCheck(!(flags.getFlag(OWISE)),
-		     LineNumber(lineNumber) <<
-		     ": owise attribute not allowed for membership axioms.");
-	WarningCheck(!(flags.getFlag(VARIANT)),
-		     LineNumber(lineNumber) <<
-		     ": variant attribute not allowed for membership axioms.");
-	WarningCheck(!(flags.getFlag(NARROWING)),
-		     LineNumber(lineNumber) <<
-		     ": narrowing attribute not allowed for membership axioms.");
-	WarningCheck(!(flags.getFlag(EXTENSION)),
-		     LineNumber(lineNumber) <<
-		     ": extension attribute not allowed for membership axioms.");
-	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
-	Sort* sort = getSort(parser.getChild(pairNode, 1));
-	SortConstraint* sc = new SortConstraint(label, lhs, sort, condition);
-	if (flags.getFlag(NONEXEC))
-	  sc->setNonexec();
-	sc->setLineNumber(lineNumber);
-	client.insertSortConstraint(sc);
-	if (metadata != NONE)
-	  client.insertMetadata(MixfixModule::MEMB_AX, sc, metadata);
-	client.handleSortConstraint(sc, flags.getFlag(DNT));
-	if (flags.getFlag(PRINT))
-	  client.insertPrintAttribute(MixfixModule::MEMB_AX, sc, printNames, printSorts);
-	break;
-      }
-    case MAKE_EQ:
-    case MAKE_CEQ:
-      {
-	WarningCheck(!(flags.getFlag(NARROWING)),
-		     LineNumber(lineNumber) <<
-		     ": narrowing attribute not allowed for equations.");
-	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
-	Term* rhs = makeTerm(parser.getChild(pairNode, 1));
-	Equation* eq = new Equation(label, lhs, rhs, flags.getFlag(OWISE), condition);
-	if (flags.getFlag(NONEXEC))
-	  eq->setNonexec();
-	if (flags.getFlag(VARIANT))
-	  {
-	    if (condition.empty())
-	      eq->setVariant();
-	    else
-	      IssueWarning(LineNumber(lineNumber) <<
-			   ": variant attribute not allowed for conditional equations.");
-	  }
-	if (flags.getFlag(EXTENSION))
-	  {
-	    if (condition.empty())
-	      eq->setExtension();
-	    else
-	      {
-		IssueWarning(LineNumber(lineNumber) <<
-			     ": extension attribute not allowed for conditional equations.");
-	      }
-	  }
-	eq->setLineNumber(lineNumber);
-	client.insertEquation(eq);
-	if (metadata != NONE)
-	  client.insertMetadata(MixfixModule::EQUATION, eq, metadata);
-	client.handleEquation(eq, flags.getFlag(DNT));
-	if (flags.getFlag(PRINT))
-	  client.insertPrintAttribute(MixfixModule::EQUATION, eq, printNames, printSorts);
-	break;
-      }
-    case MAKE_RL:
-    case MAKE_CRL:
-      {
-	WarningCheck(!(flags.getFlag(OWISE)),
-		     LineNumber(lineNumber) <<
-		     ": owise attribute not allowed for rules.");
-	WarningCheck(!(flags.getFlag(VARIANT)),
-		     LineNumber(lineNumber) <<
-		     ": variant attribute not allowed for rules.");
-	Term* lhs = makeTerm(parser.getChild(pairNode, 0));
-	Term* rhs = makeTerm(parser.getChild(pairNode, 1));
-	Rule* rl = new Rule(label, lhs, rhs, condition);
-	if (flags.getFlag(NONEXEC))
-	  rl->setNonexec();
-	if (flags.getFlag(NARROWING))
-	  {
-	    if (condition.empty())
-	      rl->setNarrowing();
-	    else
-	      IssueWarning(LineNumber(lineNumber) <<
-			   ": narrowing attribute not allowed for conditional rules.");
-	  }
-	if (flags.getFlag(EXTENSION))
-	  {
-	    if (condition.empty())
-	      rl->setExtension();
-	    else
-	      {
-		IssueWarning(LineNumber(lineNumber) <<
-			     ": extension attribute not allowed for conditional rules.");
-	      }
-	  }
-	rl->setLineNumber(lineNumber);
-	client.insertRule(rl);
-	if (metadata != NONE)
-	  client.insertMetadata(MixfixModule::RULE, rl, metadata);
-	client.handleRule(rl, flags.getFlag(DNT));
-	if (flags.getFlag(PRINT))
-	  client.insertPrintAttribute(MixfixModule::RULE, rl, printNames, printSorts);
-	break;
-      }
-   case MAKE_SD:
-   case MAKE_CSD:
-      {
-	WarningCheck(!(flags.getFlag(NARROWING)),
-		LineNumber(lineNumber) <<
-		": narrowing attribute not allowed for strategy definitions.");
-	WarningCheck(!(flags.getFlag(OWISE)),
-		LineNumber(lineNumber) <<
-		": otherwise attribute not allowed for strategy definitions.");
-	pair<RewriteStrategy*, Term*> call = makeStrategyCall(parser.getChild(pairNode, 0));
-	StrategyExpression* rhs = makeStrategy(parser.getChild(pairNode, 1));
-	StrategyDefinition* sdef = new StrategyDefinition(label, call.first, call.second, rhs, condition);
-	if (flags.getFlag(NONEXEC))
-	  sdef->setNonexec();
-	sdef->setLineNumber(lineNumber);
-	client.insertStrategyDefinition(sdef);
-	if (metadata != NONE)
-	  client.insertMetadata(MixfixModule::STRAT_DEF, sdef, metadata);
-	if (flags.getFlag(PRINT))
-	  client.insertPrintAttribute(MixfixModule::STRAT_DEF, sdef, printNames, printSorts);
-	break;
-      }
-    default:
-      CantHappen("bad action");
-    }
+  return true;
 }

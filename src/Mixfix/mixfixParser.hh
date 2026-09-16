@@ -221,6 +221,7 @@ private:
   typedef unordered_map<int,int> IntMap;
   typedef unordered_set<int> NameSet;
   typedef unordered_map<int,Vector<OtfDef>> OtfDefMap;
+  typedef set<pair<int, int>> VarDeclSet;
 
   enum Flags
   {
@@ -276,6 +277,8 @@ private:
   int makeFreshVariableName(int code);
   int classicParse(int root, int& firstBad, int nrTokens);
   int extendedParse(int root, int& firstBad, int nrTokens);
+  bool checkParse(int& firstBad);
+  bool checkSubparse(int node, int& firstBad);
 
   MixfixModule& client;
   const bool complexParser;
@@ -293,6 +296,7 @@ private:
   IntMap iterSymbolTerminals;		// special terminals for tokens like f^42
   int wildcardTerminal = NONE;		// special terminal for wildcards
   bool bubblesAllowed;			// do we allow bubbles of unknown tokens
+  bool inexact;
   //
   //	We store the tokens we are parsing here to avoid passing extra parameters
   //	when recursing down a parse tree.
@@ -301,9 +305,13 @@ private:
   Vector<int> sentence;			// sentence translated into terminal numbers
   int currentOffset;			// start of parsed tokens
   int nrParses;
+  //
+  //	Used for extended parsing mode.
+  //
   OtfDefMap otfTranslations;
   NameSet usedNames;			// names already used for wildcard variables
   Vector<Vector<int>> terminalLists;
+  VarDeclSet seenSet;
 };
 
 inline int

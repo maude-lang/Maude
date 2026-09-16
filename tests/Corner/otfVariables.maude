@@ -274,7 +274,6 @@ fmod BAZ3{X :: TRIV} is
   ops f g : Foo{X} Foo{X} Bar Foo{X} ~> Foo{X} .
   eq f(A, B, C, D) = g(A, B, C, D) [print A B:Foo{X} C:Bar D:[Foo{X}]] .
 endfm
-show desugared .
 
 *** bubbles are too wild a syntactic construct to co-exist with extended scope
 fmod QUUX is  
