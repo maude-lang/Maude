@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ ModelChecker2::findCounterexample()
 //	in the intersection (synchronous product).
 //
 
-local_inline bool
+FORCE_INLINE bool
 ModelChecker2::dfs1SystemTransitions(int systemStateNr, int propertyStateNr)
 {
   intersectionStates[systemStateNr].dfs1Seen.insert(propertyStateNr);
@@ -115,7 +115,7 @@ ModelChecker2::dfs1PropertyTransitions(int systemStateNr, int propertyStateNr)
 //	state on the first DFS stack.
 //
 
-local_inline bool
+FORCE_INLINE bool
 ModelChecker2::dfs2PropertyTransitions(int systemStateNr, int propertyStateNr)
 {
   

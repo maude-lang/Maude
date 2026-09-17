@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 //      Implementation for main AC/ACU matcher.
 //
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::multiplicityChecks(ACU_DagNode* subject)
 {
   //
@@ -62,7 +62,7 @@ okay:
   return true;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::eliminateGroundAliens(ACU_DagNode* subject)
 {
   for (const GroundAlien& i : groundAliens)
@@ -74,7 +74,7 @@ ACU_LhsAutomaton::eliminateGroundAliens(ACU_DagNode* subject)
   return true;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::eliminateBoundVariables(ACU_DagNode* subject,
 					  Substitution& solution)
 {
@@ -102,7 +102,7 @@ ACU_LhsAutomaton::eliminateBoundVariables(ACU_DagNode* subject,
   return true;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::eliminateGroundedOutAliens(ACU_DagNode* subject,
 					     Substitution& solution)
 {
@@ -222,7 +222,7 @@ ACU_LhsAutomaton::forcedLoneVariableCase(ACU_DagNode* subject,
   return false;
 }
 
-local_inline bool 
+FORCE_INLINE bool 
 ACU_LhsAutomaton::aliensOnlyMatch(ACU_DagNode* subject,
 				  Substitution& solution,
 				  Subproblem*& returnedSubproblem)
@@ -294,7 +294,7 @@ ACU_LhsAutomaton::aliensOnlyMatch(ACU_DagNode* subject,
   return true;
 }
 
-local_inline int
+FORCE_INLINE int
 ACU_LhsAutomaton::computeTotalMultiplicity()
 {
   int totalSubjectMultiplicity = 0;

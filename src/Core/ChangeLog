@@ -1,3 +1,8 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* sortConstraintTable.cc (SortConstraintTable::sortConstraintLt):
+	local_inline -> FORCE_INLINE
+
 2026-08-20  Saruman the White  <eker@eker10>
 
 	* groundRhsAutomaton.cc (GroundRhsAutomaton::GroundRhsAutomaton):

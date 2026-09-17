@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ ACU_LhsAutomaton::greedyMatch(ACU_TreeDagNode* subject,
   return UNDECIDED;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::tryToBindVariable(const TopVariable& tv,
 				    Substitution& solution)
 {
@@ -235,7 +235,7 @@ ACU_LhsAutomaton::makeHighMultiplicityAssignment(int multiplicity,
   return d2;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::tryToBindLastVariable(ACU_TreeDagNode* subject,
 					const TopVariable& tv,
 					Substitution& solution)

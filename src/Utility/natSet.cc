@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 #include "natSet.hh"
 
 
-local_inline NatSet::Word
+FORCE_INLINE NatSet::Word
 NatSet::getMaskSmall(int i)
 {
   Assert(i >= 0, "-ve argument");
@@ -37,7 +37,7 @@ NatSet::getMaskSmall(int i)
   return mask << i;
 }
 
-local_inline NatSet::Word
+FORCE_INLINE NatSet::Word
 NatSet::getMask(value_type i)
 {
   Assert(i >= 0, "-ve argument");
@@ -74,14 +74,14 @@ NatSet::countBits(Word w)
   return count;
 }
 
-local_inline unsigned int
+FORCE_INLINE unsigned int
 NatSet::getShift(value_type i)
 {
   Assert(i >= 0, "-ve argument");
   return i & (BITS_PER_WORD - 1);
 }
 
-local_inline int
+FORCE_INLINE int
 NatSet::getWordNr(value_type i)
 {
   Assert(i >= 0, "-ve argument");

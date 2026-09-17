@@ -280,7 +280,7 @@ MixfixParser::makeOtfTranslations()
 		  if (Sort* sort = client.findSort(structuredSortCode))
 		    {
 		      makeOtfTranslation(varName, i, sort->getIndexWithinModule(), uncertain);
-		      uncertain = true;  // any addition valid sort flagged as uncertain
+		      uncertain = true;  // any additional valid sort flagged as uncertain
 		    }
 		  //
 		  //	Get the next shorter sort name in a super-inefficient way.
@@ -479,8 +479,14 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 		  int otfTerminal = bareOtfVariableTerminals[d.sortIndex];
 		  translations.push_back(otfTerminal);
 		  if (d.uncertain)
-		    inexact = true;
+		    {
+		      Verbose("Inexact parsing triggered by " << Token::name(code) << ":" <<
+			      client.getSorts()[d.sortIndex]);
+		      inexact = true;
+		    }
 		}
+	      else
+		break;  // remaining translations will be later
 	    }
 	}
       //

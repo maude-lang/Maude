@@ -1,3 +1,11 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* freeFast2RhsAutomaton.cc (FreeFast2RhsAutomaton::fillOutArgs):
+	local_inline -> FORCE_INLINE
+
+	* freeRhsAutomaton.cc (FreeRhsAutomaton::fillOutArgs):
+	local_inline -> FORCE_INLINE
+
 2026-06-23  Saruman the White  <eker@eker10>
 
 	* freeSymbol.cc (FreeSymbol::computeBaseSort): fix typo in

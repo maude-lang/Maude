@@ -1,3 +1,7 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* S_LhsAutomaton.cc: local_inline -> FORCE_INLINE
+
 2026-04-06  Saruman the White  <eker@eker10>
 
 	* S_DagNode.hh (S_DagNode::normalizeAtTop): moved here and made

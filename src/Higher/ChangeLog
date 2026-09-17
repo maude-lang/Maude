@@ -1,3 +1,11 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* searchState.cc (SearchState::hasCondition): local_inline ->
+	FORCE_INLINE
+
+	* positionState.cc (PositionState::exploreNextPosition):
+	local_inline -> FORCE_INLINE
+
 2026-02-10  Saruman the White  <eker@eker10>
 
 	* satSolverSymbol.hh (class SatSolverSymbol): added decls for

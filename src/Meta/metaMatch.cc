@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 //	Code for metaMatch() and metaXmatch() descent functions.
 //
 
-local_inline MatchSearchState*
+FORCE_INLINE MatchSearchState*
 MetaLevelOpSymbol::makeMatchSearchState(MetaModule* m,
 					FreeDagNode* subject,
 					RewritingContext& context) const
@@ -111,7 +111,7 @@ MetaLevelOpSymbol::metaMatch(FreeDagNode* subject, RewritingContext& context)
   return false;
 }
 
-local_inline MatchSearchState*
+FORCE_INLINE MatchSearchState*
 MetaLevelOpSymbol::makeMatchSearchState2(MetaModule* m,
                                          FreeDagNode* subject,
                                          RewritingContext& context) const
