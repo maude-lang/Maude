@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ S_LhsAutomaton::addSubpattern(Term* term,
   return true;
 }
 
-local_inline bool
+FORCE_INLINE bool
 S_LhsAutomaton::matchEq(DagNode* arg,
 			Substitution& solution,
 			Subproblem*& returnedSubproblem)
@@ -134,7 +134,7 @@ S_LhsAutomaton::matchEq(DagNode* arg,
   return false;
 }
 
-local_inline bool
+FORCE_INLINE bool
 S_LhsAutomaton::nonExtMatchGt(DagNode* subject,
 			      DagNode* arg,
 			      const mpz_class& subjectNumber,
@@ -172,7 +172,7 @@ S_LhsAutomaton::nonExtMatchGt(DagNode* subject,
   return false;
 }
 
-local_inline bool
+FORCE_INLINE bool
 S_LhsAutomaton::extMatchGt(S_DagNode* subject,
 			   DagNode* arg,
 			   const mpz_class& subjectNumber,

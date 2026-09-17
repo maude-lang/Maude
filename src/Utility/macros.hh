@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -207,27 +207,25 @@ enum SpecialConstants
 //	From Google search AI mode:
 //
 #if defined(_MSC_VER)
-    #define NOINLINE_PORTABLE __declspec(noinline)
+    #define NO_INLINE __declspec(noinline)
 #else
     // 'weak' forces the compiler/linker to assume the function might be 
     // overridden at runtime, permanently shattering Clang's single-caller LTO inlining optimizations.
-    #define NOINLINE_PORTABLE __attribute__((noinline, weak))
+    #define NO_INLINE __attribute__((noinline, weak))
+#endif
+
+#if defined(_MSC_VER)
+    #define FORCE_INLINE __forceinline
+#elif defined(__GNUC__) || defined(__clang__)
+    #define FORCE_INLINE __attribute__((always_inline)) inline
+#else
+    #define FORCE_INLINE inline
 #endif
 
 //
 //	For functions local to a compilation unit that can be inlined
 //	in that compilation unit and discarded.
 //
-#ifdef LOCAL_INLINES
-  #ifdef __GNUC__
-    #define local_inline extern __inline__
-  #else
-    #define local_inline inline
-  #endif
-#else
-  #define local_inline
-#endif
-
 
 #ifndef NO_ASSERT
 

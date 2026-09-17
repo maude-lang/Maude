@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -280,7 +280,7 @@ ACU_Term::normalizeAliensAndFlatten()
   return changed;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_Term::pairLt(const Pair& p1, const Pair& p2)
 {
   return p1.term->compare(p2.term) < 0;  // sort pairs in ascending order of terms

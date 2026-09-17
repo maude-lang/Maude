@@ -1,3 +1,7 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): use NO_INLINE
+
 2026-09-16  Saruman the White  <eker@eker10>
 
 	* stringOpSymbol.cc (StringOpSymbol::eqRewrite): force no inlining

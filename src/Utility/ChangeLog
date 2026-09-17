@@ -1,3 +1,18 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* timer.cc (Timer::calculateMicroseconds): local_inline ->
+	FORCE_INLINE
+
+	* natSet.cc: local_inline -> FORCE_INLINE
+
+	* diophantineSystem.cc: local_inline -> FORCE_INLINE
+
+	* pointerSet.cc (PointerSet::isEqual): local_inline ->
+	FORCE_INLINE
+
+	* macros.hh (FORCE_INLINE): added; renamed NOINLINE_PORTABLE to
+	NO_INLINE; deleted local_inline
+
 2026-09-16  Saruman the White  <eker@eker10>
 
 	* macros.hh: deleted commented out #ifdef NO_IMPLEMENT_INLINES

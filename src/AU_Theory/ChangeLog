@@ -1,3 +1,11 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* AU_RhsAutomaton.cc (AU_RhsAutomaton::buildArguments):
+	local_inline -> FORCE_INLINE
+
+	* AU_LhsCompiler.cc (AU_Term::unitVariable): local_inline ->
+	FORCE_INLINE
+
 2026-04-06  Saruman the White  <eker@eker10>
 
 	* AU_Symbol.cc (AU_Symbol::eqRewriteStandardStrategy): simplified

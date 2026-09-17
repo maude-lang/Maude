@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ DiophantineSystem::solve()
 //	We sort rows in order of descending coefficients; splitting ties
 //	in order of ascending maximum allowed sums
 //
-local_inline bool
+FORCE_INLINE bool
 DiophantineSystem::rowLt(const Row& i, const Row& j)
 {
   int t = j.coeff - i.coeff;
@@ -238,7 +238,7 @@ DiophantineSystem::buildSolubilityVectors()
 //	rule out a certain kind of failure. Return false if the current partial
 //	solution fails this test (and must therefore fail).
 //
-local_inline bool
+FORCE_INLINE bool
 DiophantineSystem::viable(int rowNr) const
 {
   int nrRows = rows.length();
@@ -282,7 +282,7 @@ DiophantineSystem::viable(int rowNr) const
 //	exceeding overall selection size). Then make up the size of the selection
 //	by selecting the earliest elements available.
 //
-local_inline bool
+FORCE_INLINE bool
 DiophantineSystem::Row::multisetSelect(Vector<int>& bag, bool findFirst)
 {
   int bagLength = bag.length();
@@ -334,7 +334,7 @@ forwards:
 //
 //	Solve last row by allocating what is left.
 //
-local_inline void
+FORCE_INLINE void
 DiophantineSystem::solveLastRowSimple()
 {
   Vector<Select>& selection = rows[rows.length() - 1].selection;
@@ -348,7 +348,7 @@ DiophantineSystem::solveLastRowSimple()
 //	the size of selection we are looking for if necessary. If we are looking for
 //	a first solution we first have to generate the multiset and determine the
 //	feasable range of selection sizes.
-local_inline bool
+FORCE_INLINE bool
 DiophantineSystem::solveRowSimple(int rowNr, bool findFirst)
 {
   Row& r = rows[rowNr];
@@ -438,7 +438,7 @@ DiophantineSystem::solveSimple(bool findFirst)
 //	Then make up the size of the selection by selecting the earliest elements
 //	available (backtracking if this violates solubility constraints).
 //
-local_inline bool
+FORCE_INLINE bool
 DiophantineSystem::Row::multisetComplex(Vector<int>& bag,
 					Vector<Soluble>& soluble,
 					bool findFirst)
@@ -514,7 +514,7 @@ forwards:
 //	Solve last row by allocating what is left divided by coefficient. We
 //	actually avoid the explicit division by using the solubility vector.
 //
-local_inline void
+FORCE_INLINE void
 DiophantineSystem::solveLastRowComplex()
 {
   Vector<Select>& selection = rows[rows.length() - 1].selection;
@@ -538,7 +538,7 @@ DiophantineSystem::solveLastRowComplex()
 //	for the first solution and added back when the final failure occurs (just
 //	before returning false).
 //
-local_inline bool
+FORCE_INLINE bool
 DiophantineSystem::solveRowComplex(int rowNr, bool findFirst)
 {
   int nrColumns = columns.length();

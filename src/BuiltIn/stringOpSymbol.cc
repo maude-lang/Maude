@@ -239,8 +239,7 @@ StringOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& co
   return s->eqRewrite(subject, context);
 }
 
-NOINLINE_PORTABLE  // force no inlining to avoid making our caller have a huge stack frame
-bool
+NO_INLINE bool  // force no inlining to avoid making our caller have a huge stack frame
 StringOpSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 {
   Assert(this == subject->symbol(), "bad symbol");

@@ -1,3 +1,7 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* ACU_Tree.cc (ACU_Tree::pow2min1): local_inline -> FORCE_INLINE
+
 2025-10-06  Saruman the White  <eker@eker10>
 
 	* ACU_RedBlackNode.cc (ACU_RedBlackNode::checkRedBlackProperty):

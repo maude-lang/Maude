@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 //      Implementation for AC/ACU matcher that works on red-black trees.
 //
 
-local_inline int
+FORCE_INLINE int
 ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
 {
   nrUnboundVariables = 0;
@@ -60,7 +60,7 @@ ACU_LhsAutomaton::eliminateBoundVariables(Substitution& solution)
   return true;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::eliminateGroundAliens()
 {
   for (const GroundAlien& i : groundAliens)
@@ -77,7 +77,7 @@ ACU_LhsAutomaton::eliminateGroundAliens()
   return true;
 }
 
-local_inline bool
+FORCE_INLINE bool
 ACU_LhsAutomaton::eliminateGroundedOutAliens(Substitution& solution)
 {
   for (const NonGroundAlien& i : groundedOutAliens)

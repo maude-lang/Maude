@@ -1,3 +1,17 @@
+2026-09-17  Saruman the White  <eker@eker10>
+
+	* ACU_Matcher.cc: local_inline -> FORCE_INLINE
+
+	* ACU_TreeMatcher.cc: local_inline -> FORCE_INLINE
+
+	* ACU_LhsAutomaton.cc (ACU_LhsAutomaton::topVariableLt):
+	local_inline -> FORCE_INLINE
+
+	* ACU_RhsAutomaton.cc (ACU_RhsAutomaton::buildArguments):
+	local_inline -> FORCE_INLINE
+
+	* ACU_Term.cc (ACU_Term::pairLt): local_inline -> FORCE_INLINE
+
 2026-04-07  Saruman the White  <eker@eker10>
 
 	* ACU_Symbol.hh (class ACU_Symbol): added decls for
