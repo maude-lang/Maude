@@ -59,6 +59,7 @@ using kind = cvc5::Kind;
 VariableGenerator::VariableGenerator(const SMT_Info& smtInfo)
   : smtInfo(smtInfo), smtSolver(termManager)
 {
+  smtSolver.setOption("sets-exp", "true");
   smtSolver.push();  // make a new context so we have a clean context to pop() back to
   pushCount = 0;
 }
@@ -221,6 +222,12 @@ VariableGenerator::makeVariable(VariableDagNode* v)
 	DebugAdvisory("made Real variable " << static_cast<DagNode*>(v));
 	break;
       }
+    case SMT_Info::SET:
+      {
+	type = termManager.mkSetSort(termManager.getIntegerSort());
+	DebugAdvisory("made Set variable " << static_cast<DagNode*>(v));
+	break;
+      }
     }
   //
   //	Get the name as a C string, make the new variable and cache it under the pair.
@@ -257,6 +264,24 @@ VariableGenerator::makeBooleanExpr(DagNode* dag)
 
   WarningCheck(!e.isNull(), "Expecting an SMT Boolean expression but saw but saw " << dag);
   return e;
+}
+
+cvc5::Sort
+VariableGenerator::getSmtSort(const Sort* sort)
+{
+  switch (smtInfo.getType(sort))
+    {
+    case SMT_Info::BOOLEAN:
+      return termManager.getBooleanSort();
+    case SMT_Info::INTEGER:
+      return termManager.getIntegerSort();
+    case SMT_Info::REAL:
+      return termManager.getRealSort();
+    case SMT_Info::SET:
+      return termManager.mkSetSort(termManager.getIntegerSort());
+    default:
+      return cvc5::Sort();
+    }
 }
 
 cvc5::Term
@@ -438,6 +463,68 @@ VariableGenerator::dagToCvc5(DagNode* dag)
 	case SMT_Symbol::IS_INTEGER:
 	  {
 	    return termManager.mkTerm(kind::IS_INTEGER, exprs);
+	  }
+	  //
+	  //	Set stuff.
+	  //
+	case SMT_Symbol::SET_MEMBERSHIP:
+	  {
+	    return termManager.mkTerm(kind::SET_MEMBER, exprs);
+	  }
+	case SMT_Symbol::SET_UNION:
+	  {
+	    return termManager.mkTerm(kind::SET_UNION, exprs);
+	  }
+	case SMT_Symbol::SET_INTERSECTION:
+	  {
+	    return termManager.mkTerm(kind::SET_INTER, exprs);
+	  }
+	case SMT_Symbol::SET_DIFFERENCE:
+	  {
+	    return termManager.mkTerm(kind::SET_MINUS, exprs);
+	  }
+	case SMT_Symbol::SET_SUBSET:
+	  {
+	    return termManager.mkTerm(kind::SET_SUBSET, exprs);
+	  }
+	case SMT_Symbol::SET_INSERT:
+	  {
+	    cvc5::Term element = exprs[0];
+	    cvc5::Term set = exprs[1];
+	    cvc5::Term singleton = termManager.mkTerm(kind::SET_SINGLETON, {element});
+	    return termManager.mkTerm(kind::SET_UNION, {singleton, set});
+	  }
+	case SMT_Symbol::SET_COMPLEMENT:
+	  {
+	    cvc5::Term set = exprs[0];
+	    cvc5::Sort setSort = set.getSort();
+	    cvc5::Term universe = termManager.mkUniverseSet(setSort);
+	    return termManager.mkTerm(kind::SET_MINUS, {universe, set});
+	  }
+	case SMT_Symbol::SET_EMPTY:
+	  {
+	    FreeDagNode* fd = dynamic_cast<FreeDagNode*>(dag);
+	    DagNode* arg = fd->getArgument(0);
+	    cvc5::Sort elementSort = getSmtSort(arg->symbol()->getRangeSort());
+	    return termManager.mkEmptySet(termManager.mkSetSort(elementSort));
+	  }
+	case SMT_Symbol::SET_SINGLETON:
+	  {
+	    FreeDagNode* fd = dynamic_cast<FreeDagNode*>(dag);
+	    DagNode* arg = fd->getArgument(0);
+	    cvc5::Term element = dagToCvc5(arg);
+	    return termManager.mkTerm(kind::SET_SINGLETON, {element});
+	  }
+	case SMT_Symbol::SET_UNIVERSE:
+	  {
+	    FreeDagNode* fd = dynamic_cast<FreeDagNode*>(dag);
+	    DagNode* arg = fd->getArgument(0);
+	    cvc5::Sort elementSort = getSmtSort(arg->symbol()->getRangeSort());
+	    return termManager.mkUniverseSet(termManager.mkSetSort(elementSort));
+	  }
+	case SMT_Symbol::SET_CARDINALITY:
+	  {
+	    return termManager.mkTerm(kind::SET_CARD, exprs);
 	  }
 	}
     }

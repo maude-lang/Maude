@@ -96,6 +96,20 @@ const char* SMT_Symbol::operatorNames[] =
     "toReal",
     "toInteger",
     "isInteger",
+    //
+    //	Set stuff.
+    //
+    "setMembership",
+    "setUnion",
+    "setIntersection",
+    "setDifference",
+    "setSubset",
+    "setEmpty",
+    "setCardinality",
+    "setSingleton",
+    "setInsert",
+    "setComplement",
+    "setUniverse",
     0
   };
 
@@ -181,6 +195,19 @@ SMT_Symbol::fillOutSMT_Info(SMT_Info& info)
 	break;
       }
     default:
-      break;
+      {
+	if (op == SET_EMPTY || op == SET_SINGLETON || op == SET_UNION || op == SET_INTERSECTION || op == SET_DIFFERENCE || op == SET_INSERT || op == SET_COMPLEMENT || op == SET_UNIVERSE || op == SET_SUBSET || op == SET_MEMBERSHIP)
+	  {
+	    info.setType(getRangeSort(), SMT_Info::SET);
+	    if (getOpDeclarations().length() > 0)
+	      {
+	        if (op == SET_EMPTY || op == SET_SINGLETON || op == SET_UNIVERSE)
+	          {
+	            info.setSetElementSort(getRangeSort(), getOpDeclarations()[0].getDomainAndRange()[0]);
+	          }
+	      }
+	  }
+	break;
+      }
     }
 }

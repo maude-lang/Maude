@@ -1,0 +1,67 @@
+==========================================
+check in TEST-SET : setMembership(I, setSingleton(I)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setUnion(setSingleton(I), setSingleton(
+    J))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setIntersection(setSingleton(I),
+    setSingleton(I))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setDifference(setSingleton(I),
+    setSingleton(J))) and I =/== J .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setInsert(I, setSingleton(J))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setComplement(setSingleton(J))) and I =/==
+    J .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setUniverse(I)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, setSingleton(R1)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, setUnion(setSingleton(R1), setSingleton(
+    R2))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, setIntersection(setSingleton(R1),
+    setSingleton(R1))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, setDifference(setSingleton(R1),
+    setSingleton(R2))) and R1 =/== R2 .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, setInsert(R1, setSingleton(R2))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, setComplement(setSingleton(R2))) and R1
+    =/== R2 .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, setUniverse(R1)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setEmpty(I)) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(R1, setEmpty(R1)) .
+Result from sat solver is: unsat
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(I === 0)) .
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(I === J)) .
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(0 === 0)) .
+result Bool: (true).Bool
+Bye.
+

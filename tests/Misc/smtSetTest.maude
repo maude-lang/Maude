@@ -1,0 +1,41 @@
+set show timing off .
+
+*** This test requires cvc5 and will not work with yices2 or cvc4
+
+load smt
+
+fmod TEST-SET is
+  pr SMT-SET .
+  pr META-LEVEL .
+  vars I J : Integer .
+  vars R1 R2 : Real .
+endfm
+
+*** SAT Examples (Integer)
+check in TEST-SET : setMembership(I, setSingleton(I)) .
+check in TEST-SET : setMembership(I, setUnion(setSingleton(I), setSingleton(J))) .
+check in TEST-SET : setMembership(I, setIntersection(setSingleton(I), setSingleton(I))) .
+check in TEST-SET : setMembership(I, setDifference(setSingleton(I), setSingleton(J))) and I =/== J .
+check in TEST-SET : setMembership(I, setInsert(I, setSingleton(J))) .
+check in TEST-SET : setMembership(I, setComplement(setSingleton(J))) and I =/== J .
+check in TEST-SET : setMembership(I, setUniverse(I)) .
+
+*** SAT Examples (Real)
+check in TEST-SET : setMembership(R1, setSingleton(R1)) .
+check in TEST-SET : setMembership(R1, setUnion(setSingleton(R1), setSingleton(R2))) .
+check in TEST-SET : setMembership(R1, setIntersection(setSingleton(R1), setSingleton(R1))) .
+check in TEST-SET : setMembership(R1, setDifference(setSingleton(R1), setSingleton(R2))) and R1 =/== R2 .
+check in TEST-SET : setMembership(R1, setInsert(R1, setSingleton(R2))) .
+check in TEST-SET : setMembership(R1, setComplement(setSingleton(R2))) and R1 =/== R2 .
+check in TEST-SET : setMembership(R1, setUniverse(R1)) .
+
+*** UNSAT Examples
+check in TEST-SET : setMembership(I, setEmpty(I)) .
+check in TEST-SET : setMembership(R1, setEmpty(R1)) .
+
+
+select TEST-SET .
+red metaCheck(upModule('SMT-SET, false), upTerm(I === 0)) .
+red metaCheck(upModule('SMT-SET, false), upTerm(I === J)) .
+red metaCheck(upModule('SMT-SET, false), upTerm(0 === 0)) .
+
