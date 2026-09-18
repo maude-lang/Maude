@@ -216,8 +216,8 @@ MixfixParser::makeOtfTranslations()
   otfTranslations.clear();
   //
   //	We scan through the original tokens, looking for things that
-  //	are on-the-fly variables of known sort, and make these
-  //	into otf translations, unless there are confounding factors.
+  //	might be on-the-fly variables of known sort, and make these
+  //	into otf translations.
   //
   Index beyondEnd = currentOffset + sentence.size();
   for (Index i = currentOffset; i < beyondEnd; ++i)
@@ -255,42 +255,30 @@ MixfixParser::makeOtfTranslations()
 	      uncertain = true;  // any addition valid sort flagged as uncertain
 	    }
 	  //
-	  //	See if there is valid structure beyond Bar
+	  //	Look for Bar {...}...{...}
 	  //
-	  Index last = SharedTokens::skip(SharedTokens::STRUCTURE,
-					  *currentSentence,
-					  i + 1,
-					  beyondEnd);
-	  if (last != NONE)
+	  Vector<Token> structuredSortName;
+	  Index start = i + 1;
+	  for (;;)
 	    {
+	      Index last = SharedTokens::skipBracePair(*currentSentence, start, beyondEnd);
+	      if (last == NONE)
+		break;
 	      //
-	      //	We have X:Bar{...}...{...} so we make the single
-	      //	token version of Bar{...}...{...}
+	      //	Saw legal syntax for {...} in parameterized sort.
 	      //
-	      Vector<Token> structuredSortName(last + 1 - i);
+	      structuredSortName.resize(last - i + 1);
 	      structuredSortName[0].tokenize(sortName, (*currentSentence)[i].lineNumber());
-	      for (Index j = i + 1; j <= last; ++j)
+	      for (Index j = start; j <= last; ++j)
 		structuredSortName[j - i] = (*currentSentence)[j];
 	      int structuredSortCode = Token::bubbleToPrefixNameCode(structuredSortName);
-	      do
+
+	      if (Sort* sort = client.findSort(structuredSortCode))
 		{
-		  //
-		  //	We now check if this is a real sort.
-		  //
-		  if (Sort* sort = client.findSort(structuredSortCode))
-		    {
-		      makeOtfTranslation(varName, i, sort->getIndexWithinModule(), uncertain);
-		      uncertain = true;  // any additional valid sort flagged as uncertain
-		    }
-		  //
-		  //	Get the next shorter sort name in a super-inefficient way.
-		  //
-		  int header;
-		  Vector<int> dummy;
-		  Token::splitParameterList(structuredSortCode, header, dummy);
-		  structuredSortCode = header;
+		  makeOtfTranslation(varName, last, sort->getIndexWithinModule(), uncertain);
+		  uncertain = true;  // any additional valid sort flagged as uncertain
 		}
-	      while (Token::auxProperty(structuredSortCode) == Token::AUX_STRUCTURED_SORT);
+	      start = last + 1;
 	    }
 	}
       else if (sp == Token::ENDS_IN_COLON)
