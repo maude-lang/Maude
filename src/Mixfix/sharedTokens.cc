@@ -49,6 +49,66 @@ SharedTokens::SharedTokens()
 }
 
 Index
+SharedTokens::skipBracePair(const Vector<Token>& tokens, Index start, Index beyondEnd)
+{
+  //
+  //	Skip over a single top level {...} part of a structured sort.
+  //	Returns index of closing } if valid {...} seen or NONE otherwise.
+  //
+  enum class State {
+    EXPECT_LEFT_BRACE,
+    EXPECT_SORT_NAME,
+    EXPECT_COMMA_OR_BRACE
+  };
+  
+  Index depth = 0;
+  State state = State::EXPECT_LEFT_BRACE;
+
+  for (Index i = start; i < beyondEnd; ++i)
+    {
+      int code = tokens[i].code();
+      switch (state)
+	{
+	case State::EXPECT_COMMA_OR_BRACE:
+	  {
+	    if (code == rightBrace)
+	      {
+		--depth;
+		if (depth == 0)
+		  return i;
+		break;
+	      }
+	    if (code == comma)
+	      {
+		state = State::EXPECT_SORT_NAME;
+		break;
+	      }
+	    // fall thru
+	  }
+	case State::EXPECT_LEFT_BRACE:
+	  {
+	    if (code != leftBrace)
+	      return NONE;
+	    ++depth;
+	    state = State::EXPECT_SORT_NAME;
+	    break;
+	  }
+	case State::EXPECT_SORT_NAME:
+	  {
+	    if (Token::auxProperty(code) != Token::AUX_SORT)
+	      return NONE;
+	    state = State::EXPECT_COMMA_OR_BRACE;
+	    break;
+	  }
+	}
+    }
+  //
+  //	Ran out of tokens.
+  //
+  return NONE;
+}
+
+Index
 SharedTokens::skip(SkipType type, const Vector<Token>& tokens, Index start, Index beyondEnd)
 {
   //
