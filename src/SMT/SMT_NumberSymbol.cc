@@ -121,6 +121,16 @@ SMT_NumberSymbol::fillOutSMT_Info(SMT_Info& info)
     }
 }
 
+SMT_Info::SMT_Type
+SMT_NumberSymbol::getSMT_Type() const
+{
+  switch (numberSystem)
+    {
+    case CODE('i', 'n'): return SMT_Info::INTEGER;
+    case CODE('r', 'e'): return SMT_Info::REAL;
+    default: return (SMT_Info::SMT_Type)NONE;
+    }
+}
 Term*
 SMT_NumberSymbol::termify(DagNode* dagNode)
 {

@@ -101,8 +101,7 @@ endfm
 
 fmod SMT-SET is
   protecting BOOLEAN .
-  protecting INTEGER .
-  protecting REAL .
+  protecting REAL-INTEGER .
   sort Element .
   subsort Boolean < Element .
   subsort Integer < Element .

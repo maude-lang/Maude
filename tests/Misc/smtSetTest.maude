@@ -6,8 +6,7 @@ load smt
 
 fmod TEST-SET is
   pr SMT-SET .
-  pr INTEGER .
-  pr REAL .
+  pr META-LEVEL .
   vars I J : Integer .
   vars R1 R2 : Real .
 endfm
@@ -33,3 +32,10 @@ check in TEST-SET : setMembership(R1, setUniverse(R1)) .
 *** UNSAT Examples
 check in TEST-SET : setMembership(I, setEmpty(I)) .
 check in TEST-SET : setMembership(R1, setEmpty(R1)) .
+
+
+select TEST-SET .
+red metaCheck(upModule('SMT-SET, false), upTerm(I === 0)) .
+red metaCheck(upModule('SMT-SET, false), upTerm(I === J)) .
+red metaCheck(upModule('SMT-SET, false), upTerm(0 === 0)) .
+

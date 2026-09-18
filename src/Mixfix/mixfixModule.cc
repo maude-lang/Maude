@@ -992,19 +992,21 @@ MixfixModule::findFloatSymbol(const ConnectedComponent* component) const
 SMT_NumberSymbol*
 MixfixModule::findSMT_NumberSymbol(const ConnectedComponent* component, SMT_Info::SMT_Type type)
 {
-  map<int, Symbol*>::const_iterator i =
-    SMT_NumberSymbols.find(component->getIndexWithinModule());
-  if ((i == SMT_NumberSymbols.end()))
-    return 0;
-  //
-  //	Found an SMT_NumberSymbol; need to check if it is the right type.
-  //
-  Symbol* symbol = (*i).second;
-  Sort* sort = symbol->getRangeSort();
-  SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
-  Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
-  return (t == type) ? safeCast(SMT_NumberSymbol*, symbol) : 0;
+  for (Index i = 0; i < component->nrSorts(); ++i)
+    {
+
+      Sort* sort = component->sort(i);
+      map<int, Symbol*>::const_iterator it = SMT_NumberSymbols.find(sort->getIndexWithinModule());
+      if (it != SMT_NumberSymbols.end())
+        {
+          SMT_NumberSymbol* s = safeCast(SMT_NumberSymbol*, it->second);
+          if (s->getSMT_Type() == type)
+            return s;
+        }
+    }
+  return 0;
 }
+
 
 void
 MixfixModule::addIdentityToPolymorph(int polymorphIndex,

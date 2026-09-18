@@ -54,4 +54,14 @@ Result from sat solver is: unsat
 ==========================================
 check in TEST-SET : setMembership(R1, setEmpty(R1)) .
 Result from sat solver is: unsat
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(I === 0)) .
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(I === J)) .
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(0 === 0)) .
+result Bool: (true).Bool
 Bye.
+

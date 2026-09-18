@@ -57,6 +57,7 @@ class MixfixModule : public ProfileModule, public MetadataStore, protected Share
   };
 
 public:
+  map<int, Symbol*> SMT_NumberSymbols;
   enum ModuleType
   {
     FUNCTIONAL_MODULE = 0,
@@ -820,7 +821,6 @@ private:
   map<int, Symbol*> stringSymbols;
   set<int> overloadedQuotedIdentifiers;
   map<int, Symbol*> quotedIdentifierSymbols;
-  map<int, Symbol*> SMT_NumberSymbols;
   //
   //	We keep sets of integers and rationals whose decimal i/o
   //	representation has been used for user symbols of arity 0.
