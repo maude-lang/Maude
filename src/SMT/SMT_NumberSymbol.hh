@@ -52,8 +52,6 @@ public:
   //	For SMT_Base.
   //
   void fillOutSMT_Info(SMT_Info& info);
-  SMT_Info::SMT_Type getSMT_Type() const;
-
 
 private:
   int numberSystem;

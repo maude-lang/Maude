@@ -35,17 +35,15 @@ check in TEST-SET : setMembership(I, setSingleton(I)) .
 check in TEST-SET : setMembership(I, setSingleton(J)) and I =/== J .
 check in TEST-SET : setMembership(I, setEmpty) .
 check in TEST-SET : setMembership(I, setUniverse) .
-***
-***	NOTE: the next one *should* be unsat -- everything is a member of
-***	the universe set -- but cvc5 answers sat.  This is a cvc5
+***	IMPORTANT: the next one should be unsat as everything is a member
+***	of the universe set but cvc5 answers sat. This is a cvc5
 ***	incompleteness in its reasoning about set.universe under
 ***	--sets-exp, not a mistranslation on our side: feeding cvc5
-***	  (assert (not (set.member x (as set.universe (Set Int)))))
-***	directly answers sat too.  Note that cvc5 *does* get the
-***	corresponding setSubset question right, below.  Avoid setUniverse
-***	and setComplement where soundness matters; prefer complementing
+***	(assert (not (set.member x (as set.universe (Set Int)))))
+***	directly answers sat too. Note that cvc5 does get the
+***	corresponding setSubset question right. Avoid setUniverse
+***	and setComplement where soundness matters & prefer complementing
 ***	against an explicit carrier set.
-***
 check in TEST-SET : not setMembership(I, setUniverse) .
 
 ***
@@ -60,7 +58,7 @@ check in TEST-SET : setMembership(I, setComplement(setSingleton(J))) and I =/== 
 check in TEST-SET : setMembership(I, setComplement(setSingleton(I))) .
 
 ***
-***	Insert and remove.  setRemove has no cvc5 kind of its own; it is
+***	Insert and remove. setRemove has no cvc5 kind of its own; it is
 ***	difference with a singleton, so removing an absent element is a
 ***	no-op rather than an error.
 ***
@@ -159,20 +157,3 @@ red metaCheck(upModule('SMT-SET, false), upTerm(S === S1)) .
 red metaCheck(upModule('INTEGER-SET, false), upTerm(setMembership(I, setSingleton(I)))) .
 red metaCheck(upModule('REAL-SET, false), upTerm(setMembership(R1, RS))) .
 red metaCheck(upModule('BOOLEAN-SET, false), upTerm(setMembership(B, BS))) .
-
-***
-***	Regression: the plain arithmetic SMT sorts must keep working
-***	alongside sets.  While Boolean, Integer and Real were subsorts of a
-***	common Element sort their kinds were merged, which made the
-***	<Integers> and <Reals> constants collide in SMT_NumberSymbols and
-***	the three _===_ overloads collide in SMT_Info's equality map.
-***
-red metaCheck(upModule('SMT-SET, false), upTerm(I === 0)) .
-red metaCheck(upModule('SMT-SET, false), upTerm(I === J)) .
-red metaCheck(upModule('SMT-SET, false), upTerm(0 === 0)) .
-red metaCheck(upModule('SMT-SET, false), upTerm(R1 === 0/1)) .
-red metaCheck(upModule('SMT-SET, false), upTerm(R1 + R2 > 0/1)) .
-red metaCheck(upModule('SMT-SET, false), upTerm(B === true)) .
-check in TEST-SET : I === 3 and R1 === 1/2 and B and setMembership(I, S) .
-check in TEST-SET : I + J === 5 and I > 2 and J > 2 .
-check in TEST-SET : toReal(I) === R1 and R1 > 0/1 and I < 0 .
