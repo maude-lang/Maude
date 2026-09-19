@@ -224,7 +224,13 @@ VariableGenerator::makeVariable(VariableDagNode* v)
       }
     case SMT_Info::SET:
       {
-	type = termManager.mkSetSort(termManager.getIntegerSort());
+	type = getSmtSort(sort);
+	if (type.isNull())
+	  {
+	    IssueWarning("Unable to determine the element sort of set variable " <<
+			 QUOTE(static_cast<DagNode*>(v)) << '.');
+	    return cvc5::Term();
+	  }
 	DebugAdvisory("made Set variable " << static_cast<DagNode*>(v));
 	break;
       }
@@ -245,21 +251,34 @@ cvc5::Term
 VariableGenerator::makeBooleanExpr(DagNode* dag)
 {
   cvc5::Term e;
-
-  if (SMT_Symbol* s = dynamic_cast<SMT_Symbol*>(dag->symbol()))
+  //
+  //	Term construction itself can throw. cvc5 rejects a
+  //	set.member whose element sort disagrees with the set's element
+  //	sort... If not caught, we exit the interpreter, so we flag
+  //	it as a warning and a null term (a bad dag)
+  //
+  try
     {
-      Sort* rangeSort = s->getRangeSort();
-      if (smtInfo.getType(rangeSort) == SMT_Info::BOOLEAN)
+      if (SMT_Symbol* s = dynamic_cast<SMT_Symbol*>(dag->symbol()))
 	{
-	  e = dagToCvc5(dag);
-	  DebugAdvisory("Maude: " << dag << "  cvc5: " << e);
+	  Sort* rangeSort = s->getRangeSort();
+	  if (smtInfo.getType(rangeSort) == SMT_Info::BOOLEAN)
+	    {
+	      e = dagToCvc5(dag);
+	      DebugAdvisory("Maude: " << dag << "  cvc5: " << e);
+	    }
+	}
+      else if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(dag))
+	{
+	  Sort* rangeSort = v->symbol()->getRangeSort();
+	  if (smtInfo.getType(rangeSort) == SMT_Info::BOOLEAN)
+	    e = makeVariable(v);
 	}
     }
-  else if (VariableDagNode* v = dynamic_cast<VariableDagNode*>(dag))
+  catch (const cvc5::CVC5ApiException& x)
     {
-      Sort* rangeSort = v->symbol()->getRangeSort();
-      if (smtInfo.getType(rangeSort) == SMT_Info::BOOLEAN)
-	e = makeVariable(v);
+      IssueWarning("cvc5 rejected a subterm of " << QUOTE(dag) << ": " << x.what());
+      return cvc5::Term();
     }
 
   WarningCheck(!e.isNull(), "Expecting an SMT Boolean expression but saw but saw " << dag);
@@ -278,7 +297,21 @@ VariableGenerator::getSmtSort(const Sort* sort)
     case SMT_Info::REAL:
       return termManager.getRealSort();
     case SMT_Info::SET:
-      return termManager.mkSetSort(termManager.getIntegerSort());
+      {
+	//
+	//	The element sort is recorded when the module's SMT_Info was
+	//	filled out from the dec of the ops that
+	//	mention a set AND its elements. Recursing means sets of
+	//	sets would work if we want via a view!
+	//
+	const Sort* elementSort = smtInfo.getSetElementSort(sort);
+	if (elementSort == 0)
+	  return cvc5::Sort();
+	cvc5::Sort e = getSmtSort(elementSort);
+	if (e.isNull())
+	  return cvc5::Sort();
+	return termManager.mkSetSort(e);
+      }
     default:
       return cvc5::Sort();
     }
@@ -489,38 +522,49 @@ VariableGenerator::dagToCvc5(DagNode* dag)
 	  }
 	case SMT_Symbol::SET_INSERT:
 	  {
-	    cvc5::Term element = exprs[0];
-	    cvc5::Term set = exprs[1];
-	    cvc5::Term singleton = termManager.mkTerm(kind::SET_SINGLETON, {element});
-	    return termManager.mkTerm(kind::SET_UNION, {singleton, set});
+	    //
+	    //	cvc5 has set.insert but it is variadic sugar for union with
+	    //	a singleton so we do that instead
+	    //
+	    cvc5::Term singleton = termManager.mkTerm(kind::SET_SINGLETON, {exprs[0]});
+	    return termManager.mkTerm(kind::SET_UNION, {singleton, exprs[1]});
+	  }
+	case SMT_Symbol::SET_REMOVE:
+	  {
+	    //
+	    //	No cvc5 kind for this - removing an element is set difference
+	    //	with a singleton and this is a no-op when the element is
+	    //	absent
+	    //
+	    cvc5::Term singleton = termManager.mkTerm(kind::SET_SINGLETON, {exprs[0]});
+	    return termManager.mkTerm(kind::SET_MINUS, {exprs[1], singleton});
 	  }
 	case SMT_Symbol::SET_COMPLEMENT:
 	  {
 	    cvc5::Term set = exprs[0];
-	    cvc5::Sort setSort = set.getSort();
-	    cvc5::Term universe = termManager.mkUniverseSet(setSort);
+	    cvc5::Term universe = termManager.mkUniverseSet(set.getSort());
 	    return termManager.mkTerm(kind::SET_MINUS, {universe, set});
 	  }
 	case SMT_Symbol::SET_EMPTY:
+	case SMT_Symbol::SET_UNIVERSE:
 	  {
-	    FreeDagNode* fd = dynamic_cast<FreeDagNode*>(dag);
-	    DagNode* arg = fd->getArgument(0);
-	    cvc5::Sort elementSort = getSmtSort(arg->symbol()->getRangeSort());
-	    return termManager.mkEmptySet(termManager.mkSetSort(elementSort));
+	    //
+	    //	Nullary constant: the cvc5 sort comes from our range sort
+	    //	via the element sort recorded in SMT_Info, rather than from
+	    //	a dummy argument used only for its sort
+	    //
+	    cvc5::Sort setSort = getSmtSort(s->getRangeSort());
+	    if (setSort.isNull())
+	      {
+		IssueWarning("Unable to determine the element sort of " << QUOTE(dag) << '.');
+		goto fail;
+	      }
+	    return (s->getOperator() == SMT_Symbol::SET_EMPTY) ?
+	      termManager.mkEmptySet(setSort) : termManager.mkUniverseSet(setSort);
 	  }
 	case SMT_Symbol::SET_SINGLETON:
 	  {
-	    FreeDagNode* fd = dynamic_cast<FreeDagNode*>(dag);
-	    DagNode* arg = fd->getArgument(0);
-	    cvc5::Term element = dagToCvc5(arg);
-	    return termManager.mkTerm(kind::SET_SINGLETON, {element});
-	  }
-	case SMT_Symbol::SET_UNIVERSE:
-	  {
-	    FreeDagNode* fd = dynamic_cast<FreeDagNode*>(dag);
-	    DagNode* arg = fd->getArgument(0);
-	    cvc5::Sort elementSort = getSmtSort(arg->symbol()->getRangeSort());
-	    return termManager.mkUniverseSet(termManager.mkSetSort(elementSort));
+	    return termManager.mkTerm(kind::SET_SINGLETON, exprs);
 	  }
 	case SMT_Symbol::SET_CARDINALITY:
 	  {

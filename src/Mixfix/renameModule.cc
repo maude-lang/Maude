@@ -391,7 +391,7 @@ ImportModule::donateOps2(ImportModule* copy, Renaming* renaming)
       if (moduleDonatingToTheory)
 	copy->polymorphDeclaredInModule.insert(copyIndex);
     }
-  }
+}
 
 void
 ImportModule::fixUpDonatedOps2(ImportModule* copy, Renaming* renaming)
@@ -469,22 +469,6 @@ ImportModule::fixUpDonatedOps2(ImportModule* copy, Renaming* renaming)
 	copy->copyFixUpPolymorph(donatedCopyIndex, this, i, &importTranslation);
       }
   }
-
-  //
-  // Donate our SMT number symbols, after a possible renaming.
-  //
-  for (std::map<int, Symbol*>::const_iterator it = SMT_NumberSymbols.begin(); it != SMT_NumberSymbols.end(); ++it)
-    {
-      int oldSortIndex = it->first;
-      Symbol* symbol = it->second;
-      Sort* sort = getSorts()[oldSortIndex];
-      Sort* newSort = localSort(copy, renaming, sort);
-      if (newSort != 0)
-        {
-          copy->SMT_NumberSymbols[newSort->getIndexWithinModule()] = 
-            safeCast(Symbol*, importTranslation.translate(symbol));
-        }
-    }
 }
 
 void

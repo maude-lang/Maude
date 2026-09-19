@@ -108,6 +108,7 @@ const char* SMT_Symbol::operatorNames[] =
     "setCardinality",
     "setSingleton",
     "setInsert",
+    "setRemove",
     "setComplement",
     "setUniverse",
     0
@@ -194,20 +195,68 @@ SMT_Symbol::fillOutSMT_Info(SMT_Info& info)
 	info.setEqualityOperator(this);
 	break;
       }
-    default:
+      //
+      //	Set stuff :)
+      //
+      //	We NEED to be careful here to mark the set sort and
+      //	not the range sort as setMembership / setSubset return Boolean
+      //	but setCardinality returns Integer
+      //
+    case SET_EMPTY:
+    case SET_UNIVERSE:
+    case SET_UNION:
+    case SET_INTERSECTION:
+    case SET_DIFFERENCE:
+    case SET_COMPLEMENT:
       {
-	if (op == SET_EMPTY || op == SET_SINGLETON || op == SET_UNION || op == SET_INTERSECTION || op == SET_DIFFERENCE || op == SET_INSERT || op == SET_COMPLEMENT || op == SET_UNIVERSE || op == SET_SUBSET || op == SET_MEMBERSHIP)
+	//
+	//	range is the set sort and there is no element sort info
+	//	here (setUnion et al. are recorded by their element-taking
+	//	sibs in the same mod)
+	//
+	info.setType(getRangeSort(), SMT_Info::SET);
+	break;
+      }
+    case SET_SINGLETON:
+    case SET_INSERT:
+    case SET_REMOVE:
+      {
+	//
+	//	elt -> set or elt set -> set
+  //  arg 0 is the element
+	//
+	Sort* setSort = getRangeSort();
+	info.setType(setSort, SMT_Info::SET);
+	if (getOpDeclarations().length() > 0)
+	  info.setSetElementSort(setSort, getOpDeclarations()[0].getDomainAndRange()[0]);
+	break;
+      }
+    case SET_MEMBERSHIP:
+      {
+	//
+	//	elt set -> Boolean .  
+  //  arg 0 is the element, arg 1 the set
+	//
+	if (getOpDeclarations().length() > 0)
 	  {
-	    info.setType(getRangeSort(), SMT_Info::SET);
-	    if (getOpDeclarations().length() > 0)
-	      {
-	        if (op == SET_EMPTY || op == SET_SINGLETON || op == SET_UNIVERSE)
-	          {
-	            info.setSetElementSort(getRangeSort(), getOpDeclarations()[0].getDomainAndRange()[0]);
-	          }
-	      }
+	    const Vector<Sort*>& domainAndRange = getOpDeclarations()[0].getDomainAndRange();
+	    info.setType(domainAndRange[1], SMT_Info::SET);
+	    info.setSetElementSort(domainAndRange[1], domainAndRange[0]);
 	  }
 	break;
       }
+    case SET_SUBSET:
+    case SET_CARDINALITY:
+      {
+	//
+	//	set ... -> Boolean/Integer
+  /// arg 0 is a set here
+	//
+	if (getOpDeclarations().length() > 0)
+	  info.setType(getOpDeclarations()[0].getDomainAndRange()[0], SMT_Info::SET);
+	break;
+      }
+    default:
+      break;
     }
 }

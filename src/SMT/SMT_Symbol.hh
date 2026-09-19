@@ -85,6 +85,7 @@ public:
       SET_CARDINALITY,
       SET_SINGLETON,
       SET_INSERT,
+      SET_REMOVE,
       SET_COMPLEMENT,
       SET_UNIVERSE
     };
