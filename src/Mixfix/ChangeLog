@@ -1,3 +1,16 @@
+2026-09-18  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslations): added
+	comment to explain why we don't flag the first of multiple
+	potential otf variables as uncertain, even though they now have
+	different locations
+	(MixfixParser::extendedParse): don't break out of the loop when we
+	see a translation ahead of current location, because translations
+	are no longer guaranteed to be in order
+	(MixfixParser::extendedParse): cleaner Verbose() message
+	(MixfixParser::makeOtfTranslations): kind otf variables have their
+	translation located at their last token
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* sharedTokens.cc (SharedTokens::skipBracePair): added

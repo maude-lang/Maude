@@ -242,9 +242,12 @@ MixfixParser::makeOtfTranslations()
 	  //	  Bar{...}
 	  //	  Bar{...}{...}
 	  //	  ...
-	  //	If more than one is a valid sort then we are uncertain about all translations,
-	  //	but because they will all be added for the same location, it is enough to
-	  //	flag at least one as uncertain.
+	  //	If more than one is a valid sort we are uncertain about all translations,
+	  //	however, we don't need to flag the first one, because the uncertainty only
+	  //	starts when the second one becomes active. In X:Bar{X} for example, in any
+	  //	parse where the second X parses as the extended scope of X:Bar, if X:Bar
+	  //	didn't have any other meaning then X:Bar must be an otf variable, or we
+	  //	would have a parse error before reaching the second X.
 	  //
 	  if (Sort* sort = client.findSort(sortName))
 	    {
@@ -301,7 +304,7 @@ MixfixParser::makeOtfTranslations()
 		  Sort* kind = component->sort(Sort::KIND);
 		  bool uncertain = (tokenSet.find(code) != NONE) ||
 		    (otfTranslations.find(code) != otfTranslations.end());
-		  makeOtfTranslation(varName, i, kind->getIndexWithinModule(), uncertain);
+		  makeOtfTranslation(varName, last, kind->getIndexWithinModule(), uncertain);
 		}
 	    }
 	}
@@ -468,13 +471,18 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 		  translations.push_back(otfTerminal);
 		  if (d.uncertain)
 		    {
-		      Verbose("Inexact parsing triggered by " << Token::name(code) << ":" <<
-			      client.getSorts()[d.sortIndex]);
-		      inexact = true;
+		      if (!inexact)
+			{
+			  inexact = true;
+			  Verbose("Inexact parsing triggered by:");
+			}
+		      Verbose("  " << Token::name(code) << ":" << client.getSorts()[d.sortIndex]);
 		    }
 		}
-	      else
-		break;  // remaining translations will be later
+	      //
+	      //	Translations aren't guaranteed to be in order so
+	      //	we need to check them all.
+	      //
 	    }
 	}
       //
