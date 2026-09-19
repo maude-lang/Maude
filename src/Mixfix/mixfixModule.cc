@@ -997,7 +997,7 @@ MixfixModule::findSMT_NumberSymbol(const ConnectedComponent* component, SMT_Info
   if ((i == SMT_NumberSymbols.end()))
     return 0;
   //
-  //	Found an SMT_NumberSymbol; need to check if it is the right type.
+  //	Found an SMT_NumberSymbol but need to check if it is the right type
   //
   Symbol* symbol = (*i).second;
   Sort* sort = symbol->getRangeSort();

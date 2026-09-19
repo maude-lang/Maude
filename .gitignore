@@ -21,3 +21,28 @@ src/Mixfix/tokenizer.cc
 src/Mixfix/deserializer.cc
 src/Mixfix/surface.yy
 src/Mixfix/surface.cc
+src/Mixfix/surface.h
+src/Mixfix/surface.output
+build/
+Makefile
+config.h
+config.log
+config.status
+*.o
+*.a
+.deps/
+**/.deps/
+**/*.o
+**/*.a
+*.out
+
+# Test harness artifacts from `make check`
+*.log
+*.trs
+
+# Binaries
+src/Main/maude
+
+# Build stamps
+stamp-*
+
