@@ -1,19 +1,15 @@
 #!/bin/sh
 
-if grep "#define USE_CVC4" ../../config.h ; # are we using CVC4?
-then
-  echo "testing CVC4"
-else if grep "#define USE_CVC5" ../../config.h ; # are we using CVC5?
+#
+#	The finite set theory is only implemented for the cvc5 bindings, so
+#	skip rather than fail for the other solvers or for no SMT at all.
+#
+if grep "#define USE_CVC5" ../../config.h ; # are we using cvc5?
 then
   echo "testing cvc5"
-else if grep "#define USE_YICES2" ../../config.h ; # are we using YICES2?
-then
-  echo "testing Yices2"
 else
-  echo "no SMT support compiled in"
-  exit 77 # grep returned nonzero exit so skip this test
-fi
-fi
+  echo "finite set theory needs cvc5"
+  exit 77 # tell the harness to skip this test
 fi
 
 MAUDE_LIB=$srcdir/../../src/Main

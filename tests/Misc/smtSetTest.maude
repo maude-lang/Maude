@@ -7,35 +7,172 @@ load smt
 fmod TEST-SET is
   pr SMT-SET .
   pr META-LEVEL .
-  vars I J : Integer .
+  vars I J K : Integer .
   vars R1 R2 : Real .
+  vars B B1 : Boolean .
+  vars S S1 S2 : SmtSet{Integer} .
+  vars RS RS1 : SmtSet{Real} .
+  vars BS BS1 : SmtSet{Boolean} .
 endfm
 
-*** SAT Examples (Integer)
+***
+***	Each set instantiation must get its own kind, and none of the
+***	built-in SMT kinds may be dragged into a common component.  If this
+***	output ever shows the sorts merged into one component, the
+***	<Integers>/<Reals> constants and the three _===_ overloads will
+***	start colliding in the per-kind maps in SMT_Info.
+***
+fmod TEST-SET-KINDS is
+  pr SMT-SET .
+endfm
+select TEST-SET-KINDS .
+show components .
+
+***
+***	Membership, the basic constructors.
+***
 check in TEST-SET : setMembership(I, setSingleton(I)) .
+check in TEST-SET : setMembership(I, setSingleton(J)) and I =/== J .
+check in TEST-SET : setMembership(I, setEmpty) .
+check in TEST-SET : setMembership(I, setUniverse) .
+***
+***	NOTE: the next one *should* be unsat -- everything is a member of
+***	the universe set -- but cvc5 answers sat.  This is a cvc5
+***	incompleteness in its reasoning about set.universe under
+***	--sets-exp, not a mistranslation on our side: feeding cvc5
+***	  (assert (not (set.member x (as set.universe (Set Int)))))
+***	directly answers sat too.  Note that cvc5 *does* get the
+***	corresponding setSubset question right, below.  Avoid setUniverse
+***	and setComplement where soundness matters; prefer complementing
+***	against an explicit carrier set.
+***
+check in TEST-SET : not setMembership(I, setUniverse) .
+
+***
+***	Union, intersection, difference, complement.
+***
 check in TEST-SET : setMembership(I, setUnion(setSingleton(I), setSingleton(J))) .
 check in TEST-SET : setMembership(I, setIntersection(setSingleton(I), setSingleton(I))) .
+check in TEST-SET : setMembership(I, setIntersection(setSingleton(I), setSingleton(J))) and I =/== J .
 check in TEST-SET : setMembership(I, setDifference(setSingleton(I), setSingleton(J))) and I =/== J .
-check in TEST-SET : setMembership(I, setInsert(I, setSingleton(J))) .
+check in TEST-SET : setMembership(I, setDifference(setSingleton(I), setSingleton(I))) .
 check in TEST-SET : setMembership(I, setComplement(setSingleton(J))) and I =/== J .
-check in TEST-SET : setMembership(I, setUniverse(I)) .
+check in TEST-SET : setMembership(I, setComplement(setSingleton(I))) .
 
-*** SAT Examples (Real)
+***
+***	Insert and remove.  setRemove has no cvc5 kind of its own; it is
+***	difference with a singleton, so removing an absent element is a
+***	no-op rather than an error.
+***
+check in TEST-SET : setMembership(I, setInsert(I, setEmpty)) .
+check in TEST-SET : setMembership(I, setInsert(J, setEmpty)) and I =/== J .
+check in TEST-SET : setMembership(I, setRemove(I, setUniverse)) .
+check in TEST-SET : setMembership(I, setRemove(J, setUniverse)) and I =/== J .
+check in TEST-SET : setRemove(I, setInsert(I, S)) === setRemove(I, S) .
+check in TEST-SET : setRemove(I, setInsert(I, S)) =/== setRemove(I, S) .
+*** insert then remove is not the identity when the element was present
+check in TEST-SET : setMembership(I, S) and setRemove(I, setInsert(I, S)) =/== S .
+check in TEST-SET : not setMembership(I, S) and setRemove(I, setInsert(I, S)) =/== S .
+
+***
+***	Subset.
+***
+check in TEST-SET : setSubset(setEmpty, S) .
+check in TEST-SET : not setSubset(setEmpty, S) .
+check in TEST-SET : setSubset(S, setUniverse) .
+check in TEST-SET : not setSubset(S, setUniverse) .
+check in TEST-SET : setSubset(S, S1) and setMembership(I, S) and not setMembership(I, S1) .
+check in TEST-SET : setSubset(setSingleton(I), setInsert(J, setSingleton(I))) .
+
+***
+***	Cardinality.
+***
+*** setEmpty has to be qualified here: nothing else in the term pins down
+*** which instantiation is meant.
+check in TEST-SET : setCardinality((setEmpty).SmtSet{Integer}) === 0 .
+check in TEST-SET : setCardinality((setEmpty).SmtSet{Integer}) =/== 0 .
+check in TEST-SET : setCardinality(setSingleton(I)) === 1 .
+check in TEST-SET : setCardinality(setSingleton(I)) === 2 .
+check in TEST-SET : setCardinality(setInsert(I, setSingleton(J))) === 2 and I =/== J .
+check in TEST-SET : setCardinality(setInsert(I, setSingleton(J))) === 2 and I === J .
+check in TEST-SET : setSubset(S, S1) and setCardinality(S) > setCardinality(S1) .
+*** cardinality grows by one exactly when the element was absent
+check in TEST-SET : not setMembership(I, S) and setCardinality(setInsert(I, S)) === setCardinality(S) + 1 .
+check in TEST-SET : setMembership(I, S) and setCardinality(setInsert(I, S)) === setCardinality(S) + 1 .
+
+***
+***	Set equality and if-then-else, over set *variables*.  These are what
+***	a symbolic-execution front end needs in order to express assignment
+***	of one set-valued program variable to another.
+***
+check in TEST-SET : S === S1 .
+check in TEST-SET : S === S1 and setMembership(I, S) and not setMembership(I, S1) .
+check in TEST-SET : S =/== S1 and setSubset(S, S1) and setSubset(S1, S) .
+check in TEST-SET : S === (B ? S1 : S2) and B and S =/== S1 .
+check in TEST-SET : S === (B ? S1 : S2) and not B and S === S2 .
+*** extensionality
+check in TEST-SET : S =/== S1 and setCardinality(setDifference(S, S1)) === 0
+                    and setCardinality(setDifference(S1, S)) === 0 .
+
+***
+***	Real and Boolean element sorts.  Before sets were parameterized,
+***	every set variable was hard-wired to Set(Int) in the bindings and
+***	these aborted the interpreter.
+***
 check in TEST-SET : setMembership(R1, setSingleton(R1)) .
-check in TEST-SET : setMembership(R1, setUnion(setSingleton(R1), setSingleton(R2))) .
-check in TEST-SET : setMembership(R1, setIntersection(setSingleton(R1), setSingleton(R1))) .
-check in TEST-SET : setMembership(R1, setDifference(setSingleton(R1), setSingleton(R2))) and R1 =/== R2 .
-check in TEST-SET : setMembership(R1, setInsert(R1, setSingleton(R2))) .
-check in TEST-SET : setMembership(R1, setComplement(setSingleton(R2))) and R1 =/== R2 .
-check in TEST-SET : setMembership(R1, setUniverse(R1)) .
+check in TEST-SET : setMembership(R1, setEmpty) .
+check in TEST-SET : setMembership(R1, RS) and setMembership(R2, RS) and R1 =/== R2 .
+check in TEST-SET : setMembership(R1, RS) and RS === setEmpty .
+check in TEST-SET : setCardinality(setInsert(R1, setSingleton(R2))) === 1 and R1 =/== R2 .
+check in TEST-SET : setMembership(B, BS) .
+check in TEST-SET : setMembership(B, BS) and setMembership(B1, BS) and B =/== B1 .
+*** a set of Booleans has at most two elements
+check in TEST-SET : setCardinality(BS) > 2 .
+check in TEST-SET : setCardinality(BS) === 2 .
 
-*** UNSAT Examples
-check in TEST-SET : setMembership(I, setEmpty(I)) .
-check in TEST-SET : setMembership(R1, setEmpty(R1)) .
+***
+***	Modelling a database table with a set: "insert if absent" is the
+***	pattern the BPMN front end uses to mimic a create/consume
+***	transaction.  created' = created u {x} guarded on x not already
+***	being present.
+***
+check in TEST-SET : not setMembership(I, S) and S1 === setInsert(I, S)
+                    and setMembership(I, S1) and setCardinality(S1) === setCardinality(S) + 1 .
+*** consuming an item: available' = available \ {x}, requires x available
+check in TEST-SET : setMembership(I, S) and S1 === setRemove(I, S)
+                    and not setMembership(I, S1) and setCardinality(S1) + 1 === setCardinality(S) .
+*** double-consume of the same item must be impossible
+check in TEST-SET : setMembership(I, S) and S1 === setRemove(I, S) and setMembership(I, S1) .
+*** an item cannot be both available and already used, if the two sets partition
+check in TEST-SET : setIntersection(S, S1) === setEmpty
+                    and setMembership(I, S) and setMembership(I, S1) .
+*** moving an item from available to used preserves the partition
+check in TEST-SET : setIntersection(S, S1) === setEmpty and setMembership(I, S)
+                    and setIntersection(setRemove(I, S), setInsert(I, S1)) =/== setEmpty .
 
+***
+***	metaCheck on the set module, and on the individual instantiations.
+***
+red metaCheck(upModule('SMT-SET, false), upTerm(setMembership(I, S))) .
+red metaCheck(upModule('SMT-SET, false), upTerm(setMembership(I, setEmpty))) .
+red metaCheck(upModule('SMT-SET, false), upTerm(S === S1)) .
+red metaCheck(upModule('INTEGER-SET, false), upTerm(setMembership(I, setSingleton(I)))) .
+red metaCheck(upModule('REAL-SET, false), upTerm(setMembership(R1, RS))) .
+red metaCheck(upModule('BOOLEAN-SET, false), upTerm(setMembership(B, BS))) .
 
-select TEST-SET .
+***
+***	Regression: the plain arithmetic SMT sorts must keep working
+***	alongside sets.  While Boolean, Integer and Real were subsorts of a
+***	common Element sort their kinds were merged, which made the
+***	<Integers> and <Reals> constants collide in SMT_NumberSymbols and
+***	the three _===_ overloads collide in SMT_Info's equality map.
+***
 red metaCheck(upModule('SMT-SET, false), upTerm(I === 0)) .
 red metaCheck(upModule('SMT-SET, false), upTerm(I === J)) .
 red metaCheck(upModule('SMT-SET, false), upTerm(0 === 0)) .
-
+red metaCheck(upModule('SMT-SET, false), upTerm(R1 === 0/1)) .
+red metaCheck(upModule('SMT-SET, false), upTerm(R1 + R2 > 0/1)) .
+red metaCheck(upModule('SMT-SET, false), upTerm(B === true)) .
+check in TEST-SET : I === 3 and R1 === 1/2 and B and setMembership(I, S) .
+check in TEST-SET : I + J === 5 and I > 2 and J > 2 .
+check in TEST-SET : toReal(I) === R1 and R1 > 0/1 and I < 0 .

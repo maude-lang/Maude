@@ -36,6 +36,10 @@ config.status
 **/*.a
 *.out
 
+# Test harness artifacts from `make check`
+*.log
+*.trs
+
 # Binaries
 src/Main/maude
 
