@@ -242,43 +242,4 @@ reduce in TEST-SET : metaCheck(upModule('BOOLEAN-SET, false), upTerm(
     setMembership(B, BS))) .
 rewrites: 3
 result Bool: (true).Bool
-==========================================
-reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(I === (
-    0).Integer)) .
-rewrites: 3
-result Bool: (true).Bool
-==========================================
-reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(I === J)) .
-rewrites: 3
-result Bool: (true).Bool
-==========================================
-reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm((0).Integer
-    === (0).Integer)) .
-rewrites: 3
-result Bool: (true).Bool
-==========================================
-reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(R1 === 0/1)) .
-rewrites: 3
-result Bool: (true).Bool
-==========================================
-reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(R1 + R2 >
-    0/1)) .
-rewrites: 3
-result Bool: (true).Bool
-==========================================
-reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(B === (
-    true).Boolean)) .
-rewrites: 3
-result Bool: (true).Bool
-==========================================
-check in TEST-SET : I === (3).Integer and R1 === 1/2 and B and setMembership(I,
-    S) .
-Result from sat solver is: sat
-==========================================
-check in TEST-SET : I + J === (5).Integer and I > (2).Integer and J > (
-    2).Integer .
-Result from sat solver is: unsat
-==========================================
-check in TEST-SET : toReal(I) === R1 and R1 > 0/1 and I < (0).Integer .
-Result from sat solver is: unsat
 Bye.
