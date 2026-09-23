@@ -1,3 +1,24 @@
+2026-09-22  Saruman the White  <eker@eker10>
+
+	* sharedTokens.cc (SharedTokens::skipKindName): handle single
+	token structured sort names within kind
+
+	* sharedTokens.hh: deleted decl for skip()
+
+	* sharedTokens.cc (SharedTokens::skipBracePair): use
+	Token::isValidSortComponent()
+	(SharedTokens::skipKindName): use skipBracePair() to handle . and
+	: in sort components
+	(SharedTokens::skip): deleted
+
+	* token.hh (class Token): added decl for isValidSortComponent()
+
+	* token.cc (Token::isValidViewName): require that view names only
+	contain printable characters
+	(Token::isValidSortComponent): added
+
+	* token.hh (enum ProblemSituations): reformatted comments
+
 2026-09-18  Saruman the White  <eker@eker10>
 
 	* mixfixParser.cc (MixfixParser::makeOtfTranslations): added
