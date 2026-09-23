@@ -73,8 +73,8 @@ public:
      //
      MULTIPLE_TOKENS = 1,
      //
-     //	If the first (and possibly only) token is "term", this causes confusion for targets in view op mappings
-     //	because it looks like an op->term mapping.
+     //	If the first (and possibly only) token is "term", this causes confusion for
+     //	targets in view op mappings because it looks like an op->term mapping.
      //
      EXPOSED_TERM = 2,
      //
@@ -82,21 +82,23 @@ public:
      //
      EXPOSED_COMMA = 4,
      //
-     //	An exposed left bracket in the target of a renaming op mapping looks like the start of attributes.
+     //	An exposed left bracket in the target of a renaming op mapping looks like the
+     // start of attributes.
      //
      EXPOSED_LEFT_BRACKET = 8,
      //
-     //	An exposed colon can be confused with the ":" between and op name and its sort information in op
-     // declarations, and in from-names in renaming and view op mappings.
+     //	An exposed colon can be confused with the ":" between and op name and its sort
+     // information in op declarations, and in from-names in renaming and view op mappings.
      //
      EXPOSED_COLON = 16,
      //
-     //	An exposed dot can be confused with the end of statement "." in the target of a view op mapping.
+     //	An exposed dot can be confused with the end of statement "." in the target of a
+     // view op mapping.
      //
      EXPOSED_DOT = 32,
      //
-     //	An exposed "to" token can be confused with the "to" between a from-name and a to-name in renaming
-     //	and view op mappings
+     //	An exposed "to" token can be confused with the "to" between a from-name and a
+     // to-name in renaming and view op mappings
      //
      EXPOSED_TO = 64,
      //
@@ -106,7 +108,8 @@ public:
      //
      //	If in doubt of our context, we treat all these situations as problem.
      //
-     UNKNOWN_CONTEXT = MULTIPLE_TOKENS | EXPOSED_TERM | EXPOSED_COMMA | EXPOSED_LEFT_BRACKET | EXPOSED_COLON | EXPOSED_DOT | EXPOSED_TO | BARE_COLON
+     UNKNOWN_CONTEXT = MULTIPLE_TOKENS | EXPOSED_TERM | EXPOSED_COMMA |
+       EXPOSED_LEFT_BRACKET | EXPOSED_COLON | EXPOSED_DOT | EXPOSED_TO | BARE_COLON
     };
   
   enum ReturnValues
@@ -177,6 +180,7 @@ public:
   static bool isFlagged(int code);
   static bool isValidViewName(int code);
   static bool isValidSortName(int code);
+  static bool isValidSortComponent(int code);
   static int unflaggedCode(int code);
   static int fixUp(const char* tokenString);
   static pair<string, bool> makePrettyOpName(int prefixNameCode, int situations);

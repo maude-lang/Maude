@@ -40,7 +40,6 @@ public:
   //	Helper functions for otf variable declarations.
   //
   static Index skipBracePair(const Vector<Token>& tokens, Index start, Index beyondEnd);
-  static Index skip(SkipType type, const Vector<Token>& tokens, Index start, Index beyondEnd);
   static Index skipKindName(const Vector<Token>& tokens,
 			    Index start,
 			    Index beyondEnd,

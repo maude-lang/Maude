@@ -1148,7 +1148,21 @@ Token::isValidViewName(int code)
 {
   for (const char* p = stringTable.name(code); *p; ++p)
     {
-      if (specialChar(*p))
+      if (!isprint(*p) || specialChar(*p))
+	return false;
+    }
+  return true;
+}
+
+bool
+Token::isValidSortComponent(int code)
+{
+  if (auxProperty(code) == AUX_SORT)
+    return true;
+  for (const char* p = stringTable.name(code); *p; ++p)
+    {
+      char c = *p;
+      if (!isprint(c) || c == '[' || c == ']' || c == '{' || c == '}' || c  == ',')
 	return false;
     }
   return true;
