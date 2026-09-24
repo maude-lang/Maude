@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/modexp-zeroSeptember2026.maude -no-banner -no-advise \
+  > modexp-zeroSeptember2026.out 2>&1
+
+diff $srcdir/modexp-zeroSeptember2026.expected modexp-zeroSeptember2026.out > /dev/null 2>&1
