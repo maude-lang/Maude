@@ -453,7 +453,7 @@ NumberOpSymbol::eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& co
 		{
 		case CODE('m', 'o'):
 		  {
-		    if (a0 < 0 || a1 < 0 || a2 < 0)
+		    if (a0 < 0 || a1 < 0 || a2 <= 0)
 		      goto fail;
 		    mpz_powm(r.get_mpz_t(), a0.get_mpz_t(), a1.get_mpz_t(), a2.get_mpz_t());
 		    break;

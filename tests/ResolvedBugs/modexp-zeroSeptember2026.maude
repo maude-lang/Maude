@@ -1,0 +1,7 @@
+***(
+Discovered by Claude 9/18/26
+Modulus of 0 give a floating point exception.
+)
+set show timing off .
+
+red in NAT : modExp(3, 2, 0) .
