@@ -741,7 +741,7 @@ op 'if_then_else_fi : 'Bool 'Universal 'Universal -> 'Universal [poly(2 3 0)
     term-hook('1, 'true.Bool) 
     term-hook('2, 'false.Bool))] .
 op 'including_. : 'ModuleExpression -> 'Import [ctor] .
-op 'insert : 'Qid 'QidSet -> 'QidSet [none] .
+op 'insert : 'Qid 'QidSet -> 'NeQidSet [none] .
 op 'intersection : 'QidSet 'QidSet -> 'QidSet [none] .
 op 'iter : nil -> 'Attr [ctor] .
 op 'label : 'Qid -> 'Attr [ctor] .
@@ -2997,7 +2997,7 @@ result FModule: fmod 'META-LEVEL is
     term-hook('1, 'true.Bool) 
     term-hook('2, 'false.Bool))] .
   op 'including_. : 'ModuleExpression -> 'Import [ctor] .
-  op 'insert : 'Qid 'QidSet -> 'QidSet [none] .
+  op 'insert : 'Qid 'QidSet -> 'NeQidSet [none] .
   op 'intersection : 'QidSet 'QidSet -> 'QidSet [none] .
   op 'iter : nil -> 'Attr [ctor] .
   op 'label : 'Qid -> 'Attr [ctor] .
@@ -6315,7 +6315,7 @@ result FModule: fmod 'META-LEVEL is
     term-hook('1, 'true.Bool) 
     term-hook('2, 'false.Bool))] .
   op 'including_. : 'ModuleExpression -> 'Import [ctor] .
-  op 'insert : 'Qid 'QidSet -> 'QidSet [none] .
+  op 'insert : 'Qid 'QidSet -> 'NeQidSet [none] .
   op 'intersection : 'QidSet 'QidSet -> 'QidSet [none] .
   op 'iter : nil -> 'Attr [ctor] .
   op 'label : 'Qid -> 'Attr [ctor] .
@@ -8685,7 +8685,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'nil.TypeList], 'term-hook[''1.Sort, ''true.Bool.Constant], 'term-hook[
     ''2.Sort, ''false.Bool.Constant]]]]], 'op_:_->_`[_`].[''including_..Qid,
     ''ModuleExpression.Sort, ''Import.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''insert.Sort, '__[''Qid.Sort, ''QidSet.Sort], ''QidSet.Sort,
+    ''insert.Sort, '__[''Qid.Sort, ''QidSet.Sort], ''NeQidSet.Sort,
     'none.AttrSet], 'op_:_->_`[_`].[''intersection.Sort, '__[''QidSet.Sort,
     ''QidSet.Sort], ''QidSet.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''iter.Sort,
     'nil.TypeList, ''Attr.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''label.Sort,
@@ -11388,7 +11388,7 @@ result GroundTerm: 'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'nil.TypeList], 'term-hook[''1.Sort, ''true.Bool.Constant], 'term-hook[
     ''2.Sort, ''false.Bool.Constant]]]]], 'op_:_->_`[_`].[''including_..Qid,
     ''ModuleExpression.Sort, ''Import.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''insert.Sort, '__[''Qid.Sort, ''QidSet.Sort], ''QidSet.Sort,
+    ''insert.Sort, '__[''Qid.Sort, ''QidSet.Sort], ''NeQidSet.Sort,
     'none.AttrSet], 'op_:_->_`[_`].[''intersection.Sort, '__[''QidSet.Sort,
     ''QidSet.Sort], ''QidSet.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''iter.Sort,
     'nil.TypeList, ''Attr.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''label.Sort,
@@ -14090,7 +14090,7 @@ result ResultPair: {'fmod_is_sorts_.____endfm[''META-LEVEL.Sort,
     'nil.TypeList], 'term-hook[''1.Sort, ''true.Bool.Constant], 'term-hook[
     ''2.Sort, ''false.Bool.Constant]]]]], 'op_:_->_`[_`].[''including_..Qid,
     ''ModuleExpression.Sort, ''Import.Sort, 'ctor.Attr], 'op_:_->_`[_`].[
-    ''insert.Sort, '__[''Qid.Sort, ''QidSet.Sort], ''QidSet.Sort,
+    ''insert.Sort, '__[''Qid.Sort, ''QidSet.Sort], ''NeQidSet.Sort,
     'none.AttrSet], 'op_:_->_`[_`].[''intersection.Sort, '__[''QidSet.Sort,
     ''QidSet.Sort], ''QidSet.Sort, 'none.AttrSet], 'op_:_->_`[_`].[''iter.Sort,
     'nil.TypeList, ''Attr.Sort, 'ctor.Attr], 'op_:_->_`[_`].[''label.Sort,

@@ -1191,7 +1191,7 @@ fmod SET{X :: TRIV} is
 
   eq N, N = N .
   
-  op insert : X$Elt Set{X} -> Set{X} .
+  op insert : X$Elt Set{X} -> NeSet{X} .
   eq insert(E, S) = E, S .
 
   op delete : X$Elt Set{X} -> Set{X} .
@@ -1424,7 +1424,7 @@ fmod SET*{X :: TRIV} is
   eq {P, P} = {P} .
   eq {P, P, Q} = {P, Q} .
 
-  op insert : Element{X} Set{X} -> Set{X} .
+  op insert : Element{X} Set{X} -> NeSet{X} .
   eq insert(E, {}) = {E} .
   eq insert(E, {P}) = {E, P} .
 
@@ -1473,12 +1473,12 @@ fmod SET*{X :: TRIV} is
   eq $diff(E, S, A) = if E in S then A else insert(E, A) fi .
   eq $diff((E, P), S, A) = $diff(P, S, $diff(E, S, A)) .
 
-  op 2^_ : Set{X} -> Set{X} .
+  op 2^_ : Set{X} -> NeSet{X} .
   eq 2^{} = {{}} .
   eq 2^{E} = {{}, {E}} .
   eq 2^{E, P} = union(2^{P}, $augment(2^{P}, E, {})) .
 
-  op $augment : NeSet{X} Element{X} Set{X} -> Set{X} .
+  op $augment : NeSet{X} Element{X} Set{X} -> NeSet{X} .
   eq $augment({S}, E, A) = insert(insert(E, S), A) .
   eq $augment({S, P}, E, A) = $augment({P}, E, $augment({S}, E, A)) .
 
