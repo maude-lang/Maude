@@ -1,3 +1,8 @@
+2026-09-23  Saruman the White  <eker@eker10>
+
+	* prelude.maude: Set{X} -> NeSet{X} for ranges of insert(), 2^_,
+	$augment in fmod SET* and insert() in fmod SET
+
 2026-08-19  Saruman the White  <eker@eker10>
 
 	* prelude.maude: added NeModuleExpressionList
