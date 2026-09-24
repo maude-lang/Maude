@@ -1,3 +1,10 @@
+2026-09-23  Saruman the White  <eker@eker10>
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): fix
+	first of 3 bugs found by Claude by calling
+	close(failureReturnPipe[READ_END]) as soon as we hit EOF so it's
+	done whether or not execvp() succeeded
+
 2024-05-10  Steven Eker  <eker@pup>
 
 	* streamManagerSymbol.cc (StreamManagerSymbol::nonblockingGetLine):

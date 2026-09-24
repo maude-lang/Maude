@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -289,13 +289,13 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
 	break;
       errorMessage += Rope(buffer, nrChar);
     }
+  close(failureReturnPipe[READ_END]);  // done with pipe
   if (!(errorMessage.empty()))
     {
       //
       //	Non-empty error message means execvp() failed in the child.
       //	Close file descriptors and inject a processError() reply.
       //
-      close(failureReturnPipe[READ_END]);
       close(errSockets[0]);
       close(ioSockets[0]);
       errorReply(errorMessage, message, context);
