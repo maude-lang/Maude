@@ -1,0 +1,43 @@
+fmod FOO is
+  including BOOL .
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  var X : Foo .
+  eq f(X, Y:Foo) = f(X, Y:Foo) .
+endfm
+fmod FOO1 is
+  including BOOL .
+  sorts Foo Bar .
+  op f : Foo Bar -> Foo .
+  var X : Foo .
+  eq f(X, X:Bar) = f(X, X:Bar) .
+endfm
+fmod FOO2 is
+  including BOOL .
+  sorts Baz Foo{Bar} Foo{Bar}{X:Baz} .
+  eq X:Foo{Bar}{X:Baz} = X:Foo{Bar}{X:Baz} .
+endfm
+fmod FOO3 is
+  including BOOL .
+  sorts Baz Foo{Bar} Foo{Bar}{X:Baz} .
+  op _{_} : Foo{Bar} Baz -> Foo{Bar} [prec 41 gather (E &)] .
+  op f : Foo{Bar} -> Foo{Bar} .
+  op g : Foo{Bar}{X:Baz} -> Foo{Bar}{X:Baz} .
+  eq f(X:Foo{Bar}{X:Baz}) = X:Foo{Bar} .
+  eq g(X:Foo{Bar}{X:Baz}) = X:Foo{Bar}{X:Baz} .
+endfm
+fmod FOO4 is
+  including BOOL .
+  sort Foo{Bar.Baz} .
+  eq X:Foo{Bar.Baz} = X:Foo{Bar.Baz} .
+endfm
+Advisory: redefining module FOO.
+Inexact parsing triggered by:
+  Y:Foo
+  Y:Foo
+Reported error may not be the earliest due to inexact parsing.
+Warning: <standard input>, line 66 (fmod FOO): didn't expect token ,:
+eq f ( X:Foo { Y:Foo } ) = g ( Y , <---*HERE*
+Warning: <standard input>, line 66 (fmod FOO): no parse for statement
+eq f (X:Foo {Y:Foo}) = g (Y, Y) .
+Bye.

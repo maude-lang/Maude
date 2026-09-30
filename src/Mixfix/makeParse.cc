@@ -558,7 +558,6 @@ MixfixParser::makeTerm(int node)
 	    //
 	    //	We haven't completed fix-ups, so identity need not exist.
 	    //
-	    int pos = currentOffset + parser.getFirstPosition(node);
 	    IssueWarning(LineNumber((*currentSentence)[pos].lineNumber()) <<
 			 ": empty attribute set syntax is not allowed in operator declarations.");
 	    client.markAsBad();
@@ -696,6 +695,13 @@ MixfixParser::makeTerm(int node)
     case MAKE_BARE_OTF_VARIABLE:
     case MAKE_VARIABLE_FROM_ALIAS:
       {
+	//
+	//	In the bare otf variable case, the token was given a translation to
+	//	a terminal for an otf variable of a given sort.
+	//	In the second case, the variable alias has its own translation.
+	//	In both cases the sort is encoded in the action data and the token is
+	//	the variable name.
+	//
 	Sort* sort = client.getSorts()[a.data];
 	VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(client.instantiateVariable(sort));
 	t = new VariableTerm(symbol, (*currentSentence)[pos].code());
