@@ -314,6 +314,20 @@ MixfixParser::makeOtfTranslations()
 void
 MixfixParser::makeOtfTranslation(int varName, int location, int sortIndex, bool uncertain)
 {
+  const MixfixModule::AliasMap& aliasMap = client.getVariableAliases();
+  MixfixModule::AliasMap::const_iterator p = aliasMap.find(varName);
+  if (p != aliasMap.end())
+    {
+      if (p->second->getIndexWithinModule() == sortIndex)
+	{
+	  //
+	  //	Translation would duplicate a variable alias mapping and
+	  //	produce false ambiguity.
+	  //
+	  return;
+	}
+    }
+  
   Vector<OtfDef>& translations = otfTranslations[varName];
   for (const OtfDef& d : translations)
     {
@@ -393,6 +407,13 @@ int
 MixfixParser::classicParse(int root, int& firstBad, int nrTokens)
 {
   //
+  //	Parse using classic (Maude version <= 3.5.1) conventions.
+  //	Return value is:
+  //	  -1 : bad token at position firstBad
+  //	  0  : tokens good, but parse fails at position firstBad
+  //	  1  : exactly one parse
+  //	  2  : two or more parses - ambiguous
+  //
   //	Translate tokens into terminals.
   //
   for (Index i = 0; i < nrTokens; ++i)
@@ -434,12 +455,26 @@ MixfixParser::classicParse(int root, int& firstBad, int nrTokens)
 int
 MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 {
+  //
+  //	Parse using wildcards and extended scope for otf variables.
+  //	Return value is:
+  //	  -1 : bad token at position firstBad
+  //	  0  : tokens good, but parse fails at or before position firstBad
+  //	  1  : exactly one parse
+  //	  2  : two or more parses - ambiguous
+  //
+  //	Translate tokens into terminals.
+  //
   makeOtfTranslations();
   terminalLists.clear();
   //
   //	Wildcard variable names are fresh with respect to sentence.
   //
   usedNames.clear();
+  //
+  //	Keep track if we actually use extended translations.
+  //
+  bool usedExtendedTranslation = false;
   //
   //	Translate tokens into terminals.
   //
@@ -469,6 +504,7 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 		{
 		  int otfTerminal = bareOtfVariableTerminals[d.sortIndex];
 		  translations.push_back(otfTerminal);
+		  usedExtendedTranslation = true;
 		  if (d.uncertain)
 		    {
 		      if (!inexact)
@@ -508,13 +544,29 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 	  if (wildcardTerminal != NONE &&
 	      Token::name(code)[0] == '_' &&
 	      Token::isValidViewName(code))
-	    sentence[i] = wildcardTerminal;
+	    {
+	      sentence[i] = wildcardTerminal;
+	      usedExtendedTranslation = true;
+	    }
 	  else
 	    {
 	      firstBad = j;
 	      return -1;  // bad token
 	    }
 	}
+    }
+
+  if (!usedExtendedTranslation)
+    {
+      //
+      //	Our translation from tokens to nonterminals was exactly
+      //	the same as in the classic parse. Since we didn't encounter
+      //	a bad token we know the classic parse didn't either, so
+      //	we can just return 0 parses, leaving the firstBad location
+      //	unchanged.
+      //
+      nrParses = 0;
+      return 0;
     }
   
 #if PARSER_DEBUG
@@ -527,7 +579,20 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
   nrParses = parser.parseSentence(sentence, root, terminalLists);
   DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
   if (nrParses == 0)  // no parse
-    firstBad = currentOffset + parser.getErrorPosition();
+    {
+      int newFirstBad = currentOffset + parser.getErrorPosition();
+      if (newFirstBad > firstBad)
+	{
+	  //
+	  //	We got further, but that maybe due to inexactness.
+	  //
+	  if (inexact)
+	    {
+	      Verbose("Reported error may not be the earliest due to inexact parsing.");
+	      firstBad = newFirstBad;
+	    }
+	}
+    }
   else if (inexact)
     {
       //cerr << Tty(Tty::BLUE) << "inexact parse" << Tty(Tty::RESET) << endl;

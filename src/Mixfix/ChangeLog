@@ -1,3 +1,17 @@
+2026-09-29  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::makeOtfTranslation): don't add
+	translations that duplicate variable aliases
+	(MixfixParser::classicParse): added comments
+	(MixfixParser::extendedParse): added comments
+	(MixfixParser::extendedParse): don't run parser again if we didn't
+	get a different token->terminal translation; Verbose() warning if
+	we're not certain we found the earliest syntax error
+
+	* makeParse.cc (MixfixParser::makeTerm): added comment for
+	MAKE_BARE_OTF_VARIABLE and MAKE_VARIABLE_FROM_ALIAS cases; delete
+	inner def on pos in MAKE_OBJECT_WITH_EMPTY_ATTRIBUTE_SET case
+
 2026-09-22  Saruman the White  <eker@eker10>
 
 	* sharedTokens.cc (SharedTokens::skipKindName): handle single

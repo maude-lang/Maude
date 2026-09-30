@@ -1,0 +1,67 @@
+set show timing off .
+
+***
+***	Check handling of extended on-the-fly variable scope in hard cases.
+***
+
+*** having both a variable alias and an otf variable that agree should not
+*** produce ambiguity -  note that we need Y here so that the example doesn't
+*** parse without scope extension
+fmod FOO is
+  sort Foo .
+  op f : Foo Foo -> Foo .
+  var X : Foo .
+  eq f(X:Foo, Y:Foo) = f(X, Y) .
+endfm
+show desugared .
+
+*** classic parse should fail and extended parse should figure out which X
+*** is which
+fmod FOO1 is
+  sorts Foo Bar .
+  op f : Foo Bar -> Foo .
+  var X : Foo .
+  eq f(X:Foo, X:Bar) = f(X, X) .
+endfm
+show desugared .
+
+*** sort name that appears to contain variable declaration shouldn't affect
+*** otf variable
+fmod FOO2 is
+  sorts Baz Foo{Bar} Foo{Bar}{X:Baz} .
+  eq X:Foo{Bar}{X:Baz} = X .
+endfm
+show desugared .
+
+*** X:Foo{Bar}{X:Baz} can be a single or double otf declaration depending
+*** on context
+fmod FOO3 is
+  sorts Baz Foo{Bar} Foo{Bar}{X:Baz} .
+  op _{_} : Foo{Bar} Baz -> Foo{Bar} .
+
+  op f : Foo{Bar} -> Foo{Bar} .
+  op g : Foo{Bar}{X:Baz} -> Foo{Bar}{X:Baz} .
+
+  eq f(X:Foo{Bar}{X:Baz}) = X .
+  eq g(X:Foo{Bar}{X:Baz}) = X .
+endfm
+show desugared .
+
+*** we recognize inner sort components containing a period
+fmod FOO4 is
+  sort Foo{Bar.Baz} .
+  eq X:Foo{Bar.Baz} = X .
+endfm
+show desugared .
+
+*** this illustrates the main weakness of the current algorithm - when
+*** a syntax error is found during inexact parsing, we can't be sure
+*** that it's the earliest wrt exact parsing
+set verbose on .
+
+fmod FOO is
+  sorts Foo Foo{Y:Foo} .
+  op f : Foo{Y:Foo} -> Foo .
+  op g : Foo -> Foo .
+  eq f(X:Foo{Y:Foo}) = g(Y, Y) .
+endfm
