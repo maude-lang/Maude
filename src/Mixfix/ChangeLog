@@ -1,6 +1,19 @@
 2026-10-05  Saruman the White  <eker@eker10>
 
+	* extendedParse.cc (MixfixParser::makeOtfTranslations): use
+	handleContainsColon() and handleEndsInColon()
+	(MixfixParser::extendedParse): don't call makeOtfTranslations();
+	call handleContainsColon(), handleEndsInColon()
+	(MixfixParser::makeOtfTranslations): deleted
+
+	* mixfixParser.hh (class MixfixParser): updated decl for
+	checkSortNames(); added decls for handleContainsColon(),
+	handleEndsInColon()
+
 	* extendedParse.cc: extended parse code moved here
+	(MixfixParser::handleContainsColon): added
+	(MixfixParser::handleEndsInColon): added
+	(MixfixParser::checkSortNames): made const
 
 	* mixfixParser.cc (MixfixParser::extendedParse): reuse initial
 	translation if we're < firstBad

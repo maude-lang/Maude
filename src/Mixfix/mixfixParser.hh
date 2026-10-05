@@ -270,8 +270,10 @@ private:
   void makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
   void makeTermDisjunction(int node, Vector<Term*>& terms);
   int translateSpecialToken(int code);
+  void handleContainsColon(int code, Index index, Index beyondEnd);
+  ConnectedComponent* checkSortNames(const Vector<int>& sortNames) const;
+  void handleEndsInColon(int code, Index index, Index beyondEnd);
   void makeOtfTranslations();
-  ConnectedComponent* checkSortNames(const Vector<int>& sortNames);
   void makeOtfTranslation(int varName, int location, int sortIndex, bool uncertain);
   bool guaranteedFresh(int code) const;
   int makeFreshVariableName(int code);

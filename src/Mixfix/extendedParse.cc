@@ -21,107 +21,6 @@
 */
 
 void
-MixfixParser::makeOtfTranslations()
-{
-  otfTranslations.clear();
-  //
-  //	We scan through the original tokens, looking for things that
-  //	might be on-the-fly variables of known sort, and make these
-  //	into otf translations.
-  //
-  Index beyondEnd = currentOffset + sentence.size();
-  for (Index i = currentOffset; i < beyondEnd; ++i)
-    {
-      int code = (*currentSentence)[i].code();
-      int sp = Token::specialProperty(code);
-      if (sp == Token::CONTAINS_COLON)
-	{
-	  //
-	  //	Token looks like X:Bar so it may be an otf
-	  //	variable of sort Bar or an otf variable of
-	  //	sort Bar{...}...{...}
-	  //
-	  bool uncertain = (tokenSet.find(code) != NONE) ||
-	    (otfTranslations.find(code) != otfTranslations.end());  // maybe X:Bar has some other meaning
-	  int varName;
-	  int sortName;
-	  Token::split(code, varName, sortName);
-	  //
-	  //	We need to check
-	  //	  Bar
-	  //	  Bar{...}
-	  //	  Bar{...}{...}
-	  //	  ...
-	  //	If more than one is a valid sort we are uncertain about all translations,
-	  //	however, we don't need to flag the first one, because the uncertainty only
-	  //	starts when the second one becomes active. In X:Bar{X} for example, in any
-	  //	parse where the second X parses as the extended scope of X:Bar, if X:Bar
-	  //	didn't have any other meaning then X:Bar must be an otf variable, or we
-	  //	would have a parse error before reaching the second X.
-	  //
-	  if (Sort* sort = client.findSort(sortName))
-	    {
-	      //
-	      //	Deal with Bar case.
-	      //
-	      makeOtfTranslation(varName, i, sort->getIndexWithinModule(), uncertain);
-	      uncertain = true;  // any addition valid sort flagged as uncertain
-	    }
-	  //
-	  //	Look for Bar {...}...{...}
-	  //
-	  Vector<Token> structuredSortName;
-	  Index start = i + 1;
-	  for (;;)
-	    {
-	      Index last = SharedTokens::skipBracePair(*currentSentence, start, beyondEnd);
-	      if (last == NONE)
-		break;
-	      //
-	      //	Saw legal syntax for {...} in parameterized sort.
-	      //
-	      structuredSortName.resize(last - i + 1);
-	      structuredSortName[0].tokenize(sortName, (*currentSentence)[i].lineNumber());
-	      for (Index j = start; j <= last; ++j)
-		structuredSortName[j - i] = (*currentSentence)[j];
-	      int structuredSortCode = Token::bubbleToPrefixNameCode(structuredSortName);
-
-	      if (Sort* sort = client.findSort(structuredSortCode))
-		{
-		  makeOtfTranslation(varName, last, sort->getIndexWithinModule(), uncertain);
-		  uncertain = true;  // any additional valid sort flagged as uncertain
-		}
-	      start = last + 1;
-	    }
-	}
-      else if (sp == Token::ENDS_IN_COLON)
-	{
-	  //
-	  //	Token looks like X: so it may be an otf variable of kind type.
-	  //
-	  int varName;
-	  int sortName;
-	  Token::split(code, varName, sortName);
-	  Vector<int> sortNames;
-	  Index last = SharedTokens::skipKindName(*currentSentence,
-						  i + 1,
-						  beyondEnd,
-						  sortNames);
-	  if (last != NONE)
-	    {
-	      if (ConnectedComponent* component = checkSortNames(sortNames))
-		{
-		  Sort* kind = component->sort(Sort::KIND);
-		  bool uncertain = (tokenSet.find(code) != NONE) ||
-		    (otfTranslations.find(code) != otfTranslations.end());
-		  makeOtfTranslation(varName, last, kind->getIndexWithinModule(), uncertain);
-		}
-	    }
-	}
-    }
-}
-
-void
 MixfixParser::makeOtfTranslation(int varName, int location, int sortIndex, bool uncertain)
 {
   const MixfixModule::AliasMap& aliasMap = client.getVariableAliases();
@@ -147,8 +46,70 @@ MixfixParser::makeOtfTranslation(int varName, int location, int sortIndex, bool 
   translations.push_back({location, sortIndex, uncertain});
 }
 
-ConnectedComponent* 
-MixfixParser::checkSortNames(const Vector<int>& sortNames)
+FORCE_INLINE void
+MixfixParser::handleContainsColon(int code, Index index, Index beyondEnd)
+{
+  //
+  //	Token looks like X:Bar so it may be an otf
+  //	variable of sort Bar or an otf variable of
+  //	sort Bar{...}...{...}
+  //
+  bool uncertain = (tokenSet.find(code) != NONE) ||
+    (otfTranslations.find(code) != otfTranslations.end());  // maybe X:Bar has some other meaning
+  int varName;
+  int sortName;
+  Token::split(code, varName, sortName);
+  //
+  //	We need to check
+  //	  Bar
+  //	  Bar{...}
+  //	  Bar{...}{...}
+  //	  ...
+  //	If more than one is a valid sort we are uncertain about all translations,
+  //	however, we don't need to flag the first one, because the uncertainty only
+  //	starts when the second one becomes active. In X:Bar{X} for example, in any
+  //	parse where the second X parses as the extended scope of X:Bar, if X:Bar
+  //	didn't have any other meaning then X:Bar must be an otf variable, or we
+  //	would have a parse error before reaching the second X.
+  //
+  if (Sort* sort = client.findSort(sortName))
+    {
+      //
+      //	Deal with Bar case.
+      //
+      makeOtfTranslation(varName, index, sort->getIndexWithinModule(), uncertain);
+      uncertain = true;  // any addition valid sort flagged as uncertain
+    }
+  //
+  //	Look for Bar {...}...{...}
+  //
+  Vector<Token> structuredSortName;
+  Index start = index + 1;
+  for (;;)
+    {
+      Index last = SharedTokens::skipBracePair(*currentSentence, start, beyondEnd);
+      if (last == NONE)
+	break;
+      //
+      //	Saw legal syntax for {...} in parameterized sort.
+      //
+      structuredSortName.resize(last - index + 1);
+      structuredSortName[0].tokenize(sortName, (*currentSentence)[index].lineNumber());
+      for (Index j = start; j <= last; ++j)
+	structuredSortName[j - index] = (*currentSentence)[j];
+      int structuredSortCode = Token::bubbleToPrefixNameCode(structuredSortName);
+
+      if (Sort* sort = client.findSort(structuredSortCode))
+	{
+	  makeOtfTranslation(varName, last, sort->getIndexWithinModule(), uncertain);
+	  uncertain = true;  // any additional valid sort flagged as uncertain
+	}
+      start = last + 1;
+    }
+}
+
+FORCE_INLINE ConnectedComponent* 
+MixfixParser::checkSortNames(const Vector<int>& sortNames) const
 {
   //
   //	Check that sorts exist and are all in the same connected component.
@@ -168,13 +129,39 @@ MixfixParser::checkSortNames(const Vector<int>& sortNames)
   return component;
 }
 
+FORCE_INLINE void
+MixfixParser::handleEndsInColon(int code, Index index, Index beyondEnd)
+{
+  //
+  //	Token looks like X: so it may be an otf variable of kind type.
+  //
+  int varName;
+  int sortName;
+  Token::split(code, varName, sortName);
+  Vector<int> sortNames;
+  Index last = SharedTokens::skipKindName(*currentSentence,
+					  index + 1,
+					  beyondEnd,
+					  sortNames);
+  if (last != NONE)
+    {
+      if (ConnectedComponent* component = checkSortNames(sortNames))
+	{
+	  Sort* kind = component->sort(Sort::KIND);
+	  bool uncertain = (tokenSet.find(code) != NONE) ||
+	    (otfTranslations.find(code) != otfTranslations.end());
+	  makeOtfTranslation(varName, last, kind->getIndexWithinModule(), uncertain);
+	}
+    }
+}
+
 int
 MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 {
   //
   //	Parse using wildcards and extended scope for otf variables.
   //	We assume that all tokens < firstBad have their classic translation
-  //	store in sentence.
+  //	stored in sentence.
   //
   //	Return value is:
   //	  -1 : bad token at position firstBad
@@ -184,8 +171,9 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
   //
   //	Translate tokens into terminals.
   //
-  makeOtfTranslations();
+  otfTranslations.clear();
   terminalLists.clear();
+  Index beyondEnd = currentOffset + nrTokens;
   //
   //	Wildcard variable names are fresh with respect to sentence.
   //
@@ -296,6 +284,14 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 	  nrParses = 0;
 	  return 0;
 	}
+      //
+      //	Now check for otf variable declarations.
+      //
+      int sp = Token::specialProperty(code);
+      if (sp == Token::CONTAINS_COLON)
+	handleContainsColon(code, j, beyondEnd);
+      else if (sp == Token::ENDS_IN_COLON)
+	handleEndsInColon(code, j, beyondEnd);
     }
 
 #if PARSER_DEBUG
@@ -324,8 +320,6 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
     }
   else if (inexact)
     {
-      //cerr << Tty(Tty::BLUE) << "inexact parse" << Tty(Tty::RESET) << endl;
-      //cerr << "nrParses = " << nrParses << endl;
       firstBad = -1;
       if (nrParses == 1)
 	{
@@ -342,14 +336,12 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 	  //
 	  while (!checkParse(firstBad))
 	    {
-	      //cerr << Tty(Tty::BLUE) << "parse failed check" << Tty(Tty::RESET) << endl;
 	      if (!parser.extractNextParse())
 		{
 		  nrParses = 0;  // no consistent parses
 		  return nrParses;
 		}
 	    }
-	  //cerr << "found first consistent" << endl;
 	  //
 	  //	Save our consistent parse and see if there is another one for
 	  //	ambiguity in the smaller grammar.
@@ -365,11 +357,9 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 		  //
 		  parser.swapParse();
 		  nrParses = 2;  // ambiguous
-		  //cerr << "found second consistent" << endl;
 		  return nrParses;
 		}
 	    }
-	  //cerr << "no more consistent" << endl;
 	  parser.swapParse();  // restore consistent parse
 	  nrParses = 1;  // only found a single consistent parse.
 	}
