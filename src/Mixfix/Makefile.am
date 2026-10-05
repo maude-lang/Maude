@@ -199,7 +199,8 @@ EXTRA_DIST = \
 	latexCommand.cc \
 	latexPreModulePrint.cc \
 	resultSignature.cc \
-	makeParse.cc
+	makeParse.cc \
+	extendedParse.cc
 
 noinst_HEADERS = \
 	renaming.hh \
