@@ -138,7 +138,7 @@ public:
   virtual void doError(int fd);   // a error happened
   virtual void doHungUp(int fd);  // the other end of a socket was closed when wanting to do a write (for some OS, when wanting to do a read)
   virtual void doCallback(long clientData);  // notBefore time reached for a requested call back
-  virtual void doChildExit(pid_t childPid);
+  virtual void doChildExit(pid_t childPid, int status);
 
 private:
   enum Values
@@ -162,7 +162,6 @@ private:
     
     PseudoThread* client;
     pid_t pid;
-    bool exited;
   };
 
   static bool processCallbacks(int& returnValue, timespec& wait);
@@ -170,7 +169,7 @@ private:
   static void link(int fd);
   static void unlink(int fd);
 
-  static void sigchldHandler(int signalNr, siginfo_t* info, void* context);
+  static void sigchldHandler(int signalNr);
   static bool dispatchChildRequests();
   //
   //	All data is shared between PseudoThread objects since it refers to
@@ -200,7 +199,6 @@ PseudoThread::ChildRequest::ChildRequest(PseudoThread* client, pid_t pid)
   : client(client),
     pid(pid)
 {
-  exited = false;
 }
 
 #endif

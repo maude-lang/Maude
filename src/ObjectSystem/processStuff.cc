@@ -73,15 +73,9 @@ ProcessManagerSymbol::cleanUp(DagNode* objectId)
 }
 
 void
-ProcessManagerSymbol::doChildExit(pid_t childPid)
+ProcessManagerSymbol::doChildExit(pid_t childPid, int wstatus)
 {
-  DebugInfo("childPid = " << childPid);
-  //
-  //	First we wait for the child.
-  //
-  int wstatus;
-  DebugSave(exitPid, waitpid(childPid, &wstatus, 0));
-  Assert(exitPid == childPid, "unexpected return value " << exitPid << " from waidpid() for process " << childPid);
+  DebugInfo("childPid = " << childPid << "  wstatus = " << wstatus);
   //
   //	Recover original waitForProcessExit message and context.
   //

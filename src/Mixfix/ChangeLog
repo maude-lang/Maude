@@ -5,6 +5,7 @@
 	(MixfixParser::extendedParse): don't call makeOtfTranslations();
 	call handleContainsColon(), handleEndsInColon()
 	(MixfixParser::makeOtfTranslations): deleted
+	(MixfixParser::extendedParse): code cleaning
 
 	* mixfixParser.hh (class MixfixParser): updated decl for
 	checkSortNames(); added decls for handleContainsColon(),
