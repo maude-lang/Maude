@@ -46,12 +46,11 @@ PseudoThread::requestChildExitCallback(pid_t childPid)
   if (!installedSigchldHandler)
     {
       static struct sigaction sigchldAction;
-      //
-      //	We use a 3 argument SIGINFO style handler because we
-      //	need the extra information about the child.
-      //
-      sigchldAction.sa_sigaction = sigchldHandler;
-      sigchldAction.sa_flags = SA_SIGINFO;
+      
+      sigchldAction.sa_handler = sigchldHandler;
+      // don't set sigchldAction.sa_sigaction as it may be a union with the above
+      sigemptyset(&sigchldAction.sa_mask);  // don't block any additional signals in the handler
+      sigchldAction.sa_flags = 0;  // no flags
 #ifdef SA_INTERRUPT
       //
       //	Avoid old BSD semantics which automatically restarts
@@ -70,18 +69,8 @@ PseudoThread::requestChildExitCallback(pid_t childPid)
 void
 PseudoThread::cancelChildExitCallback(pid_t childPid)
 {
-  //
-  //	We need to ensure that we're not interrupted by the
-  //	signal handler while we're changing childVec.
-  //
-  sigset_t oldset;
-  sigset_t newset;
-  sigemptyset(&newset);
-  sigaddset(&newset, SIGCHLD);
-  sigprocmask(SIG_BLOCK, &newset, &oldset);
-
-  int nrRequests = childRequests.size();
-  for (int i = 0; i < nrRequests; ++i)
+  Index nrRequests = childRequests.size();
+  for (Index i = 0; i < nrRequests; ++i)
     {
       if (childRequests[i].pid == childPid)
 	{
@@ -92,46 +81,30 @@ PseudoThread::cancelChildExitCallback(pid_t childPid)
 	  break;
 	}
     }
-  
-  sigprocmask(SIG_SETMASK, &oldset, 0);
 }
 
 void
-PseudoThread::sigchldHandler(int /* signalNr */, siginfo_t* info, void* /* context */)
+PseudoThread::sigchldHandler(int /* signalNr */)
 {
-  if (info->si_code == CLD_EXITED ||
-      info->si_code == CLD_KILLED ||
-      info->si_code == CLD_DUMPED)
-    {
-      //
-      //	Currently we only worry about the child exiting normally (CLD_EXITED)
-      //	being killed by a signal (CLD_KILLED) or exiting abnoramlly (CLD_DUMPED).
-      //	We ignore other changes of state.
-      //	We're in a signal handler so we don't want to call library functions
-      //	that might access global stuff such as memory allocation.
-      //	We know that Vector::iterator does not allocate memory.
-      //
-      pid_t childPid = info->si_pid;
-      for (ChildRequest& c : childRequests)
-	{
-	  if (c.pid == childPid)
-	    {
-	      c.exited = true;
-	      exitedFlag = true;
-	      break;
-	    }
-	}
-    }
+  //
+  //	Child status events are not queued so we just record that at least one
+  //	happened, and leave it to non-signal handler code to figure out if one
+  //	or more children exited.
+  //
+  exitedFlag = true;
 }
 
 bool
 PseudoThread::dispatchChildRequests()
 {
+  DebugInfo("exitedFlag = " << exitedFlag);
   if (!exitedFlag)
     return false;
-
-  DebugInfo("child exits to process");
-  
+  //
+  //	We block SIGCHLD so that we don't get a race between setting
+  //	setting  exitedFlag to true in the signal handler and setting it
+  //	to false here.
+  //
   sigset_t oldset;
   sigset_t newset;
   sigemptyset(&newset);
@@ -143,9 +116,11 @@ PseudoThread::dispatchChildRequests()
   DebugInfo("nrRequests = " << nrRequests);
   for (int i = 0; i < nrRequests;)
     {
-      if (childRequests[i].exited)
+      pid_t pid = childRequests[i].pid;
+      int wstatus;
+      if (waitpid(pid, &wstatus, WNOHANG) == pid)
 	{
-	  childRequests[i].client->doChildExit(childRequests[i].pid);
+	  childRequests[i].client->doChildExit(childRequests[i].pid, wstatus);
 	  didCallback = true;
 	  //
 	  //	Reduce number of pending requests and fill in the hole
@@ -159,14 +134,16 @@ PseudoThread::dispatchChildRequests()
       else
 	++i;
     }
-
   exitedFlag = false;
+  //
+  //	Now we can unblock SIGCHLD without losing events.
+  //
   sigprocmask(SIG_SETMASK, &oldset, 0);
   return didCallback;
 }
 
 void
-PseudoThread::doChildExit(pid_t childPid)
+PseudoThread::doChildExit(pid_t childPid, int /* status */)
 {
   CantHappen("failed to do child exit on " << childPid);
 }

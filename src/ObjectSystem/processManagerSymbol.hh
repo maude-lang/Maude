@@ -60,10 +60,6 @@ public:
   bool handleMessage(DagNode* message, ObjectSystemRewritingContext& context);
   void cleanUp(DagNode* objectId);
   //
-  //	Overridden method from PseudoThread.
-  //
-  void doChildExit(pid_t childPid);
-  //
   //	Static function to disable/enable this class.
   //
   static void setAllowProcesses(bool flag);
@@ -92,7 +88,11 @@ private:
   };
 
   typedef map<pid_t, ChildProcess> ProcessMap;
-
+  //
+  //	Overridden method from PseudoThread.
+  //
+  void doChildExit(pid_t childPid, int wstatus) override;
+  
   bool createProcess(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool waitForExit(FreeDagNode* message, ObjectSystemRewritingContext& context);
   bool signalProcess(FreeDagNode* message, ObjectSystemRewritingContext& context);

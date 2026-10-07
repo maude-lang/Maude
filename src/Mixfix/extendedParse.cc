@@ -356,12 +356,11 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 		  //	Swap it with the first one.
 		  //
 		  parser.swapParse();
-		  nrParses = 2;  // ambiguous
-		  return nrParses;
+		  return nrParses;  // will be 2
 		}
 	    }
-	  parser.swapParse();  // restore consistent parse
 	  nrParses = 1;  // only found a single consistent parse.
+	  parser.swapParse();  // restore consistent parse
 	}
     }
   return nrParses;
