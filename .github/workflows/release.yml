@@ -1,0 +1,64 @@
+name: Build Maude
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  linux:
+    name: Maude for Linux
+    runs-on: ubuntu-22.04
+    env:
+      TAG_NAME: ${{ github.ref_name }}
+    steps:
+
+    - name: Check out repository code
+      uses: actions/checkout@v3
+
+    - name: Build Maude
+      run: .github/scripts/build_linux.sh
+
+    - name: Upload binary
+      uses: softprops/action-gh-release@v2
+      with:
+        files: linux64/Maude-*.zip
+
+  macos-arm:
+    name: Maude for macOS (ARM)
+    runs-on: macos-14
+    env:
+      TAG_NAME: ${{ github.ref_name }}
+    steps:
+
+    - name: Check out repository code
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Build Maude
+      run: .github/scripts/build_macos.sh arm64 /opt/homebrew
+
+    - name: Upload binary
+      uses: softprops/action-gh-release@v2
+      with:
+        files: macos/Maude-*.zip
+
+  macos-intel:
+    name: Maude for macOS (Intel)
+    runs-on: macos-15-intel
+    env:
+      TAG_NAME: ${{ github.ref_name }}
+    steps:
+
+    - name: Check out repository code
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Build Maude
+      run: .github/scripts/build_macos.sh x86_64 /usr/local
+
+    - name: Upload binary
+      uses: softprops/action-gh-release@v2
+      with:
+        files: macos/Maude-*.zip
