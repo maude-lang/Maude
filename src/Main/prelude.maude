@@ -2215,31 +2215,28 @@ fmod META-VIEW is
      format (d d d d d d d n++i ni ni n--i d)] .
 
 *** projection functions
-  var Q : Qid .
-  var PDL : ParameterDeclList .
-  vars ME ME' : ModuleExpression .
-  var SMS : SortMappingSet .
-  var OMS : OpMappingSet .
-  var TMS : StratMappingSet .
-
   op getName : View -> Qid .
-  eq getName(view Q from ME to ME' is SMS OMS TMS endv) = Q .
-  eq getName(view Q{PDL} from ME to ME' is SMS OMS TMS endv) = Q .
+  eq getName(view Q:Qid from _ to _ is _ _ _ endv) = Q .
+  eq getName(view Q:Qid{PDL:ParameterDeclList} from _ to _ is _ _ _ endv) = Q .
+  
+  op getParameters : View -> ParameterDeclList .
+  eq getParameters(view Q:Qid from _ to _ is _ _ _ endv) = nil .
+  eq getParameters(view _{PDL:ParameterDeclList} from _ to _ is _ _ _ endv) = PDL .
 
   op getFrom : View -> ModuleExpression .
-  eq getFrom(view Q from ME to ME' is SMS OMS TMS endv) = ME .
+  eq getFrom(view _ from ME:ModuleExpression to _ is _ _ _ endv) = ME .
 
   op getTo : View -> ModuleExpression .
-  eq getTo(view Q from ME to ME' is SMS OMS TMS endv) = ME' .
+  eq getTo(view _ from _ to ME':ModuleExpression is _ _ _ endv) = ME' .
 
   op getSortMappings : View -> SortMappingSet .
-  eq getSortMappings(view Q from ME to ME' is SMS OMS TMS endv) = SMS .
+  eq getSortMappings(view _ from _ to _ is SMS:SortMappingSet _ _ endv) = SMS .
 
   op getOpMappings : View -> OpMappingSet .
-  eq getOpMappings(view Q from ME to ME' is SMS OMS TMS endv) = OMS .
+  eq getOpMappings(view _ from _ to _ is _ OMS:OpMappingSet _ endv) = OMS .
 
   op getStratMappings : View -> StratMappingSet .
-  eq getStratMappings(view Q from ME to ME' is SMS OMS TMS endv) = TMS .
+  eq getStratMappings(view _ from _ to _ is _ _ TMS:StratMappingSet endv) = TMS .
 endfm
 
 fmod META-LEVEL is
