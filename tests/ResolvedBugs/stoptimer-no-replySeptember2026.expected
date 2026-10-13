@@ -1,0 +1,5 @@
+==========================================
+erewrite in T : init .
+rewrites: 2
+result Configuration: <> stoppedTimer(me, timer(0)) < me : C | none >
+Bye.

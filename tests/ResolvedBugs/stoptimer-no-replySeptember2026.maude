@@ -1,0 +1,21 @@
+***(
+Discovered by Claude 9/18/26
+stopTimer() message doesn't get a stoppedTimer() reply if the timer is already
+stopped, though we explicitly allow this case in the manual to handle
+stopTimer() vs timeOut() races.
+)
+
+set show timing off .
+
+load time
+
+mod T is
+  protecting TIME .
+  op me : -> Oid .  op C : -> Cid .
+  op init : -> Configuration .
+  eq init = <> < me : C | none > createTimer(timeManager, me) .
+  var O : Oid .
+  rl < me : C | none > createdTimer(me, timeManager, O) => < me : C | none > stopTimer(O, me) .
+endm
+
+erew init .

@@ -320,9 +320,9 @@ TimeManagerSymbol::stopTimer(FreeDagNode* message, ObjectSystemRewritingContext&
       cancelCallback(timer->callbackHandle);
       timer->callbackRequestTime.tv_sec = 0;
       timer->callbackRequestTime.tv_nsec = 0;
-      timer->lastStartMessage.setNode(0);
-      trivialReply(stoppedTimerMsg, message, context);
+      timer->lastStartMessage.setNode(nullptr);
     }
+  trivialReply(stoppedTimerMsg, message, context);
 }
   
 void
