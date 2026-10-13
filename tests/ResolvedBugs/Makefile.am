@@ -79,7 +79,8 @@ TESTS = \
 	fragmentBufferJune2025 \
 	viewNameApril2025 \
 	freeParametersInAutoImportApril2026 \
-	modexp-zeroSeptember2026
+	modexp-zeroSeptember2026 \
+	stoptimer-no-replySeptember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -162,7 +163,8 @@ MAUDE_FILES = \
 	fragmentBufferJune2025.maude \
 	viewNameApril2025.maude \
 	freeParametersInAutoImportApril2026.maude \
-	modexp-zeroSeptember2026.maude
+	modexp-zeroSeptember2026.maude \
+	stoptimer-no-replySeptember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -245,6 +247,7 @@ RESULT_FILES = \
 	fragmentBufferJune2025.expected \
 	viewNameApril2025.expected \
 	freeParametersInAutoImportApril2026.expected \
-	modexp-zeroSeptember2026.expected
+	modexp-zeroSeptember2026.expected \
+	stoptimer-no-replySeptember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

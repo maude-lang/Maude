@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/stoptimer-no-replySeptember2026.maude -no-banner -no-advise \
+  > stoptimer-no-replySeptember2026.out 2>&1
+
+diff $srcdir/stoptimer-no-replySeptember2026.expected stoptimer-no-replySeptember2026.out > /dev/null 2>&1
