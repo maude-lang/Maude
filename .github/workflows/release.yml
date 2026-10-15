@@ -13,13 +13,13 @@ jobs:
     steps:
 
     - name: Check out repository code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
 
     - name: Build Maude
       run: .github/scripts/build_linux.sh
 
     - name: Upload binary
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: linux64/Maude-*.zip
 
@@ -31,7 +31,7 @@ jobs:
     steps:
 
     - name: Check out repository code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -39,7 +39,7 @@ jobs:
       run: .github/scripts/build_macos.sh arm64 /opt/homebrew
 
     - name: Upload binary
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: macos/Maude-*.zip
 
@@ -51,7 +51,7 @@ jobs:
     steps:
 
     - name: Check out repository code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
       with:
         submodules: true
 
@@ -59,6 +59,6 @@ jobs:
       run: .github/scripts/build_macos.sh x86_64 /usr/local
 
     - name: Upload binary
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         files: macos/Maude-*.zip
