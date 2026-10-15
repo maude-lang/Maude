@@ -1,0 +1,87 @@
+==========================================
+xmatch in AU-BUG : b c <=? b c b c .
+
+Matcher 1
+Matched portion = b c
+empty substitution
+
+Matcher 2
+Matched portion = b c
+empty substitution
+==========================================
+search in AU-BUG : b c b c b c =>+ X:L .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+X:L --> ok b c b c
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+X:L --> b c ok b c
+
+Solution 3 (state 3)
+states: 4  rewrites: 3
+X:L --> b c b c ok
+
+Solution 4 (state 4)
+states: 5  rewrites: 4
+X:L --> ok ok b c
+
+Solution 5 (state 5)
+states: 6  rewrites: 5
+X:L --> ok b c ok
+
+Solution 6 (state 6)
+states: 7  rewrites: 7
+X:L --> b c ok ok
+
+Solution 7 (state 7)
+states: 8  rewrites: 10
+X:L --> ok ok ok
+
+No more solutions.
+states: 8  rewrites: 12
+==========================================
+xmatch in A-BUG : b c <=? b c b c .
+
+Matcher 1
+Matched portion = b c
+empty substitution
+
+Matcher 2
+Matched portion = b c
+empty substitution
+==========================================
+search in A-BUG : b c b c b c =>+ X:L .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+X:L --> ok b c b c
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+X:L --> b c ok b c
+
+Solution 3 (state 3)
+states: 4  rewrites: 3
+X:L --> b c b c ok
+
+Solution 4 (state 4)
+states: 5  rewrites: 4
+X:L --> ok ok b c
+
+Solution 5 (state 5)
+states: 6  rewrites: 5
+X:L --> ok b c ok
+
+Solution 6 (state 6)
+states: 7  rewrites: 7
+X:L --> b c ok ok
+
+Solution 7 (state 7)
+states: 8  rewrites: 10
+X:L --> ok ok ok
+
+No more solutions.
+states: 8  rewrites: 12
+Bye.

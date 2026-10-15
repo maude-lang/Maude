@@ -175,7 +175,7 @@ AU_Term::compileLhs2(bool matchAtTop,
   //	(2) cannot handle the intricacies involved in one sided identity theories;
   //	(3) does not check that enough has been matched if extension present.
   //
-  bool greedy = !oneSidedIdentity &&
+  bool greedy = !variableInfo.allMatchesRequired() && !oneSidedIdentity &&
     (!matchAtTop || collapseSymbols().empty());
   int fixedLengthBlockStart = NONE;
   for (int i = leftPos; i <= rightPos; i++)

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/AU_WronglyUsedGreedyMatchingSeptember2026.maude -no-banner -no-advise \
+  > AU_WronglyUsedGreedyMatchingSeptember2026.out 2>&1
+
+diff $srcdir/AU_WronglyUsedGreedyMatchingSeptember2026.expected AU_WronglyUsedGreedyMatchingSeptember2026.out > /dev/null 2>&1

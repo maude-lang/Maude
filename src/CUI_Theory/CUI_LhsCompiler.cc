@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +74,8 @@ CUI_Term::compileLhs2(bool matchAtTop,
   //
   //	Check to see if greedy matching is safe.
   //
-  bool greedy = greedySafe(variableInfo, boundUniquely);
+  bool greedy = !variableInfo.allMatchesRequired() &&
+    greedySafe(variableInfo, boundUniquely);
   int flags = greedy ? CUI_LhsAutomaton::GREEDY_MATCH_OK : 0;
 
   Term* t0 = argArray[0];

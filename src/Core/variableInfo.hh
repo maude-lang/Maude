@@ -81,6 +81,16 @@ public:
   //	of a fresh variable source.
   //
   Term* variableNameConflict(FreshVariableGenerator& variableSource);
+  //
+  //	We keep a flag to record if matching algorithms should generate
+  //	all matches. Previously we finagled this by adding the pattern variables
+  //	to the condition variables, because matching compilation has to produce
+  //	an automaton that generates all matches that differ on condition variables
+  //	when we're trying to find a match that satisfies a condition. However this
+  //	trick fails for A/AU with extension and a ground pattern.
+  //
+  void requireAllMatches();
+  bool allMatchesRequired() const;
 
 private:
   enum Values
@@ -98,11 +108,24 @@ private:
 
   Vector<Term*> variables;
   int nrProtectedVariables;
-  int fragmentNumber;
+  short fragmentNumber;
+  bool allMatchesRequiredFlag = false;
   Vector<ConstructionIndex> constructionIndices;
   NatSet conditionVariables;
   NatSet unboundVariables;
 };
+
+inline void
+VariableInfo::requireAllMatches()
+{
+  allMatchesRequiredFlag = true;
+}
+
+inline bool
+VariableInfo::allMatchesRequired() const
+{
+  return allMatchesRequiredFlag;
+}
 
 inline int
 VariableInfo::getNrRealVariables() const

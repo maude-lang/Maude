@@ -1,3 +1,19 @@
+2026-10-14  Saruman the White  <eker@eker10>
+
+	* rule.cc (Rule::getNonExtLhsAutomaton): call requireAllMatches()
+	(Rule::getExtLhsAutomaton): call requireAllMatches()
+	(Rule::compile): don't add lhs variable to condition variables
+
+	* strategyDefinition.cc (StrategyDefinition::preprocess): call
+	requireAllMatches() rather than add lhs variables to condition
+	variables
+
+	* variableInfo.hh (class VariableInfo): made fragmentNumber a
+	short
+	(class VariableInfo): added data member allMatchesRequired
+	(VariableInfo::requireAllMatches): added
+	(VariableInfo::allMatchesRequired): added
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* sortConstraintTable.cc (SortConstraintTable::sortConstraintLt):

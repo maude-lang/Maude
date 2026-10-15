@@ -1,3 +1,8 @@
+2026-10-14  Saruman the White  <eker@eker10>
+
+	* AU_LhsCompiler.cc (AU_Term::compileLhs2): check
+	allMatchesRequired() before allowing greedy automaton
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* AU_RhsAutomaton.cc (AU_RhsAutomaton::buildArguments):

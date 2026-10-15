@@ -1,3 +1,16 @@
+2026-10-14  Saruman the White  <eker@eker10>
+
+	* pattern.cc (Pattern::prepare): call requireAllMatches() rather
+	than adding pattern variables to lhs variables
+
+2026-10-13  Saruman the White  <eker@eker10>
+
+	* pattern.hh (class Pattern): format and correct comment
+
+	* pattern.cc (Pattern::print): changed infinite loop to
+	CantHappen()
+	(Pattern::Pattern): formatting
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* searchState.cc (SearchState::hasCondition): local_inline ->
