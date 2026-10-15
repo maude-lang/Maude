@@ -1,0 +1,32 @@
+***
+***	Check that we don't use AU greedy matching for xmatch or search when
+***	pattern is a ground term.
+***
+
+set show timing off .
+set show advisories off .
+
+mod AU-BUG is
+  sorts Elt L .
+  subsort Elt < L .
+  ops a b c ok : -> Elt [ctor] .
+  op nil : -> L [ctor] .
+  op __ : L L -> L [ctor assoc id: nil] .
+  rl [g] : b c => ok .
+endm
+
+xmatch in AU-BUG : b c <=? b c b c .
+
+search b c b c b c =>+ X:L .
+
+mod A-BUG is
+  sorts Elt L .
+  subsort Elt < L .
+  ops a b c ok : -> Elt [ctor] .
+  op __ : L L -> L [ctor assoc] .
+  rl [g] : b c => ok .
+endm
+
+xmatch in A-BUG : b c <=? b c b c .
+
+search b c b c b c =>+ X:L .

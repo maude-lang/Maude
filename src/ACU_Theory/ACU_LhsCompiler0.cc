@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ ACU_Term::compileLhs2(bool matchAtTop,
   ACU_LhsAutomaton* a = tryToMakeSpecialCaseAutomaton(matchAtTop,
 						      variableInfo,
 						      boundUniquely);
-  if (a == 0)
+  if (a == nullptr)
     {
       a = new ACU_LhsAutomaton(symbol(),
 			       matchAtTop,
@@ -57,6 +57,8 @@ ACU_Term::tryToMakeSpecialCaseAutomaton(bool matchAtTop,
 					const VariableInfo& variableInfo,
 					NatSet& boundUniquely)
 {
+  if (variableInfo.allMatchesRequired())
+    return nullptr;
   if (matchAtTop && argArray.length() == 1)
     return tryToMakeNonLinearLhsAutomaton(variableInfo, boundUniquely);
   if (argArray.length() == 2 &&
@@ -66,11 +68,11 @@ ACU_Term::tryToMakeSpecialCaseAutomaton(bool matchAtTop,
     {
       ACU_LhsAutomaton* t = 
 	tryToMakeCollectorLhsAutomaton(matchAtTop, variableInfo, boundUniquely, 0);
-      if (t != 0)
+      if (t != nullptr)
 	return t;
       return tryToMakeCollectorLhsAutomaton(matchAtTop, variableInfo, boundUniquely, 1);
     }
-  return 0;
+  return nullptr;
 }
 
 ACU_LhsAutomaton*

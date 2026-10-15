@@ -1,3 +1,13 @@
+2026-10-14  Saruman the White  <eker@eker10>
+
+	* ACU_LhsCompiler1.cc (ACU_Term::compileLhs3): check
+	variableInfo.allMatchesRequired()
+	(ACU_Term::compileLhs3): compute greedy more efficiently
+
+	* ACU_LhsCompiler0.cc (ACU_Term::tryToMakeSpecialCaseAutomaton):
+	check variableInfo.allMatchesRequired(); use nullptr
+	(ACU_Term::compileLhs2): use nullptr
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* ACU_Matcher.cc: local_inline -> FORCE_INLINE

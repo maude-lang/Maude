@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -101,6 +101,7 @@ Rule::getNonExtLhsAutomaton()
     {
       NatSet boundUniquely;
       bool subproblemLikely;
+      requireAllMatches();
       nonExtLhsAutomaton = getLhs()->compileLhs(false, *this, boundUniquely, subproblemLikely);
     }
   return nonExtLhsAutomaton;
@@ -113,6 +114,7 @@ Rule::getExtLhsAutomaton()
     {
       NatSet boundUniquely;
       bool subproblemLikely;
+      requireAllMatches();
       extLhsAutomaton = getLhs()->compileLhs(true, *this, boundUniquely, subproblemLikely);
     }
   return extLhsAutomaton;
@@ -146,13 +148,6 @@ Rule::compile(bool compileLhs)
   //  builder.dump(cout, *this);
   compileMatch(compileLhs, true);
   builder.remapIndices(*this);
-  //
-  //	Make all variables in a rules lhs into condition variables so that
-  //	if we compile lhs again in getNonExtLhsAutomaton() or getExtLhsAutomaton()
-  //	it will be compiled to generate all matchers rather than just those
-  //	that differ on variables in the condition.
-  //
-  addConditionVariables(getLhs()->occursBelow());
 }
 
 int

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ ACU_Term::compileLhs3(bool matchAtTop,
   //	in to automaton and collect non-ground aliens.
   //
   Vector<Pair> nonGroundAliens;
-  bool greedy = true;
+  bool greedy = !variableInfo.allMatchesRequired();
   int lastUnboundVariable = UNDEFINED;
   int nrUnboundVariables = 0;
   int nrAbstractionVariables = 0;
@@ -142,9 +142,8 @@ ACU_Term::compileLhs3(bool matchAtTop,
 	    {
 	      lastUnboundVariable = index;
 	      ++nrUnboundVariables;
-	      if (t->occursInContext().contains(index) ||
-		  variableInfo.getConditionVariables().contains(index))
-		greedy = false;
+	      greedy = greedy && !(t->occursInContext().contains(index)) &&
+		!(variableInfo.getConditionVariables().contains(index));
 	      //++V_COUNT; // HACK
 	    }
 	}

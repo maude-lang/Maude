@@ -2,26 +2,56 @@
 erewrite in RUN : <> < me : User | option: breadthFirst, output: empty, input:
     n1999 @ 'additive-normal-form[[empty]] > createInterpreter(
     interpreterManager, me, none) .
-rewrites: 110
+rewrites: 127
 result Configuration: <> < me : User | option: breadthFirst, output: ('__[
+    'M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'L.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol], '__['M.RomanSymbol, 'D.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'L.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'V.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol], '__[
+    'M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'L.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol], '__['M.RomanSymbol, 'D.RomanSymbol,
+    'L.RomanSymbol, 'X.RomanSymbol, 'L.RomanSymbol, 'V.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol], '__[
     'M.RomanSymbol, 'D.RomanSymbol, 'C.RomanSymbol, 'X.RomanSymbol,
     'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
-    'I.RomanSymbol]), solcount: 1, input: '__['M.RomanSymbol, 'C.RomanSymbol,
-    'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol, 'I.RomanSymbol,
-    'X.RomanSymbol] @ 'additive-normal-form[[empty]] > noSuchResult(me,
-    interpreter(0), 0)
+    'I.RomanSymbol], '__['M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol,
+    'C.RomanSymbol, 'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol]), solcount: 6, input: '__['M.RomanSymbol,
+    'C.RomanSymbol, 'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol,
+    'I.RomanSymbol, 'X.RomanSymbol] @ 'additive-normal-form[[empty]] >
+    noSuchResult(me, interpreter(0), 0)
 ==========================================
 erewrite in RUN : <> < me : User | option: depthFirst, output: empty, input:
     n1999 @ 'additive-normal-form[[empty]] > createInterpreter(
     interpreterManager, me, none) .
-rewrites: 110
+rewrites: 127
 result Configuration: <> < me : User | option: depthFirst, output: ('__[
     'M.RomanSymbol, 'D.RomanSymbol, 'C.RomanSymbol, 'X.RomanSymbol,
     'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
-    'I.RomanSymbol]), solcount: 1, input: '__['M.RomanSymbol, 'C.RomanSymbol,
-    'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol, 'I.RomanSymbol,
-    'X.RomanSymbol] @ 'additive-normal-form[[empty]] > noSuchResult(me,
-    interpreter(0), 11)
+    'I.RomanSymbol], '__['M.RomanSymbol, 'D.RomanSymbol, 'L.RomanSymbol,
+    'X.RomanSymbol, 'L.RomanSymbol, 'V.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol], '__['M.RomanSymbol,
+    'D.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol, 'V.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol], '__[
+    'M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'L.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol], '__['M.RomanSymbol, 'D.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'L.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol, 'V.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol], '__[
+    'M.RomanSymbol, 'D.RomanSymbol, 'X.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'X.RomanSymbol, 'L.RomanSymbol, 'X.RomanSymbol,
+    'X.RomanSymbol, 'V.RomanSymbol, 'I.RomanSymbol, 'I.RomanSymbol,
+    'I.RomanSymbol, 'I.RomanSymbol]), solcount: 6, input: '__['M.RomanSymbol,
+    'C.RomanSymbol, 'M.RomanSymbol, 'X.RomanSymbol, 'C.RomanSymbol,
+    'I.RomanSymbol, 'X.RomanSymbol] @ 'additive-normal-form[[empty]] >
+    noSuchResult(me, interpreter(0), 16)
 ==========================================
 erewrite in RUN : <> < me : User | option: depthFirst, output: empty, input:
     n1999 @ 'add[none]{empty} > createInterpreter(interpreterManager, me, none)

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,7 +60,8 @@ Pattern::Pattern(Term* patternTerm,
   NatSet boundVariables;  // variables bound by matching
   check(boundVariables);
 
-  if (!lazy) prepare();
+  if (!lazy)
+    prepare();
 }
 
 void
@@ -69,7 +70,8 @@ Pattern::prepare()
   if (!isBad() && !prepared)
     {
       preprocess();
-      addConditionVariables(getLhs()->occursBelow());
+      requireAllMatches();
+      //addConditionVariables(getLhs()->occursBelow());
       TermBag availableTerms;  // terms available for reuse
       compileBuild(availableTerms, false);
       compileMatch(true, withExtension);
@@ -87,6 +89,10 @@ Pattern::traceBeginTrial(DagNode* subject, RewritingContext& context) const
 void
 Pattern::print(ostream& s) const
 {
-  // FIXME This is an infinite loop
-  s << this;
+  //
+  //	This function is needed by the PreEquation parent class but we 
+  //	should never call it on a Pattern since they aren't independent
+  //	printable entities like equations and rules.
+  //
+  CantHappen("shouldn't be called");
 }

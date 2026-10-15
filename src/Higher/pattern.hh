@@ -30,13 +30,13 @@
 class Pattern : public PreEquation
 {
 public:
-  /**
-   * Patterns can be defined lazy to postpone their sort information filling
-   * and compilation after the theory has been closed (pattern appear in strategy
-   * definitions within a module).
-   *
-   * Pattern::prepare must be called before using the pattern.
-   */
+  //
+  //	Patterns can be defined lazy to postpone their sort information filling
+  //	and compilation after the theory has been closed (pattern appear in strategy
+  //	definitions within a module).
+  //
+  //	Pattern::prepare must be called before using the pattern if lazy == true
+  //
   Pattern(Term* patternTerm,
 	  bool withExtension,
 	  const Vector<ConditionFragment*>& condition = noCondition,
