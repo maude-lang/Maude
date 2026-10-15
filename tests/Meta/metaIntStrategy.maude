@@ -36,7 +36,7 @@ mod RN-SIMPL-RULES is
   rl [add] : X L => X X X X .
   rl [add] : X C => L X X X X .
   rl [add] : C D => C C C C .
-  rl [add] : C M => D X X X X .
+  rl [add] : C M => D C C C C .
 
   crl [sort] : S1 S2 => S2 S1 if S2 > S1 .
 endm
