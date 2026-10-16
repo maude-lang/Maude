@@ -2077,98 +2077,98 @@ fmod META-MODULE is
   var STDFS : StratDefSet .
 
   op getName : Module -> Qid .
-  eq getName(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = Q .
-  eq getName(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = Q .
-  eq getName(fmod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS endfm) = Q .
-  eq getName(mod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = Q .
-  eq getName(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = Q .
-  eq getName(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = Q .
-  eq getName(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = Q .
-  eq getName(smod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = Q .
-  eq getName(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = Q .
+  eq getName(fmod Q is _ sorts _ . _ _ _ _ endfm) = Q .
+  eq getName(mod Q is _ sorts _ . _ _ _ _ _ endm) = Q .
+  eq getName(fmod Q{PDL} is _ sorts _ . _ _ _ _ endfm) = Q .
+  eq getName(mod Q{PDL} is _ sorts _ . _ _ _ _ _ endm) = Q .
+  eq getName(fth Q is _ sorts _ . _ _ _ _ endfth) = Q .
+  eq getName(th Q is _ sorts _ . _ _ _ _ _ endth) = Q .
+  eq getName(smod Q is _ sorts _ . _ _ _ _ _ _ _ endsm) = Q .
+  eq getName(smod Q{PDL} is _ sorts _ . _ _ _ _ _ _ _ endsm) = Q .
+  eq getName(sth Q is _ sorts _ . _ _ _ _ _ _ _ endsth) = Q .
 
   op getParameters : Module -> ParameterDeclList .
-  eq getParameters(fmod Q is IL sorts SS . SSDS OPDS MAS EQS endfm) = nil .
-  eq getParameters(mod Q is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = nil .
-  eq getParameters(fmod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS endfm) = PDL .
-  eq getParameters(mod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = PDL .
-  eq getParameters(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = nil .
-  eq getParameters(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = nil .
-  eq getParameters(smod Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = nil .
-  eq getParameters(smod Q{PDL} is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = PDL .
-  eq getParameters(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = nil .
+  eq getParameters(fmod Q is _ sorts _ . _ _ _ _ endfm) = nil .
+  eq getParameters(mod Q is _ sorts _ . _ _ _ _ _ endm) = nil .
+  eq getParameters(fmod _{PDL} is _ sorts _ . _ _ _ _ endfm) = PDL .
+  eq getParameters(mod _{PDL} is _ sorts _ . _ _ _ _ _ endm) = PDL .
+  eq getParameters(fth Q is _ sorts _ . _ _ _ _ endfth) = nil .
+  eq getParameters(th Q is _ sorts _ . _ _ _ _ _ endth) = nil .
+  eq getParameters(smod Q is _ sorts _ . _ _ _ _ _ _ _ endsm) = nil .
+  eq getParameters(smod _{PDL} is _ sorts _ . _ _ _ _ _ _ _ endsm) = PDL .
+  eq getParameters(sth Q is _ sorts _ . _ _ _ _ _ _ _ endsth) = nil .
 
   op getImports : Module -> ImportList .
-  eq getImports(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = IL .
-  eq getImports(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = IL .
-  eq getImports(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = IL .
-  eq getImports(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = IL .
-  eq getImports(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = IL .
-  eq getImports(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = IL .
+  eq getImports(fmod _ is IL sorts _ . _ _ _ _ endfm) = IL .
+  eq getImports(mod _ is IL sorts _ . _ _ _ _ _ endm) = IL .
+  eq getImports(fth _ is IL sorts _ . _ _ _ _ endfth) = IL .
+  eq getImports(th _ is IL sorts _ . _ _ _ _ _ endth) = IL .
+  eq getImports(smod _ is IL sorts _ . _ _ _ _ _ _ _ endsm) = IL .
+  eq getImports(sth _ is IL sorts _ . _ _ _ _ _ _ _ endsth) = IL .
 
   op getSorts : Module -> SortSet .
-  eq getSorts(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = SS .
-  eq getSorts(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SS .
-  eq getSorts(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = SS .
-  eq getSorts(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = SS .
-  eq getSorts(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = SS .
-  eq getSorts(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = SS .
+  eq getSorts(fmod _ is _ sorts SS . _ _ _ _ endfm) = SS .
+  eq getSorts(mod _ is _ sorts SS . _ _ _ _ _ endm) = SS .
+  eq getSorts(fth _ is _ sorts SS . _ _ _ _ endfth) = SS .
+  eq getSorts(th _ is _ sorts SS . _ _ _ _ _ endth) = SS .
+  eq getSorts(smod _ is _ sorts SS . _ _ _ _ _ _ _ endsm) = SS .
+  eq getSorts(sth _ is _ sorts SS . _ _ _ _ _ _ _ endsth) = SS .
 
   op getSubsorts : Module -> SubsortDeclSet .
-  eq getSubsorts(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = SSDS .
-  eq getSubsorts(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = SSDS .
-  eq getSubsorts(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = SSDS .
-  eq getSubsorts(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = SSDS .
-  eq getSubsorts(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = SSDS .
-  eq getSubsorts(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = SSDS .
+  eq getSubsorts(fmod _ is _ sorts _ . SSDS _ _ _ endfm) = SSDS .
+  eq getSubsorts(mod _ is _ sorts _ . SSDS _ _ _ _ endm) = SSDS .
+  eq getSubsorts(fth _ is _ sorts _ . SSDS _ _ _ endfth) = SSDS .
+  eq getSubsorts(th _ is _ sorts _ . SSDS _ _ _ _ endth) = SSDS .
+  eq getSubsorts(smod _ is _ sorts _ . SSDS _ _ _ _ _ _ endsm) = SSDS .
+  eq getSubsorts(sth _ is _ sorts _ . SSDS _ _ _ _ _ _ endsth) = SSDS .
 
   op getOps : Module -> OpDeclSet .
-  eq getOps(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = OPDS .
-  eq getOps(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = OPDS .
-  eq getOps(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = OPDS .
-  eq getOps(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = OPDS .
-  eq getOps(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = OPDS .
-  eq getOps(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = OPDS .
+  eq getOps(fmod _ is _ sorts _ . _ OPDS _ _ endfm) = OPDS .
+  eq getOps(mod _ is _ sorts _ . _ OPDS _ _ _ endm) = OPDS .
+  eq getOps(fth _ is _ sorts _ . _ OPDS _ _ endfth) = OPDS .
+  eq getOps(th _ is _ sorts _ . _ OPDS _ _ _ endth) = OPDS .
+  eq getOps(smod _ is _ sorts _ . _ OPDS _ _ _ _ _ endsm) = OPDS .
+  eq getOps(sth _ is _ sorts _ . _ OPDS _ _ _ _ _ endsth) = OPDS .
 
   op getMbs : Module -> MembAxSet .
-  eq getMbs(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = MAS .
-  eq getMbs(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = MAS .
-  eq getMbs(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = MAS .
-  eq getMbs(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = MAS .
-  eq getMbs(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = MAS .
-  eq getMbs(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = MAS .
+  eq getMbs(fmod _ is _ sorts _ . _ _ MAS _ endfm) = MAS .
+  eq getMbs(mod _ is _ sorts _ . _ _ MAS _ _ endm) = MAS .
+  eq getMbs(fth _ is _ sorts _ . _ _ MAS _ endfth) = MAS .
+  eq getMbs(th _ is _ sorts _ . _ _ MAS _ _ endth) = MAS .
+  eq getMbs(smod _ is _ sorts _ . _ _ MAS _ _ _ _ endsm) = MAS .
+  eq getMbs(sth _ is _ sorts _ . _ _ MAS _ _ _ _ endsth) = MAS .
 
   op getEqs : Module -> EquationSet .
-  eq getEqs(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = EQS .
-  eq getEqs(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = EQS .
-  eq getEqs(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = EQS .
-  eq getEqs(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = EQS .
-  eq getEqs(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = EQS .
-  eq getEqs(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = EQS .
+  eq getEqs(fmod _ is _ sorts _ . _ _ _ EQS endfm) = EQS .
+  eq getEqs(mod _ is _ sorts _ . _ _ _ EQS _ endm) = EQS .
+  eq getEqs(fth _ is _ sorts _ . _ _ _ EQS endfth) = EQS .
+  eq getEqs(th _ is _ sorts _ . _ _ _ EQS _ endth) = EQS .
+  eq getEqs(smod _ is _ sorts _ . _ _ _ EQS _ _ _ endsm) = EQS .
+  eq getEqs(sth _ is _ sorts _ . _ _ _ EQS _ _ _ endsth) = EQS .
 
   op getRls : Module -> RuleSet .
-  eq getRls(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = none .
-  eq getRls(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = RLS .
-  eq getRls(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = none .
-  eq getRls(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = RLS .
-  eq getRls(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = RLS .
-  eq getRls(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = RLS .
+  eq getRls(fmod _ is _ sorts _ . _ _ _ _ endfm) = none .
+  eq getRls(mod _ is _ sorts _ . _ _ _ _ RLS endm) = RLS .
+  eq getRls(fth _ is _ sorts _ . _ _ _ _ endfth) = none .
+  eq getRls(th _ is _ sorts _ . _ _ _ _ RLS endth) = RLS .
+  eq getRls(smod _ is _ sorts _ . _ _ _ _ RLS _ _ endsm) = RLS .
+  eq getRls(sth _ is _ sorts _ . _ _ _ _ RLS _ _ endsth) = RLS .
 
   op getStrats : Module -> StratDeclSet .
-  eq getStrats(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = none .
-  eq getStrats(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = none .
-  eq getStrats(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = none .
-  eq getStrats(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = none .
-  eq getStrats(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = STDS .
-  eq getStrats(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = STDS .
+  eq getStrats(fmod _ is _ sorts _ . _ _ _ _ endfm) = none .
+  eq getStrats(mod _ is _ sorts _ . _ _ _ _ _ endm) = none .
+  eq getStrats(fth _ is _ sorts _ . _ _ _ _ endfth) = none .
+  eq getStrats(th _ is _ sorts _ . _ _ _ _ _ endth) = none .
+  eq getStrats(smod _ is _ sorts _ . _ _ _ _ _ STDS _ endsm) = STDS .
+  eq getStrats(sth _ is _ sorts _ . _ _ _ _ _ STDS _ endsth) = STDS .
 
   op getSds : Module -> StratDefSet .
-  eq getSds(fmod H is IL sorts SS . SSDS OPDS MAS EQS endfm) = none .
-  eq getSds(mod H is IL sorts SS . SSDS OPDS MAS EQS RLS endm) = none .
-  eq getSds(fth Q is IL sorts SS . SSDS OPDS MAS EQS endfth) = none .
-  eq getSds(th Q is IL sorts SS . SSDS OPDS MAS EQS RLS endth) = none .
-  eq getSds(smod H is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsm) = STDFS .
-  eq getSds(sth Q is IL sorts SS . SSDS OPDS MAS EQS RLS STDS STDFS endsth) = STDFS .
+  eq getSds(fmod _ is _ sorts _ . _ _ _ _ endfm) = none .
+  eq getSds(mod _ is _ sorts _ . _ _ _ _ _ endm) = none .
+  eq getSds(fth _ is _ sorts _ . _ _ _ _ endfth) = none .
+  eq getSds(th _ is _ sorts _ . _ _ _ _ _ endth) = none .
+  eq getSds(smod _ is _ sorts _ . _ _ _ _ _ _ STDFS endsm) = STDFS .
+  eq getSds(sth _ is _ sorts _ . _ _ _ _ _ _ STDFS endsth) = STDFS .
 endfm
 
 fmod META-VIEW is
@@ -2227,7 +2227,7 @@ fmod META-VIEW is
   eq getFrom(view _ from ME:ModuleExpression to _ is _ _ _ endv) = ME .
 
   op getTo : View -> ModuleExpression .
-  eq getTo(view _ from _ to ME':ModuleExpression is _ _ _ endv) = ME' .
+  eq getTo(view _ from _ to ME:ModuleExpression is _ _ _ endv) = ME .
 
   op getSortMappings : View -> SortMappingSet .
   eq getSortMappings(view _ from _ to _ is SMS:SortMappingSet _ _ endv) = SMS .

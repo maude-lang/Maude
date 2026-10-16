@@ -1,3 +1,8 @@
+2026-10-15  Saruman the White  <eker@eker10>
+
+	* prelude.maude: use otf variable scope extension and wildcards
+	for module projection functions; ME' -> ME in fmod META-VIEW
+
 2026-10-12  Saruman the White  <eker@eker10>
 
 	* prelude.maude: use wildcards and otf scope extension for fmod
