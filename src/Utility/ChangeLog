@@ -1,3 +1,19 @@
+2026-10-18  Saruman the White  <eker@eker10>
+
+	* pointerMap.cc (PointerMap::hash): replaced with Google AI Search
+	suggestion
+	(PointerMap::hash2): ditto
+
+	* intSet.cc (IntSet::hash): replaced with Google AI Search
+	suggestion as std::hash<int> is the identity function with gcc and
+	Clang
+	(IntSet::hash2): ditto
+
+	* vector.hh (Vector<T>::operator=): make move version noexcept so
+	that STL containers will use it
+	(Vector<T>::Vector): make move version noexcept so that STL
+	containers will use it
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* timer.cc (Timer::calculateMicroseconds): local_inline ->

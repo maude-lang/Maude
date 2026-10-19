@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,10 +54,10 @@ public:
   Vector();
   Vector(size_type length);
   Vector(const Vector& original);
-  Vector(Vector&& original);  // move ctor
+  Vector(Vector&& original) noexcept;  // move ctor
   ~Vector();
   Vector& operator=(const Vector& original);
-  Vector& operator=(Vector<T>&& original);  // move assignment
+  Vector& operator=(Vector<T>&& original) noexcept;  // move assignment
   //
   //	We don't support rbegin()/rend() - their semantics are too error prone; or cbegin()/cend()/crbegin()/crend().
   //
@@ -165,7 +165,7 @@ Vector<T>::Vector(const Vector& original)
 
 template<class T>
 inline
-Vector<T>::Vector(Vector&& original)
+Vector<T>::Vector(Vector&& original) noexcept
 {
   //
   //	Move ctor; sets original to null Vector.
@@ -469,7 +469,7 @@ Vector<T>::operator=(const Vector<T>& original)
 
 template<class T>
 inline Vector<T>&
-Vector<T>::operator=(Vector<T>&& original)
+Vector<T>::operator=(Vector<T>&& original) noexcept
 {
   //
   //	Move assignment.

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,17 +27,54 @@
 #include "vector.hh"
 #include "intSet.hh"
 
+//
+//	Hash functions suggested by Google AI Search.
+//
 inline int
 IntSet::hash(int i)
 {
-  return std::hash<int>{}(i);
+  // Check if we are on a 64-bit platform at compile-time
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64) || (__SIZEOF_POINTER__ == 8)
+  uint64_t x = static_cast<uint64_t>(static_cast<uint32_t>(i));
+  x ^= x >> 30;
+  x *= UINT64_C(0xbf58476d1ce4e5b9);
+  x ^= x >> 27;
+  x *= UINT64_C(0x94d049bb133111eb);
+  x ^= x >> 31;
+  return static_cast<int>(x);
+#else
+  // 32-bit Platform native mixer (Prospector32)
+  uint32_t x = static_cast<uint32_t>(i);
+  x ^= x >> 15;
+  x *= 0x2c1b3c6dU;
+  x ^= x >> 12;
+  x *= 0x297a2d39U;
+  x ^= x >> 15;
+  return static_cast<int>(x);
+#endif
 }
- 
+
 inline int
 IntSet::hash2(int i)  // 2nd hash function must always return an odd value
 {
-  std::size_t h = std::hash<int>{}(i);
-  return (h ^ (h >> 8)) | 1;
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64) || (__SIZEOF_POINTER__ == 8)
+  uint64_t x = static_cast<uint64_t>(static_cast<uint32_t>(i));
+  x ^= x >> 33;
+  x *= UINT64_C(0xff51afd7ed558ccd);
+  x ^= x >> 33;
+  x *= UINT64_C(0xc4ceb9fe1a85ec53);
+  x ^= x >> 33;
+  return static_cast<int>(x | 1ULL);
+#else
+  // 32-bit Platform native stride mixer (Lowbias32)
+  uint32_t x = static_cast<uint32_t>(i);
+  x ^= x >> 16;
+  x *= 0x7feb352dU;
+  x ^= x >> 15;
+  x *= 0x846ca68bU;
+  x ^= x >> 16;
+  return static_cast<int>(x | 1U);
+#endif
 }
 
 int

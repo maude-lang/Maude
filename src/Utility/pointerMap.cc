@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,18 +31,55 @@
 #include "vector.hh"
 #include "pointerMap.hh"
 
+//
+//	Hash functions suggested by Google AI Search.
+//
 inline int
 PointerMap::hash(const void* pointer)
 {
-  int i = reinterpret_cast<long>(pointer);
-  return (i >> NR_PTR_LOSE_BITS) ^ (i >> (2 * NR_PTR_LOSE_BITS));
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64) || (__SIZEOF_POINTER__ == 8)
+  // 64-bit: Cast directly to 64-bit unsigned integer
+  uint64_t x = reinterpret_cast<uint64_t>(pointer) >> 3;
+  x ^= x >> 30;
+  x *= UINT64_C(0xbf58476d1ce4e5b9);
+  x ^= x >> 27;
+  x *= UINT64_C(0x94d049bb133111eb);
+  x ^= x >> 31;
+  return static_cast<int>(x);
+#else
+  // 32-bit: Cast directly to 32-bit unsigned integer
+  uint32_t x = reinterpret_cast<uint32_t>(pointer) >> 2;
+  x ^= x >> 15;
+  x *= 0x2c1b3c6dU;
+  x ^= x >> 12;
+  x *= 0x297a2d39U;
+  x ^= x >> 15;
+  return static_cast<int>(x);
+#endif
 }
 
 inline int
-PointerMap::hash2(const void* pointer)  // 2nd hash function must always return an odd value
+PointerMap::hash2(const void* pointer) // 2nd hash function must always return an odd value
 {
-  int i = reinterpret_cast<long>(pointer);
-  return ((i >> NR_PTR_LOSE_BITS) ^ (i >> (WORD_SIZE / 2))) | 1;
+#if defined(__x86_64__) || defined(__aarch64__) || defined(_WIN64) || (__SIZEOF_POINTER__ == 8)
+  // 64-bit: Cast directly to 64-bit unsigned integer
+  uint64_t x = reinterpret_cast<uint64_t>(pointer) >> 3;
+  x ^= x >> 33;
+  x *= UINT64_C(0xff51afd7ed558ccd);
+  x ^= x >> 33;
+  x *= UINT64_C(0xc4ceb9fe1a85ec53);
+  x ^= x >> 33;
+  return static_cast<int>(x | 1ULL);
+#else
+  // 32-bit: Cast directly to 32-bit unsigned integer
+  uint32_t x = reinterpret_cast<uint32_t>(pointer) >> 2;
+  x ^= x >> 16;
+  x *= 0x7feb352dU;
+  x ^= x >> 15;
+  x *= 0x846ca68bU;
+  x ^= x >> 16;
+  return static_cast<int>(x | 1U);
+#endif
 }
 
 PointerMap::PointerMap(int size)
