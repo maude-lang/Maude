@@ -965,37 +965,31 @@ MixfixModule::instantiatePolymorph(int polymorphIndex, int kindIndex)
 QuotedIdentifierSymbol*
 MixfixModule::findQuotedIdentifierSymbol(const ConnectedComponent* component) const
 {
-  map<int, Symbol*>::const_iterator i =
-    quotedIdentifierSymbols.find(component->getIndexWithinModule());
-  return (i == quotedIdentifierSymbols.end()) ? 0 :
-    static_cast<QuotedIdentifierSymbol*>((*i).second);
+  SymMap::const_iterator i = quotedIdentifierSymbols.find(component->getIndexWithinModule());
+  return (i == quotedIdentifierSymbols.end()) ? nullptr :
+    safeCastNonNull<QuotedIdentifierSymbol*>((*i).second);
 }
 
 StringSymbol*
 MixfixModule::findStringSymbol(const ConnectedComponent* component) const
 {
-  map<int, Symbol*>::const_iterator i =
-    stringSymbols.find(component->getIndexWithinModule());
-  return (i == stringSymbols.end()) ? 0 :
-    static_cast<StringSymbol*>((*i).second);
+  SymMap::const_iterator i = stringSymbols.find(component->getIndexWithinModule());
+  return (i == stringSymbols.end()) ? nullptr : safeCastNonNull<StringSymbol*>((*i).second);
 }
 
 FloatSymbol*
 MixfixModule::findFloatSymbol(const ConnectedComponent* component) const
 {
-  map<int, Symbol*>::const_iterator i =
-    floatSymbols.find(component->getIndexWithinModule());
-  return (i == floatSymbols.end()) ? 0 :
-    static_cast<FloatSymbol*>((*i).second);
+  SymMap::const_iterator i = floatSymbols.find(component->getIndexWithinModule());
+  return (i == floatSymbols.end()) ? nullptr : safeCastNonNull<FloatSymbol*>((*i).second);
 }
 
 SMT_NumberSymbol*
 MixfixModule::findSMT_NumberSymbol(const ConnectedComponent* component, SMT_Info::SMT_Type type)
 {
-  map<int, Symbol*>::const_iterator i =
-    SMT_NumberSymbols.find(component->getIndexWithinModule());
+  SymMap::const_iterator i = SMT_NumberSymbols.find(component->getIndexWithinModule());
   if ((i == SMT_NumberSymbols.end()))
-    return 0;
+    return nullptr;
   //
   //	Found an SMT_NumberSymbol; need to check if it is the right type.
   //
@@ -1003,7 +997,7 @@ MixfixModule::findSMT_NumberSymbol(const ConnectedComponent* component, SMT_Info
   Sort* sort = symbol->getRangeSort();
   SMT_Info::SMT_Type t = getSMT_Info().getType(sort);
   Assert(t != SMT_Info::NOT_SMT, "bad SMT sort " << sort);
-  return (t == type) ? safeCast(SMT_NumberSymbol*, symbol) : 0;
+  return (t == type) ? safeCastNonNull<SMT_NumberSymbol*>(symbol) : nullptr;
 }
 
 void

@@ -1,3 +1,17 @@
+2026-10-18  Saruman the White  <eker@eker10>
+
+	* mixfixModule.hh (class MixfixModule): switch IntMap and SortMap
+	from map<> to unordered_map<>
+	(class MixfixModule): ditto for SymMap
+
+	* mixfixModule.cc (MixfixModule::findQuotedIdentifierSymbol)
+	(MixfixModule::findStringSymbol, MixfixModule::findFloatSymbol)
+	(MixfixModule::findSMT_NumberSymbol): use SymMap, nullptr,
+	safeCastNonNull<>()
+
+	* mixfixModule.hh (class MixfixModule): add and use typedef
+	SymMap
+
 2026-10-05  Saruman the White  <eker@eker10>
 
 	* extendedParse.cc (MixfixParser::makeOtfTranslations): use

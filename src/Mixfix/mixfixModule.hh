@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <gmpxx.h>
 #include <set>
 #include <map>
+#include <unordered_map>
 #include <list>
 #include "strategyLanguage.hh"
 #include "profileModule.hh"
@@ -85,7 +86,7 @@ public:
     GATHER_AMP = 1
   };
 
-  typedef map<int, Sort*> AliasMap;
+  typedef map<int, Sort*> AliasMap;  // order is visible so we want consistency
 
   MixfixModule(int name, ModuleType moduleType);
   ~MixfixModule();
@@ -780,11 +781,11 @@ private:
   //	of a grammar and cleared immediately after. Thus they need not
   //	be preserved during parser swapping.
   //
-  typedef map<int, int> IntMap;
+  typedef unordered_map<int, int> IntMap;
   IntMap iterSymbols;  // maps from name code to unique nonterminals
   IntMap leadTokens;  // maps from lead tokens of structured sort to unique nonterminals
 
-  typedef map<int, Sort*> SortMap;
+  typedef unordered_map<int, Sort*> SortMap;
   SortMap sortNames;  // maps from name codes to sort pointers
 
   IntMap firstSymbols;  // names from name codes to index of first symbol with that name
@@ -814,13 +815,14 @@ private:
   //	disambiguate by sort in the pretty printer and to
   //	find builtin symbols from their kind index.
   //
+  typedef unordered_map<int, Symbol*> SymMap;
   set<double> overloadedFloats;
-  map<int, Symbol*> floatSymbols;
+  SymMap floatSymbols;
   set<string> overloadedStrings;
-  map<int, Symbol*> stringSymbols;
+  SymMap stringSymbols;
   set<int> overloadedQuotedIdentifiers;
-  map<int, Symbol*> quotedIdentifierSymbols;
-  map<int, Symbol*> SMT_NumberSymbols;
+  SymMap quotedIdentifierSymbols;
+  SymMap SMT_NumberSymbols;
   //
   //	We keep sets of integers and rationals whose decimal i/o
   //	representation has been used for user symbols of arity 0.
