@@ -133,6 +133,11 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       //	We're the child.
       //
       UserLevelRewritingContext::ignoreCtrlC();  // don't respond to ctrl-C
+      //
+      //	fork() loses the alternate stack so we reinstall the segv and
+      //	stack overflow handlers.
+      //
+      UserLevelRewritingContext::installLibsigsegvHandlers();
       extern IO_Manager ioManager;  // HACK
       ioManager.unsetAutoWrap();  // don't do wrapping on our output
       //

@@ -70,6 +70,7 @@ public:
 
   static void ignoreCtrlC();
   static void setHandlers(bool handleCtrlC);
+  static void installLibsigsegvHandlers();
   static ParseResult commandLoop();
   static bool interrupted();
   static bool aborted();

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
     }
   //
   //	We want to have requests for info to be minimally disruptive
-  //	so we request system calls that are interrrupted be restarted.
+  //	so we request system calls that are interrupted be restarted.
   //
   static struct sigaction sigInfoHandler;
   sigInfoHandler.sa_handler = infoHandler;
@@ -113,27 +113,17 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
   signal(SIGILL, internalErrorHandler);  // illegal instruction
 
 #ifdef USE_LIBSIGSEGV
-  //
-  //	Stack overflows are reported as SIGSEGV signals and so we need to use the
-  //	libsigsegv library to heuristically distinguish the two conditions.
-  //
-  size_t altStackSize = SIGSTKSZ;  // might not be a compile time constant
-  void* altStack = malloc(altStackSize);
-  if (altStack == 0)
-    {
-      cerr << "Fatal error: unable to allocate alternative stack." << endl;
-      exit(OUT_OF_MEMORY);
-    }
-  sigsegv_install_handler(sigsegvHandler);  // illegal memory access or stack overflow
-  stackoverflow_install_handler(stackOverflowHandler, altStack, altStackSize);
+  installLibsigsegvHandlers();
 #else
   //
   //	If we can't use the library we will will catch SIGSEGVs but not install
-  //	an alternative stack so that that stack overflows will show up as
-  //	segmentation faults.
+  //	an alternate stack so that that stack overflows will show up as
+  //	uncaught segmentation faults, while real segmentation faults will
+  //	be caught and reported as internal errors.
   //
   signal(SIGSEGV, internalErrorHandler);
 #endif
+
 #endif
   //
   //	Because we can't ensure that when we write to a pipe or socket
@@ -148,6 +138,69 @@ UserLevelRewritingContext::setHandlers(bool handleCtrlC)
   //
   changePrompt();
   ioManager.setContPrompt("> ");
+}
+
+void
+UserLevelRewritingContext::installLibsigsegvHandlers()
+{
+#ifdef NO_ASSERT
+#ifdef USE_LIBSIGSEGV
+  //
+  //	This handles both the installation and reinstallation of libsigsev handlers.
+  //	Reinstallation is needed in a child because alternate stacks are not
+  //	preserved in the child after a fork().
+  //
+  static size_t altStackSize = 0;  // SIGSTKSZ might not be a compile time constant
+  static void* altStack = nullptr;
+
+  if (altStack == nullptr)
+    {
+      //
+      //	Must be the top level process.
+      //
+      altStackSize = SIGSTKSZ;
+      altStack = malloc(altStackSize);
+      if (altStack == nullptr)
+	{
+	  //
+	  //	Don't trust cerr if we're out of memory.
+	  //
+	  static char allocFail[] = "Fatal error: unable to allocate alternate stack.\n";
+	  returnValueDump = write(STDERR_FILENO, allocFail, sizeof(allocFail) - 1);
+	  fsync(STDERR_FILENO);  // needed to avoid _exit() losing message on Mac OS <= 10.5
+	  _exit(OUT_OF_MEMORY);  // don't flush any buffers.
+	}
+    }
+  else
+    {
+      //
+      //	Must be a child process.
+      //
+      long pageSize = sysconf(_SC_PAGESIZE);
+      if (pageSize <= 0) {
+	pageSize = 4096; // fail-safe default fallback if system call fails
+      }
+      //
+      //	Read and write back a byte from each page to break COW bond between
+      //	the parent's alternate stack and the child's alternate stack.
+      //
+      volatile char* touch = (volatile char*) altStack;
+      for (size_t i = 0; i < altStackSize; i += pageSize)
+        touch[i] = touch[i];
+      touch[altStackSize - 1] = touch[altStackSize - 1]; // guarantee the trailing page splits COW
+      //
+      //	Uninstall parent's handlers.
+      //
+      stackoverflow_deinstall_handler();
+      sigsegv_deinstall_handler();
+    }
+  //
+  //	Install handlers using alternate stack.
+  //
+  sigsegv_install_handler(sigsegvHandler);
+  stackoverflow_install_handler(stackOverflowHandler, altStack, altStackSize);
+#endif
+#endif
 }
 
 #ifdef USE_LIBSIGSEGV
@@ -169,7 +222,8 @@ Depending on your operating system configuration you may be able to\n\
 increase your stacksize with the tcsh command 'unlimit stacksize'\n\
 or the bash command 'ulimit -s unlimited'.\n\n";
   returnValueDump = write(STDERR_FILENO, message, sizeof(message) - 1);
-  exit(STACK_OVERFLOW);  // calling _exit() loses the message on Macs
+  fsync(STDERR_FILENO);  // needed to avoid _exit() losing message on Mac OS <= 10.5
+  _exit(STACK_OVERFLOW);
 }
 
 int
@@ -197,7 +251,8 @@ runtime to the bug being visible is greater than 10 seconds.\n\n";
   returnValueDump = write(STDERR_FILENO, message1, sizeof(message1) - 1);
   returnValueDump = write(STDERR_FILENO, message2, sizeof(message2) - 1);
   returnValueDump = write(STDERR_FILENO, message3, sizeof(message3) - 1);
-  exit(INTERNAL_ERROR);  // calling _exit() loses the message on Macs
+  fsync(STDERR_FILENO);  // needed to avoid _exit() losing message on Mac OS <= 10.5
+  _exit(INTERNAL_ERROR);
 }
 
 void
