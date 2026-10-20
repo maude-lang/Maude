@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -52,25 +52,47 @@ getInputFromRope(char* buf, yy_size_t& result, yy_size_t max_size)
     }
 }
 
+//
+//	We do some checks for corruption, but it's possible that a corrupt
+//	serialization could be a serialization of a different dag.
+//	We're mostly concerned about not crashing the receiver.
+//
+
 static DagNode*
 makeDagNode(MixfixModule* m)
 {
   Symbol* symbol;
   if (opType == EAGER_SORT_TEST || opType == LAZY_SORT_TEST)
     {
+
+      int nrSorts = m->getSorts().size();
+      if (savedIndex >= nrSorts)
+	return nullptr;  // corrupt - not a valid sort index
       Sort* sort = m->getSorts()[savedIndex];
       symbol = m->instantiateSortTest(sort, opType == EAGER_SORT_TEST);
     }
   else
     {
-      symbol = (opType == POLYMORPH) ?
-	m->instantiatePolymorph(savedIndex, savedKindIndex) :
-	m->getSymbols()[savedIndex];
+      if (opType == POLYMORPH)
+	{
+	  if (savedIndex >= m->getNrPolymorphs())
+	    return nullptr;  // corrupt - not a valid polymorph index
+	  int nrKinds = m->getConnectedComponents().size();
+	  if (savedKindIndex >= nrKinds)
+	    return nullptr;  // corrupt - not a valid kind index
+	  symbol = m->instantiatePolymorph(savedIndex, savedKindIndex);
+	}
+      else
+	{
+	  int nrSymbols = m->getSymbols().size();
+	  if (savedIndex >= nrSymbols)
+	    return nullptr;  // corrupt - not a valid symbol index
+	  symbol = m->getSymbols()[savedIndex];
+	}
       SymbolType type = m->getSymbolType(symbol);
-      //cout << "symbolType " << type << endl;
       if (type.hasFlag(SymbolType::ITER))
 	{
-	  S_Symbol* s = safeCast(S_Symbol*, symbol);
+	  S_Symbol* s = safeCastNonNull<S_Symbol*>(symbol);
 	  return new S_DagNode(s, savedBigNum, argList[0]);
 	}
     }
@@ -80,46 +102,76 @@ makeDagNode(MixfixModule* m)
 static DagNode*
 makeVariableDagNode(MixfixModule* m, int code)
 {
+  int nrSorts = m->getSorts().size();
+  if (savedIndex >= nrSorts)
+    return nullptr;  // corrupt - not a valid sort index
   Sort* sort = m->getSorts()[savedIndex];
-  VariableSymbol* symbol = safeCast(VariableSymbol*, m->instantiateVariable(sort));
+  VariableSymbol* symbol = safeCastNonNull<VariableSymbol*>(m->instantiateVariable(sort));
   return new VariableDagNode(symbol, code, NONE);
 }
 
 static DagNode*
 makeQuotedIdentifierDagNode(MixfixModule* m, int code)
 {
+  int nrSymbols = m->getSymbols().size();
+  if (savedIndex >= nrSymbols)
+    return nullptr;  // corrupt - not a valid symbol index
   Symbol* symbol = m->getSymbols()[savedIndex];
-  QuotedIdentifierSymbol* s = safeCast(QuotedIdentifierSymbol*, symbol);
+  QuotedIdentifierSymbol* s = dynamic_cast<QuotedIdentifierSymbol*>(symbol);
+  if (s == nullptr)
+    return nullptr;  // corrupt - not a valid qid symbol
   return new QuotedIdentifierDagNode(s, code);
 }
 
 static DagNode*
 makeStringDagNode(MixfixModule* m, const char* quotedString)
 {
+  int nrSymbols = m->getSymbols().size();
+  if (savedIndex >= nrSymbols)
+    return nullptr;  // corrupt - not a valid symbol index
   Symbol* symbol = m->getSymbols()[savedIndex];
-  StringSymbol* s = safeCast(StringSymbol*, symbol);
+  StringSymbol* s = dynamic_cast<StringSymbol*>(symbol);
+  if (s == nullptr)
+    return nullptr;  // corrupt - not a valid string symbol
   return new StringDagNode(s, Token::stringToRope(quotedString));
 }
 
 static DagNode*
 makeFloatDagNode(MixfixModule* m, const char* bitsAsInt64)
 {
+  int nrSymbols = m->getSymbols().size();
+  if (savedIndex >= nrSymbols)
+    return nullptr;  // corrupt - not a valid symbol index
   Symbol* symbol = m->getSymbols()[savedIndex];
-  FloatSymbol* s = safeCast(FloatSymbol*, symbol);
+  FloatSymbol* s = dynamic_cast<FloatSymbol*>(symbol);
+  if (s == nullptr)
+    return nullptr;  // corrupt - not a valid string symbol
 
   bool error;
   Int64 dBits = stringToInt64(bitsAsInt64, error);
+  if (error)
+    return nullptr;  // corrupt - not a valid 64 bit int
+  //
+  //	Currently we don't validate the bits in a float.
+  //
   double d;
   memcpy(&d, &dBits, sizeof(d));
-  
   return new FloatDagNode(s, d);
 }
 
 static DagNode*
 makeSMT_NumberDagNode(MixfixModule* m, const char* stringRep)
 {
+  int nrSymbols = m->getSymbols().size();
+  if (savedIndex >= nrSymbols)
+    return nullptr;  // corrupt - not a valid symbol index
   Symbol* symbol = m->getSymbols()[savedIndex];
-  SMT_NumberSymbol* s = safeCast(SMT_NumberSymbol*, symbol);
+  SMT_NumberSymbol* s = dynamic_cast<SMT_NumberSymbol*>(symbol);
+  if (s == nullptr)
+    return nullptr;  // corrupt - not a valid string symbol
+  //
+  //	Currently we don't validate the string as an SMT number.
+  //
   mpq_class value(stringRep);
   return new SMT_NumberDagNode(s, value);
 }

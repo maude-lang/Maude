@@ -1,0 +1,5 @@
+==========================================
+erewrite in CLIENT : go .
+rewrites: 5
+result Configuration: <> bye(me, interpreter(0)) < me : C | st: 3 >
+Bye.

@@ -501,15 +501,16 @@ Term::getHashValue() const
 inline unsigned int
 Term::hash(unsigned int v1, unsigned int v2)
 {
+  //
+  //	"Golden Ratio" shift formula.
+  //
   return v1 ^ (v2 + 0x9e3779b9 + (v1 << 6) + (v1 >> 2));
-  //return (v1 * v1) ^ (v1 >> 16) ^ v2;  // symmetry with DagNode version
 }
 
 inline unsigned int
 Term::hash(unsigned int v1, unsigned int v2, unsigned int v3)
 {
   return hash(hash(v1, v2), v3);
-  //return (v1 * v1) ^ (v1 >> 16) ^ (v2 * v3);  // symmetry with DagNode version
 }
 
 inline void

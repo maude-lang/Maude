@@ -1,3 +1,33 @@
+2026-10-19  Saruman the White  <eker@eker10>
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::outputWholeErrorLines): fix bug where
+	we were using incomingMessage rather than incomingErrorLine
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	don't do waitpid here
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol):
+	updated decl for doChildExit(); marked PseudoThread overrides with
+	override
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	check corruptReplyReceived flag
+	(InterpreterManagerSymbol::remoteHandleReply): hanlde nullptr
+	returd by deserialize()
+	(InterpreterManagerSymbol::doChildExit): take wstatus argument
+
+	* interpreterManagerSymbol.hh (struct RemoteInterpreter): added
+	corruptReplyReceived data member
+
+	* remoteInterpreter2.cc
+	(InterpreterManagerSymbol::becomeRemoteInterpreter): handle
+	nullptr returned from deserialize(); use safeCaseNonNull<>();
+	deleted commented out print
+
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	handle CORRUPT_MESSAGE_RECEIVED exit code
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* metaMatch.cc: local_inline -> FORCE_INLINE

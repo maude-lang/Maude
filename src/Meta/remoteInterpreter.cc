@@ -225,6 +225,27 @@ void
 InterpreterManagerSymbol::remoteHandleReply(RemoteInterpreter* r, const Rope& reply)
 {
   DagNode* replyDag = r->module->deserialize(reply);
+  if (replyDag == nullptr)
+    {
+      //
+      //	The reply from the remote interpreter was corrupted.
+      //	We recover by terminating the remote interpreter and
+      //	sending the object that created an interpeterExit()
+      //	message.
+      //
+      int childPid = r->processId;
+      IssueWarning("Terminating remote interpreter process " << childPid <<
+		   " due to a corrupt reply.");
+      kill(childPid, SIGTERM);
+      //
+      //	We let doChildExit() do all the clean up, but we set
+      //	a flag in the RemoteInterpreter struct to indicate why
+      //	the child was killed, so doChildExit() can send the
+      //	correct message.
+      //
+      r->corruptReplyReceived = true;
+      return;
+    }
   DagNode* target = safeCast(FreeDagNode*, replyDag)->getArgument(0);
   r->savedContext->bufferMessage(target, replyDag);
   --(r->nrPendingReplies);
@@ -235,15 +256,17 @@ InterpreterManagerSymbol::remoteHandleReply(RemoteInterpreter* r, const Rope& re
 }
 
 void
-InterpreterManagerSymbol::doChildExit(pid_t childPid)
+InterpreterManagerSymbol::doChildExit(pid_t childPid, int wstatus)
 {
   //
   //	First we wait for the child.
   //
+  /*
   int wstatus;
   DebugSave(exitPid, waitpid(childPid, &wstatus, 0));
   Assert(exitPid == childPid, "unexpected return value " << exitPid <<
 	 " from waidpid() for process " << childPid);
+  */
   //
   //	A little inefficient but we only expect a handfull of intepreters
   //	in existence at one time.
@@ -271,7 +294,9 @@ InterpreterManagerSymbol::doChildExit(pid_t childPid)
   //	Make error message.
   //
   const char* errorMessage = "Unknown cause.";  // catch all; shouldn't happen
-  if (WIFEXITED(wstatus))
+  if (i->second.corruptReplyReceived)
+    errorMessage = "Killed by parent due to corrupt reply.";
+  else if (WIFEXITED(wstatus))
     {
       if (WEXITSTATUS(wstatus) == UserLevelRewritingContext::STACK_OVERFLOW)
 	errorMessage = "Stack overflow.";
@@ -279,6 +304,8 @@ InterpreterManagerSymbol::doChildExit(pid_t childPid)
 	errorMessage = "Internal error.";
       else if (WEXITSTATUS(wstatus) == UserLevelRewritingContext::SOCKET_CLOSED)
 	errorMessage = "Socket closed.";
+      else if (WEXITSTATUS(wstatus) == UserLevelRewritingContext::CORRUPT_MESSAGE_RECEIVED)
+	errorMessage = "Corrupt message received.";
     }
   else if(WIFSIGNALED(wstatus))
     errorMessage = "Killed by signal.";

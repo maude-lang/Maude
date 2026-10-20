@@ -1,0 +1,37 @@
+***
+***	Julia + Claude mi-bug1
+***	"99" written to stderr was ending up in serialization stream
+***
+
+set show timing off .
+set show advisories off .
+
+load file
+load metaInterpreter
+
+mod CHILD is
+  protecting STD-STREAM .
+  op c : -> Oid .
+  op K : -> Cid .
+  op start : -> Configuration .
+  eq start = <> < c : K | none > write(stderr, c, "99") .
+  rl < c : K | none > wrote(c, stderr) => < c : K | none > .
+endm
+
+mod CLIENT is
+  protecting META-INTERPRETER .
+  op me : -> Oid .
+  op C : -> Cid .
+  op go : -> Configuration .
+  op st:_ : Nat -> Attribute .
+  vars O I : Oid .  var RC : Nat .  var T : Term .  var TY : Type .
+  eq go = <> < me : C | st: 0 > createInterpreter(interpreterManager, me, newProcess) .
+  rl < me : C | st: 0 > createdInterpreter(me, O, I)
+  => < me : C | st: 1 > insertModule(I, me, upModule('CHILD, true)) .
+  rl < me : C | st: 1 > insertedModule(me, I)
+  => < me : C | st: 2 > erewriteTerm(I, me, unbounded, 1, 'CHILD, 'start.Configuration) .
+  rl < me : C | st: 2 > erewroteTerm(me, I, RC, T, TY)
+  => < me : C | st: 3 > quit(I, me) .
+endm
+
+erew go .

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -152,19 +152,25 @@ InterpreterManagerSymbol::becomeRemoteInterpreter(int socketId,
   for (;;)
     {
       Rope request = receiveMessage(socketId);
+      DagNode* d = m->deserialize(request);
+      if (d == nullptr)
+	{
+	  //
+	  //	If a message is corrupted passing through the socket
+	  //	we exit rather than attempting to recover.
+	  //
+	  exit(UserLevelRewritingContext::CORRUPT_MESSAGE_RECEIVED);
+	}
       //
       //	Deserialized dag is vulnerable to the garbage collector so
       //	protect it.
       //
-      DagRoot requestDag(m->deserialize(request));
+      DagRoot requestDag(d);
       //
       //	We only support message symbols in the free theory.
       //
-      DagNode* replyDag = handleMessage(safeCast(FreeDagNode*, requestDag.getNode()),
-					context,
-					interpreter);
+      DagNode* replyDag = handleMessage(safeCastNonNull<FreeDagNode*>(d), context, interpreter);
       Rope reply = m->serialize(replyDag);
-      //cerr << "reply = " << reply << endl;
       sendMessage(socketId, reply);
     }
 }

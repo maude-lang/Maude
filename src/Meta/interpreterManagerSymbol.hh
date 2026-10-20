@@ -68,6 +68,10 @@ private:
     int ioSocket;
     int errSocket;
     //
+    //	To record if we terminated the interpreter ourself because of a corrupt reply.
+    //
+    bool corruptReplyReceived = false;
+    //
     //	To handle nonblocking send.
     //
     char* charArray;  // full message
@@ -94,9 +98,9 @@ private:
   //
   //	Overridden methods from PseudoThread.
   //
-  void doRead(int fd);
-  void doWrite(int fd);
-  void doChildExit(pid_t childPid);
+  void doRead(int fd) override;
+  void doWrite(int fd) override;
+  void doChildExit(pid_t childPid, int wstatus) override;
 
   static RewritingContext* term2RewritingContext(Term* term, RewritingContext& context);
 

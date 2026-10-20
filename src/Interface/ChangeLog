@@ -1,3 +1,11 @@
+2026-10-18  Saruman the White  <eker@eker10>
+
+	* dagNode.hh (DagNode::hash): symmetric changes with below
+
+	* term.hh (Term::hash): added comment that this is the "Golden
+	Ratio" shift formula; deleted commented out code
+	(Term::hash): (3 arg version) deleted commented out code
+
 2026-08-20  Saruman the White  <eker@eker10>
 
 	* term.hh (class Term): added static constexpr int

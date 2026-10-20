@@ -1,3 +1,31 @@
+2026-10-19  Saruman the White  <eker@eker10>
+
+	* deserializer.ll: append() -> push_back()
+
+	* deserializerAux.cc (makeDagNode): check polymorph index and
+	kind; use safeCastNonNull<>()
+	(makeVariableDagNode): check for bad sort index; use
+	safeCastNonNull<>()
+	(makeQuotedIdentifierDagNode): check for bad symbol; use
+	dynamic_cast<>()
+	(makeStringDagNode): check for bad symbol; use dynamic_cast<>()
+	(makeFloatDagNode): check for bad symbol; use dynamic_cast<>();
+	check for bad 64 bit int
+	(makeSMT_NumberDagNode): check for bad symbol; use
+	dynamic_cast<>()
+
+	* deserializer.ll: check for nullptr returned from makeDagNode()
+	in arg list case
+
+	* deserializerAux.cc (makeDagNode): return nullptr if savedIndex
+	is out of range for sort or symbol
+
+	* deserializer.ll: return nullptr in the case of unexpected
+	character; treat nullptr returned from makeDagNode() as corrupt
+
+	* userLevelRewritingContext.hh (enum ExitCodes): added
+	CORRUPT_MESSAGE_RECEIVED
+
 2026-10-18  Saruman the White  <eker@eker10>
 
 	* mixfixModule.hh (class MixfixModule): switch IntMap and SortMap

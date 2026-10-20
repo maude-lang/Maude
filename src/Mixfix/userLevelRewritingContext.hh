@@ -46,7 +46,8 @@ public:
      STACK_OVERFLOW = 1,
      INTERNAL_ERROR = 2,
      SOCKET_CLOSED = 3,
-     OUT_OF_MEMORY = 4
+     OUT_OF_MEMORY = 4,
+     CORRUPT_MESSAGE_RECEIVED = 5
     };
 
   enum OtherPurpose

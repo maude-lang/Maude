@@ -143,7 +143,6 @@ InterpreterManagerSymbol::doWrite(int fd)
 void
 InterpreterManagerSymbol::doRead(int fd)
 {
-  //IssueAdvisory("doRead() for fd = " << fd);
   //
   //	A little inefficient but we only expect a handfull of intepreters
   //	in existence at one time.
@@ -263,18 +262,22 @@ InterpreterManagerSymbol::outputWholeErrorLines(RemoteInterpreter* ri)
 {
   //
   //	Read any characters available on the error socket and
-  //	send any whole lines cerr. Return true if saw EOF condition
+  //	send any whole lines cerr. Return true if we saw EOF condition
   //	and false otherwise.
   //
   int fd = ri->errSocket;
   for (;;)
     {
+      //
+      //	Read some characters, if available, restarting a call interrupted
+      //	by a signal.
+      //
       char buffer[READ_BUFFER_SIZE];
       ssize_t n;
       do
 	n = read(fd, buffer, READ_BUFFER_SIZE);
       while (n == -1 && errno == EINTR);
-      //cerr << "---- read " << n << endl;
+ 
       if (n > 0)
 	{
 	  ssize_t messageStart = 0;
@@ -282,17 +285,16 @@ InterpreterManagerSymbol::outputWholeErrorLines(RemoteInterpreter* ri)
 	    {
 	      if (buffer[i] == '\n')
 		{
-		  ri->incomingMessage += Rope(buffer + messageStart, i - messageStart);
-		  //cerr << "----> ";
-		  cerr << ri->incomingMessage << endl;
-		  ri->incomingMessage.clear();
+		  ri->incomingErrorLine += Rope(buffer + messageStart, i - messageStart);
+		  cerr << ri->incomingErrorLine << endl;
+		  ri->incomingErrorLine.clear();
 		  messageStart = i + 1;
 		}
 	    }
 	  ssize_t nrCharsLeft = n - messageStart;
 	  if (nrCharsLeft > 0)
 	    {
-	      ri->incomingMessage += Rope(buffer + messageStart, nrCharsLeft);
+	      ri->incomingErrorLine += Rope(buffer + messageStart, nrCharsLeft);
 	      Assert(ri->nrPendingReplies > 0, "partial message yet no pending replies");
 	    }
 	}
@@ -303,7 +305,6 @@ InterpreterManagerSymbol::outputWholeErrorLines(RemoteInterpreter* ri)
 	      //
 	      //	Other end of socket must have closed.
 	      //
-	      //IssueAdvisory("fd = " << fd << "  saw EOF");
 	      return true;
 	    }
 	  else
@@ -312,7 +313,6 @@ InterpreterManagerSymbol::outputWholeErrorLines(RemoteInterpreter* ri)
 	      //	We don't know for sure that there are characters waiting
 	      //	for us since we just clearing out any pending messages.
 	      //
-	      //IssueAdvisory("fd = " << fd << " error = " << strerror(errno));
 	    }
 	  break;
 	}

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 2 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -125,7 +125,10 @@ ratNumber	({anyInt}|{posRat}|(-{posRat}))
 						    return history[history.size() - 1];
 						}
 \n						;
-[^\004]						CantHappen(((int) *yytext) << " in init");
+[^\004]						{
+						  CantHappen(((int) *yytext) << " in init");
+						  return nullptr;   // treat dag as corrupt.
+						}
 }
 
 <SEEN_NUMBER_MODE>{
@@ -133,29 +136,32 @@ ratNumber	({anyInt}|{posRat}|(-{posRat}))
 						  BEGIN(ARG_LIST_MODE);
 						}
 \n						{
-						  DagNode* d = makeDagNode(m);
-						  history.append(d);
+						  // constant case
+						  if (DagNode* d = makeDagNode(m))
+						    history.push_back(d);
+						  else
+						    return nullptr;  // corrupt
 						  BEGIN(INITIAL);
 						}
 \^{posInt}					{
 						  savedBigNum = yytext + 1;
 						}
 {string}					{
-						  history.append(makeStringDagNode(m, yytext));
+						  history.push_back(makeStringDagNode(m, yytext));
 						  BEGIN(INITIAL);
 						}
 v{maudeId}					{
 						  int code = Token::encode(yytext + 1);
-						  history.append(makeVariableDagNode(m, code));
+						  history.push_back(makeVariableDagNode(m, code));
 						  BEGIN(INITIAL);
 						}
 \'|\'{maudeId}					{
 						  int code = Token::encode(yytext + 1);
-						  history.append(makeQuotedIdentifierDagNode(m, code));
+						  history.push_back(makeQuotedIdentifierDagNode(m, code));
 						  BEGIN(INITIAL);
 						}
 f{anyInt}					{
-						  history.append(makeFloatDagNode(m, yytext + 1));
+						  history.push_back(makeFloatDagNode(m, yytext + 1));
 						  BEGIN(INITIAL);
 						}
 s						{
@@ -169,7 +175,7 @@ p{natNumber}					{
 						  opType = POLYMORPH;
 						}
 q{ratNumber}					{
-						  history.append(makeSMT_NumberDagNode(m, yytext + 1));
+						  history.push_back(makeSMT_NumberDagNode(m, yytext + 1));
 						  BEGIN(INITIAL);
 						}
 .						CantHappen(((int) *yytext) << " in num");
@@ -178,11 +184,15 @@ q{ratNumber}					{
 <ARG_LIST_MODE>{
 {natNumber}					{
 						  int historyIndex = atoi(yytext);
-						  argList.append(history[historyIndex]);
+						  argList.push_back(history[historyIndex]);
 						}
 ,						;
 \)\n						{
-						  history.append(makeDagNode(m));
+						  // arg list case
+						  if (DagNode* d = makeDagNode(m))
+						    history.push_back(d);
+						  else
+						    return nullptr;  // corrupt
 						  argList.clear();
 						  BEGIN(INITIAL);
 						}
