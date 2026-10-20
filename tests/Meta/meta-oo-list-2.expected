@@ -31,7 +31,6 @@ result Configuration: <> < me : User | pending: nil, level: 0 > rewroteTerm(me,
     'next`:_['null.Maybe`{Oid`}], 'previous`:_['o['l.Oid, 's_^3['0.Zero]]],
     'value`:_['w['s_^4['0.Zero]]]]], 'to_from_elt`at`pos_is_['l.Oid, 'l.Oid,
     's_^3['0.Zero], 's_^3['0.Zero]]], 'Configuration)
-Advisory: deleting interpreter(0)
 ==========================================
 rewrite in SORTED-NAT-LIST : (create-sorted-list(l) ((((((((((l add w(4)) l get
     at 3 from l) l add w(3)) l add w(2)) l add w(1)) l add w(0)) < w(4) :

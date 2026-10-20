@@ -1,5 +1,34 @@
 2026-10-19  Saruman the White  <eker@eker10>
 
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	fix bug where we were using delete rather than delete [] for
+	charArray
+	(InterpreterManagerSymbol::doChildExit): don't walk off end of the
+	map if the childPid is missing
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::deleteInterpreter): fix bug where we
+	were using delete rather than delete [] for charArray
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleReply): added comment to
+	explain why we can let doChildExit() do the clean up
+	(InterpreterManagerSymbol::doChildExit): removed commented out code
+
+	* remoteInterpreter2.cc (InterpreterManagerSymbol::sendMessage):
+	check for <= 0 return from write()
+	(InterpreterManagerSymbol::receiveMessage): treat -1 return from
+	read() as a closed socket, even though it should never happen
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::deleteInterpreter): changed two
+	IssueAdvisory()s into DebugInfo()s
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): set
+	globalAdvisoryFlag, globalVerboseFlag, globalDebugFlag to false if
+	we're the child to limit the flood of extraneous information
+
 	* remoteInterpreterNonblocking.cc
 	(InterpreterManagerSymbol::outputWholeErrorLines): fix bug where
 	we were using incomingMessage rather than incomingErrorLine

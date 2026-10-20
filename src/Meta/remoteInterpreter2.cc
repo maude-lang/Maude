@@ -79,11 +79,12 @@ InterpreterManagerSymbol::receiveMessage(int socketId)
 	n = read(socketId, buffer, READ_BUFFER_SIZE);
       while (n == -1 && errno == EINTR);
       Assert(n != -1, "unexpected read failure: " << strerror(errno));
-      if (n == 0)
+      if (n <= 0)
 	{
 	  //
-	  //	EOF means parent must have closed socket so we
-	  //	need to exit.
+	  //	Zero characters read is means EOF so the socket must be closed.
+	  //	With a blocking read(), n == -1 shouldn't happen but we treat
+	  //	an error as a closed socket in the release build.
 	  //
 	  exit(UserLevelRewritingContext::SOCKET_CLOSED);
 	}
@@ -135,6 +136,16 @@ InterpreterManagerSymbol::sendMessage(int socketId, const Rope& message)
       do
 	n = write(socketId, p, nrUnsent);
       while (n == -1 && errno == EINTR);
+      if (n <= 0)
+	{
+	  //
+	  //	Returning 0 characters sent is undefined for a socket.
+	  //	This is a blocking write() so n == -1 probably means EPIPE.
+	  //	We don't bother testing, and instead treat all errors as
+	  //	a closed socket.
+	  //
+	  exit(UserLevelRewritingContext::SOCKET_CLOSED);
+	}
       p += n;
       nrUnsent -= n;
     }

@@ -135,7 +135,14 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       UserLevelRewritingContext::ignoreCtrlC();  // don't respond to ctrl-C
       extern IO_Manager ioManager;  // HACK
       ioManager.unsetAutoWrap();  // don't do wrapping on our output
-      //globalAdvisoryFlag = false;  // limit crap that we dump on screen
+      //
+      //	Limit stuff we dump in standard I/O.
+      //	Only output warnings on errSockets[1].
+      //
+      globalAdvisoryFlag = false;
+      globalVerboseFlag = false;
+      globalDebugFlag = false;
+
       close(ioSockets[0]);
       close(errSockets[0]);  // close parent end
       dup2(errSockets[1], STDERR_FILENO);  // replace stderr with errSockets[1]
@@ -238,6 +245,8 @@ InterpreterManagerSymbol::remoteHandleReply(RemoteInterpreter* r, const Rope& re
 		   " due to a corrupt reply.");
       kill(childPid, SIGTERM);
       //
+      //	Because we're handling a reply, nrPendingReplies != 0
+      //	so we have requested a child exit callback.
       //	We let doChildExit() do all the clean up, but we set
       //	a flag in the RemoteInterpreter struct to indicate why
       //	the child was killed, so doChildExit() can send the
@@ -259,21 +268,20 @@ void
 InterpreterManagerSymbol::doChildExit(pid_t childPid, int wstatus)
 {
   //
-  //	First we wait for the child.
-  //
-  /*
-  int wstatus;
-  DebugSave(exitPid, waitpid(childPid, &wstatus, 0));
-  Assert(exitPid == childPid, "unexpected return value " << exitPid <<
-	 " from waidpid() for process " << childPid);
-  */
-  //
   //	A little inefficient but we only expect a handfull of intepreters
   //	in existence at one time.
   //
   RemoteInterpreterMap::iterator i = remoteInterpreters.begin();
-  for (; i->second.processId != childPid; ++i)
-    ;
+  for (;; ++i)
+    {
+      if (i == remoteInterpreters.end())
+	{
+	  CantHappen("childPid = " << childPid << " isn't in our map");
+	  return;
+	}
+      if (i->second.processId == childPid)
+	break;
+    }
   //
   //	Clean up.
   //
@@ -325,6 +333,6 @@ InterpreterManagerSymbol::doChildExit(pid_t childPid, int wstatus)
   //
   //	Delete interpreter.
   //
-  delete i->second.charArray;
+  delete [] i->second.charArray;
   remoteInterpreters.erase(i);
 }

@@ -367,7 +367,7 @@ InterpreterManagerSymbol::getRemoteInterpreter(DagNode* interpreterArg)
 bool
 InterpreterManagerSymbol::deleteInterpreter(DagNode* interpreterArg)
 {
-  IssueAdvisory("deleting " << interpreterArg);
+  DebugInfo("deleting " << interpreterArg);
   if (interpreterArg->symbol() == interpreterOidSymbol)
     {
       DagNode* idArg = safeCast(FreeDagNode*, interpreterArg)->getArgument(0);
@@ -386,7 +386,7 @@ InterpreterManagerSymbol::deleteInterpreter(DagNode* interpreterArg)
 		}
 	      else
 		{
-		  IssueAdvisory("its a remote interpreter " << interpreterArg);
+		  DebugInfo("it's a remote interpreter " << interpreterArg);
 		  RemoteInterpreterMap::iterator i = remoteInterpreters.find(interpreterId);
 		  if (i != remoteInterpreters.end())
 		    {
@@ -411,7 +411,7 @@ InterpreterManagerSymbol::deleteInterpreter(DagNode* interpreterArg)
 		      //	Wait for child we just terminated to avoid a zombie.
 		      //
 		      waitpid(i->second.processId, 0, 0);
-		      delete i->second.charArray;
+		      delete [] i->second.charArray;
 		      remoteInterpreters.erase(i);
 		      return true;
 		    }
