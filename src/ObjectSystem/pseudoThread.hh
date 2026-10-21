@@ -154,7 +154,6 @@ private:
     short prevActive;
   };
 
-
   struct ChildRequest
   {
     ChildRequest() {} // need for Vector template

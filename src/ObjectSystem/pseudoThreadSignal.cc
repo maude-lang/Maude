@@ -97,9 +97,15 @@ PseudoThread::sigchldHandler(int /* signalNr */)
 bool
 PseudoThread::dispatchChildRequests()
 {
+  //
+  //	This function must be called with SIGCHLD blocked to avoid
+  //	a race between setting  exitedFlag to true in the signal handler
+  //	and setting it to false here.
+  //
   DebugInfo("exitedFlag = " << exitedFlag);
   if (!exitedFlag)
     return false;
+  /*
   //
   //	We block SIGCHLD so that we don't get a race between setting
   //	setting  exitedFlag to true in the signal handler and setting it
@@ -110,7 +116,7 @@ PseudoThread::dispatchChildRequests()
   sigemptyset(&newset);
   sigaddset(&newset, SIGCHLD);
   sigprocmask(SIG_BLOCK, &newset, &oldset);
-
+  */
   bool didCallback = false;
   int nrRequests = childRequests.size();
   DebugInfo("nrRequests = " << nrRequests);
@@ -138,7 +144,7 @@ PseudoThread::dispatchChildRequests()
   //
   //	Now we can unblock SIGCHLD without losing events.
   //
-  sigprocmask(SIG_SETMASK, &oldset, 0);
+  //sigprocmask(SIG_SETMASK, &oldset, 0);
   return didCallback;
 }
 

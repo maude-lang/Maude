@@ -169,7 +169,8 @@ InterpreterManagerSymbol::doRead(int fd)
   Assert(ri != 0, "couldn't find remote interpreter for doRead() callback");
   Assert(ri->nrPendingReplies > 0, "wasn't expect a doRead() callback");
   //
-  //	Drain any error messages and cancel callback if we saw EOF.
+  //	Before we process any output dag, we drain any error messages and
+  //	cancel callback if we saw EOF.
   //
   if (outputWholeErrorLines(ri))
     clearFlags(ri->errSocket);
@@ -227,16 +228,18 @@ InterpreterManagerSymbol::doRead(int fd)
 	      //	Other end of socket must have closed.
 	      //
 	      sawEOF = true;
-	      //IssueAdvisory("callback for fd = " << fd << " saw EOF");
+	      DebugAdvisory("callback for fd = " << fd << " saw EOF");
 	    }
 	  else
 	    {
 	      //
-	      //	We had an error that wasn't due to an interrupt or
-	      //	not wanting to block. This shouldn't happen on the
-	      //	first read but we expect it to happen eventually.
+	      //	We had an error that wasn't due to an interrupt.
+	      //	Our socket is nonblocking so we expect to see
+	      //	EAGAIN or EWOULDBLOCK eventually, though not on the
+	      //	first read because doRead() is only called when
+	      //	characters are waiting.
 	      //
-	      //IssueAdvisory("callback for fd = " << fd << " error =  " << strerror(errno));
+	      DebugAdvisory("callback for fd = " << fd << " error =  " << strerror(errno));
 	    }
 	  break;
 	}

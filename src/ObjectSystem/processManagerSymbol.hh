@@ -56,9 +56,9 @@ public:
   //
   //	Overridden methods from ExternalObjectManagerSymbol.
   //
-  bool handleManagerMessage(DagNode* message, ObjectSystemRewritingContext& context);
-  bool handleMessage(DagNode* message, ObjectSystemRewritingContext& context);
-  void cleanUp(DagNode* objectId);
+  bool handleManagerMessage(DagNode* message, ObjectSystemRewritingContext& context) override;
+  bool handleMessage(DagNode* message, ObjectSystemRewritingContext& context) override;
+  void cleanUp(DagNode* objectId) override;
   //
   //	Static function to disable/enable this class.
   //

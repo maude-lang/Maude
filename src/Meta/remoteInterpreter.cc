@@ -110,6 +110,15 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       return true;
     }
   //
+  //	Flush our C++ streams so that buffered data doesn't end up in child.
+  //
+  cout.flush();
+  cerr.flush();
+  //
+  //	Flush any C i/o streams we have open.
+  //
+  fflush(nullptr);
+  //
   //	Fork a new Maude interpreter.
   //
   pid_t pid = fork();

@@ -1,6 +1,15 @@
 2026-10-20  Saruman the White  <eker@eker10>
 
 	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): flush C/C++
+	streams before fork() so child doesn't get our buffered data
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doRead): turn IssueAdvisory()s into
+	DebugAdvisory()s; added comment to explain why we handle error
+	socket when we get a callback on io socket
+
+	* remoteInterpreter.cc
 	(InterpreterManagerSymbol::createRemoteInterpreter): call
 	UserLevelRewritingContext::uninstallAndReinstallHandlers() in the
 	child process so that stack overflow is handled in the child

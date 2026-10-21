@@ -1,3 +1,22 @@
+2026-10-20  Saruman the White  <eker@eker10>
+
+	* pseudoThread-pselect.cc (PseudoThread::processFds): reorganized
+	to match pseudoThread-ppoll.cc reorganization
+
+	* objectSystemRewritingContext.cc
+	(ObjectSystemRewritingContext::externalRewrite): fix typo in comment
+
+	* pseudoThreadSignal.cc (PseudoThread::dispatchChildRequests):
+	don't block SIGCHLD here - we should only be called with SIGCHLD
+	already blocked
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): reorganize so
+	that child exit events are processed after fd events; set wait
+	to zero if a SIGCHLD has already arrived an keep SIGCHLD blocked
+	until exits have been processed so if a process writes and exits
+	after ppoll() returns we won't process its exit until after we've
+	called ppoll() again and processed its fds
+
 2026-10-10  Saruman the White  <eker@eker10>
 
 	* timeActions.cc (TimeManagerSymbol::stopTimer): always send a

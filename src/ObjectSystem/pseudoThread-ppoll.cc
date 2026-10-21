@@ -38,7 +38,6 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
   //	of these may be currently blocked to avoid losing the
   //	signals if they are delivered before the system call happens.
   //
-  int childEvent = NOTHING_HAPPENED;
   //
   //	Block SIGCHLD.
   //
@@ -47,14 +46,6 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
   sigemptyset(&newset);
   sigaddset(&newset, SIGCHLD);
   sigprocmask(SIG_BLOCK, &newset, &oldset);
-  //
-  //	Deal with any child exit notifications that became due.
-  //
-  if (dispatchChildRequests())
-    {
-      childEvent |= EVENT_HANDLED;
-      waitPointer = &zeroTime;  // must not block in ppoll()
-    }
 
   static pollfd ufds[MAX_NR_FDS];
   int nfds = 0;
@@ -73,25 +64,35 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
       ++nfds;
     }
   //
-  //	Now we look to see what happened.
-  //
-  //
   //	Decide on the signals to be atomically unblocked during ppoll().
   //
   sigset_t* maskForSystemCall = (normalSet != 0) ? normalSet : &oldset;
+  //
+  //	If a SIGCHLD signal arrived before we blocked it, set wait to zero
+  //	so we don't hang in ppoll() and can process any exited processes,
+  //	even if nothing else is ready.
+  //
+  if (exitedFlag)
+    waitPointer = &zeroTime;
+  //
+  //	Now we look to see what happened.
+  //
   int nrEvents = ppoll(ufds, nfds, waitPointer, maskForSystemCall);
-  //
-  //	We restore mask to what it was before we blocked SIGCHLD.
-  //
-  sigprocmask(SIG_SETMASK, &oldset, 0);
- 
   if (nrEvents < 0)
     {
+      //
+      //	We expect this to happen when the ppoll() exits due to a signal,
+      //	perhaps SIGCHILD being caught.
+      //
       Assert(errno == EINTR, "ppoll() failed with " << errno);
+      sigprocmask(SIG_SETMASK, &oldset, 0);  // unblock SIGCHLD
       return INTERRUPTED;  // treat all errors as interrupts
     }
   //
   //	Deal with the information returned by ppoll().
+  //	We handle this with SIGCHLD blocked so that if a process writes
+  //	and exits after ppoll() returns, we don't process its exit
+  //	until we have processed its file descriptors.
   //
   int returnValue = NOTHING_HAPPENED;
   if (nrEvents > 0)
@@ -166,5 +167,19 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
       Assert(returnValue == EVENT_HANDLED, "ppoll() saw " << nrEvents
 	     << " events but we didn't handle any");
     }
-  return returnValue | childEvent;
+  //
+  //	Deal with any child exit notifications that became due before
+  //	we blocked SIGCHILD.
+  //
+  //	We only call doChildExit() after any fd events from the child have been
+  //	processed since the callback may close fds.
+  //
+  if (dispatchChildRequests())
+    returnValue |= EVENT_HANDLED;
+  //
+  //	Unblock SIGCHLD.
+  //
+  sigprocmask(SIG_SETMASK, &oldset, 0);
+
+  return returnValue;
 }

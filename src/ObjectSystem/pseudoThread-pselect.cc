@@ -38,7 +38,6 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
   //	of these may be currently blocked to avoid losing the
   //	signals if they are delivered before the system call happens.
   //
- int childEvent = NOTHING_HAPPENED;
   //
   //	Block SIGCHLD.
   //
@@ -47,14 +46,6 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
   sigemptyset(&newset);
   sigaddset(&newset, SIGCHLD);
   sigprocmask(SIG_BLOCK, &newset, &oldset);
-  //
-  //	Deal with any child exit notifications that became due.
-  //
-  if (dispatchChildRequests())
-    {
-      childEvent |= EVENT_HANDLED;
-      waitPointer = &zeroTime;  // must not block in pselect()
-    }
 
   static fd_set readfds;
   static fd_set writefds;
@@ -93,25 +84,35 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
 	}
     }
   //
-  //	Now we look to see what happened.
-  //
-  //
   //	Decide on the signals to be atomically unblocked during pselect().
   //
   sigset_t* maskForSystemCall = (normalSet != 0) ? normalSet : &oldset;
+  //
+  //	If a SIGCHLD signal arrived before we blocked it, set wait to zero
+  //	so we don't hang in pselect() and can process any exited processes,
+  //	even if nothing else is ready.
+  //
+  if (exitedFlag)
+    waitPointer = &zeroTime;
+  //
+  //	Now we look to see what happened.
+  //
   int nrEvents = pselect(maxFd + 1, &readfds, &writefds, 0, waitPointer, maskForSystemCall);
-  //
-  //	We restore mask to what it was before we blocked SIGCHLD.
-  //
-  sigprocmask(SIG_SETMASK, &oldset, 0);
-
   if (nrEvents < 0)
     {
+      //
+      //	We expect this to happen when the pselects() exits due to a signal,
+      //	perhaps SIGCHILD being caught.
+      //
       Assert(errno == EINTR, "pselect() failed with " << errno);
+      sigprocmask(SIG_SETMASK, &oldset, 0);  // unblock SIGCHLD
       return INTERRUPTED;  // treat all errors as interrupts
     }
   //
   //	Deal with the information returned by pselect().
+  //	We handle this with SIGCHLD blocked so that if a process writes
+  //	and exits after pselect() returns, we don't process its exit
+  //	until we have processed its file descriptors.
   //
   int returnValue = NOTHING_HAPPENED;
   if (nrEvents > 0)
@@ -144,5 +145,19 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
       Assert(returnValue == EVENT_HANDLED, "pselect() saw " << nrEvents
 	     << " events but we didn't handle any");
     }
-  return returnValue | childEvent;
+  //
+  //	Deal with any child exit notifications that became due before
+  //	we blocked SIGCHILD.
+  //
+  //	We only call doChildExit() after any fd events from the child have been
+  //	processed since the callback may close fds.
+  //
+  if (dispatchChildRequests())
+    returnValue |= EVENT_HANDLED;
+  //
+  //	Unblock SIGCHLD.
+  //
+  sigprocmask(SIG_SETMASK, &oldset, 0);
+
+  return returnValue;
 }

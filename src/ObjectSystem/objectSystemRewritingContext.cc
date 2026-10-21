@@ -217,7 +217,7 @@ ObjectSystemRewritingContext::externalRewrite()
 	{
 	  //
 	  //	There were no external events pending and no events were
-	  //	handles. Since there are no local rewrites available, we're done.
+	  //	handled. Since there are no local rewrites available, we're done.
 	  //
 	  break;
 	}
