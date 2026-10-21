@@ -27,6 +27,7 @@
 #define _SMT_NumberSymbol_hh_
 #include "NA_Symbol.hh"
 #include "SMT_Base.hh"
+#include "SMT_Info.hh"
 
 class SMT_NumberSymbol : public NA_Symbol, public SMT_Base
 {
