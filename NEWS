@@ -1,3 +1,10 @@
+Overview of Changes in alpha166 (2026-10-28)
+============================================
+* extended mixfix parsing with on-the-fly variables and wildcards
+* revised module and view transformers
+* typeExists descent function
+* other optimization and bug fixes
+
 Overview of Changes in alpha165 (2026-07-23)
 ============================================
 * make command to create modules from module expressions

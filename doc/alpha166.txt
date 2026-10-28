@@ -1,0 +1,285 @@
+Alpha 166 release notes
+========================
+
+New features
+============
+
+(1) Extended mixfix parsing
+---------------------------
+
+Extended mixfix parsing adds optional syntactic sugar when parsing terms in
+statements. The extended
+mixfix syntax is used only when classic parsing (Maude 3.5.1 and earlier)
+cannot parse the statement, so existing files keep their meaning. It is not
+used in operator signatures that define bubble operators, and it does not
+apply to metamodules or metaterms.
+
+On-the-fly variable scope. In extended mode, a token such as X:Foo declares
+that later bare X tokens in the same statement are that variable (not only a
+long variable name). For example:
+
+  eq N:Nat + 0 = N .
+
+Wildcards. If the parser sees _ or a token beginning with _ that has no other
+role in the signature, and the position could hold a variable, it is treated
+as a wildcard. Each wildcard is desugared to a fresh kind variable whose kind
+is inferred from the grammar terminal at that position, written _k:[Kind]
+(or a numbered name such as _1:[Foo] for anonymous _). Named wildcards such
+as _X keep that name in the desugared term so rewriting traces can show what
+matched. You cannot refer to a wildcard on the right-hand side of an equation
+or rule (there is no variable to use). Kind variables match any term in that
+kind, including terms in error sorts; use an explicit sort or a declared
+variable when you need to exclude ill-formed terms.
+
+Examples with on-the-fly scope and wildcards:
+
+  eq p1(X:Foo, _, _) = X .
+  eq p2(_, X:List{Bar}, _) = X .
+  eq p3(_, _, X:[Foo]) = X .
+
+  eq getRadius(circle(_X, _Y, R:Float)) = R .
+
+In getRadius, _X and _Y are named wildcards (desugared to kind variables at
+the argument positions of circle), e.g.,
+  eq getRadius(circle(_X:[Float], _Y:[Float], R:Float)) = R .
+The desugaring can be seen using the show desugared command. As already pointed
+out, naming wildcards may be useful for debugging purposes; one could write
+circle(_, _, R:Float) if you did not need to distinguish them in traces.
+In any case, Maude will desugar them as different variables. E.g., given the
+module
+
+fmod GETRADIUS-ANON is
+  including BOOL .
+  protecting FLOAT .
+  sort Circle .
+  op circle : Float Float Float -> Circle [ctor] .
+  op getRadius : Circle -> Float .
+  eq getRadius(circle(_, _, R:Float)) = R:Float .
+endfm
+
+Desugared modules parse in classic mode; "show desugared ." displays them.
+
+fmod GETRADIUS-ANON is
+  including BOOL .
+  including BOOL .
+  protecting FLOAT .
+  sort Circle .
+  op circle : Float Float Float -> Circle [ctor] .
+  op getRadius : Circle -> Float .
+  eq getRadius(circle(_:[Float], _1:[Float], R:Float)) = R:Float .
+endfm
+
+The trace uses the desugared variables.
+
+Maude> set trace on .
+Maude> reduce in GETRADIUS-ANON : getRadius(circle(3.0, 4.0, 5.0)) .
+*********** equation
+eq getRadius(circle(_:[Float], _1:[Float], R:Float)) = R:Float .
+_:[Float] --> 3.0
+_1:[Float] --> 4.0
+R:Float --> 5.0
+getRadius(circle(3.0, 4.0, 5.0))
+--->
+5.0
+rewrites: 1 in 0ms cpu (0ms real) (83333 rewrites/second)
+result FiniteFloat: 5.0
+
+Scope and wildcard on the same equation may produce curious mixes. E.g., in
+
+  fmod Foo is
+    sorts Foo Bar .
+    op f : Foo Bar -> Bar .
+    eq f(_, _:Bar) = _ .
+  endfm
+
+The first _ is a wildcard, _:Bar is a variable of type Bar. The _ on the right
+is the variable introduced by _:Bar on the left. After desugaring, a typical
+form is:
+
+  eq f(_1:[Foo], _:Bar) = _:Bar .
+
+Anonymous wildcards use numbered kind variables (here _1:[Foo]) so they are
+not confused with on-the-fly sort syntax.
+
+Extended mode can report ambiguous parses when several readings of potential
+on-the-fly declarations are possible. If extended parsing is involved in a failure,
+"set verbose on ." may print extra parser diagnostics. In some exceptional cases,
+when parsing fails in extended mode, the reported error may not be the earliest error.
+
+
+(2) Module and view transformers (revised mechanism)
+---------------------------------------------------
+
+Alpha 165 already provided user-definable module transformers and view
+generators as separate mechanisms with related but not identical calling
+conventions. Alpha 166 replaces that split with one object-level syntax that
+can pass module expressions and view expressions together and can produce
+either a module (ModuleResult) or a view (ViewResult), depending on which
+transformer module defines the operation.
+
+Prelude changes (with respect to Alpha 165):
+  fmod VIEW-GENERATOR
+is renamed
+  fmod VIEW-TRANSFORMER
+and
+  sort TransformResult
+is renamed
+  sort ModuleResult
+for symmetry.
+
+A module that defines a module transformer imports MODULE-TRANSFORMER; one
+that defines a view transformer imports VIEW-TRANSFORMER. Both use the same
+calling shape at the object level.
+
+The new calling syntax for both module and view transformers is a superset of the old syntax,
+
+  transformer-module[module-expression-list](argument-list)[view-expression-list]
+
+where module-expression-list and view-expression-list are nonempty and
+argument-list may be empty, with the following 5 abbreviated forms allowed:
+
+  transformer-module[module-expression-list]
+  transformer-module[module-expression-list](argument-list)
+  transformer-module[module-expression-list][view-expression-list]
+  transformer-module(argument-list)
+  transformer-module(argument-list)[view-expression-list]
+
+Examples:
+
+  ID-COMPLETION[List{Nat}]
+  KB-COMPLETION[TOP-MOD](new-eq-bound = 10)
+  DISJOINT-UNION[M1, M2, M3](decoration = numeric)
+  DEGENERATE()
+
+Just like input modules, input views can have free parameters but not bound parameters.
+
+Transformers are available at the metalevel as:
+
+  op _[_](_)[_] : Qid ModuleExpressionList QidList ParameterList -> Expression [ctor ditto] .
+
+A module implementing a transformer must declare an operator whose result sort is
+ModuleResult or ViewResult and whose arguments form an initial segment of the
+following sequence (in this order):
+
+  1. ModuleList   — (structured) input modules
+  2. QidList      — the text provided as options is received as the qid list
+                    resulting from its tokenization
+  3. ModuleExpressionList — module expressions passed as extra arguments when
+                    the transformer needs expressions, not only lifted modules
+                    (for example view transformers that read from/to module
+                    expressions in a view declaration)
+  4. ViewList     — input views
+  5. ParameterList — view expressions from [ ... ] (view side of the call)
+  6. ModuleList   — flat input modules (flattened bodies; costly and usually
+                    avoided because of import interaction issues)
+
+E.g.,
+  op mt : ModuleList QidList ModuleExpressionList ViewList ParameterList -> ModuleResult .
+  op makeDefault : ModuleList QidList ModuleExpressionList -> ViewResult .
+
+See example (redefined) transformers TUPLE, POWER, and @ in the prelude.
+
+Most user transformers use only (1) and (2): module list and options.
+Alpha 165 already allowed ModuleList and QidList; that convention remains when
+you use only those two arguments.
+
+Maude selects the transformer operator in a transformer module as follows.
+If exactly one operator returns ModuleResult (or ViewResult) and its
+argument list matches the call, that operator is used. If several operators
+match, mark the intended one with metadata "transformer" on its
+declaration; otherwise Maude cannot tell which operation defines the
+transformer. Even if there is no confussion, the transformer attribute
+can always be used for documentation purposes or to avoid confusion.
+
+Result shape and messages. A successful module transformer returns a pair
+{ModuleList, SystemMsgList}, of sort ModuleResult, where the module list
+holds structured modules on success; on failure it is empty (nil). Similarly,
+a view transformer returns a pair {ViewList, SystemMsgList}, of sort ViewResult.
+The prelude module SYSTEM-MESSAGE defines constructors for messages, including:
+
+  warning(String)   — errors (failure should include at least one warning)
+  advisory(String)  — non-fatal notices; suppressed by "set advise off ."
+  verbose(String)   — extra detail; shown when "set verbose on ."
+
+Warnings and advisories are reported with line numbers tied to the transformer
+name in the calling expression.
+
+Meta-recursive imports. Transformers run on structured modules; imports must
+be processed recursively for the result to fit the module system. As in
+Alpha165, MODULE-TRANSFORMER provides a predefined operator
+  op _(_)[_] : Qid QidList ImportList -> ImportList .
+so that T(OPT)[IL] re-invokes the same transformer T
+on each submodule in the import list IL, with the same options OPT.
+
+Input modules lifted from module expressions may have long or structured
+names (sums, renamings, nested instantiations). At the metalevel they receive
+internal names derived from those expressions so that metamodule syntax can
+represent them. Names chosen inside the transformer result are adjusted when
+the module is installed in the cache so users see the object-level transformer
+syntax again. The name chosen inside the transformer result is used as the
+short name for view results. Short names are used inside parameterized sorts.
+
+Useful prelude module expressions (already in Alpha 165; implementations
+updated for the 166 API) include TUPLE(n), POWER(n), and the default view
+transformer @[m], for example:
+
+  fmod FOO is
+    inc LIST{@[M]} .
+  endfm
+
+The default view experssion @[M] creates a view from TRIV to the module M,
+sending the sort Elt to the top sort of the unique sort component of M. In case
+of M having multiple connected components or multiple top sorts, the view
+may be completed by the user identifying the target sort.
+Module transformers may return modules (fmod/mod/smod) or theories (fth/th).
+
+Example sketch — theory parameter for a parameterized module:
+
+  fmod MITRIV is
+    pr MODULE-TRANSFORMER .
+    op mitriv : ModuleList QidList -> ModuleResult .
+    eq mitriv(nil, T:Qid)
+      = {fth 'MITRIV is nil sorts T . none none none none endfth, nil} .
+  endfm
+
+  view Elt from MITRIV(T) to FOO is sort T to Foo . endv
+
+  fmod M{X :: MITRIV(T)} is
+    sort Bar .
+    op f : X$T -> Bar .
+  endfm
+
+Here mitriv builds a one-sort theory with sort name supplied by the option
+list; the view maps that sort to Foo; M uses the generated theory as a
+parameter.
+
+
+(3) Type existence check
+------------------------
+
+The META-LEVEL module includes a new descent function
+    op typeExists : Module Type ~> Bool [...] .
+to check the existence of a type without generating an advisory if it doesn't exist.
+
+
+Backward incompatibility (transformer API)
+==========================================
+
+User-defined transformers written for the Alpha 165 prelude (TransformResult,
+VIEW-GENERATOR, and the older metalevel call without view-expression lists)
+must be updated to MODULE-TRANSFORMER / VIEW-TRANSFORMER, ModuleResult, and
+the unified T[...](...)[...] syntax if they use view inputs or the new
+metalevel shape. Also, the new syntax for transformers include the case
+in Alpha 165 to handle flat modules
+ op trans : QidList ModuleList -> TransformResult .
+This syntax is no longer supported, the new 6 argument call convention with
+flattened modules being the last argument has to be used.
+Transformer modules shipped with the Alpha 166 prelude are
+already on the new API. Mixing an Alpha 165 binary with a 166 prelude (or
+the reverse) is not supported for user-defined transformers.
+The meta-recursion operator is likely to change in the future.
+
+Other changes
+=============
+
+Multiple optimizations and bug fixes since Alpha 165.

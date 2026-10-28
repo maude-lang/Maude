@@ -3,7 +3,7 @@
 #
 #	Initialize autoconf stuff.
 #
-AC_INIT([Maude],[alpha165],[maude-bugs@lists.cs.illinois.edu])
+AC_INIT([Maude],[alpha166],[maude-bugs@lists.cs.illinois.edu])
 #
 #	Allow directory names that look like macros.
 #
