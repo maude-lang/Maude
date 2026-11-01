@@ -943,12 +943,12 @@ int
 Token::ropeToStringTokenCode(const Rope& r)
 {
   //
-  //	Turn a rope abc into a token code for "abc".
+  //	Turn a rope a<newline>c into a token code for "a\nc", escaping control
+  //	characters and \ itself.
   //
-  Rope a("\"");
-  a += r;
-  a += "\"";
-  return ropeToCode(a);
+  string str;
+  Token::ropeToString(r, str);
+  return encode(str.c_str());
 }
 
 int

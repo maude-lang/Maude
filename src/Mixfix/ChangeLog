@@ -1,3 +1,9 @@
+2026-11-01  Saruman the White  <eker@eker10>
+
+	* token.cc (Token::ropeToStringTokenCode): need to handle control
+	character conversions; <newline> must become \n and \ must become
+	\\
+
 2026-10-31  Saruman the White  <eker@eker10>
 
 	* token.hh (class Token): added decl for ropeToPrefixNameCode()
