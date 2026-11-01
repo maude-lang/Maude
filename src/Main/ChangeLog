@@ -1,3 +1,7 @@
+2026-10-31  Saruman the White  <eker@eker10>
+
+	* prelude.maude: update comment
+
 2026-10-15  Saruman the White  <eker@eker10>
 
 	* prelude.maude: use otf variable scope extension and wildcards

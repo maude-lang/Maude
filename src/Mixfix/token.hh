@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -167,6 +167,7 @@ public:
   static Rope stringToRope(const char* string);
   static void ropeToString(const Rope& rope, string& result);
   static int ropeToCode(const Rope& r);
+  static int ropeToStringTokenCode(const Rope& r);
   static int ropeToPrefixNameCode(const Rope& r);
   static int bubbleToPrefixNameCode(const Vector<Token>& opBubble);
   static int bubbleToPrefixNameCode(const Vector<Token>& opBubble, Index start, Index beyondEnd);

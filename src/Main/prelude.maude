@@ -3186,7 +3186,7 @@ fmod META-LEVEL is
 endfm
 
 ***
-***	Module transformation and view generation.
+***	Module and view transformation.
 ***
 
 fmod EXTENDED-META-LEVEL is

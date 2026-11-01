@@ -822,19 +822,16 @@ MetaLevel::downStatementAttr(DagNode* metaAttr, MixfixModule* m, StatementAttrib
     }
   else if (ma == metadataSymbol)
     {
-      DagNode* metaStr = safeCast(FreeDagNode*, metaAttr)->getArgument(0);
+      DagNode* metaStr = safeCastNonNull<FreeDagNode*>(metaAttr)->getArgument(0);
       if (metaStr->symbol() != stringSymbol)
 	return false;
-      string str;
-      Token::ropeToString(safeCast(StringDagNode*, metaStr)->getValue(), str);
-      ai.metadata = Token::encode(str.c_str());
+      ai.metadata =
+	Token::ropeToStringTokenCode(safeCastNonNull<StringDagNode*>(metaStr)->getValue());
     }
   else if (ma == owiseSymbol)
     ai.flags.setFlags(OWISE);
   else if (ma == variantAttrSymbol)
     ai.flags.setFlags(VARIANT);
-  else if (ma == nonexecSymbol)
-    ai.flags.setFlags(NONEXEC);
   else if (ma == nonexecSymbol)
     ai.flags.setFlags(NONEXEC);
   else if (ma == narrowingSymbol)

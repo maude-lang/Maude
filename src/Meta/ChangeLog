@@ -1,3 +1,15 @@
+2026-10-31  Saruman the White  <eker@eker10>
+
+	* metaDown.cc (MetaLevel::downStatementAttr): use Token::ropeToStringTokenCode()
+
+	* metaDownOps.cc (MetaLevel::downAttr): fix bug where we were not
+	adding back quotes from metadata string argument
+	(MetaLevel::downAttr): use Token::ropeToStringTokenCode()
+
+	* metaDown.cc (MetaLevel::downStatementAttr): remove duplicate
+	NONEXEC case; use safeCastNonNull<>; fix bug where we were not
+	adding back quotes from metadata string argument
+
 2026-10-20  Saruman the White  <eker@eker10>
 
 	* remoteInterpreter.cc
