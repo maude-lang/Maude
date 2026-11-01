@@ -1,0 +1,25 @@
+==========================================
+erewrite in METADATA-TEST : <> < me : User | none > createInterpreter(
+    interpreterManager, me, none) .
+rewrites: 3
+result Configuration: <> < me : User | none > showingModule(me, interpreter(0),
+    fmod 'TAGGED is
+  nil
+  sorts 'S .
+  none
+  op 'f : 'S -> 'S [metadata("a\\c\n")] .
+  none
+  eq 'f['X:S] = 'X:S [metadata("e\\g\n")] .
+endfm)
+==========================================
+reduce in METADATA-TEST : upModule('TAGGED, true) .
+rewrites: 1
+result FModule: fmod 'TAGGED is
+  nil
+  sorts 'S .
+  none
+  op 'f : 'S -> 'S [metadata("a\\c\n")] .
+  none
+  eq 'f['X:S] = 'X:S [metadata("e\\g\n")] .
+endfm
+Bye.

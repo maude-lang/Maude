@@ -1,0 +1,43 @@
+---- Maude alpha166: a transformer result loses the first character of every
+---- metadata string.
+
+set show timing off .
+set show advisories off .
+
+set include BOOL off .
+fmod SRC is
+  sort S .
+  op f : S -> S .
+  op g : S S -> S .
+endfm
+set include BOOL on .
+
+---- Adds metadata("abc") to every operator of the input module.
+fmod META-TAG is
+  inc MODULE-TRANSFORMER .
+
+  var  H : Header .
+  var  IL : ImportList .
+  var  SS : SortSet .
+  var  SSDS : SubsortDeclSet .
+  var  ODS : OpDeclSet .
+  var  MAS : MembAxSet .
+  var  EQS : EquationSet .
+  var  F : Qid .
+  var  TyL : TypeList .
+  var  Ty : Type .
+  var  AtS : AttrSet .
+
+  op tag : OpDeclSet -> OpDeclSet .
+  eq tag((op F : TyL -> Ty [AtS] .) ODS) = (op F : TyL -> Ty [AtS metadata("abc")] .) tag(ODS) .
+  eq tag(none) = none .
+
+  op t : ModuleList QidList -> ModuleResult [metadata "transformer"] .
+  eq t(fmod H is IL sorts SS . SSDS ODS MAS EQS endfm, nil)
+    = {fmod H is IL sorts SS . SSDS tag(ODS) MAS EQS endfm, nil} .
+endfm
+
+make TAGGED is META-TAG[SRC] endm
+
+---- The operator f of TAGGED carries metadata("bc").
+red in META-LEVEL : getOps(upModule('TAGGED, true)) .

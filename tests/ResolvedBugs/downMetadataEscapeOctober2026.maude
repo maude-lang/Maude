@@ -1,0 +1,40 @@
+***
+***	Converting a meta-attribute metadata(S:String) to a metadata
+***	token in the object-level module must take care of escape characters.
+***
+
+set show timing off .
+set show advisories off .
+
+set include BOOL off .
+fmod TAGGED is
+  sort S .
+  op f : S -> S [metadata "a\\c\n"] .
+  eq f(X:S) = X [metadata "e\\g\n"] .
+endfm
+set include BOOL on .
+
+load metaInterpreter
+
+mod METADATA-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op type:_ : Type -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('TAGGED, true)) .
+
+  rl < X : User | AS > insertedModule(X, Y) =>
+     < X : User | AS > showModule(Y, X, 'TAGGED, true) .
+endm
+
+erew in METADATA-TEST : <> 
+< me : User | none > 
+createInterpreter(interpreterManager, me, none) .
+
+red upModule('TAGGED, true) .

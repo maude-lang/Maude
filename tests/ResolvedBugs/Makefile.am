@@ -82,7 +82,9 @@ TESTS = \
 	modexp-zeroSeptember2026 \
 	stoptimer-no-replySeptember2026 \
 	AU_WronglyUsedGreedyMatchingSeptember2026 \
-	mi-bug1October2026
+	mi-bug1October2026 \
+	downMetadataOctober2026 \
+	downMetadataEscapeOctober2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -168,7 +170,9 @@ MAUDE_FILES = \
 	modexp-zeroSeptember2026.maude \
 	stoptimer-no-replySeptember2026.maude \
 	AU_WronglyUsedGreedyMatchingSeptember2026.maude \
-	mi-bug1October2026.maude
+	mi-bug1October2026.maude \
+	downMetadataOctober2026.maude \
+	downMetadataEscapeOctober2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -254,6 +258,8 @@ RESULT_FILES = \
 	modexp-zeroSeptember2026.expected \
 	stoptimer-no-replySeptember2026.expected \
 	AU_WronglyUsedGreedyMatchingSeptember2026.expected \
-	mi-bug1October2026.expected
+	mi-bug1October2026.expected \
+	downMetadataOctober2026.expected \
+	downMetadataEscapeOctober2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

@@ -1,0 +1,6 @@
+==========================================
+reduce in META-LEVEL : getOps(upModule('TAGGED, true)) .
+rewrites: 2
+result OpDeclSet: op 'f : 'S -> 'S [metadata("abc")] .
+op 'g : 'S 'S -> 'S [metadata("abc")] .
+Bye.
