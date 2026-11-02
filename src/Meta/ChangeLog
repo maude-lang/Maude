@@ -1,3 +1,9 @@
+2026-11-01  Saruman the White  <eker@eker10>
+
+	* metaDown.cc (MetaLevel::downPatternSubjectPair): fixed missing
+	space in IssueAdvisory()
+	(MetaLevel::downUnificandPair): ditto
+
 2026-10-31  Saruman the White  <eker@eker10>
 
 	* metaDown.cc (MetaLevel::downStatementAttr): use Token::ropeToStringTokenCode()

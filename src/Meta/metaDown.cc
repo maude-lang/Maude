@@ -1155,7 +1155,7 @@ MetaLevel::downUnificandPair(DagNode* metaUnificandPair,
 	      if (lhs->symbol()->rangeComponent() ==
 		  rhs->symbol()->rangeComponent())
 		return true;
-	      IssueAdvisory("kind clash for unificand pair" << QUOTE(metaUnificandPair) <<
+	      IssueAdvisory("kind clash for unificand pair " << QUOTE(metaUnificandPair) <<
 			    " in meta-module " << QUOTE(m) << '.');
 	      rhs->deepSelfDestruct();
 	    }
@@ -1222,7 +1222,7 @@ MetaLevel::downPatternSubjectPair(DagNode* metaPatternSubjectPair,
 	      if (pattern->symbol()->rangeComponent() ==
 		  subject->symbol()->rangeComponent())
 		return true;
-	      IssueAdvisory("kind clash for term subject pair" << QUOTE(metaPatternSubjectPair) <<
+	      IssueAdvisory("kind clash for term subject pair " << QUOTE(metaPatternSubjectPair) <<
 			    " in meta-module " << QUOTE(m) << '.');
 	      subject->deepSelfDestruct();
 	    }

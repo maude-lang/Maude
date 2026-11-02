@@ -1,0 +1,33 @@
+***
+***	Negative values for rpo attribute should be rejected.
+***
+
+set show timing off .
+set show advisories off .
+
+set include BOOL off .
+
+fmod R is
+  sort S .
+  op f : S -> S [rpo -3] .
+  op g : S -> S [rpo -2] .
+endfm
+
+fmod R2 is
+  sort S .
+  op f : S -> S [rpo 3] .
+endfm
+
+fmod R3 is
+  protecting R * (op g to h [rpo -1]) .
+endfm
+
+show ops R .
+show ops R3 .
+
+fmod M is protecting META-LEVEL . endfm
+
+red in M : upModule('R, false) .
+red in M : upModule('R2, false) .
+red in M : metaReduce(upModule('R, false), 'f['X:S]) .
+red in M : upImports('R3) .
