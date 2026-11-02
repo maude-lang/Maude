@@ -1,0 +1,22 @@
+Warning: <standard input>, line 14 (fmod ASSOC-RIGHT): assoc operator f has a
+    domain sort Other in a different connected component from its range sort
+    Nat.
+Warning: <standard input>, line 15 (fmod ASSOC-RIGHT): assoc operator g has a
+    domain sort Other in a different connected component from its range sort
+    Nat.
+Warning: <standard input>, line 16 (fmod ASSOC-RIGHT): idem operator k has a
+    domain sort Other in a different connected component from its range sort
+    Nat.
+Warning: <standard input>, line 17 (fmod ASSOC-RIGHT): idem operator l has a
+    domain sort Other in a different connected component from its range sort
+    Nat.
+fmod ASSOC-RIGHT is
+  sorts Nat Other .
+  op 0 : -> Nat [ctor] .
+  op o : -> Other [ctor] .
+  op f : Other Nat -> Nat .
+  op g : Nat Other -> Nat .
+  op k : Other Nat -> Nat .
+  op l : Nat Other -> Nat .
+endfm
+Bye.

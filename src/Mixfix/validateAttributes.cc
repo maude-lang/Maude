@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ MixfixModule::validateAttributes(Token prefixName,
 	  else if (domainSort1 != 0 && domainSort2 != 0 && rangeSort != 0)
 	    {
 	      bool leftOK = domainSort1->component() == rangeSort->component();
-	      if (leftOK && domainSort1->component() == rangeSort->component())
+	      if (leftOK && domainSort2->component() == rangeSort->component())
 		;  // ok
 	      else
 		{
@@ -299,7 +299,7 @@ MixfixModule::validateAttributes(Token prefixName,
 	  else if (domainSort1 != 0 && domainSort2 != 0 && rangeSort != 0)
 	    {
 	      bool leftOK = domainSort1->component() == rangeSort->component();
-	      if (leftOK && domainSort1->component() == rangeSort->component())
+	      if (leftOK && domainSort2->component() == rangeSort->component())
 		;  // ok
 	      else
 		{

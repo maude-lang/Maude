@@ -1,0 +1,20 @@
+***
+***	Right domain of operators with assoc and idem attributes should
+***	match their range.
+***
+
+set show advisories off .
+
+set include BOOL off .
+
+fmod ASSOC-RIGHT is
+  sorts Nat Other .
+  op 0 : -> Nat [ctor] .
+  op o : -> Other [ctor] .
+  op f : Other Nat -> Nat [assoc] .
+  op g : Nat Other -> Nat [assoc] .
+  op k : Other Nat -> Nat [idem] .
+  op l : Nat Other -> Nat [idem] .
+endfm
+
+show all .

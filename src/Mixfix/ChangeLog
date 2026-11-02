@@ -1,5 +1,10 @@
 2026-11-01  Saruman the White  <eker@eker10>
 
+	* validateAttributes.cc (MixfixModule::validateAttributes): fix
+	bug where we were testing the left domain sort twice and the right
+	domain sort not at all for assoc symbols
+	(MixfixModule::validateAttributes): fix symmetric bug in idem case
+
 	* renaming.cc (Renaming::setRpo): don't allow negative rpo values
 
 	* ops.cc (SyntacticPreModule::setRpo): don't allow negative rpo

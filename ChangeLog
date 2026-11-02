@@ -1,5 +1,8 @@
 2026-11-01  Saruman the White  <eker@eker10>
 
+	* tests/ResolvedBugs/assocIdemRightDomainUncheckedNovember2026.maude:
+	added
+
 	* tests/ResolvedBugs/rpoNegativeValueNovember2026.maude: added
 
 	* tests/ResolvedBugs/downMetadataEscapeOctober2026.maude: added
