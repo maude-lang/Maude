@@ -1,0 +1,12 @@
+==========================================
+reduce in LEXICAL : tokenize("[") .
+rewrites: 1
+result Qid: '`[
+==========================================
+reduce in LEXICAL : tokenize("[ [") .
+rewrites: 1
+result NeQidList: '`[ '`[
+
+backquoted
+backquoted
+Bye.

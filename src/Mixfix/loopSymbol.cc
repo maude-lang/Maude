@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 //      utility stuff
 #include "macros.hh"
 #include "vector.hh"
-//#include "stringTable.hh"
 
 //      forward declarations
 #include "interface.hh"
@@ -149,7 +148,7 @@ LoopSymbol::createQidList(const Vector<Token>& ids)
   if (nrIds == 0)
     return new FreeDagNode(nilQidListSymbol);
   if (nrIds == 1)
-    return new QuotedIdentifierDagNode(qidSymbol, ids[0].code());
+    return new QuotedIdentifierDagNode(qidSymbol, Token::backQuoteSpecials(ids[0].code()));
   Vector<DagNode*> args(nrIds);
   for (int i = 0; i < nrIds; i++)
     args[i] = new QuotedIdentifierDagNode(qidSymbol, Token::backQuoteSpecials(ids[i].code()));

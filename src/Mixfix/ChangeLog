@@ -1,5 +1,9 @@
 2026-11-01  Saruman the White  <eker@eker10>
 
+	* loopSymbol.cc (LoopSymbol::createQidList): call
+	Token::backQuoteSpecials() in the singleton list case - it was a
+	bug not to
+
 	* validateAttributes.cc (MixfixModule::validateAttributes): fix
 	bug where we were testing the left domain sort twice and the right
 	domain sort not at all for assoc symbols

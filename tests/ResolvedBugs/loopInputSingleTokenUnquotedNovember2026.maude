@@ -1,0 +1,20 @@
+***
+***	All special characters should be quoted in loop mode, even if there is only one.
+***
+
+set show timing off .
+set show advisories off .
+
+red in LEXICAL : tokenize("[") .
+red in LEXICAL : tokenize("[ [") .
+
+mod L is
+  including LOOP-MODE .
+  op s : -> State .
+  var I O : QidList .
+  crl [I, s, O] => [nil, s, if I == '`[ or I == ('`[ '`[) then 'backquoted else 'bare fi] if I =/= nil .
+endm
+
+loop [nil, s, nil] .
+( [ )
+( [ [ )
