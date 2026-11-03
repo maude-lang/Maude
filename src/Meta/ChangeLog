@@ -1,5 +1,8 @@
 2026-11-02  Saruman the White  <eker@eker10>
 
+	* descentFunctions.cc (MetaLevelOpSymbol::metaCheck): determined
+	-> determine in IssueAdvisory()
+
 	* miNarrowSearch.cc
 	(InterpreterManagerSymbol::getNarrowingSearchResult): symmetric
 	bug fix to below

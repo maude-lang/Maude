@@ -1,3 +1,25 @@
+2026-11-02  Saruman the White  <eker@eker10>
+
+	* cvc5_Bindings.cc (VariableGenerator::makeBooleanExpr): fix typo
+	in WarningCheck()
+	(VariableGenerator::assertDag): fix double space in IssueWarning()
+	(VariableGenerator::checkDag): ditto
+	(VariableGenerator::assertDag): CVC5 is stylized cvc5
+
+	* cvc4_Bindings.cc (VariableGenerator::makeBooleanExpr): fix typo
+	in WarningCheck()
+	(VariableGenerator::assertDag): fix double space in IssueWarning()
+	(VariableGenerator::checkDag): ditto
+
+	* yices2_Bindings.cc (VariableGenerator::makeBooleanExpr): fix
+	typo in WarningCheck()
+	(VariableGenerator::assertDag): fix double space in IssueWarning()
+	(VariableGenerator::checkDag): ditto
+
+	* ooView.cc (View::getClassSortAndSymbol): fix missing space in
+	warning
+	(View::getClassSortAndSymbol): formatting
+
 2026-11-01  Saruman the White  <eker@eker10>
 
 	* loopSymbol.cc (LoopSymbol::createQidList): call

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2017 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
     Copyright 2025 Universidad Complutense de Madrid, 28040 Madrid, Spain.
 
     This program is free software; you can redistribute it and/or modify
@@ -108,7 +108,7 @@ VariableGenerator::assertDag(DagNode* dag)
 
   if (result.isUnknown())
     {
-      IssueWarning("CVC5 not able to determine satisfiability  - giving up.");
+      IssueWarning("cvc5 not able to determine satisfiability - giving up.");
       return SAT_UNKNOWN;
     }
   return result.isUnsat() ? UNSAT : SAT;
@@ -139,7 +139,7 @@ VariableGenerator::checkDag(DagNode* dag)
 
   if (result.isUnknown())
     {
-      IssueWarning("cvc5 not able to determine satisfiability  - giving up.");
+      IssueWarning("cvc5 not able to determine satisfiability - giving up.");
       return SAT_UNKNOWN;
     }
   return result.isUnsat() ? UNSAT : SAT;
@@ -255,7 +255,7 @@ VariableGenerator::makeBooleanExpr(DagNode* dag)
 	e = makeVariable(v);
     }
 
-  WarningCheck(!e.isNull(), "Expecting an SMT Boolean expression but saw but saw " << dag);
+  WarningCheck(!e.isNull(), "Expecting an SMT Boolean expression but saw " << dag);
   return e;
 }
 

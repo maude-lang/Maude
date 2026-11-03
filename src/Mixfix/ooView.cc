@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,14 +35,16 @@ View::getClassSortAndSymbol(Token className,
   classSort = module->findSort(className.code());
   if (classSort == 0)
     {
-      IssueWarning(LineNumber(className.lineNumber()) << ": class mapping " << direction << QUOTE(className) <<
+      IssueWarning(LineNumber(className.lineNumber()) << ": class mapping " << direction <<
+		   " " << QUOTE(className) <<
 		   " fails because there is no such class sort in " << QUOTE(module) << ".");
       return false;
     }
   if (classIdSort->component() != classSort->component() || !leq(classSort, classIdSort))
     {
-      IssueWarning(LineNumber(className.lineNumber()) << ": class mapping " << direction << " " <<
-		   QUOTE(className) << " maps " << direction << " a sort in " << QUOTE(module) <<
+      IssueWarning(LineNumber(className.lineNumber()) << ": class mapping " << direction <<
+		   " " << QUOTE(className) << " maps " << direction <<
+		   " a sort in " << QUOTE(module) <<
 		   " that is not a subsort of " << QUOTE(classIdSort) << ".");
       return false;
     }
@@ -51,7 +53,8 @@ View::getClassSortAndSymbol(Token className,
   classSymbol = module->findSymbol(className.code(), emptyDomain, classSort->component());
   if (classSymbol == 0)
     {
-      IssueWarning(LineNumber(className.lineNumber()) << ": class mapping " << direction << " " << QUOTE(className) <<
+      IssueWarning(LineNumber(className.lineNumber()) << ": class mapping " << direction <<
+		   " " << QUOTE(className) <<
 		   " fails because there is no such class constant in " << QUOTE(module) << ".");
       return false;
     }
