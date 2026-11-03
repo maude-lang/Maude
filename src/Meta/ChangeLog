@@ -1,3 +1,11 @@
+2026-11-03  Saruman the White  <eker@eker10>
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doWrite): don't Assert() that
+	EAGAIN/EWOULDBLOCK can't happen; handle them
+	(InterpreterManagerSymbol::doRead): change commens to indicate
+	that EAGAIN/EWOULDBLOCK can happen on the first read()
+
 2026-11-02  Saruman the White  <eker@eker10>
 
 	* descentFunctions.cc (MetaLevelOpSymbol::metaCheck): determined

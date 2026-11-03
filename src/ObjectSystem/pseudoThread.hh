@@ -133,11 +133,30 @@ public:
   //
   //	Call back functions.
   //
-  virtual void doRead(int fd);  // a read is possible (or the other end of a socket was closed for some OS)
-  virtual void doWrite(int fd);  // a write is possible
-  virtual void doError(int fd);   // a error happened
-  virtual void doHungUp(int fd);  // the other end of a socket was closed when wanting to do a write (for some OS, when wanting to do a read)
-  virtual void doCallback(long clientData);  // notBefore time reached for a requested call back
+  //	A read() may be possible, but not guaranteed, or for some OSes, the other end
+  //	of a socket was closed.
+  //
+  virtual void doRead(int fd);
+  //
+  //	A write() may be possible  but not guaranteed.
+  //
+  virtual void doWrite(int fd);
+  //
+  //	An error happened.
+  //
+  virtual void doError(int fd);
+  //
+  //	The other end of a socket was closed when wanting to write(), or for some OSes
+  //	when wantinf to read().
+  //
+  virtual void doHungUp(int fd);
+  //
+  //	Called at some point after notBefore time reached for requested callback.
+  //
+  virtual void doCallback(long clientData);
+  //
+  //	Child exited and has been waited for.
+  //
   virtual void doChildExit(pid_t childPid, int status);
 
 private:

@@ -441,7 +441,8 @@ StreamManagerSymbol::nonblockingGetLine(FreeDagNode* message,
   //	Because when we fork() we will have copies of the any buffered
   //	cout characters in two processes, we need to make sure nothing is buffered.
   //
-  cout << flush;
+  cout.flush();
+  cerr.flush();
   //
   //	fork() a child to do the getLine() without blocking the parent
   //	process.
@@ -628,9 +629,10 @@ StreamManagerSymbol::doRead(int fd)
 	  Assert(errno == EAGAIN || errno == EWOULDBLOCK,
 		 "unexpected read() error: " << strerror(errno));
 	  //
-	  //	We've read all the characters but the child hasn't yet
-	  //	closed the write end of the pipe so we're not seeing an EOF
-	  //	condition.
+	  //	We got an error but the child hasn't closed the write end
+	  //	of the pipe so we're not seeing an EOF condition.
+	  //
+	  //	It is possible that the pipe wasn't ready to read after all.
 	  //
 	  //	There is a possibility that the child will write more
 	  //	characters in the case of a very long line that couldn't be
@@ -639,7 +641,7 @@ StreamManagerSymbol::doRead(int fd)
 	  //	It's also possible that the child was just about to
 	  //	close() the write end when we did our read().
 	  //
-	  //	Either way we request another read event so when something
+	  //	In all cases we request another read event so when something
 	  //	happens on the pipe we can respond appropriately.
 	  //
 	  wantTo(READ, fd);

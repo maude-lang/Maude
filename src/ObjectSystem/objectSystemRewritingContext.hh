@@ -72,7 +72,10 @@ protected:
 private:
   typedef std::map<DagNode*, ExternalObjectManagerSymbol*, DagNode::LessThan> ObjectMap;
   typedef std::map<DagNode*, list<DagNode*>, DagNode::LessThan> MessageMap;
-  typedef std::set<ExternalObjectManagerSymbol*> ManagerSet;  // std::less provides an implementation defined a strict total order on pointers
+  //
+  //	std::less provides an implementation defined a strict total order on pointers
+  //
+  typedef std::set<ExternalObjectManagerSymbol*> ManagerSet;
 
   bool interleave();
 

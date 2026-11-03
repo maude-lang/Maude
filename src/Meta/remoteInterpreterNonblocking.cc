@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ InterpreterManagerSymbol::nonblockingSendMessage(RemoteInterpreter& ri, const Ro
     {
       //
       //	We had an error that wasn't due to an interrupt or
-      //	not wanting to block. We must assume connection is broken.
+      //	wanting to block. We must assume connection is broken.
       //	Not sure for the moment how to clean up.
       //
       CantHappen("write() failed");
@@ -98,15 +98,13 @@ InterpreterManagerSymbol::doWrite(int fd)
   //
   //	Restart interrupted calls.
   //	Because we're in a callback we expect to be able to write at
-  //	at least one character without blocking.
+  //	at least one character without blocking, but it's not guaranteed.
   //
   ssize_t n;
   do
     n = write(fd, ri->unsent, ri->nrUnsent);
   while (n == -1 && errno == EINTR);
   Assert(n != 0, "unexpected zero characters written");
-  Assert(!(n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)),
-	 "unexpected would block in doWrite() callback");
   
   if (n >= 0)  // include 0 case here for safety, though it should not arise
     {
@@ -123,7 +121,7 @@ InterpreterManagerSymbol::doWrite(int fd)
       else
 	{
 	  //
-	  //	Need to move unsent pointers and request another callback.
+	  //	Need to move unsent pointer and request another callback.
 	  //
 	  ri->unsent += n;
 	  wantTo(WRITE, fd);
@@ -131,6 +129,14 @@ InterpreterManagerSymbol::doWrite(int fd)
     }
   else
     {
+      if (errno == EAGAIN || errno == EWOULDBLOCK)
+	{
+	  //
+	  //	Not ready to write(), even though OS hinted otherwise.
+	  //	Leave things unchanged and ask for another callback.
+	  //
+	  wantTo(WRITE, fd);
+	}
       //
       //	We had an error that wasn't due to an interrupt or
       //	not wanting to block. We must assume connection is broken.
@@ -235,8 +241,8 @@ InterpreterManagerSymbol::doRead(int fd)
 	      //
 	      //	We had an error that wasn't due to an interrupt.
 	      //	Our socket is nonblocking so we expect to see
-	      //	EAGAIN or EWOULDBLOCK eventually, though not on the
-	      //	first read because doRead() is only called when
+	      //	EAGAIN or EWOULDBLOCK eventually, maybe even on the
+	      //	first read because doRead() is only a hint that
 	      //	characters are waiting.
 	      //
 	      DebugAdvisory("callback for fd = " << fd << " error =  " << strerror(errno));

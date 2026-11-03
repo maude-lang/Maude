@@ -74,15 +74,26 @@ SocketManagerSymbol::doRead(int fd)
 	}
       else
 	{
-	  //
-	  //	An error on the socket. We expect that this is due to the
-	  //	connection being broken, so we close the socket. No need
-	  //	to clear the WAITING_TO_READ or the lastReadMessage
-	  //	because closedSocketReply() will delete the whole object.
-	  //
-	  const char* errText = strerror(errno);
-	  DebugInfo("unexpected read() error in callback: " << errText);
-	  closedSocketReply(fd, errText, message, context);
+	  if (errno == EAGAIN || errno == EWOULDBLOCK)
+	    {
+	      //
+	      //	Not ready to read(), even though OS hinted otherwise.
+	      //	Leave things unchanged and ask for another callback.
+	      //
+	      wantTo(READ, fd);
+	    }
+	  else
+	    {
+	      //
+	      //	An error on the socket. We expect that this is due to the
+	      //	connection being broken, so we close the socket. No need
+	      //	to clear the WAITING_TO_READ or the lastReadMessage
+	      //	because closedSocketReply() will delete the whole object.
+	      //
+	      const char* errText = strerror(errno);
+	      DebugInfo("unexpected read() error in callback: " << errText);
+	      closedSocketReply(fd, errText, message, context);
+	    }
 	}
     }
   else if (as.state & WAITING_TO_ACCEPT)
@@ -166,9 +177,6 @@ SocketManagerSymbol::doWrite(int fd)
 	n = write(fd, as.unsent, as.nrUnsent);
       while (n == -1 && errno == EINTR);
       Assert(n != 0, "unexpected zero characters written");
-      Assert(!(n == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)),
-	     "unexpected would block in doWrite() callback");
-      
       if (n >= 0)  // include 0 case here for safety, though it should not arise
 	{
 	  as.nrUnsent -= n;
@@ -187,25 +195,36 @@ SocketManagerSymbol::doWrite(int fd)
 	}
       else
 	{
-	  //
-	  //	We had an error that was not due to an interrupt
-	  //	or no characters available. We assume that this
-	  //	means a broken connection. However we don't want
-	  //	to close the socket as it may still be possible
-	  //	to read characters. Instead we just inform the
-	  //	requesting object of the error.
-	  //
-	  const char* errorText = strerror(errno);
-	  DebugInfo("unexpected write() error : " << errorText);
-	  errorReply(errorText, message, context);
-	  as.state &= ~WAITING_TO_WRITE;
- 	  as.lastWriteMessage.setNode(0);  // allow GC of last message
-	  //
-	  //	Delete character array here so we don't lose
-	  //	the pointer in a future send().
-	  //
-	  delete [] as.textArray;
-	  as.textArray = 0;
+	  if (errno == EAGAIN || errno == EWOULDBLOCK)
+	    {
+	      //
+	      //	Not ready to write(), even though OS hinted otherwise.
+	      //	Leave things unchanged and ask for another callback.
+	      //
+	      wantTo(WRITE, fd);
+	    }
+	  else
+	    {
+	      //
+	      //	We had an error that was not due to an interrupt
+	      //	or socket not being ready. We assume that this
+	      //	means a broken connection. However we don't want
+	      //	to close the socket as it may still be possible
+	      //	to read characters. Instead we just inform the
+	      //	requesting object of the error.
+	      //
+	      const char* errorText = strerror(errno);
+	      DebugInfo("unexpected write() error : " << errorText);
+	      errorReply(errorText, message, context);
+	      as.state &= ~WAITING_TO_WRITE;
+	      as.lastWriteMessage.setNode(0);  // allow GC of last message
+	      //
+	      //	Delete character array here so we don't lose
+	      //	the pointer in a future send().
+	      //
+	      delete [] as.textArray;
+	      as.textArray = 0;
+	    }
 	}
     }
   else

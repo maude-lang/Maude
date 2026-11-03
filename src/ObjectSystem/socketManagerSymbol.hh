@@ -59,10 +59,10 @@ public:
   //
   //	Overridden methods from PseudoThread.
   //
-  void doRead(int fd);
-  void doWrite(int fd);
-  void doError(int fd);
-  void doHungUp(int fd);
+  void doRead(int fd) override;
+  void doWrite(int fd) override;
+  void doError(int fd) override;
+  void doHungUp(int fd) override;
   //
   //	For other socket creators (our clients).
   //
