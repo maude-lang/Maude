@@ -284,10 +284,11 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
   char buffer[ERROR_BUFFER_SIZE];
   for (;;)
     {
-      int nrChar = read(failureReturnPipe[READ_END], buffer, ERROR_BUFFER_SIZE);
-      if (nrChar <= 0)
-	break;
-      errorMessage += Rope(buffer, nrChar);
+     int nrChar = read(failureReturnPipe[READ_END], buffer, ERROR_BUFFER_SIZE);
+     if (nrChar > 0)
+       errorMessage += Rope(buffer, nrChar);
+     else if (nrChar == 0 || errno != EINTR)
+       break;  // EOF or an error other than interrupted by signal
     }
   close(failureReturnPipe[READ_END]);  // done with pipe
   if (!(errorMessage.empty()))

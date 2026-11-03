@@ -1,5 +1,9 @@
 2026-11-02  Saruman the White  <eker@eker10>
 
+	* processActions.cc (ProcessManagerSymbol::createProcess): handle
+	early exit of read() on failureReturnPipe due to a signal (EINTR);
+	this fixes bug-eintr
+
 	* processStuff.cc (ProcessManagerSymbol::cleanUp): add comment to
 	explain why socket closing code is commented out
 	(ProcessManagerSymbol::doChildExit): added comment to explain why
