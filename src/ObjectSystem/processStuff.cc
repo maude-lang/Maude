@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,10 @@
 void
 ProcessManagerSymbol::cleanUp(DagNode* objectId)
 {
+  //
+  //	Our ObjectSystemRewritingContext is destructing so we need
+  //	to clean up our external object.
+  //
   int processId;
   ChildProcess* cpp;
   if (getChildProcess(objectId, processId, cpp))
@@ -43,19 +47,13 @@ ProcessManagerSymbol::cleanUp(DagNode* objectId)
 	  //
 	  cancelChildExitCallback(processId);
 	}
-      /*
-      if (cpp->ioSocket != NONE)
-	close(cpp->ioSocket);
-      if (cpp->errSocket != NONE)
-	close(cpp->errSocket);
-      */
       //
-      //	Many programs will exit when their stdio streams are closed
-      //	but we can't be sure of that. So make sure.
-      //	No point checking first since we would run into a race
-      //	condition.
+      //	We no longer close sockets here - responsibility has been
+      //	passed to SocketManagerSymbol.
       //
-      kill(processId, SIGKILL);  // may return failure code
+      //	Kill the process; kill() can return a failure code.
+      //
+      kill(processId, SIGKILL);
       //
       //	Wait for it to die and remove the zombie.
       //	We want to be robust against early exit due to
@@ -85,8 +83,12 @@ ProcessManagerSymbol::doChildExit(pid_t childPid, int wstatus)
   FreeDagNode* message = safeCast(FreeDagNode*, cp.waitMessage.getNode());
   ObjectSystemRewritingContext& context = *(cp.waitContext);
   //
-  //	Generate exited() reply.
+  //	We don't close sockets here because:
+  //	(a) responsibility for the sockets has been handed to SocketManagerSymbol; and
+  //	(b) if the child wrote a reply before exiting we might lose it.
   //
+  //	Generate exited() reply. The exitedReply() call erases the ChildProcess
+  //	object from the childProcesses map and removes it as an external object.
   //
   //	Child status changes; make sure it is an exit.
   //

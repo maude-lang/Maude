@@ -39,7 +39,6 @@ ProcessManagerSymbol::exitedReply(pid_t processId,
 				  FreeDagNode* originalMessage,
 				  ObjectSystemRewritingContext& context)
 {
-  //ProcessMap::iterator i = childProcesses.find(processId);
   Assert(childProcesses.find(processId) != childProcesses.end(), "missing child");
   //
   //	Clean up process.

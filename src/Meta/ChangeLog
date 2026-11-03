@@ -1,3 +1,16 @@
+2026-11-02  Saruman the White  <eker@eker10>
+
+	* miNarrowSearch.cc
+	(InterpreterManagerSymbol::getNarrowingSearchResult): symmetric
+	bug fix to below
+
+	* miNarrow.cc (InterpreterManagerSymbol::getOneStepNarrowing):
+	only call protect() if we didn't call makeNarrowingSearchState2()
+	which call protect() - fixes another mi-bug4 bug
+
+	* miSearch.cc (InterpreterManagerSymbol::getSearchResult): fix
+	mi-bug4 by calling mm->unprotect() in the noSuchResultMsg path
+
 2026-11-01  Saruman the White  <eker@eker10>
 
 	* metaDown.cc (MetaLevel::downPatternSubjectPair): fixed missing

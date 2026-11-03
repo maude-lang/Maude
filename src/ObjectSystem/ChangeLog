@@ -1,3 +1,17 @@
+2026-11-02  Saruman the White  <eker@eker10>
+
+	* processStuff.cc (ProcessManagerSymbol::cleanUp): add comment to
+	explain why socket closing code is commented out
+	(ProcessManagerSymbol::doChildExit): added comment to explain why
+	sockets should not be closed here
+	(ProcessManagerSymbol::cleanUp): remove commented out code and
+	obsolete comment
+	(ProcessManagerSymbol::cleanUp): added comment to explain when
+	this is called
+
+	* processOutcomes.cc (ProcessManagerSymbol::exitedReply): deleted
+	commented out code
+
 2026-10-20  Saruman the White  <eker@eker10>
 
 	* pseudoThread-pselect.cc (PseudoThread::processFds): reorganized

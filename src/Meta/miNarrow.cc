@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -106,7 +106,8 @@ InterpreterManagerSymbol::getOneStepNarrowing(FreeDagNode* message,
 		return makeErrorReply("Bad narrowing problem.", message);
 	      lastSolutionNr = -1;
 	    }
-	  mm->protect();
+	  else
+	    mm->protect();
 	  DagNode* target = message->getArgument(1);
 	  //
 	  //	Find requested solution.
