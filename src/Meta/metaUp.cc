@@ -550,8 +550,8 @@ MetaLevel::upSmtSubstitution(const Substitution& substitution,
       //
       if (!smtVariables.contains(i))
 	{
-	  args.append(upAssignment(variableInfo.index2Variable(0),
-				   substitution.value(0),
+	  args.append(upAssignment(variableInfo.index2Variable(i),
+				   substitution.value(i),
 				   m,
 				   qidMap,
 				   dagNodeMap));

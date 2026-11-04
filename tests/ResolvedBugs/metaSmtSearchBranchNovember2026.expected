@@ -1,0 +1,63 @@
+==========================================
+reduce in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st[
+    'N:Integer], nil, '#, 0, 1, 0) .
+rewrites: 1
+result [SmtResult?]: metaSmtSearch(mod 'F is
+  including 'BOOLEAN .
+  protecting 'INTEGER .
+  sorts 'St .
+  none
+  op 'st : 'Integer -> 'St [ctor] .
+  none
+  none
+  rl 'st['N:Integer] => 'st['_+_['N:Integer, 'N:Integer]] [label('dbl)] .
+  crl 'st['N:Integer] => 'st['K:Integer] if '_>_['K:Integer, 'N:Integer] =
+    'true.Boolean [nonexec label('jump)] .
+endm, 'st['0.Integer], 'st['N:Integer], nil, '#, 0, 1, 0)
+==========================================
+reduce in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st[
+    'N:Integer], nil, '+, 0, 1, 0) .
+rewrites: 3
+result SmtResult: {'st['_+_['0.Integer, '0.Integer]], (none).Substitution,
+    '_and_['true.Boolean, '_===_['N:Integer, '_+_['0.Integer, '0.Integer]]], 0}
+==========================================
+reduce in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st[
+    'N:Integer], nil, '#, 0, 1, 1) .
+rewrites: 1
+result [SmtResult?]: metaSmtSearch(mod 'F is
+  including 'BOOLEAN .
+  protecting 'INTEGER .
+  sorts 'St .
+  none
+  op 'st : 'Integer -> 'St [ctor] .
+  none
+  none
+  rl 'st['N:Integer] => 'st['_+_['N:Integer, 'N:Integer]] [label('dbl)] .
+  crl 'st['N:Integer] => 'st['K:Integer] if '_>_['K:Integer, 'N:Integer] =
+    'true.Boolean [nonexec label('jump)] .
+endm, 'st['0.Integer], 'st['N:Integer], nil, '#, 0, 1, 1)
+==========================================
+reduce in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st[
+    'N:Integer], nil, '+, 0, 1, 1) .
+rewrites: 3
+result SmtResult: {'st['#1-K:Integer], (none).Substitution, '_and_['_>_[
+    '#1-K:Integer, '0.Integer], '_===_['N:Integer, '#1-K:Integer]], 1}
+==========================================
+reduce in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st[
+    'N:Integer], nil, '!, 0, 1, 0) .
+rewrites: 1
+result [SmtResult?]: metaSmtSearch(mod 'F is
+  including 'BOOLEAN .
+  protecting 'INTEGER .
+  sorts 'St .
+  none
+  op 'st : 'Integer -> 'St [ctor] .
+  none
+  none
+  rl 'st['N:Integer] => 'st['_+_['N:Integer, 'N:Integer]] [label('dbl)] .
+  crl 'st['N:Integer] => 'st['K:Integer] if '_>_['K:Integer, 'N:Integer] =
+    'true.Boolean [nonexec label('jump)] .
+endm, 'st['0.Integer], 'st['N:Integer], nil, '!, 0, 1, 0)
+Warning: <standard input>, line 24: =># mode is not supported for searching
+    modulo SMT.
+Bye.

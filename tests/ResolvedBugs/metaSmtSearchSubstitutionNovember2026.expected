@@ -1,0 +1,33 @@
+==========================================
+reduce in META-LEVEL : metaSmtSearch(upModule('P, false), 'p['_;_['it[
+    '1.Integer], 'it['2.Integer]], 'e.Bag], 'p['B:Bag, 'C:Bag], nil, '+, 0, 1,
+    0) .
+rewrites: 3
+result SmtResult: {'p['it['2.Integer], '_;_['e.Bag, 'it['1.Integer]]], 
+  'B:Bag <- 'it['2.Integer] ; 
+  'C:Bag <- '_;_['e.Bag, 'it['1.Integer]], 'true.Boolean, 0}
+==========================================
+smt-search [1] in P : p(it(1) ; it(2), e) =>+ p(B, C) .
+
+Solution 1
+rewrites: 1
+state: p(it(2), e ; it(1))
+B --> it(2)
+C --> e ; it(1)
+where true
+==========================================
+reduce in META-LEVEL : metaSmtSearch(upModule('Q, false), 'q['0.Integer, '_;_[
+    'it['5.Integer], 'e.Bag]], 'q['N:Integer, 'B:Bag], nil, '+, 0, 1, 0) .
+rewrites: 3
+result SmtResult: {'q['_+_['0.Integer, '5.Integer], 'e.Bag], 
+  'B:Bag <- 'e.Bag, '_and_['true.Boolean, '_===_['N:Integer, '_+_['0.Integer,
+    '5.Integer]]], 0}
+==========================================
+smt-search [1] in Q : q(0, e ; it(5)) =>+ q(N, B) .
+
+Solution 1
+rewrites: 1
+state: q(0 + 5, e)
+B --> e
+where true and N === 0 + 5
+Bye.

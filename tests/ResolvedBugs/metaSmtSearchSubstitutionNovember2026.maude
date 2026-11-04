@@ -1,0 +1,44 @@
+***
+***	Check that substitution contains bindings for non-SMT sort variables.
+***
+
+set show timing off .
+set show advisories off .
+
+load smt .
+
+mod P is
+  protecting INTEGER .
+  sorts St Bag Item .
+  subsort Item < Bag .
+  op it : Integer -> Item [ctor] .
+  op _;_ : Bag Bag -> Bag [assoc comm] .
+  op p : Bag Bag -> St [ctor] .
+  op e : -> Bag [ctor] .
+  var N : Integer .
+  vars B C : Bag .
+  rl [mv] : p(it(N) ; B, C) => p(B, it(N) ; C) .
+endm
+
+red in META-LEVEL : metaSmtSearch(upModule('P, false),
+  'p['_;_['it['1.Integer], 'it['2.Integer]], 'e.Bag], 'p['B:Bag, 'C:Bag],
+  nil, '+, 0, 1, 0) .
+smt-search [1] in P : p(it(1) ; it(2), e) =>+ p(B:Bag, C:Bag) .
+
+mod Q is
+  protecting INTEGER .
+  sorts St Bag Item .
+  subsort Item < Bag .
+  op it : Integer -> Item [ctor] .
+  op _;_ : Bag Bag -> Bag [assoc comm] .
+  op q : Integer Bag -> St [ctor] .
+  op e : -> Bag [ctor] .
+  vars N K : Integer .
+  var B : Bag .
+  rl [add] : q(N, it(K) ; B) => q(N + K, B) .
+endm
+
+red in META-LEVEL : metaSmtSearch(upModule('Q, false),
+  'q['0.Integer, '_;_['it['5.Integer], 'e.Bag]], 'q['N:Integer, 'B:Bag],
+  nil, '+, 0, 1, 0) .
+smt-search [1] in Q : q(0, it(5) ; e) =>+ q(N:Integer, B:Bag) .

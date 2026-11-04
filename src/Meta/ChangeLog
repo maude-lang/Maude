@@ -1,3 +1,12 @@
+2026-11-04  Saruman the White  <eker@eker10>
+
+	* metaUp.cc (MetaLevel::upSmtSubstitution): fix bug where we were
+	always accessing variable 0 rather than variable i
+
+	* metaSearch.cc
+	(MetaLevelOpSymbol::makeSMT_RewriteSequenceSearch): exclude
+	SequenceSearch::BRANCH
+
 2026-11-03  Saruman the White  <eker@eker10>
 
 	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):

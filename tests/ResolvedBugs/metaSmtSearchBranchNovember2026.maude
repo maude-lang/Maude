@@ -1,0 +1,24 @@
+***
+***	=># searches should be refused by metaSmtSearch()
+***
+
+set show timing off .
+set show advisories off .
+
+load smt .
+
+mod F is
+  protecting INTEGER .
+  sort St .
+  op st : Integer -> St [ctor] .
+  vars N K : Integer .
+  crl [jump] : st(N) => st(K) if K > N = true [nonexec] .
+  rl [dbl] : st(N) => st(N + N) .
+endm
+
+red in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st['N:Integer], nil, '#, 0, 1, 0) .
+red in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st['N:Integer], nil, '+, 0, 1, 0) .
+red in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st['N:Integer], nil, '#, 0, 1, 1) .
+red in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st['N:Integer], nil, '+, 0, 1, 1) .
+red in META-LEVEL : metaSmtSearch(upModule('F, false), 'st['0.Integer], 'st['N:Integer], nil, '!, 0, 1, 0) .
+smt-search [1] in F : st(0) =># st(N:Integer) .
