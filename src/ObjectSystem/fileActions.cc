@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2017-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2017-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -168,8 +168,8 @@ FileManagerSymbol::makeLink(FreeDagNode* message, ObjectSystemRewritingContext& 
 	      const Rope& linkName = safeCast(StringDagNode*, linkNameArg)->getValue();
 	      char* linkNameStr = linkName.makeZeroTerminatedString();
 
-	      int result = symbolic ? link(targetStr, linkNameStr) :
-		symlink(targetStr, linkNameStr);
+	      int result = symbolic ? symlink(targetStr, linkNameStr) :
+		link(targetStr, linkNameStr);
 	      if (result == 0)
 		trivialReply(madeLinkMsg, message, context);
 	      else

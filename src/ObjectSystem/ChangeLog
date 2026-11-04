@@ -1,5 +1,14 @@
 2026-11-03  Saruman the White  <eker@eker10>
 
+	* fileActions.cc (FileManagerSymbol::makeLink): fixed bug where
+	symlink() and link() were in the wrong branches of ?: operator
+
+	* directoryActions.cc (DirectoryManagerSymbol::getDirectoryEntry):
+	fix bug where DT_SOCK was being translated as directoryEntrySymbol
+	rather than socketEntrySymbol
+	(DirectoryManagerSymbol::getDirectoryEntry): treat any platform
+	specific value for d_type as DT_UNKNOWN
+
 	* socketStuff.cc (SocketManagerSymbol::createClientTcpSocket):
 	check that fd is supported by PseudoThread
 	(SocketManagerSymbol::createServerTcpSocket): check that fd is

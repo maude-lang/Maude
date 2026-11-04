@@ -1,3 +1,9 @@
+2026-11-04  Saruman the White  <eker@eker10>
+
+	* interact.cc
+	(UserLevelRewritingContext::printStatusReportCommon): fix bug
+	where vnTotal and nrTotal were switched in print statement
+
 2026-11-02  Saruman the White  <eker@eker10>
 
 	* cvc5_Bindings.cc (VariableGenerator::makeBooleanExpr): fix typo

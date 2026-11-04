@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2021-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2021-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -213,10 +213,11 @@ DirectoryManagerSymbol::getDirectoryEntry(FreeDagNode* message, ObjectSystemRewr
 	  }
 	case DT_SOCK:
 	  {
-	    typeSymbol = directoryEntrySymbol;
+	    typeSymbol = socketEntrySymbol;
 	    break;
 	  }
 	case DT_UNKNOWN:
+	default:  // treat any platform specific value as unknown
 	  {
 	    //
 	    //	readdir() does not guarantee the file type will be obtained; it depends on the file system.

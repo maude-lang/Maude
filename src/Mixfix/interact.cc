@@ -506,14 +506,14 @@ UserLevelRewritingContext::printStatusReportCommon()
       mbTotal += p->getMbCount();
       eqTotal += p->getEqCount();
       rlTotal += p->getRlCount();
-      nrTotal += p->getNarrowingCount();
       vnTotal += p->getVariantNarrowingCount();
+      nrTotal += p->getNarrowingCount();
     }
   cerr << "membership applications: " << mbTotal <<
     "\nequational rewrites: " << eqTotal <<
     "\nrule rewrites: " << rlTotal <<
-    "\nvariant narrowing steps: " << nrTotal <<
-    "\nnarrowing steps: " << vnTotal <<
+    "\nvariant narrowing steps: " << vnTotal <<
+    "\nnarrowing steps: " << nrTotal <<
     "\ntotal: " << mbTotal + eqTotal + rlTotal + nrTotal + vnTotal << '\n';
 }
 
