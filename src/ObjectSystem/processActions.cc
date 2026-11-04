@@ -179,6 +179,13 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
   int ioSockets[2];
   if (!makeNonblockingSocketPair(ioSockets, message, context, false))
     return true;
+  if (!PseudoThread::supported(ioSockets[0]) || !PseudoThread::supported(ioSockets[1]))
+    {
+      close(ioSockets[0]);
+      close(ioSockets[1]);
+      errorReply("file descriptor too large", message, context);
+      return true;
+    }
   //
   //	Socket pair to communicate with stderr of created process.
   //
@@ -192,10 +199,20 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
       close(ioSockets[1]);
       return true;
     }
+  if (!PseudoThread::supported(errSockets[0]) || !PseudoThread::supported(errSockets[1]))
+    {
+      close(errSockets[0]);
+      close(errSockets[1]);
+      close(ioSockets[0]);
+      close(ioSockets[1]);
+      errorReply("file descriptor too large", message, context);
+      return true;
+    }
   //
   //	Now we need to deal with the issue that the child may
   //	fail to execute a new image and we need to recognize this
   //	in the parent. We do this with a close on execute pipe.
+  //	It's ok for the fds not to be supported by PseudoThread.
   //
   int failureReturnPipe[2];
   if(!makeCloseOnExitPipe(failureReturnPipe, message, context))

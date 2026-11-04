@@ -193,6 +193,7 @@ PseudoThread::eventLoop(bool block, sigset_t* normalSet)
 void
 PseudoThread::clearFlags(int fd)
 {
+  Assert(fd < MAX_NR_FDS, "unsupported fd = " << fd);
   //
   //	Forget about this file descriptor.
   //
@@ -201,11 +202,13 @@ PseudoThread::clearFlags(int fd)
       fdInfo[fd].flags = 0;
       unlink(fd);
     }
+  return ;
 }
 
 void
 PseudoThread::wantTo(int flags, int fd)
 {
+  Assert(fd < MAX_NR_FDS, "unsupported fd = " << fd);
   Assert(flags != 0, "empty flags for " << fd);
   int t = fdInfo[fd].flags;
   if (t == 0)
@@ -277,12 +280,8 @@ PseudoThread::purgeAllCallbackRequests()
   //
   //	Purge fd callback requests.
   //
-  for (int i = firstActive; i != NONE;)
-    {
-      int next = fdInfo[i].nextActive;
-      fdInfo[i] = {nullptr, 0, 0, 0};
-      i = next;
-    }
+  for (int i = firstActive; i != NONE; i = fdInfo[i].nextActive)
+    fdInfo[i].flags = 0;
   firstActive = NONE;
   //
   //	Purge timed callback requests; this makes all CallbackHandle values stale.

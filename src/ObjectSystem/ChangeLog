@@ -1,5 +1,24 @@
 2026-11-03  Saruman the White  <eker@eker10>
 
+	* socketStuff.cc (SocketManagerSymbol::createClientTcpSocket):
+	check that fd is supported by PseudoThread
+	(SocketManagerSymbol::createServerTcpSocket): check that fd is
+	supported by PseudoThread
+	(SocketManagerSymbol::acceptClient): check that fd returned by
+	accept() is supported by PseudoThread
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): check
+	that ioSockets and errSockets are supported by PseudoThread
+
+	* pseudoThread.hh (PseudoThread::supported): added
+
+	* pseudoThread.cc (PseudoThread::purgeAllCallbackRequests): just
+	clear flags for simplicity - we don't depend on the owner and
+	prev/next links being cleared
+
+	* pseudoThread.cc (PseudoThread::clearFlags)
+	(PseudoThread::wantTo): Assert fd < MAX_NR_FDS
+
 	* pseudoThread.hh (class PseudoThread): closeFds() ->
 	closeFdsExcept()
 

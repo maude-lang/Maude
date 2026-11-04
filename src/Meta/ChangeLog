@@ -7,6 +7,8 @@
 	remoteInterpreters
 	(InterpreterManagerSymbol::createRemoteInterpreter):
 	PseudoThread::closeFds() -> PseudoThread::closeFdsExcept()
+	(InterpreterManagerSymbol::createRemoteInterpreter): check for too
+	large file descriptors
 
 	* interpreterManagerSymbol.hh (struct RemoteInterpreter): added
 	decl for ~RemoteInterpreter()

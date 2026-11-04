@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -132,6 +132,12 @@ SocketManagerSymbol::createClientTcpSocket(FreeDagNode* message, ObjectSystemRew
 	  errorReply(errText, message, context);
 	  return true;
 	}
+      if (!PseudoThread::supported(fd))
+	{
+	  close(fd);
+	  errorReply("file descriptor too large", message, context);
+	  return true;
+	}
       //
       //	Make it nonblocking. This is important because
       //	a write may be too big for the output buffer and
@@ -203,6 +209,12 @@ SocketManagerSymbol::createServerTcpSocket(FreeDagNode* message, ObjectSystemRew
 	  const char* errText = strerror(errno);
 	  DebugAdvisory("unexpected socket() error: " << errText);
 	  errorReply(errText, message, context);
+	  return true;
+	}
+      if (!PseudoThread::supported(fd))
+	{
+	  close(fd);
+	  errorReply("file descriptor too large", message, context);
 	  return true;
 	}
       //
@@ -286,6 +298,12 @@ SocketManagerSymbol::acceptClient(FreeDagNode* message, ObjectSystemRewritingCon
 	  while (r == -1 && errno == EINTR);
 	  if (r >= 0)
 	    {
+	      if (!PseudoThread::supported(r))
+		{
+		  close(r);
+		  errorReply("file descriptor too large", message, context);
+		  return true;
+		}
 	      if (setNonblockingFlag(r, message, context))
 		{
 		  acceptedClientReply(inet_ntoa(sockName.sin_addr), r, message, context);

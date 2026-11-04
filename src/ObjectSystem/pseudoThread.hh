@@ -107,6 +107,11 @@ public:
   //
   static int eventLoop(bool block = true, sigset_t* normalSet = 0);
   //
+  //	We currently only support a limited number of file descriptors
+  //	because of pselect() limitation (ppoll() is linux specific).
+  //
+  static bool supported(int fd);
+  //
   //	Clear any requests for callbacks on a given fd.
   //
   static void clearFlags(int fd);
@@ -230,6 +235,12 @@ PseudoThread::ChildRequest::ChildRequest(PseudoThread* client, pid_t pid)
   : client(client),
     pid(pid)
 {
+}
+
+inline bool
+PseudoThread::supported(int fd)
+{
+  return fd < MAX_NR_FDS;
 }
 
 #endif

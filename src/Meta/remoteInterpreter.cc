@@ -98,6 +98,13 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       errorReply(strerror(errNr), originalMessage, context);
       return true;
     }
+  if (!PseudoThread::supported(ioSockets[0]) || !PseudoThread::supported(ioSockets[1]))
+    {
+      close(ioSockets[0]);
+      close(ioSockets[1]);
+      errorReply("file descriptor too large", originalMessage, context);
+      return true;
+    }
   int errSockets[2];
   if (int errNr = makeNonblockingSocketPair(errSockets, true))
     {
@@ -107,6 +114,15 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       close(ioSockets[0]);
       close(ioSockets[1]);
       errorReply(strerror(errNr), originalMessage, context);
+      return true;
+    }
+  if (!PseudoThread::supported(errSockets[0]) || !PseudoThread::supported(errSockets[1]))
+    {
+      close(errSockets[0]);
+      close(errSockets[1]);
+      close(ioSockets[0]);
+      close(ioSockets[1]);
+      errorReply("file descriptor too large", originalMessage, context);
       return true;
     }
   //
