@@ -87,7 +87,8 @@ TESTS = \
 	downMetadataEscapeOctober2026 \
 	rpoNegativeValueNovember2026 \
 	assocIdemRightDomainUncheckedNovember2026 \
-	loopInputSingleTokenUnquotedNovember2026
+	loopInputSingleTokenUnquotedNovember2026 \
+	commComplexStrat2ndArgSortNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -178,7 +179,8 @@ MAUDE_FILES = \
 	downMetadataEscapeOctober2026.maude \
 	rpoNegativeValueNovember2026.maude \
 	assocIdemRightDomainUncheckedNovember2026.maude \
-	loopInputSingleTokenUnquotedNovember2026.maude
+	loopInputSingleTokenUnquotedNovember2026.maude \
+	commComplexStrat2ndArgSortNovember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -269,6 +271,7 @@ RESULT_FILES = \
 	downMetadataEscapeOctober2026.expected \
 	rpoNegativeValueNovember2026.expected \
 	assocIdemRightDomainUncheckedNovember2026.expected \
-	loopInputSingleTokenUnquotedNovember2026.expected
+	loopInputSingleTokenUnquotedNovember2026.expected \
+	commComplexStrat2ndArgSortNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

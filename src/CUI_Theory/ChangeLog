@@ -1,3 +1,9 @@
+2026-11-03  Saruman the White  <eker@eker10>
+
+	* CUI_Symbol.cc (CUI_Symbol::eqRewriteComplexStrategy): fix but
+	where we were calling computeTrueSort() on the first argument
+	twice and the second argument not at all
+
 2026-10-14  Saruman the White  <eker@eker10>
 
 	* CUI_LhsCompiler.cc (CUI_Term::compileLhs2): check

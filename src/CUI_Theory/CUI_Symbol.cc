@@ -155,7 +155,7 @@ CUI_Symbol::eqRewriteComplexStrategy(Symbol* symbol, DagNode* subject, Rewriting
 	  if (!seenZero)
 	    {
 	      d->argArray[0]->computeTrueSort(context);
-	      d->argArray[0]->computeTrueSort(context);
+	      d->argArray[1]->computeTrueSort(context);
 	      seenZero = true;
 	    }
 	  //

@@ -1,0 +1,53 @@
+==========================================
+reduce in LAZY : g(2) #l g(3) .
+rewrites: 4
+result NzNat: 5
+==========================================
+reduce in LAZY : 2 #l g(3) .
+rewrites: 3
+result NzNat: 5
+==========================================
+reduce in LAZY : g(2) #a g(3) .
+rewrites: 4
+result NzNat: 5
+==========================================
+reduce in LAZY : g(2) #f g(3) .
+rewrites: 4
+result NzNat: 5
+==========================================
+reduce in LAZY : g(2) #m g(3) .
+rewrites: 4
+result NzNat: 5
+==========================================
+reduce in LAZY : g(2) #e g(3) .
+rewrites: 4
+result NzNat: 5
+==========================================
+reduce in SEMI : g(2) #s g(3) .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in SEMI : 5 #s g(3) .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in SEMI : g(2) #t g(3) .
+rewrites: 1
+result NzNat: 1
+==========================================
+reduce in CRASH : c #l d .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in CRASH : 0 #l c .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in CRASH : 2 #l 7 .
+rewrites: 1
+result NzNat: 2
+==========================================
+reduce in CRASH : c #l 7 .
+rewrites: 1
+result NzNat: 2
+Bye.

@@ -1,0 +1,62 @@
+***
+***	Claude found bug where second argument does not get its sort computed.
+***
+
+set show timing off .
+set show advisories off .
+
+fmod LAZY is
+  protecting NAT .
+  sort S .
+  subsort Nat < S .
+  op _#l_ : Nat Nat -> Nat [comm strat (0)] .
+  op _#a_ : Nat Nat -> Nat [assoc comm strat (0)] .
+  op _#f_ : Nat Nat -> Nat [strat (0)] .
+  op _#m_ : Nat Nat -> Nat [comm strat (0) memo] .
+  op _#e_ : Nat Nat -> Nat [comm strat (1 0)] .
+  op g : Nat -> Nat .
+  vars N M : Nat .
+  eq N #l M = N + M .
+  eq N #a M = N + M .
+  eq N #f M = N + M .
+  eq N #m M = N + M .
+  eq N #e M = N + M .
+  eq g(N) = N .
+endfm
+
+red g(2) #l g(3) .
+red 2 #l g(3) .
+red g(2) #a g(3) .
+red g(2) #f g(3) .
+red g(2) #m g(3) .
+red g(2) #e g(3) .
+
+fmod SEMI is
+  protecting NAT .
+  op _#s_ : Nat Nat -> Nat [comm strat (0 1 0)] .
+  op _#t_ : Nat Nat -> Nat [strat (0 1 2 0)] .
+  op g : Nat -> Nat .
+  vars N M : Nat .
+  eq g(N) #s M = 1 .
+  eq N #s M = 2 [owise] .
+  eq g(N) #t M = 1 .
+  eq N #t M = 2 [owise] .
+  eq g(N) = N .
+endfm
+
+red g(2) #s g(3) .
+red 5 #s g(3) .
+red g(2) #t g(3) .
+
+fmod CRASH is
+  protecting NAT .
+  op _#l_ : Nat Nat -> Nat [comm strat (0)] .
+  ops c d : -> Nat .
+  vars Y Z : Nat .
+  eq Y #l Z = 2 .
+endfm
+
+red c #l d .
+red c #l 0 .
+red 2 #l 7 .
+red c #l 7 .
