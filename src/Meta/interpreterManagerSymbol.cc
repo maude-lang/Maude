@@ -484,3 +484,8 @@ InterpreterManagerSymbol::upRewriteCount(const RewritingContext* context)
 #endif
   return metaLevel->upNat(totalCount);
 }
+
+InterpreterManagerSymbol::RemoteInterpreter::~RemoteInterpreter()
+{
+  delete [] charArray;
+}

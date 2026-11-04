@@ -88,13 +88,13 @@ InterpreterManagerSymbol::doWrite(int fd)
   //	A little inefficient but we only expect a handfull of intepreters
   //	in existence at one time.
   //
-  RemoteInterpreter* ri = 0;
+  RemoteInterpreter* ri = nullptr;
   for (auto& p : remoteInterpreters)
     {
       if (p.second.ioSocket == fd)
 	ri = &p.second;
     }
-  Assert(ri != 0, "couldn't find remote interpreter for doWrite() callback");
+  Assert(ri != nullptr, "couldn't find remote interpreter for doWrite() callback");
   //
   //	Restart interrupted calls.
   //	Because we're in a callback we expect to be able to write at
@@ -115,8 +115,8 @@ InterpreterManagerSymbol::doWrite(int fd)
 	  //	Finished sending; tidy up.
 	  //
 	  delete [] ri->charArray;
-	  ri->charArray = 0;
-	  ri->unsent = 0;
+	  ri->charArray = nullptr;
+	  ri->unsent = nullptr;
 	}
       else
 	{

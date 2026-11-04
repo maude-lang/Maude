@@ -1,5 +1,29 @@
 2026-11-03  Saruman the White  <eker@eker10>
 
+	* remoteInterpreter.cc (InterpreterManagerSymbol::doChildExit):
+	don't delete charArray here now it is deleted in
+	~RemoteInterpreter()
+	(InterpreterManagerSymbol::createRemoteInterpreter): clear
+	remoteInterpreters
+	(InterpreterManagerSymbol::createRemoteInterpreter):
+	PseudoThread::closeFds() -> PseudoThread::closeFdsExcept()
+
+	* interpreterManagerSymbol.hh (struct RemoteInterpreter): added
+	decl for ~RemoteInterpreter()
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::RemoteInterpreter::~RemoteInterpreter):
+	added
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doWrite): use nullptr
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): call
+	PseudoThread::purgeAllCallbackRequests() and
+	PseudoThread::closeFds() in the child process to fix mi-bug6
+	(InterpreterManagerSymbol::createRemoteInterpreter): use nullptr
+
 	* remoteInterpreterNonblocking.cc
 	(InterpreterManagerSymbol::doWrite): don't Assert() that
 	EAGAIN/EWOULDBLOCK can't happen; handle them

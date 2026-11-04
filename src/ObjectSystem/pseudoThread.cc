@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -269,4 +269,40 @@ PseudoThread::unlink(int fd)
     fdInfo[prev].nextActive = next;
   else
     firstActive = next;
+}
+
+void
+PseudoThread::purgeAllCallbackRequests()
+{
+  //
+  //	Purge fd callback requests.
+  //
+  for (int i = firstActive; i != NONE;)
+    {
+      int next = fdInfo[i].nextActive;
+      fdInfo[i] = {nullptr, 0, 0, 0};
+      i = next;
+    }
+  firstActive = NONE;
+  //
+  //	Purge timed callback requests; this makes all CallbackHandle values stale.
+  //
+  callbackMap.clear();
+  //
+  //	Purge child exit callback requests.
+  //
+  childRequests.clear();
+}
+
+void
+PseudoThread::closeFdsExcept(int preserve)
+{
+  //
+  //	We never closed stdin/stdout/stderr.
+  //
+  for (int fd = STDERR_FILENO + 1; fd < MAX_NR_FDS; ++fd)
+    {
+      if (fd != preserve)
+	(void) close(fd);
+    }
 }

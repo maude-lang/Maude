@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -130,6 +130,19 @@ public:
   //
   void requestChildExitCallback(pid_t childPid);
   void cancelChildExitCallback(pid_t childPid);
+  //
+  //	This resets the PseudoThreads object to initial state with no
+  //	requests pending. Any CallbackHandle previously returned will
+  //	become stale and should not be passed cancelCallback().
+  //	Useful in a child that didn't exec() a new binary and may
+  //	call eventLoop().
+  //
+  void purgeAllCallbackRequests();
+  //
+  //	Closes all file descriptors, for stdin/stdout/stderr and preserve
+  //	(if other than NONE). Useful in a child that didn't exec() a new binary.	
+  //
+  void closeFdsExcept(int preserve = NONE);
   //
   //	Call back functions.
   //

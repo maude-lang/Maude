@@ -1,5 +1,21 @@
 2026-11-03  Saruman the White  <eker@eker10>
 
+	* pseudoThread.hh (class PseudoThread): closeFds() ->
+	closeFdsExcept()
+
+	* pseudoThread.cc (PseudoThread::purgeAllCallbackRequests): fix
+	bug where we were clearing next link in list before following it
+	(PseudoThread::closeFds): becomes closeFdsExcept()
+
+	* pseudoThread.hh (class PseudoThread): adde decl for closeFds()
+
+	* pseudoThread.cc (PseudoThread::closeFds): added
+
+	* pseudoThread.hh (class PseudoThread): added decl for
+	purgeAllCallbackRequests()
+
+	* pseudoThread.cc (PseudoThread::purgeAllCallbackRequests): added
+
 	* socketAsync.cc (SocketManagerSymbol::doRead): handle
 	EAGAIN/EWOULDBLOCK errors from read()
 

@@ -64,6 +64,8 @@ public:
 private:
   struct RemoteInterpreter
   {
+    ~RemoteInterpreter();
+
     pid_t processId;
     int ioSocket;
     int errSocket;
@@ -74,8 +76,8 @@ private:
     //
     //	To handle nonblocking send.
     //
-    char* charArray;  // full message
-    const char* unsent;  // point to first unsent character
+    char* charArray = nullptr;  // full message
+    const char* unsent = nullptr;  // pointer to first unsent character
     Rope::size_type nrUnsent;  // number of unsent characters
     //
     //	To handle async replies from remote interpreter.

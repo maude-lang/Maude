@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -156,15 +156,32 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
       globalAdvisoryFlag = false;
       globalVerboseFlag = false;
       globalDebugFlag = false;
-
-      close(ioSockets[0]);
-      close(errSockets[0]);  // close parent end
+      //
+      //	Purge any pending callbacks our parent is owed, in case
+      //	we call PseudoThread::eventLoop().
+      //
+      PseudoThread::purgeAllCallbackRequests();
+      //
+      //	Forget about other remote interpreters.
+      //
+      remoteInterpreters.clear();
+      //
+      //	Point stderr at the child end of errSocket,
+      //	and close all file descriptors except stdin/stdout/stderr
+      //	and the child end of ioSocket.
+      //
       dup2(errSockets[1], STDERR_FILENO);  // replace stderr with errSockets[1]
+      PseudoThread::closeFdsExcept(ioSockets[1]);
       //
       //	We disable slow-route stuff; in particular
       //	tracing, break points, profiling and the print attribute.
       //
       RewritingContext::setTraceStatus(false);
+      //
+      //	In the future we should probably clear root pointers
+      //	so dagnodes only accessible from parent's context can
+      //	be garbage collected.
+      //
       becomeRemoteInterpreter(ioSockets[1], m, context);  // doesn't return
     }
   //
@@ -176,8 +193,8 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
   ri.processId = pid;
   ri.ioSocket = ioSockets[0];
   ri.errSocket = errSockets[0];
-  ri.charArray = 0;
-  ri.unsent = 0;
+  ri.charArray = nullptr;
+  ri.unsent = nullptr;
   ri.nrUnsent = 0;
   ri.nrPendingReplies = 0;
   ri.savedContext = &context;
@@ -347,6 +364,5 @@ InterpreterManagerSymbol::doChildExit(pid_t childPid, int wstatus)
   //
   //	Delete interpreter.
   //
-  delete [] i->second.charArray;
   remoteInterpreters.erase(i);
 }
