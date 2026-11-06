@@ -72,12 +72,41 @@ InterpreterManagerSymbol::nonblockingSendMessage(RemoteInterpreter& ri, const Ro
     }
   else
     {
+      DebugInfo("write() failed");
       //
       //	We had an error that wasn't due to an interrupt or
-      //	wanting to block. We must assume connection is broken.
-      //	Not sure for the moment how to clean up.
+      //	wanting to block. We expect that this happened because
+      //	the interpreter has exited, or is part way though
+      //	exiting, and its end of the socket is closed.
       //
-      CantHappen("write() failed");
+      Assert(errno == EPIPE, "unexpected error in write() " << strerror(errno));
+      //
+      //	Because we may have miss the SIGCHLD, we check
+      //	to see if the interpreter has fully exited.
+      //
+      int pid = ri.processId;
+      int wstatus;
+      if (waitpid(pid, &wstatus, WNOHANG) == pid)
+	{
+	  //
+	  //	The interpreter exited. Because our caller should have
+	  //	requested a notification, there is a race between the
+	  //	exit and the request for notification - the SIGCHLD
+	  //	could have been missed.
+	  //	We first cancel the request, and then call the callback
+	  //	to handle the exit ourself.
+	  //
+	  cancelChildExitCallback(pid);
+	  doChildExit(pid, wstatus);
+	}
+      else
+	{
+	  //
+	  //	The socket is closed but the interpreter has not finished
+	  //	exiting. Our request for notification won the race and
+	  //	we can rely on PseudoThread::eventLoop() make the callback.
+	  //
+	}
     }
 }
 
@@ -137,12 +166,23 @@ InterpreterManagerSymbol::doWrite(int fd)
 	  //
 	  wantTo(WRITE, fd);
 	}
+      DebugInfo("write() failed");
+      Assert(errno == EPIPE, "unexpected error in write() " << strerror(errno));
       //
       //	We had an error that wasn't due to an interrupt or
-      //	not wanting to block. We must assume connection is broken.
-      //	Not sure for the moment how to clean up.
+      //	wanting to block. We expect that this happened because
+      //	the interpreter has exited, or is in the process
+      //	of exiting, and its end of the socket is closed.
       //
-      CantHappen("write() failed in callback");
+      //	Becasue we're in a callback, we can assume that our
+      //	request for a child exit callback is active. If the child
+      //	exited before our callback was active then POSIX guarantees
+      //	that the write() in nonblockingSendMessage() would have
+      //	failed with EPIPE and we would not have requested this callback.
+      //
+      //	Thus we can do nothing and allows the child exit callback
+      //	to handle the cleanup.
+      //
     }
 }
 
@@ -250,6 +290,9 @@ InterpreterManagerSymbol::doRead(int fd)
 	  break;
 	}
     }
+  //
+  //	We broke out of the loop because we encountered EOF or an error.
+  //
   if (!sawEOF && ri->nrPendingReplies > 0)
     {
       //
@@ -260,7 +303,17 @@ InterpreterManagerSymbol::doRead(int fd)
   else
     {
       //
-      //	Don't hang waiting for nonexistent error messages.
+      //	Either we saw an EOF; or we got an error and we aren't looking
+      //	for more replies (so our child exit request is canceled).
+      //
+      //	It could be that the interpreter exited. If we aren't looking
+      //	for more replies, we will discover this should we interact with it
+      //	in the future. If we are looking for more replies, our child
+      //	exit callback request should be active and PseudoThread::eventLoop()
+      //	will deal with it.
+      //
+      //	Clear our request to read on the error socket so that eventLoop()
+      //	won't block on it, once everything else is done.
       //
       clearFlags(ri->errSocket);
     }

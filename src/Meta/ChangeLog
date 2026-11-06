@@ -1,3 +1,37 @@
+2026-11-06  Saruman the White  <eker@eker10>
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::remoteHandleMessage): do
+	nonblockingSendMessage() after ensuring our child exit callback
+	request is active
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::nonblockingSendMessage): changed
+	CantHappen() to DebugAlways()
+	(InterpreterManagerSymbol::doWrite): ditto
+	(InterpreterManagerSymbol::doRead): added comments to explain the
+	behavior
+	(InterpreterManagerSymbol::doWrite): added comment to explain why
+	we do nothing in response to an EPIPE
+	(InterpreterManagerSymbol::nonblockingSendMessage): handle EPIPE
+	by checking child status, and calling doChildExit() if needed;
+	this is the biggest part of the mi-bug2 fix
+
+2026-11-05  Saruman the White  <eker@eker10>
+
+	* remoteInterpreterNonblocking.cc
+	(InterpreterManagerSymbol::doRead): added comment to explain why
+	we don't deal with EOF or error caused by an interpreter exit here
+
+	* remoteInterpreter.cc
+	(InterpreterManagerSymbol::createRemoteInterpreter): added
+	detailed comment explaining why we should not do
+	requestChildExitCallback(pid) here
+	(InterpreterManagerSymbol::remoteHandleReply): added explanation
+	of why we need to cancelChildExitCallback(r->processId) here
+	(InterpreterManagerSymbol::remoteHandleMessage): added explanation
+	of why we need to requestChildExitCallback(r->processId) here
+
 2026-11-04  Saruman the White  <eker@eker10>
 
 	* metaUp.cc (MetaLevel::upSmtSubstitution): fix bug where we were

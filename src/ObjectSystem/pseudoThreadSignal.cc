@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,7 +48,9 @@ PseudoThread::requestChildExitCallback(pid_t childPid)
       static struct sigaction sigchldAction;
       
       sigchldAction.sa_handler = sigchldHandler;
-      // don't set sigchldAction.sa_sigaction as it may be a union with the above
+      //
+      //	Don't set sigchldAction.sa_sigaction as it may be a union with the above
+      //
       sigemptyset(&sigchldAction.sa_mask);  // don't block any additional signals in the handler
       sigchldAction.sa_flags = 0;  // no flags
 #ifdef SA_INTERRUPT
@@ -102,14 +104,14 @@ PseudoThread::dispatchChildRequests()
   //	a race between setting  exitedFlag to true in the signal handler
   //	and setting it to false here.
   //
-  DebugInfo("exitedFlag = " << exitedFlag);
+  DebugEnter("exitedFlag = " << exitedFlag);
   if (!exitedFlag)
     return false;
   /*
   //
   //	We block SIGCHLD so that we don't get a race between setting
   //	setting  exitedFlag to true in the signal handler and setting it
-  //	to false here.
+  //	to false here. NOT ANY MORE - Must be called with SIGCHLD blocked.
   //
   sigset_t oldset;
   sigset_t newset;

@@ -1,3 +1,32 @@
+2026-11-06  Saruman the White  <eker@eker10>
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): added
+	DebugInfo()
+
+	* pseudoThread.cc (PseudoThread::doRead): added comment
+	(PseudoThread::doWrite): added comment
+	(PseudoThread::doError): added comment and call DebugInfo() rather
+	than CantAlways() do we can still run test suite on debug build
+	(PseudoThread::doHungUp): ditto
+	(PseudoThread::doCallback): added comment
+
+	* pseudoThreadSignal.cc (PseudoThread::dispatchChildRequests):
+	added DebugExit()
+
+	* pseudoThread-ppoll.cc (PseudoThread::processFds): added
+	DebugInfo()
+
+	* pseudoThread.cc (PseudoThread::eventLoop): added DebugEnter()
+
+2026-11-05  Saruman the White  <eker@eker10>
+
+	* pseudoThread.cc (PseudoThread::doError): change CantHappen() to
+	DebugAlways() so it doesn't terminate the process
+	(PseudoThread::doHungUp): ditto
+
+	* pseudoThreadSignal.cc (PseudoThread::dispatchChildRequests):
+	updated comment
+
 2026-11-03  Saruman the White  <eker@eker10>
 
 	* fileActions.cc (FileManagerSymbol::makeLink): fixed bug where

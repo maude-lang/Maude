@@ -217,9 +217,24 @@ InterpreterManagerSymbol::createRemoteInterpreter(FreeDagNode* originalMessage,
   ri.module = m;
   ri.owner.setNode(originalMessage->getArgument(1));
   //
-  //	We want to know if child exits unexpectedly.
+  //	We cannot have a child exit callback pending on an interpreter
+  //	that is idle, by calling
+  //	  requestChildExitCallback(pid);
+  //	here. The problem is, once there no more rewriting is possible,
+  //	we call PseudoThread::eventLoop() in blocking mode to wait for
+  //	pending events that could inject a message in the the current
+  //	configuration and enable more rewriting. If the idle interpreter
+  //	doesn't exit, eventLoop() will block indefinitely, waiting for
+  //	a SIGCHILD that never arrives.
   //
-  //requestChildExitCallback(pid);
+  //	Ideally users would send a quit() message to interpreters they
+  //	are finished with, but we can't rely on this, and in fact most
+  //	our test suite examples don't both.
+  //
+  //	If the interpreter owes us at least one reply, there is no problem
+  //	having a pending child exit callback, because once no more rewriting
+  //	is possible, we need to block until the reply arrives or the
+  //	interpreter exits.
   //
   //	Make reply.
   //
@@ -244,6 +259,7 @@ InterpreterManagerSymbol::remoteHandleMessage(FreeDagNode* message,
 					      ObjectSystemRewritingContext& context,
 					      RemoteInterpreter* r)
 {
+  
   if (r->unsent != 0)
     {
       //
@@ -254,11 +270,18 @@ InterpreterManagerSymbol::remoteHandleMessage(FreeDagNode* message,
     }
   DebugAdvisory("sending request " << message);
   Rope text = r->module->serialize(message);
-  nonblockingSendMessage(*r, text);
   //
   //	We don't want to wait for a reply; instead we just increment
   //	the count of replies we are owed, and if this is the first one,
-  //	request a callback.
+  //	request a callback
+  //
+  //	We do this first because nonblockingSendMessage() will handle the
+  //	case that the interpreter has exited when it sees an EPIPE.
+  //
+  //	What we need to avoid is, calling nonblockingSendMessage()
+  //	and not having our child exit callback active, because the
+  //	interpreter could exit after nonblockingSendMessage() has checked
+  //	the process status, and we would miss the SIGCHLD.
   //
   if (++(r->nrPendingReplies) == 1)
     {
@@ -269,9 +292,19 @@ InterpreterManagerSymbol::remoteHandleMessage(FreeDagNode* message,
       //
       wantTo(READ, r->ioSocket);
       wantTo(READ, r->errSocket);
+      //
+      //	It's our first pending reply so request a callback in case
+      //	the interpreter exits rather than replying.
+      //
       requestChildExitCallback(r->processId);
     }
   DebugAdvisory("nrPendingReplies = " << r->nrPendingReplies);
+  //
+  //	nonblockingSendMessage() may reap the process and delete the
+  //	remote interpreter if it gets an EPIPE error, so r must be
+  //	treated as stale.
+  //
+  nonblockingSendMessage(*r, text);
   return true;
 }
 
@@ -306,7 +339,15 @@ InterpreterManagerSymbol::remoteHandleReply(RemoteInterpreter* r, const Rope& re
   r->savedContext->bufferMessage(target, replyDag);
   --(r->nrPendingReplies);
   if (r->nrPendingReplies == 0)
-    cancelChildExitCallback(r->processId); // so we don't hang waiting for exit
+    {
+      //
+      //	No more replies are owed. As explained above, it's unsafe
+      //	to have a pending child exit callback when the interpreter is
+      //	idle so we need to cancel it before eventLoop() can be called,
+      //	to avoid the possibility of hanging.
+      //
+      cancelChildExitCallback(r->processId);
+    }
   DebugAdvisory("got a reply: " << replyDag <<
 		" nrPendingReplies = " << r->nrPendingReplies);
 }

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2020 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -86,6 +86,7 @@ PseudoThread::processFds(const timespec* waitPointer, sigset_t* normalSet)
       //
       Assert(errno == EINTR, "ppoll() failed with " << errno);
       sigprocmask(SIG_SETMASK, &oldset, 0);  // unblock SIGCHLD
+      DebugInfo("returning immediately due to interrupt");
       return INTERRUPTED;  // treat all errors as interrupts
     }
   //

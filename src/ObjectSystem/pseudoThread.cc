@@ -93,6 +93,7 @@ PseudoThread::processCallbacks(int& returnValue, timespec& wait)
 int
 PseudoThread::eventLoop(bool block, sigset_t* normalSet)
 {
+  DebugEnter("block = " << block);
   //
   //	If block is true we make use of normalSet and
   //	return for one or more of 3 reasons:
@@ -224,30 +225,45 @@ PseudoThread::wantTo(int flags, int fd)
 void
 PseudoThread::doRead(int fd)
 {
+  //
+  //	We expect client to handle this if they asked for it.
+  //
   CantHappen("failed to do read on " << fd);
 }
 
 void
 PseudoThread::doWrite(int fd)
 {
+  //
+  //	We expect client to handle this if they asked for it.
+  //
   CantHappen("failed to do write on " << fd);
 }
 
 void
 PseudoThread::doError(int fd)
 {
-  CantHappen("failed to do error on " << fd);
+  //
+  //	We don't expect a client to necessarily handle this.
+  //
+  DebugInfo("failed to handle error on " << fd);
 }
 
 void
 PseudoThread::doHungUp(int fd)
 {
-  CantHappen("failed to do hung up on " << fd);
+  //
+  //	We don't expect a client to necessarily handle this.
+  //
+  DebugInfo("failed to handle hung up on " << fd);
 }
 
 void
 PseudoThread::doCallback(long /* clientData */)
 {
+  //
+  //	We expect client to handle this if they asked for it.
+  //
   CantHappen("failed to do call back");
 }
 
