@@ -1,0 +1,28 @@
+***
+***	Julia + Claude mi-message-of-arity-one-crash bug
+***	Message of arity one set to interpreterManager should be ignored and not crash.
+***
+
+set show timing off .
+set show advisories off .
+
+load metaInterpreter
+
+mod PROBE is
+  pr META-INTERPRETER .
+  op me : -> Oid .
+  op User : -> Cid .
+  op step : Nat -> Attribute [ctor] .
+  op ping : Oid -> Msg [ctor msg] .
+  op ping2 : Oid Oid -> Msg [ctor msg] .
+  op init : -> Configuration .
+  eq init = <> < me : User | step(0) > createInterpreter(interpreterManager, me, none) .
+  vars I : Oid .
+  var S : String .
+  rl < me : User | step(0) > createdInterpreter(me, interpreterManager, I)
+  => < me : User | step(1) > ping2(I, me) .
+  rl < me : User | step(1) > interpreterError(me, I, S)
+  => < me : User | step(2) > ping(I) .
+endm
+
+erew init .

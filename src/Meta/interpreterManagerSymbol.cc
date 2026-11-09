@@ -282,6 +282,9 @@ InterpreterManagerSymbol::handleMessage(DagNode* message, ObjectSystemRewritingC
 
   if (FreeDagNode* f = dynamic_cast<FreeDagNode*>(message))
     {
+      FreeSymbol* fs = f->symbol();
+      if (fs->arity() < 2 || fs->domainComponent(1) != fs->domainComponent(0))
+	return false;  // no return address or return address in the wrong kind
       //
       //	quit is always handled locally.
       //

@@ -1,7 +1,14 @@
+2026-11-09  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/miNarrowingSeachCountNotTransferredNovember2026.maude:
+	added
+
+	* tests/ResolvedBugs/miMessageOfArityOneCrashNovember2026.maude: added
+
 2026-11-04  Saruman the White  <eker@eker10>
 
 	* tests/ResolvedBugs/metaSmtSearchSubstitutionNovember2026.maude:
-	added 
+	added
 
 	* tests/ResolvedBugs/metaSmtSearchBranchNovember2026.maude: added
 

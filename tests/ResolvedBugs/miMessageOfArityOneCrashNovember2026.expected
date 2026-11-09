@@ -1,0 +1,5 @@
+==========================================
+erewrite in PROBE : init .
+rewrites: 3
+result Configuration: <> ping(interpreter(0)) < me : User | step(2) >
+Bye.

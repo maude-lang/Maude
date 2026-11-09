@@ -1,3 +1,15 @@
+2026-11-08  Saruman the White  <eker@eker10>
+
+	* interpreterManagerSymbol.cc
+	(InterpreterManagerSymbol::handleMessage): check that a message
+	has a return address and that it is the same kind as the target
+	address before we try to process it
+
+	* miNarrowSearch.cc
+	(InterpreterManagerSymbol::getNarrowingSearchResult):
+	transferCountFrom() from stateContext to current context in both
+	returnPath and non returnPath cases
+
 2026-11-06  Saruman the White  <eker@eker10>
 
 	* remoteInterpreter.cc

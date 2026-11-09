@@ -1,0 +1,43 @@
+==========================================
+erewrite in CLIENT : seq .
+rewrites: 14
+mb applications: 0  equational rewrites: 6  rule rewrites: 6  variant narrowing
+    steps: 0  narrowing steps: 2
+result Configuration: <> < me : User | step(6), got(0, 0), got(1, 1), got(2,
+    1), got(3, 0) >
+==========================================
+erewrite in CLIENT : single(0) .
+rewrites: 5
+mb applications: 0  equational rewrites: 3  rule rewrites: 2  variant narrowing
+    steps: 0  narrowing steps: 0
+result Configuration: <> < me : User | ask(0) > gotNarrowingSearchResult(me,
+    interpreter(0), 0, 'h['#1:S], 'S, 
+  'X:S <- '#1:S, '#, 
+  '#1:S <- '@1:S ; 
+  'Y:S <- 'h['@1:S], '@)
+==========================================
+erewrite in CLIENT : single(1) .
+rewrites: 6
+mb applications: 0  equational rewrites: 3  rule rewrites: 2  variant narrowing
+    steps: 0  narrowing steps: 1
+result Configuration: <> < me : User | ask(1) > gotNarrowingSearchResult(me,
+    interpreter(0), 1, 'b.S, 'S, 
+  'X:S <- 'a.S, '@, 
+  'Y:S <- 'b.S, '%)
+==========================================
+erewrite in CLIENT : single(2) .
+rewrites: 7
+mb applications: 0  equational rewrites: 3  rule rewrites: 2  variant narrowing
+    steps: 0  narrowing steps: 2
+result Configuration: <> < me : User | ask(2) > gotNarrowingSearchResult(me,
+    interpreter(0), 2, 'c.S, 'S, 
+  'X:S <- 'b.S, '@, 
+  'Y:S <- 'c.S, '%)
+==========================================
+erewrite in CLIENT : single(3) .
+rewrites: 7
+mb applications: 0  equational rewrites: 3  rule rewrites: 2  variant narrowing
+    steps: 0  narrowing steps: 2
+result Configuration: <> < me : User | ask(3) > noSuchResult(me, interpreter(
+    0), 2, true)
+Bye.

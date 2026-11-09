@@ -12,19 +12,19 @@ result Configuration: <> < me : User | soln: 4, got: (gotNarrowingSearchResult(
   '#1:Foo <- '@1:Foo ; 
   '#2:Foo <- '@2:Foo ; 
   'C:Foo <- 'g['j['@1:Foo, '@2:Foo]], '@) ; gotNarrowingSearchResult(me,
-    interpreter(0), 1, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
+    interpreter(0), 0, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, '#, 
   '#1:Foo <- 'f['%2:Foo] ; 
   '#2:Foo <- '%1:Foo ; 
   'C:Foo <- 'g['i['f['%1:Foo], '%2:Foo]], '%) ; gotNarrowingSearchResult(me,
-    interpreter(0), 3, 'f['k['%2:Foo, 'f['%3:Foo]]], 'Foo, 
+    interpreter(0), 2, 'f['k['%2:Foo, 'f['%3:Foo]]], 'Foo, 
   'A:Foo <- 'f['k['%1:Foo, '%2:Foo]] ; 
   'B:Foo <- '%3:Foo, '%, 
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
   'C:Foo <- 'f['k['@1:Foo, 'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,
-    'B:Foo]]), goal: 'C:Foo, fold: 'none > noSuchResult(me, interpreter(0), 4,
+    'B:Foo]]), goal: 'C:Foo, fold: 'none > noSuchResult(me, interpreter(0), 1,
     true)
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo, 'B:Foo]]),
@@ -40,19 +40,19 @@ result Configuration: <> < me : User | soln: 4, got: (gotNarrowingSearchResult(
   '#1:Foo <- '@1:Foo ; 
   '#2:Foo <- '@2:Foo ; 
   'C:Foo <- 'g['j['@1:Foo, '@2:Foo]], '@) ; gotNarrowingSearchResult(me,
-    interpreter(0), 1, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
+    interpreter(0), 0, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, '#, 
   '#1:Foo <- 'f['%2:Foo] ; 
   '#2:Foo <- '%1:Foo ; 
   'C:Foo <- 'g['i['f['%1:Foo], '%2:Foo]], '%) ; gotNarrowingSearchResult(me,
-    interpreter(0), 3, 'f['k['%2:Foo, 'f['%3:Foo]]], 'Foo, 
+    interpreter(0), 2, 'f['k['%2:Foo, 'f['%3:Foo]]], 'Foo, 
   'A:Foo <- 'f['k['%1:Foo, '%2:Foo]] ; 
   'B:Foo <- '%3:Foo, '%, 
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
   'C:Foo <- 'f['k['@1:Foo, 'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,
-    'B:Foo]]), goal: 'C:Foo, fold: 'match > noSuchResult(me, interpreter(0), 4,
+    'B:Foo]]), goal: 'C:Foo, fold: 'match > noSuchResult(me, interpreter(0), 1,
     true)
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo, 'B:Foo]]),
@@ -69,13 +69,13 @@ result Configuration: <> < me : User | soln: 4, got: (
   '#1:Foo <- '@1:Foo ; 
   '#2:Foo <- '@2:Foo ; 
   'C:Foo <- 'g['j['@1:Foo, '@2:Foo]], '@) ; gotNarrowingSearchResultAndPath(me,
-    interpreter(0), 1, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
+    interpreter(0), 0, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, nil, 
   '#1:Foo <- 'f['%2:Foo] ; 
   '#2:Foo <- '%1:Foo ; 
   'C:Foo <- 'g['i['f['%1:Foo], '%2:Foo]], '%) ;
-    gotNarrowingSearchResultAndPath(me, interpreter(0), 3, 'g['j['#1:Foo,
+    gotNarrowingSearchResultAndPath(me, interpreter(0), 2, 'g['j['#1:Foo,
     '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, 
@@ -95,7 +95,7 @@ result Configuration: <> < me : User | soln: 4, got: (
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
   'C:Foo <- 'f['k['@1:Foo, 'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,
-    'B:Foo]]), goal: 'C:Foo, fold: 'none > noSuchResult(me, interpreter(0), 4,
+    'B:Foo]]), goal: 'C:Foo, fold: 'none > noSuchResult(me, interpreter(0), 1,
     true)
 ==========================================
 erewrite in NARROW-TEST : <> < me : User | start: ('g['j['A:Foo, 'B:Foo]]),
@@ -112,13 +112,13 @@ result Configuration: <> < me : User | soln: 4, got: (
   '#1:Foo <- '@1:Foo ; 
   '#2:Foo <- '@2:Foo ; 
   'C:Foo <- 'g['j['@1:Foo, '@2:Foo]], '@) ; gotNarrowingSearchResultAndPath(me,
-    interpreter(0), 1, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
+    interpreter(0), 0, 'g['j['#1:Foo, '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, nil, 
   '#1:Foo <- 'f['%2:Foo] ; 
   '#2:Foo <- '%1:Foo ; 
   'C:Foo <- 'g['i['f['%1:Foo], '%2:Foo]], '%) ;
-    gotNarrowingSearchResultAndPath(me, interpreter(0), 3, 'g['j['#1:Foo,
+    gotNarrowingSearchResultAndPath(me, interpreter(0), 2, 'g['j['#1:Foo,
     '#2:Foo]], 'Foo, 
   'A:Foo <- '#1:Foo ; 
   'B:Foo <- '#2:Foo, 
@@ -138,6 +138,6 @@ result Configuration: <> < me : User | soln: 4, got: (
   '%2:Foo <- '@1:Foo ; 
   '%3:Foo <- '@2:Foo ; 
   'C:Foo <- 'f['k['@1:Foo, 'f['@2:Foo]]], '@)), start: ('g['j['A:Foo,
-    'B:Foo]]), goal: 'C:Foo, fold: 'match > noSuchResult(me, interpreter(0), 4,
+    'B:Foo]]), goal: 'C:Foo, fold: 'match > noSuchResult(me, interpreter(0), 1,
     true)
 Bye.

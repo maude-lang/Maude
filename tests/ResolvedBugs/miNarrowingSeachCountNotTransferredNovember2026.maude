@@ -1,0 +1,62 @@
+***
+***	Julia + Claude mi-narrowing-search-count-not-transferred bug
+***	Transfer rewrite count at each success for symmetry with other
+***	message pairs and functional metalevel.
+***
+
+set show timing off .
+set show advisories off .
+
+load metaInterpreter
+
+mod CLIENT is
+  pr META-INTERPRETER .
+  op me : -> Oid .
+  op User : -> Cid .
+  op step : Nat -> Attribute [ctor] .
+  op ask : Nat -> Attribute [ctor] .
+  op got : Nat Nat -> Attribute [ctor] .
+  op modN : -> Module .
+  eq modN = (mod 'NARROW is nil sorts 'S . none
+               op 'a : nil -> 'S [ctor] . op 'b : nil -> 'S [ctor] . op 'c : nil -> 'S [ctor] .
+               op 'h : 'S -> 'S [none] . none none
+               rl 'h['a.S] => 'b.S [narrowing] . rl 'h['b.S] => 'c.S [narrowing] . endm) .
+  op req : Oid Nat -> Msg .
+  vars I : Oid . vars N K : Nat . var B : Bool . var T : Term . var TY : Type .
+  vars SB SB2 : Substitution . vars Q Q2 : Qid . var A : AttributeSet .
+  eq req(I, N) = getNarrowingSearchResult(I, me, 'NARROW, 'h['X:S], 'Y:S, '*, unbounded, 'none, none, N) .
+
+  *** Sequential client: solutions 0, 1, 2 and 3 of one search, in turn.
+  op seq : -> Configuration .
+  eq seq = <> < me : User | step(0) > createInterpreter(interpreterManager, me, none) .
+  rl < me : User | step(0) > createdInterpreter(me, interpreterManager, I)
+  => < me : User | step(1) > insertModule(I, me, modN) .
+  rl < me : User | step(1) > insertedModule(me, I)
+  => < me : User | step(2) > req(I, 0) .
+  rl < me : User | step(s s N), A > gotNarrowingSearchResult(me, I, K, T, TY, SB, Q, SB2, Q2)
+  => < me : User | step(s s s N), got(N, K), A > req(I, s N) .
+  rl < me : User | step(s s N), A > noSuchResult(me, I, K, B)
+  => < me : User | step(s s s N), got(N, K), A > .
+
+  *** Single client: only solution K, then stop. The client's own work is the same for every K.
+  op single : Nat -> Configuration .
+  eq single(K) = <> < me : User | ask(K) > createInterpreter(interpreterManager, me, none) .
+  rl < me : User | ask(K) > createdInterpreter(me, interpreterManager, I)
+  => < me : User | ask(K) > insertModule(I, me, modN) .
+  rl < me : User | ask(K) > insertedModule(me, I)
+  => < me : User | ask(K) > req(I, K) .
+endm
+
+set show breakdown on .
+
+*** got(0, 0) got(1, 1) got(2, 2) got(3, 2): each reply reports the count of all the requests so
+*** far. Expected got(0, 0) got(1, 1) got(2, 1) got(3, 0), as getSearchResult and
+*** getOneStepNarrowing report the rewrites of each request.
+erew seq .
+
+*** The replies report 0, 1, 2 and 2 rewrites, and the totals are 5, 5, 5 and 7: the narrowing
+*** steps reach the total only when the search is exhausted (K = 3). Expected 5, 6, 7 and 7.
+erew single(0) .
+erew single(1) .
+erew single(2) .
+erew single(3) .

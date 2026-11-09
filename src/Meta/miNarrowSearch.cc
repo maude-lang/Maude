@@ -207,6 +207,7 @@ InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message,
 						    qidMap,
 						    dagNodeMap);
 		args[6] = makeNarrowingSearchPath(m, state);
+		context.transferCountFrom(*stateContext);
 		(void) m->unprotect();
 		return gotNarrowingSearchResultAndPathMsg->makeDagNode(args);
 	      }
@@ -235,6 +236,7 @@ InterpreterManagerSymbol::getNarrowingSearchResult(FreeDagNode* message,
 						    dagNodeMap);
 		args[6] = metaLevel->upQid(FreshVariableSource::getBaseName(stateVariableFamily),
 					   qidMap);
+		context.transferCountFrom(*stateContext);
 		(void) m->unprotect();
 		return gotNarrowingSearchResultMsg->makeDagNode(args);
 	      }

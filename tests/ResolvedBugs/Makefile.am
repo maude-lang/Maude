@@ -90,7 +90,9 @@ TESTS = \
 	loopInputSingleTokenUnquotedNovember2026 \
 	commComplexStrat2ndArgSortNovember2026 \
 	metaSmtSearchBranchNovember2026 \
-	metaSmtSearchSubstitutionNovember2026
+	metaSmtSearchSubstitutionNovember2026 \
+	miNarrowingSeachCountNotTransferredNovember2026 \
+	miMessageOfArityOneCrashNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -184,7 +186,9 @@ MAUDE_FILES = \
 	loopInputSingleTokenUnquotedNovember2026.maude \
 	commComplexStrat2ndArgSortNovember2026.maude \
 	metaSmtSearchBranchNovember2026.maude \
-	metaSmtSearchSubstitutionNovember2026.maude
+	metaSmtSearchSubstitutionNovember2026.maude \
+	miNarrowingSeachCountNotTransferredNovember2026.maude \
+	miMessageOfArityOneCrashNovember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -278,6 +282,8 @@ RESULT_FILES = \
 	loopInputSingleTokenUnquotedNovember2026.expected \
 	commComplexStrat2ndArgSortNovember2026.expected \
 	metaSmtSearchBranchNovember2026.expected \
-	metaSmtSearchSubstitutionNovember2026.expected
+	metaSmtSearchSubstitutionNovember2026.expected \
+	miNarrowingSeachCountNotTransferredNovember2026.expected \
+	miMessageOfArityOneCrashNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
