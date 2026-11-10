@@ -25,7 +25,7 @@ jobs:
 
   macos-arm:
     name: Maude for macOS (ARM)
-    runs-on: macos-14
+    runs-on: macos-15
     env:
       TAG_NAME: ${{ github.ref_name }}
     steps:
