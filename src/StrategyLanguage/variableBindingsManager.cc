@@ -33,7 +33,7 @@
 #include "core.hh"
 #include "strategyLanguage.hh"
 
-// 	others
+//	others
 #include "variableInfo.hh"
 #include "substitution.hh"
 #include "dagRoot.hh"
@@ -60,9 +60,8 @@ VariableBindingsManager::VariableBindingsManager(int substitutionSize)
 
 VariableBindingsManager::~VariableBindingsManager()
 {
-  size_t nrEntries = contextTable.length();
-  for (size_t i = 0; i < nrEntries; i++)
-    delete contextTable[i];
+  for (Entry* entry : contextTable)
+    delete entry;
 }
 
 ContextId
@@ -174,9 +173,8 @@ VariableBindingsManager::buildInitialSubstitution(ContextId ctx,
 void
 VariableBindingsManager::Entry::markReachableNodes()
 {
-  int nrValues = values.length();
-  for (int i = 0; i < nrValues; i++)
-    values[i]->mark();
+  for (DagNode* dag : values)
+    dag->mark();
 }
 
 inline void

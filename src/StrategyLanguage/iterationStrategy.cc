@@ -46,7 +46,7 @@ IterationStrategy::IterationStrategy(StrategyExpression* child, bool zeroAllowed
 
 IterationStrategy::~IterationStrategy()
 {
-  delete (star != 0 ? star : child);
+  delete (star != nullptr ? star : child);
 }
 
 bool

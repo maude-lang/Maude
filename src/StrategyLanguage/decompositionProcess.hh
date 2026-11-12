@@ -41,7 +41,7 @@ public:
   //
   DecompositionProcess(DecompositionProcess* original);
 
-  Survival run(StrategicSearch& searchObject);
+  Survival run(StrategicSearch& searchObject) override;
   void pushStrategy(StrategyStackManager& stackManager, StrategyExpression* strategy);
   StrategyStackManager::StackId getPending() const;
   int getDagIndex() const;

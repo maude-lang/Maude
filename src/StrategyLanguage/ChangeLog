@@ -1,3 +1,108 @@
+2026-10-30  Rubén Rubio <rubenrub@ucm.es>
+
+	* applicationProcess.cc (ApplicationProcess::ApplicationProcess):
+	change 0 to nullptr and change loop to range for
+	(ApplicationProcess::~ApplicationProcess): change loop to range for
+
+	* applicationProcess.hh (class ApplicationProcess): add overrides
+	declaration
+
+	* applicationStrategy.cc: change loop to range for
+
+	* applicationStrategy.hh (class ApplicationStrategy): add overrides
+	declaration
+
+	* branchStrategy.cc (BranchStrategy::BranchStrategy): change 0 to
+	nullptr
+
+	* branchStrategy.hh (class BranchStrategy): add overrides declaration
+
+	* branchTask.hh (class BranchTask): add overrides declaration
+
+	* callProcess.cc (CallProcess::CallProcess): change 0 to nullptr
+
+	* callProcess.hh (class CallProcess): add overrides declaration
+
+	* callStrategy.cc: change 0 to nullptr
+
+	* callStrategy.hh (class CallStrategy): add overrides declaration
+
+	* callTask.hh (class CallTask): add overrides declaration
+
+	* concatenationStrategy.cc: change loops to range for
+
+	* concatenationStrategy.hh (class ConcatenationStrategy): add
+	overrides declaration
+
+	* decompositionProcess.hh (class DecompositionProcess): add overrides
+	declaration
+
+	* depthFirstStrategicSearch.cc: change 0 to nullptr
+
+	* depthFirstStrategicSearch.hh (class DepthFirstStrategicSearch): add
+	overrides declaration
+
+	* fairStrategicSearch.cc: change 0 to nullptr
+
+	* fairStrategicSearch.hh (class FairStrategicSearch): add overrides
+	declaration
+
+	* iterationStrategy.cc: change 0 to nullptr
+
+	* iterationStrategy.hh (class IterationStrategy): add overrides
+	declaration
+
+	* matchProcess.cc (MatchProcess): change 0 to nullptr
+
+	* matchProcess.hh (class MatchProcess): add overrides declaration
+
+	* oneStrategy.hh (class OneStrategy): add overrides declaration
+
+	* oneTask.hh (class OneTask): add overrides declaration
+
+	* rewriteTask.cc (RewriteTask): change 0 to nullptr
+
+	* rewriteTask.hh (class RewriteTask): add overrides declaration
+
+	* strategicProcess.cc (StrategicProcess::StrategicProcess): change 0
+	to nullptr
+
+	* strategicSearch.cc (StrategicSearch::StrategicSearch): change 0 to
+	nullptr
+	(StrategicSearch::lastSolution): change 0 to nullptr
+
+	* strategicSearch.hh (class StrategicSearch): add overrides
+	declaration
+
+	* strategyStackManager.cc
+	(StrategyStackManager::StrategyStackManager): change 0 to nullptr
+
+	* subtermProcess.cc (SubtermProcess::run): change 0 to nullptr
+
+	* subtermProcess.hh (class SubtermProcess): add overrides declaration
+
+	* subtermStrategy.cc: change loops to range for
+
+	* subtermStrategy.hh (class SubtermStrategy): add overrides
+	declaration
+
+	* subtermTask.cc (SubtermTask::SubtermTask): add != nullptr
+
+	* subtermTask.hh (class SubtermTask): add overrides declaration
+
+	* testStrategy.hh (class TestStrategy): add overrides declaration
+
+	* trivialStrategy.hh (class TrivialStrategy): add overrides
+	declaration
+
+	* unionStrategy.cc: change loops to range for
+
+	* unionStrategy.hh (class UnionStrategy): add overrides declaration
+
+	* variableBindingsManager.cc: change loops to range for
+
+===================================Maude166===========================================
+
 2024-10-28  Rubén Rubio <rubenrub@ucm.es>
 
 	* rewriteTask.cc (RewriteTask::executionSucceeded): delete match

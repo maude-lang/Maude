@@ -66,8 +66,8 @@ SubtermStrategy::SubtermStrategy(Term* patternTerm,
 
   // Indexes subpattern variables with mainPattern's indices
   // (will make subterm checking and subpattern instantion easier)
-  for (size_t i = 0; i < subpatterns.size(); i++)
-    subpatterns[i]->indexVariables(mainPattern);
+  for (Term* subpattern : subpatterns)
+    subpattern->indexVariables(mainPattern);
 }
 
 void
@@ -143,13 +143,11 @@ SubtermStrategy::check(VariableInfo& indices, const TermSet& boundVars)
 
   // Include the pattern and condition variables in the
   // set of bound variables for the recursive check
-  size_t nrSubpatterns = subtermStrats.length();
-
   for (size_t index = 0; index < nrVars; index++)
     boundNew.insert(mainPattern.index2Variable(index));
 
-  for (size_t i = 0; i < nrSubpatterns; i++)
-    if (!subtermStrats[i]->check(vinfo, boundNew))
+  for (StrategyExpression* expr : subtermStrats)
+    if (!expr->check(vinfo, boundNew))
       return false;
 
   // Make the context translation vector
@@ -157,8 +155,8 @@ SubtermStrategy::check(VariableInfo& indices, const TermSet& boundVars)
   // also the not rewritten variables in the pattern
   NatSet patternVars = mainPattern.getLhs()->occursBelow();
 
-  for (size_t i = 0; i < nrSubpatterns; i++)
-    patternVars.subtract(subpatterns[i]->occursBelow());
+  for (Term* t : subpatterns)
+    patternVars.subtract(t->occursBelow());
 
   int nrInnerContextVars = vinfo.getNrRealVariables();
   contextSpec.expandTo(nrInnerContextVars);
@@ -207,8 +205,8 @@ SubtermStrategy::checkSubterms()
   variableMapping.expandTo(mainPattern.getNrRealVariables());
 
   // Not all indexed variables appear in the pattern
-  for (size_t i = 0; i < variableMapping.size(); i++)
-    variableMapping[i] = -1;
+  for (int& vmap : variableMapping)
+    vmap = -1;
 
   // Finds the subterm in the main pattern variables
   const Term* patternTerm = mainPattern.getLhs();

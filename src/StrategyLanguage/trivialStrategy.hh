@@ -33,10 +33,10 @@ public:
   TrivialStrategy(bool result);
   bool getResult() const;
 
-  bool check(VariableInfo& indices, const TermSet& boundVars);
-  void process();
+  bool check(VariableInfo& indices, const TermSet& boundVars) override;
+  void process() override;
 
-  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
+  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder) override;
 
 private:
   const bool result;

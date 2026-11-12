@@ -55,8 +55,8 @@ private:
   //
   //	Virtual in StrategicTask.
   //
-  Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint);
-  Survival executionsExhausted(StrategicProcess* insertionPoint);
+  Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint) override;
+  Survival executionsExhausted(StrategicProcess* insertionPoint) override;
 
   StrategyExpression* strategy;
 
@@ -69,7 +69,7 @@ protected:
 inline DagNode*
 StrategicSearch::lastSolution() const
 {
-  return solutionIndex != NONE ? getCanonical(solutionIndex) : 0;
+  return solutionIndex != NONE ? getCanonical(solutionIndex) : nullptr;
 }
 
 inline RewritingContext*

@@ -53,10 +53,10 @@ public:
   //
   const Vector<std::pair<int, int> >& getIndexTranslation() const;
 
-  bool check(VariableInfo& indices, const TermSet& boundVars);
-  void process();
+  bool check(VariableInfo& indices, const TermSet& boundVars) override;
+  void process() override;
 
-  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
+  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder) override;
 
 private:
   Pattern pattern;

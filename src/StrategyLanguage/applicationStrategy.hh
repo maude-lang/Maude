@@ -49,13 +49,13 @@ public:
   const Vector<CachedDag>& getValues() const;
   const Vector<StrategyExpression*>& getStrategies() const;
 
-  bool check(VariableInfo& indices, const TermSet& boundVars);
-  void process();
+  bool check(VariableInfo& indices, const TermSet& boundVars) override;
+  void process() override;
 
   bool areSubsDagsReduced() const;
   void setSubsDagsReduced();
 
-  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
+  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder) override;
 
 private:
   bool top;					// restrict rewrites to top of term

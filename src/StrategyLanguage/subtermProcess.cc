@@ -75,7 +75,7 @@ SubtermProcess::run(StrategicSearch& searchObject)
       // (because matchSearchState will reuse when searching again). And if the
       // whole term was matched, we can get rid of it.
       if (extensionInfo)
-	extensionInfo = !extensionInfo->matchedWhole() ? extensionInfo->makeClone() : 0;
+	extensionInfo = !extensionInfo->matchedWhole() ? extensionInfo->makeClone() : nullptr;
 
       VariableBindingsManager::ContextId varBinds = getOwner()->getVarsContext();
       const Vector<int>& contextSpec = strategy->getContextSpec();

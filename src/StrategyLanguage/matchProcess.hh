@@ -49,7 +49,7 @@ public:
 	       StrategicProcess* insertionPoint);
   ~MatchProcess();
 
-  Survival run(StrategicSearch& searchObject);
+  Survival run(StrategicSearch& searchObject) override;
 
 private:
   shared_ptr<RewriteSearchState> rewriteState;		// smart pointer to rewrite state that found our redex
@@ -61,7 +61,7 @@ private:
   const int fragmentNr;					// number of condition fragment within rule
   const Vector<StrategyExpression*>& strategies;	// vector of strategies for rewrite fragments
   const int strategyNr;					// number of next strategy to use
-  StrategyStackManager::StackId pending;       		// continuation once we finally do a rewrite
+  StrategyStackManager::StackId pending;		// continuation once we finally do a rewrite
   bool findFirst;					// are we looking for a first solution to fragment match?
 };
 

@@ -46,17 +46,15 @@ ConcatenationStrategy::ConcatenationStrategy(const Vector<StrategyExpression*>& 
 
 ConcatenationStrategy::~ConcatenationStrategy()
 {
-  int nrStrategies = strategies.size();
-  for (int i = 0; i < nrStrategies; ++i)
-    delete strategies[i];
+  for (StrategyExpression* expr : strategies)
+    delete expr;
 }
 
 bool
 ConcatenationStrategy::check(VariableInfo& indices, const TermSet& boundVars)
 {
-  int nrStrategies = strategies.length();
-  for (int i = 0; i < nrStrategies; i++)
-    if (!strategies[i]->check(indices, boundVars))
+  for (StrategyExpression* expr : strategies)
+    if (!expr->check(indices, boundVars))
       return false;
 
   return true;
@@ -65,9 +63,8 @@ ConcatenationStrategy::check(VariableInfo& indices, const TermSet& boundVars)
 void
 ConcatenationStrategy::process()
 {
-  int nrStrategies = strategies.length();
-  for (int i = 0; i < nrStrategies; i++)
-    strategies[i]->process();
+  for (StrategyExpression* expr : strategies)
+    expr->process();
 }
 
 StrategicExecution::Survival

@@ -49,8 +49,8 @@ public:
   //
   //	Call-backs for interesting events.
   //
-  virtual Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint);
-  virtual Survival executionsExhausted(StrategicProcess* insertionPoint);
+  virtual Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint) override;
+  virtual Survival executionsExhausted(StrategicProcess* insertionPoint) override;
 
 private:
   StrategyStackManager& strategyStackManager;

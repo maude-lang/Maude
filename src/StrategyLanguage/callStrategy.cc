@@ -60,7 +60,7 @@ CallStrategy::CallStrategy(RewriteStrategy* strat, Term* term)
     callTerm(term),
     callDagIsReduced(false)
 {
-  Assert(term != 0, "term cannot be null");
+  Assert(term != nullptr, "term cannot be null");
 
   callTerm.normalize();
 }
@@ -103,7 +103,7 @@ inline bool
 CallStrategy::tailCall(DecompositionProcess* remainder)
 {
   return remainder->getPending() == StrategyStackManager::EMPTY_STACK
-	  && dynamic_cast<CallTask*>(remainder->getOwner()) != 0;
+	  && dynamic_cast<CallTask*>(remainder->getOwner()) != nullptr;
 }
 
 StrategicExecution::Survival
@@ -202,7 +202,7 @@ CallStrategy::equal(const StrategyExpression& other) const
   //
 
   const CallStrategy* callOther = dynamic_cast<const CallStrategy*>(&other);
-  return this == &other || (callOther != 0
+  return this == &other || (callOther != nullptr
 	  && strategy->id() == callOther->strategy->id()
 	  && strategy->arity() == 0 && callOther->strategy->arity() == 0);
 }

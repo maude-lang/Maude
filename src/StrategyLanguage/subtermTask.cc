@@ -145,8 +145,8 @@ SubtermTask::RemainingProcess::RemainingProcess(SubtermTask* parent, size_t spId
     i(indices.size() - 1)
 {
   // Indices initialization to 0
-  for (size_t i = 0; i < indices.size(); i++)
-    indices[i] = 0;
+  for (int& index : indices)
+    index = 0;
 
   // Initialization of the vector of rewritten nodes
 
@@ -221,7 +221,7 @@ SubtermTask::SubtermTask(StrategicSearch& searchObject,
     emptyChildren(results.size()),
     pending(pending)
 {
-  Assert(strategy, "null strategy");
+  Assert(strategy != nullptr, "null strategy");
 
   // Uses the substitution from the search to instantiate the subpatterns
   Substitution& subst = *searchState->getContext();
@@ -229,7 +229,7 @@ SubtermTask::SubtermTask(StrategicSearch& searchObject,
   const Vector<StrategyExpression*>& strategies = strategy->getStrategies();
   const Vector<Term*>& subterms = strategy->getSubterms();
 
-  for (size_t subtermIndex = 0; subtermIndex < results.size(); subtermIndex++)
+  for (size_t subtermIndex = 0; subtermIndex < results.size(); ++subtermIndex)
     {
       //
       // Creates a decomposition process under a child task to apply the corresponding

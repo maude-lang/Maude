@@ -46,17 +46,15 @@ UnionStrategy::UnionStrategy(const Vector<StrategyExpression*>& strategies)
 
 UnionStrategy::~UnionStrategy()
 {
-  int nrStrategies = strategies.size();
-  for (int i = 0; i < nrStrategies; ++i)
-    delete strategies[i];
+  for (StrategyExpression* expr : strategies)
+    delete expr;
 }
 
 bool
 UnionStrategy::check(VariableInfo& indices, const TermSet& boundVars)
 {
-  size_t nrStrategies = strategies.size();
-  for (size_t i = 0; i < nrStrategies; i++)
-    if (!strategies[i]->check(indices, boundVars))
+  for (StrategyExpression* expr : strategies)
+    if (!expr->check(indices, boundVars))
       return false;
 
   return true;
@@ -65,9 +63,8 @@ UnionStrategy::check(VariableInfo& indices, const TermSet& boundVars)
 void
 UnionStrategy::process()
 {
-  size_t nrStrategies = strategies.size();
-  for (size_t i = 0; i < nrStrategies; i++)
-    strategies[i]->process();
+  for (StrategyExpression* expr : strategies)
+    expr->process();
 }
 
 StrategicExecution::Survival
