@@ -1,3 +1,16 @@
+2026-11-12  Rubén Rubio  <rubenrub@ucm.es>
+
+	* miSearch.cc (InterpreterManagerSymbol::makeStrategySequenceSearch):
+	added
+	(InterpreterManagerSymbol::getStrategySearchResult): added
+
+	* interpreterManagerSymbol.cc: include strategySequenceSearch.hh
+
+	* interpreterManagerSymbol.hh (class InterpreterManagerSymbol): add
+	makeStrategySequenceSearch and getStrategySearchResult methods
+
+	* interpreterSignature.cc: added StrategySearch messages
+
 2026-11-08  Saruman the White  <eker@eker10>
 
 	* interpreterManagerSymbol.cc
@@ -120,6 +133,28 @@
 	* metaDown.cc (MetaLevel::downStatementAttr): remove duplicate
 	NONEXEC case; use safeCastNonNull<>; fix bug where we were not
 	adding back quotes from metadata string argument
+
+2026-11-03  Rubén Rubio  <rubenrub@ucm.es>
+
+	* descentSignature.cc: added metaStrategySearch and
+	metaStrategySearchPath
+
+	* metaLevel.cc: include strategySequenceSearch.hh
+
+	* metaLevel.hh (class MetaLevel): added overloads for upTrace and
+	upTraceState with a strategy search
+
+	* metaLevelOpSymbol.hh (class MetaLevelOpSymbol): added decl for
+	makeStrategySequenceSearch
+
+	* metaLevelSignature.cc: added traceStrategyStepSymbol
+
+	* metaSearch.cc (MetaLevelOpSymbol::makeStrategySequenceSearch): added
+	(MetaLevelOpSymbol::metaStrategySearch): added
+	(MetaLevelOpSymbol::metaStrategySearchPath): added
+
+	* metaUp.cc (MetaLevel::upTrace): added
+	(MetaLevel::upTraceStep): added
 
 2026-10-20  Saruman the White  <eker@eker10>
 

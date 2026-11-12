@@ -33,29 +33,45 @@
 #include "core.hh"
 #include "strategyLanguage.hh"
 
+//	higher class definitions
+#include "strategyTransitionGraph.hh"
+
 //	strategy language class definitions
 #include "strategicTask.hh"
+#include "decompositionProcess.hh"
 
 StrategicTask::StrategicTask(StrategicTask* master)
   : StrategicExecution(master),
+    pending(StrategyStackManager::EMPTY_STACK),
     slaveList(this),
     varsContext(master ? master->getVarsContext()
-		       : VariableBindingsManager::EMPTY_CONTEXT)
+		       : VariableBindingsManager::EMPTY_CONTEXT),
+    transitionGraph(master ? master->transitionGraph : nullptr),
+    enclosingSubtermTask(master ? master->enclosingSubtermTask : nullptr),
+    taskInfo(nullptr)
 {
 }
 
 StrategicTask::StrategicTask(StrategicExecution* sibling)
   : StrategicExecution(sibling),
+    pending(StrategyStackManager::EMPTY_STACK),
     slaveList(this),
-    varsContext(sibling->getOwner()->getVarsContext())
+    varsContext(sibling->getOwner()->getVarsContext()),
+    transitionGraph(sibling->getOwner()->transitionGraph),
+    enclosingSubtermTask(sibling->getOwner()->enclosingSubtermTask),
+    taskInfo(nullptr)
 {
 }
 
 
 StrategicTask::StrategicTask(StrategicExecution* sibling, VariableBindingsManager::ContextId ctx)
   : StrategicExecution(sibling),
+    pending(StrategyStackManager::EMPTY_STACK),
     slaveList(this),
-    varsContext(ctx)
+    varsContext(ctx),
+    transitionGraph(sibling->getOwner()->transitionGraph),
+    enclosingSubtermTask(sibling->getOwner()->enclosingSubtermTask),
+    taskInfo(nullptr)
 {
 }
 
@@ -71,6 +87,17 @@ StrategicTask::~StrategicTask()
       next = i->getNextSlave();
       delete i;
     }
+
+  if (taskInfo != nullptr)
+    deleteTaskInfo(taskInfo);
+}
+
+void StrategicTask::resumeOwner(int dagNode, int pending, StrategicProcess* insertionPoint)
+{
+  // Resume the strategy execution in the owner task.
+  // When model checking, some extra work is done and perhaps resuming is cancelled.
+  if (transitionGraph == nullptr || transitionGraph->onCheckpoint(dagNode, this, pending, insertionPoint))
+    (void) new DecompositionProcess(dagNode, pending, this, insertionPoint);
 }
 
 /*

@@ -674,7 +674,8 @@ ImportModule::deepCopyCondition(ImportTranslation* importTranslation,
       else if (SortTestConditionFragment* s = dynamic_cast<SortTestConditionFragment*>(c))
 	{
 	  n = new SortTestConditionFragment(s->getLhs()->deepCopy(importTranslation),
-					    importTranslation->translate(s->getSort()));
+					    importTranslation != nullptr ? importTranslation->translate(s->getSort())
+								   : s->getSort());
 	}
       else if (AssignmentConditionFragment* a = dynamic_cast<AssignmentConditionFragment*>(c))
 	{

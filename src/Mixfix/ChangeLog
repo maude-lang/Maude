@@ -4,6 +4,104 @@
 	(UserLevelRewritingContext::printStatusReportCommon): fix bug
 	where vnTotal and nrTotal were switched in print statement
 
+2026-11-03  Rubén Rubio  <rubenrub@ucm.es>
+
+	* doParse.cc (MixfixModule::parseSearchCommand): add strategy and
+	opaque as arguments
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): add
+	STRATEGY_MODEL_CHECKER_SYMBOL
+
+	* importTranslation.cc (ImportModule::deepCopyCondition): allow null
+	translation
+
+	* importTranslation.hh (class ImportTranslation): make
+	deepCopyCondition public
+
+	* interpreter.hh (class Interpreter): add methods
+	showStrategySearchPath, showStrategySearchPathLabels,
+	showStrategySearchGraph, strategySearchCont, doStrategySearching, and
+	pass strategy to checkSearchRestrictions
+
+	* latexCommand.cc (MaudeLatexBuffer::generateSearch): add strategy and
+	opaque set as arguments and handle them
+
+	* latexModulePrint.cc (VisibleModule::latexPrintStrategyDecl): make
+	constant method and allow indent to be null (for show path)
+	(VisibleModule::latexPrintStrategyDefinition): make constant method
+
+	* latexResult.cc (MaudeLatexBuffer::generateSearchNonResult): add
+	overload for StrategySequenceSearch
+	(MaudeLatexBuffer::generateSearchResult): add overload for
+	StrategySequenceSearch
+	(MaudeLatexBuffer::generateStrategySearchPath): added
+	(MaudeLatexBuffer::generateStrategySearchPathLabels): added
+	(MaudeLatexBuffer::generateStrategySearchGraph): added
+
+	* makeGrammar.cc (MixfixModule::makeComplexProductions): add
+	productions for search using strategy and strategy name lists
+
+	* makeParse.cc (MixfixParser::makeSearchCommand): deal with search
+	using a strategy
+	(MixfixParser::makeUsingSearchSuffix): added
+
+	* maudeLatexBuffer.cc: include strategySequenceSearch.h
+
+	* maudeLatexBuffer.hh (class MaudeLatexBuffer): added overloads
+	generateSearchNonResult and generateSearchResult for
+	StrategySequenceSearch, and generateStrategySearchPath,
+	generateNarrowingSearchPath, generateStrategySearchPathLabels, and
+	generateStrategySearchGraph
+	(MaudeLatexBuffer::generateSearch): add strategy and opaque set
+	as arguments
+
+	* maudemlBuffer.cc: include strategySequenceSearch.hh
+	(MaudemlBuffer::generateSearch): add strategy as argument
+	(MaudemlBuffer::generateSearchResult): add overload for
+	StrategySequenceSearch
+
+	* maudemlBuffer.hh (class MaudemlBuffer): add overload of
+	generateSearchResult for StrategySequenceSearch
+	(MaudemlBuffer::generateSearch): add strategy as argument
+
+	* mixfixModule.cc: include strategyModelCheckerSymbol.hh
+
+	* mixfixModule.hh (MixfixModule::parseSearchCommand): add strategy and
+	opaque set as arguments
+	(enum MixfixModule::NonTerminal): add STRATEGY_NAME,
+	STRATEGY_NAME_LIST, and USING_SEARCH_SUFFIX
+
+	* mixfixParser.hh (class MixfixParser): add makeUsingSearchSuffix
+	method
+	(MixfixParser::makeSearchCommand): add strategy and opaque set as
+	arguments
+
+	* search.cc: include strategySequenceSearch.hh
+	(Interpreter::checkSearchRestrictions): add strategy as argument and
+	(Interpreter::search): consider strategy-controlled search
+	(Interpreter::doStrategySearching): added
+	(Interpreter::strategySearchCont): added
+	(Interpreter::strategySearchPath): consider strategy-controlled search
+	(Interpreter::strategySearchPathLabels): consider strategy-controlled
+	search
+	(Interpreter::strategySearchGraph): consider strategy-controlled search
+	(Interpreter::showStrategySearchPath): added
+	(Interpreter::showStrategySearchPathLabels): added
+	(Interpreter::showStrategySearchGraph): added
+
+	* specialSymbolTypes.cc: added StrategyModelCheckerSymbol
+
+	* specialTokens.cc: added opaque
+
+	* strategyTranslation.cc (ImportModule::deepCopyStrategyExpression):
+	allow importTranslation to be null
+
+	* symbolType.hh (enum SymbolType::BasicTypes): added
+	STRATEGY_MODEL_CHECKER_SYMBOL
+
+	* visibleModule.hh (class VisibleModule): make latexPrintStrategyDecl
+	public
+
 2026-11-02  Saruman the White  <eker@eker10>
 
 	* cvc5_Bindings.cc (VariableGenerator::makeBooleanExpr): fix typo

@@ -62,7 +62,6 @@ private:
   const int fragmentNr;					// number of condition fragment within rule
   const Vector<StrategyExpression*>& strategies;	// vector of strategies for rewrite fragments
   const int strategyNr;					// number of next strategy to use
-  StrategyStackManager::StackId pending;		// continuation once we finally do a rewrite
 
   RewriteConditionFragment* rcf;
   //

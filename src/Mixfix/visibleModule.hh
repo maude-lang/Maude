@@ -69,7 +69,8 @@ public:
 
   void latexPrintRule(ostream& s, const char* indent, const Rule* rl) const;
   bool latexPrintStrategy(ostream& s, StrategyExpression* strategy, int requiredPrec = UNBOUNDED) const;
-  
+  void latexPrintStrategyDecl(ostream& s, const char* indent, const RewriteStrategy* rs) const;
+
   static void latexPrintCondition(ostream& s, const Vector<ConditionFragment*>& condition);
 
 private:
@@ -98,8 +99,7 @@ private:
 
   void latexPrintMembershipAxiom(ostream& s, const char* indent, const SortConstraint* mb) const;
   void latexPrintEquation(ostream& s, const char* indent, const Equation* eq) const;
-  void latexPrintStrategyDecl(ostream& s, const char* indent, const RewriteStrategy* rs);
-  void latexPrintStrategyDefinition(ostream& s, const char* indent, const StrategyDefinition* e);
+  void latexPrintStrategyDefinition(ostream& s, const char* indent, const StrategyDefinition* e) const;
 
   void latexShowImports(ostream& s) const;
   void latexShowAttributes(ostream& s, Symbol* symbol, Index opDeclIndex);

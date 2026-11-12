@@ -219,6 +219,8 @@ InterpreterManagerSymbol::handleMessage(FreeDagNode* message,
     return srewriteTerm(message, context, interpreter);
   else if (s == getSearchResultMsg || s == getSearchResultAndPathMsg)
     return getSearchResult(message, context, interpreter);
+  else if (s == getStrategySearchResultMsg || s == getStrategySearchResultAndPathMsg)
+    return getStrategySearchResult(message, context, interpreter);
   //
   //	Unification.
   //

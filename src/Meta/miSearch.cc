@@ -56,6 +56,62 @@ InterpreterManagerSymbol::makeRewriteSequenceSearch(ImportModule* m,
   return 0;
 }
 
+StrategySequenceSearch*
+InterpreterManagerSymbol::makeStrategySequenceSearch(ImportModule* m,
+					      FreeDagNode* subject,
+					      RewritingContext& context) const
+{
+  RewriteSequenceSearch::SearchType searchType;
+  int maxDepth;
+  if (metaLevel->downSearchType(subject->getArgument(6), searchType) &&
+      metaLevel->downBound(subject->getArgument(9), maxDepth))
+    {
+      Term* s;
+      Term* g;
+      if (metaLevel->downTermPair(subject->getArgument(3), subject->getArgument(4), s, g, m))
+	{
+	  if (StrategyExpression* e = metaLevel->downStratExpr(subject->getArgument(7), m))
+	    {
+	      TermSet boundVars;
+	      VariableInfo vinfo;
+	      if (e->check(vinfo, boundVars))
+		{
+		  Vector<int> ids;
+		  if (metaLevel->downQidSet(subject->getArgument(8), ids))
+		    {
+		      Vector<ConditionFragment*> condition;
+		      if (metaLevel->downCondition(subject->getArgument(5), m, condition))
+			{
+			  m->protect();
+			  Pattern* goal = new Pattern(g, false, condition);
+			  RewritingContext* subjectContext = term2RewritingContext(s, context);
+			  e->process();
+			  return new StrategySequenceSearch(subjectContext,
+							    searchType,
+							    goal,
+							    e,
+							    maxDepth,
+							    set<int>(ids.begin(), ids.end()));
+			}
+		    }
+		}
+	      else
+		{
+		  DebugAdvisory("bad metastrategy (check) " << QUOTE(e));
+		}
+	      delete e;
+	    }
+	  else
+	    {
+	      DebugAdvisory("bad metastrategy " << QUOTE(subject->getArgument(5)));
+	    }
+	  g->deepSelfDestruct();
+	  s->deepSelfDestruct();
+	}
+    }
+  return nullptr;
+}
+
 DagNode*
 InterpreterManagerSymbol::getSearchResult(FreeDagNode* message,
 					  ObjectSystemRewritingContext& context,
@@ -142,6 +198,98 @@ InterpreterManagerSymbol::getSearchResult(FreeDagNode* message,
 	      return gotSearchResultAndPathMsg->makeDagNode(args);
 	    }
 	  return gotSearchResultMsg->makeDagNode(args);
+	}
+      return errorMessage;
+    }
+  return makeErrorReply("Bad solution number.", message);
+}
+
+DagNode*
+InterpreterManagerSymbol::getStrategySearchResult(FreeDagNode* message,
+						  ObjectSystemRewritingContext& context,
+						  Interpreter* interpreter)
+{
+  //
+  //	op getStrategySearchResult : Oid Oid Qid Term Term Condition Qid Strategy QidSet Bound Nat -> Msg .
+  //                                  0   1   2   3    4       5      6    7       8      9    10
+  //
+  //	op getStrategySearchResultAndPath : Oid Oid Qid Term Term Condition Qid Strategy QidSet Bound Nat -> Msg .
+  //                                         0   1   2   3    4       5      6    7       8       9   10
+  //
+  Int64 solutionNr;
+  if (metaLevel->downSaturate64(message->getArgument(10), solutionNr) && solutionNr >= 0)
+    {
+      DagNode* errorMessage;
+      if (MetaModule* mm = getMetaModule(message, 2, interpreter, errorMessage))
+	{
+	  StrategySequenceSearch* state;
+	  Int64 lastSolutionNr;
+	  if (mm->getCachedStateObject(message,
+				       context,
+				       solutionNr,
+				       state,
+				       lastSolutionNr))
+	    mm->protect();  // use cached state so protect the module
+	  else if ((state = makeStrategySequenceSearch(mm, message, context)))
+	    lastSolutionNr = -1;
+	  else
+	    return makeErrorReply("Bad search.", message);
+
+	  DagNode* target = message->getArgument(1);
+	  while (lastSolutionNr < solutionNr)
+	    {
+	      bool success = state->findNextMatch();
+	      if (!success)
+		{
+		  Vector<DagNode*> args(3);
+		  args[0] = target;
+		  args[1] = message->getArgument(0);
+		  args[2] = upRewriteCount(state->getContext());
+		  //
+		  //	Account for any remaining rewrites.
+		  //
+		  context.addInCount(*(state->getContext()));
+		  delete state;
+		  (void) mm->unprotect();
+		  return noSuchResultMsg->makeDagNode(args);
+		}
+	      ++lastSolutionNr;
+	    }
+	  //
+	  //	Desired solution found. Cache new state and generate reply.
+	  //
+	  //	op gotStrategySearchResult : Oid Oid RewriteCount Term Type Substitution -> Msg .
+	  //	                              0   1       2        3    4        5
+	  //
+	  //	op gotStrategySearchResultAndPath : Oid Oid RewriteCount Term Type Substitution Trace -> Msg .
+	  //	                                     0   1       2        3    4        5         6
+	  //
+	  mm->insert(message, state, solutionNr);
+
+	  bool includeTrace = (message->symbol() == getStrategySearchResultAndPathMsg);
+	  Vector<DagNode*> args(includeTrace ? 7 : 6);
+	  args[0] = target;
+	  args[1] = message->getArgument(0);
+	  args[2] = upRewriteCount(state->getContext());
+
+	  DagNode* dagNode = state->getStateDag(state->getStateNr());
+	  PointerMap qidMap;
+	  PointerMap dagNodeMap;
+	  args[3] = metaLevel->upDagNode(dagNode, mm, qidMap, dagNodeMap);
+	  args[4] = metaLevel->upType(dagNode->getSort(), qidMap);
+	  args[5] = metaLevel->upSubstitution(*(state->getSubstitution()),
+					      *(state->getGoal()),
+					      mm,
+					      qidMap,
+					      dagNodeMap);
+	  state->transferCountTo(context);
+	  (void) mm->unprotect();
+	  if (includeTrace)
+	    {
+	      args[6] = metaLevel->upTrace(*state, mm);
+	      return gotStrategySearchResultAndPathMsg->makeDagNode(args);
+	    }
+	  return gotStrategySearchResultMsg->makeDagNode(args);
 	}
       return errorMessage;
     }

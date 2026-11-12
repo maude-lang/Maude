@@ -64,6 +64,7 @@
 #include "filteredVariantUnifierSearch.hh"
 #include "narrowingSearchState2.hh"
 #include "narrowingSequenceSearch3.hh"
+#include "strategySequenceSearch.hh"
 
 //	variable class definitions
 #include "variableDagNode.hh"

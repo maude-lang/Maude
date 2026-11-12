@@ -46,6 +46,7 @@
 //	higher class definitions
 #include "assignmentConditionFragment.hh"
 #include "rewriteConditionFragment.hh"
+#include "strategyTransitionGraph.hh"
 
 //	strategy language class definitions
 #include "strategicSearch.hh"
@@ -186,7 +187,15 @@ ApplicationProcess::run(StrategicSearch& searchObject)
 				      rule);
 	  if (resultIndex != NONE)
 	    {
-	      (void) new DecompositionProcess(resultIndex, pending, this, this);
+	      StrategyTransitionGraph* graph = getOwner()->getTransitionGraph();
+
+	      if (graph == nullptr)
+	        (void) new DecompositionProcess(resultIndex, pending, this, this);
+
+	      else
+		// Announces to the model checker that a new state has been reached
+		graph->commitState(resultIndex, pending, this, rule);
+
 	      return SURVIVE;  // stick around to look for another rewrite
 	    }
 	}
@@ -382,7 +391,15 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
   int resultIndex = doRewrite(searchObject, rewriteState, redexIndex, extensionInfo, substitutionSoFar, rule);
   if (resultIndex != NONE)
     {
-      (void) new DecompositionProcess(resultIndex, pending, taskSibling, other);
+      StrategyTransitionGraph* graph = taskSibling->getOwner()->getTransitionGraph();
+
+      if (graph == nullptr)
+	(void) new DecompositionProcess(resultIndex, pending, taskSibling, other);
+
+      else
+	// Announces to the model checker that a new state has been reached
+	graph->commitState(resultIndex, pending, taskSibling, rule);
+
       return SURVIVE;  // stick around to look for another rewrite
     }
   return DIE;  // only happens when we are aborting

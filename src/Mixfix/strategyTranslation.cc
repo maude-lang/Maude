@@ -80,12 +80,16 @@ ImportModule::deepCopyStrategyExpression(ImportTranslation* importTranslation,
 
   else if (CallStrategy* cs = dynamic_cast<CallStrategy*>(original))
     {
-      RewriteStrategy* strategy = importTranslation->translate(cs->getStrategy());
-      // If strategy is null (to expr mappings), the call must be translated
-      // to a strategy expression
-      if (strategy == 0)
+      RewriteStrategy* strategy = cs->getStrategy();
+      if (importTranslation != nullptr)
 	{
-	  return importTranslation->translateExpr(cs);
+	  strategy = importTranslation->translate(strategy);
+	  // If strategy is null (to expr mappings), the call must be translated
+	  // to a strategy expression
+	  if (strategy == nullptr)
+	    {
+	      return importTranslation->translateExpr(cs);
+	    }
 	}
       // Otherwise, the translation is another call strategy expression
       return new CallStrategy(strategy,
@@ -146,7 +150,10 @@ ImportModule::deepCopyStrategyExpression(ImportTranslation* importTranslation,
 	  valuesCopy[i] = values[i].getTerm()->deepCopy(importTranslation);
 	}
 
-      int label = importTranslation->translateLabel(as->getLabel());
+      int label = as->getLabel();
+
+      if (importTranslation != nullptr)
+	label = importTranslation->translateLabel(label);
 
       ApplicationStrategy* copy = new ApplicationStrategy(label, variablesCopy, valuesCopy, strategiesCopy);
       if (as->getTop())

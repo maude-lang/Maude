@@ -34,6 +34,7 @@
 #include "rootContainer.hh"
 #include "substitution.hh"
 #include <queue>
+#include <set>
 
 class VariableBindingsManager
 {
@@ -59,19 +60,33 @@ public:
   //
   // Opens a strategy call context. All variables come form the substitution.
   //
-  ContextId openContext(const Substitution& match,
-			const Vector<int>& contextSpec);
+  // Except if the filter parameter is null, the context will be compared to
+  // the already existing contexts to return the same context id if they are
+  // equal. Context are only compared with those with identical filter. The
+  // filter pointer will never be accessed.
+  //
+  ContextId openContext(const Substitution &match,
+			const Vector<int> &contextSpec,
+			void* filter = nullptr);
 
   //
   // Opens a static context inside expressions (for matchrew). Negative indices
   // (in absolute value less one) refer to indices in the parent context.
   //
-  ContextId openContext(ContextId parent, const Substitution& subst, const Vector<int>& contextSpec);
+  ContextId openContext(ContextId parent,
+			const Substitution &subst,
+			const Vector<int> &contextSpec);
 
   //
   // Closes a context, freeing its resources.
   //
   void closeContext(ContextId ctx);
+
+  //
+  // Prevents a context from removal. An extra closeContext call
+  // must be issued for each call to protect to free the context.
+  //
+  void protect(ContextId ctx);
 
   //
   // Instantiates a DAG node in a context.
@@ -97,12 +112,32 @@ public:
   const Vector<DagNode*>& getValues(ContextId id) const;
 
 private:
+  //
+  // Search table (for context sharing/normalization)
+  //
+  using SearchEntry = std::pair<void*, int>;
+  struct DeepComparison
+  {
+    DeepComparison(VariableBindingsManager &vbm);
+    bool operator()(const SearchEntry& lhs, const SearchEntry& rhs) const;
+
+    VariableBindingsManager &vbm;
+  };
+  friend struct DeepComparison;
+  using ShareSet = std::set<SearchEntry, DeepComparison>;
+  ShareSet contextShare;
+
+  //
+  // Context entry
+  //
   struct Entry : RootContainer
   {
-    Entry() {link();}
-    ~Entry() {unlink();}
+    Entry() : usersCount(1) { link(); }
+    ~Entry() { unlink(); }
 
     Vector<DagNode*> values;
+    size_t usersCount;
+    ShareSet::iterator shareRef;
 
     void markReachableNodes();
     void init(size_t nrVars);
@@ -111,9 +146,9 @@ private:
 
   // Table of contexts by its context identifier
   Vector<Entry*> contextTable;
-  // Queue of free cells (after some context are closed)
+  // Queue of free cells (after some contexts are closed)
   std::queue<int> freeCells;
-  // 
+
   // Cached substitution
   //
   // In the instantiate method, a Substitution is required to instantiate the
@@ -130,15 +165,27 @@ private:
 inline void
 VariableBindingsManager::closeContext(ContextId ctx)
 {
-  if (ctx != EMPTY_CONTEXT)
+  if (ctx != EMPTY_CONTEXT && contextTable[ctx]->usersCount-- == 1)
     {
       // Performs the cell deletion
+      if (contextTable[ctx]->shareRef != contextShare.end())
+	{
+	  contextShare.erase(contextTable[ctx]->shareRef);
+	  contextTable[ctx]->shareRef = contextShare.end();
+	}
       contextTable[ctx]->free();
       freeCells.push(ctx);
 
       if (currentContext == ctx)
 	currentContext = EMPTY_CONTEXT;
     }
+}
+
+inline void
+VariableBindingsManager::protect(ContextId ctx)
+{
+  if (ctx != EMPTY_CONTEXT)
+    contextTable[ctx]->usersCount++;
 }
 
 inline const Vector<DagNode*>&

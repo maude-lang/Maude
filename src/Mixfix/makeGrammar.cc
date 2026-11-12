@@ -265,6 +265,61 @@ MixfixModule::makeComplexProductions()
   rhs[2] = TERM_LIST;
   rhs[3] = irreducible;
   parser->insertProduction(VARIANT_MATCH_COMMAND, rhs, 0, gatherAnyAnyAny, MixfixParser::MAKE_TERM_LIST);
+
+  //
+  // <strategy name> is the name of a strategy
+  // <strategy name list> ::= <strategy name> (, <strategy name> ) *
+  //
+  rhs.resize(1);
+  {
+    set<int> seen;
+    for (RewriteStrategy* strat : getStrategies())
+      {
+	int id = strat->id();
+	if (seen.find(id) == seen.end())
+	  {
+	    rhs[0] = id;
+	    parser->insertProduction(STRATEGY_NAME, rhs, 0, emptyGather, MixfixParser::NOP, id);
+	    seen.insert(id);
+	  }
+      }
+  }
+
+  rhs[0] = STRATEGY_NAME;
+  parser->insertProduction(STRATEGY_NAME_LIST, rhs, 0, gatherAny);
+
+  rhs.resize(3);
+  rhs[1] = comma;
+  rhs[2] = STRATEGY_NAME_LIST;
+  parser->insertProduction(STRATEGY_NAME_LIST, rhs, 0, gatherPrefixPrefix);
+  //
+  // <using search suffix> ::= using <strategy expression> [such that <identifier list> opaque]
+  //
+  rhs.resize(2);
+  rhs[0] = usingToken;
+  rhs[1] = STRATEGY_EXPRESSION;
+  parser->insertProduction(USING_SEARCH_SUFFIX, rhs, 0, gatherAny);
+
+  rhs.resize(5);
+  rhs[2] = SUCH_THAT;
+  rhs[3] = STRATEGY_NAME_LIST;
+  rhs[4] = opaque;
+  parser->insertProduction(USING_SEARCH_SUFFIX, rhs, 0, gatherAnyAnyAny);
+  //
+  // <search command> ::= <search pair> [<such that> <rule condition>] <using search suffix>
+  //
+  rhs.resize(2);
+  rhs[0] = SEARCH_PAIR;
+  rhs[1] = USING_SEARCH_SUFFIX;
+  parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAnyAny);
+
+  rhs.resize(4);
+  rhs[1] = SUCH_THAT;
+  rhs[2] = RULE_CONDITION;
+  rhs[3] = USING_SEARCH_SUFFIX;
+  parser->insertProduction(SEARCH_COMMAND, rhs, 0, gatherAny4,
+			   MixfixParser::CONDITIONAL_COMMAND);
+
   //
   //	Hetrogeneous term lists.
   //	<term list> ::= <term>
@@ -327,7 +382,7 @@ MixfixModule::makeStrategyLanguageProductions()
     const Vector<RewriteStrategy*> &strategies = getStrategies();
     for (size_t i = 0; i < strategies.size(); i++)
       {
-	Symbol * symbol = strategies[i]->getSymbol();
+	Symbol* symbol = strategies[i]->getSymbol();
 	int nrArgs = symbol->arity();
 
 	rhs.resize(1);

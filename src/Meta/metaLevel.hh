@@ -131,6 +131,7 @@ public:
 			       MixfixModule* m);
 
   DagNode* upTrace(const RewriteSequenceSearch& state, MixfixModule* m);
+  DagNode* upTrace(const StrategySequenceSearch& state, MixfixModule* m);
   DagNode* upFailureTrace();
 
   DagNode* upContext(DagNode* dagNode,
@@ -545,6 +546,11 @@ private:
   DagNode* upCallStrat(int label, Term* callTerm, MixfixModule* m, PointerMap& qidMap);
 
   DagNode* upTraceStep(const RewriteSequenceSearch& state,
+		       int stateNr,
+		       MixfixModule* m,
+		       PointerMap& qidMap,
+		       PointerMap& dagNodeMap);
+  DagNode* upTraceStep(const StrategySequenceSearch& state,
 		       int stateNr,
 		       MixfixModule* m,
 		       PointerMap& qidMap,

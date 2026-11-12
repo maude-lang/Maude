@@ -158,6 +158,11 @@ mod META-INTERPRETER is
      				       VariantOptionSet Nat -> Msg [ctor msg format (b o)] .
   op gotNarrowingSearchResultAndPath : Oid Oid RewriteCount Term Type Substitution NarrowingTrace Substitution Qid -> Msg [ctor msg format (m o)] .
 
+  op getStrategySearchResult : Oid Oid Qid Term Term Condition Qid Strategy QidSet Bound Nat -> Msg [ctor msg format (b o)] .
+  op gotStrategySearchResult : Oid Oid RewriteCount Term Type Substitution -> Msg [ctor msg format (m o)] .
+  op getStrategySearchResultAndPath : Oid Oid Qid Term Term Condition Qid Strategy QidSet Bound Nat -> Msg [ctor msg format (b o)] .
+  op gotStrategySearchResultAndPath : Oid Oid RewriteCount Term Type Substitution Trace -> Msg [ctor msg format (m o)] .
+
   op noSuchResult : Oid Oid RewriteCount -> Msg [ctor msg format (m o)] .
   op noSuchResult : Oid Oid Bool -> Msg [ctor msg format (m o)] .
   op noSuchResult : Oid Oid RewriteCount Bool -> Msg [ctor msg format (m o)] .
@@ -267,6 +272,11 @@ mod META-INTERPRETER is
   	   op-hook gotNarrowingSearchResultMsg	(gotNarrowingSearchResult : Oid Oid RewriteCount Term Type Substitution Qid Substitution Qid ~> Msg)
   	   op-hook getNarrowingSearchResultAndPathMsg	(getNarrowingSearchResultAndPath : Oid Oid Qid Term Term Qid Bound Qid VariantOptionSet Nat ~> Msg)
   	   op-hook gotNarrowingSearchResultAndPathMsg	(gotNarrowingSearchResultAndPath : Oid Oid RewriteCount Term Type Substitution NarrowingTrace Substitution Qid ~> Msg)
+
+           op-hook getStrategySearchResultMsg		(getStrategySearchResult : Oid Oid Qid Term Term Condition Qid Strategy QidSet Bound Nat ~> Msg)
+           op-hook gotStrategySearchResultMsg		(gotStrategySearchResult : Oid Oid RewriteCount Term Type Substitution ~> Msg)
+           op-hook getStrategySearchResultAndPathMsg	(getStrategySearchResultAndPath : Oid Oid Qid Term Term Condition Qid Strategy QidSet Bound Nat ~> Msg)
+           op-hook gotStrategySearchResultAndPathMsg	(gotStrategySearchResultAndPath : Oid Oid RewriteCount Term Type Substitution Trace ~> Msg)
 
 	   op-hook noSuchResultMsg		(noSuchResult : Oid Oid RewriteCount ~> Msg)
 	   op-hook noSuchResult2Msg		(noSuchResult : Oid Oid Bool ~> Msg)

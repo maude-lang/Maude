@@ -1,0 +1,68 @@
+set show timing off .
+set show advisories off .
+
+smod LETTER is
+  sort Letter .
+
+  ops a b c d e : -> Letter [ctor] .
+
+  var L : Letter .
+
+  rl [ab] : a => b .
+  rl [bc] : b => c .
+  rl [bd] : b => d .
+  rl [xe] : L => e .
+  rl [ca] : c => a .
+
+  strat ac @ Letter .
+  sd ac := ab ; bc .
+
+  strat rec @ Letter .
+  sd rec := (ab | bc | ca) ; rec .
+
+  strat xew : Letter @ Letter .
+  sd xew(L) := xe[L <- L] .
+endsm
+
+*** simple sequence of rewrites
+select META-LEVEL .
+
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], none, unbounded, 0) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], none, unbounded, 1) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], none, unbounded, 2) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], none, unbounded, 3) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], none, unbounded, 4) .
+
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '!, 'ac[[empty]], none, unbounded, 0) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '!, 'ac[[empty]], none, unbounded, 1) .
+
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '+, 'ac[[empty]], none, 1, 0) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '+, 'ac[[empty]], none, 1, 1) .
+
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], 'ac, unbounded, 0) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], 'ac, unbounded, 1) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], 'ac, unbounded, 2) .
+
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '+, 'ac[[empty]], 'ac ; 'rec, 1, 0) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '+, 'ac[[empty]], 'ac ; 'rec, 1, 1) .
+
+reduce metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], 'rec, unbounded, 0) .
+reduce metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter, nil, '*, 'ac[[empty]], 'rec, unbounded, 1) .
+
+reduce metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter, nil, '!, 'ac[[empty]], none, unbounded, 0) .
+reduce metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter, nil, '!, 'ac[[empty]], none, unbounded, 1) .
+
+reduce metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter, nil, '!, 'ac[[empty]], 'ac, unbounded, 0) .
+reduce metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter, nil, '!, 'ac[[empty]], 'ac, unbounded, 1) .
+
+*** matchrew
+reduce metaStrategySearch(['LETTER], 'b.Letter, 'L:Letter, nil, '!, 
+  (matchrew 'L:Letter s.t. nil by 'L:Letter using 'bc[none]{empty}), none, unbounded, 0) .
+reduce metaStrategySearchPath(['LETTER], 'b.Letter, 'L:Letter, nil, '!, 
+  (matchrew 'L:Letter s.t. nil by 'L:Letter using 'bc[none]{empty}), none, unbounded, 0) .
+
+*** unbound variables
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '+,
+  'xe['L:Letter <- 'L:Letter]{empty}, none, unbounded, 0) .
+reduce metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil, '+,
+  'xew[['M:Letter]], none, unbounded, 0) .

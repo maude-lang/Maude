@@ -45,10 +45,17 @@ public:
 		      PreEquation* pattern,
 		      const string& searchType,
 		      Int64 limit,
-		      Int64 depth);
+		      Int64 depth,
+		      StrategyExpression* strategy);
   void generateContinue(const string& command, Module* module, Int64 limit);
   void generateSearchResult(Int64 number,
 			    RewriteSequenceSearch* state,
+			    const Timer& timer,
+			    bool showStats,
+			    bool showTiming,
+			    bool showBreakdown);
+  void generateSearchResult(Int64 number,
+			    StrategySequenceSearch* state,
 			    const Timer& timer,
 			    bool showStats,
 			    bool showTiming,

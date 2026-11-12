@@ -36,6 +36,7 @@ public:
 	      RewritingContext* callContext,
 	      int subjectDagIndex,
 	      StrategyStackManager::StackId pending,
+	      bool tailCall,
 	      StrategicExecution* taskSibling,
 	      StrategicProcess* insertionPoint);
 
@@ -50,6 +51,7 @@ private:
 
   int defIndex;
   bool first;
+  const bool tailCall;
 };
 
 #endif

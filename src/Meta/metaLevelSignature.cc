@@ -305,6 +305,7 @@
      MACRO(narrowingApplyResultSymbol, FreeSymbol, 0, 7)
      MACRO(narrowingSearchResultSymbol, FreeSymbol, 0, 6)
      MACRO(traceStepSymbol, FreeSymbol, 0, 3)
+     MACRO(traceStrategyStepSymbol, FreeSymbol, 0, 3)
      MACRO(nilTraceSymbol, Symbol, 0, 0)
      MACRO(traceSymbol, Symbol, SymbolType::ASSOC, 2)
      MACRO(narrowingStepSymbol, FreeSymbol, 0, 7)

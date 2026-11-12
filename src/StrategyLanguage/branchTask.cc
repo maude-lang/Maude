@@ -33,6 +33,9 @@
 #include "core.hh"
 #include "strategyLanguage.hh"
 
+//	higher class definitions
+#include "strategyTransitionGraph.hh"
+
 //	strategy language class definitions
 #include "branchTask.hh"
 #include "decompositionProcess.hh"
@@ -56,14 +59,19 @@ BranchTask::BranchTask(StrategyStackManager& strategyStackManager,
     successAction(successAction),
     successStrategy(successStrategy),
     failureAction(failureAction),
-    failureStrategy(failureStrategy),
-    pending(pending)
+    failureStrategy(failureStrategy)
 {
   success = false;
   (void) new DecompositionProcess(startIndex,
 				  strategyStackManager.push(StrategyStackManager::EMPTY_STACK, initialStrategy),
 				  getDummyExecution(),
 				  insertionPoint);
+
+  StrategicTask::pending = pending;
+
+  // Strategies not and test are opaque for the model checker
+  if (successAction == BranchStrategy::FAIL || successAction == BranchStrategy::IDLE)
+    setTransitionGraph(nullptr);
 }
 
 StrategicExecution::Survival
@@ -76,12 +84,12 @@ BranchTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoint
       return DIE;
     case BranchStrategy::IDLE:
       {
-	(void) new DecompositionProcess(startIndex, pending, this, insertionPoint);
+	resumeOwner(startIndex, pending, insertionPoint);
 	return DIE;
       }
     case BranchStrategy::PASS_THRU:
       {
-	(void) new DecompositionProcess(resultIndex, pending, this, insertionPoint);
+	resumeOwner(resultIndex, pending, insertionPoint);
 	break;
       }
     case BranchStrategy::NEW_STRATEGY:
@@ -90,8 +98,8 @@ BranchTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoint
 	//	Start a new process that applies the success strategy followed by the pending
 	//	strategies to the result. It will report to our owner.
 	//
-	DecompositionProcess* p = new DecompositionProcess(resultIndex, pending, this, insertionPoint);
-	p->pushStrategy(strategyStackManager, successStrategy);
+	StrategyStackManager::StackId newPending = strategyStackManager.push(pending, successStrategy);
+	resumeOwner(resultIndex, newPending, insertionPoint);
 	break;
       }
     case BranchStrategy::ITERATE:
@@ -100,7 +108,11 @@ BranchTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoint
 	//	Do not iterate if we have already iterated from this term. We check this
 	//	by looking for the stack position of e ! in the seen set of the parent task.
 	//
-	if (getOwner()->alreadySeen(resultIndex, iterationCheckpoint))
+	StrategyTransitionGraph* transitionGraph = getTransitionGraph();
+	if (transitionGraph == nullptr ? getOwner()->alreadySeen(resultIndex, iterationCheckpoint)
+	    // onCheckpoint may create a substate in the current branch task for the
+	    // iterationCheckpoint instead of in the new branch
+	    : !transitionGraph->onCheckpoint(resultIndex, this, iterationCheckpoint, insertionPoint))
 	  return SURVIVE;
 	//
 	//	We set up another branch task on the new result and we stay alive to
@@ -139,7 +151,7 @@ BranchTask::executionsExhausted(StrategicProcess* insertionPoint)
 	  break;
 	case BranchStrategy::IDLE:
 	  {
-	    (void) new DecompositionProcess(startIndex, pending, this, insertionPoint);
+	    resumeOwner(startIndex, pending, insertionPoint);
 	    break;
 	  }
 	case BranchStrategy::NEW_STRATEGY:
@@ -148,8 +160,8 @@ BranchTask::executionsExhausted(StrategicProcess* insertionPoint)
 	    //	Start a new process that applies the failure strategy followed by the pending
 	    //	strategies to the original term. It will report to our owner.
 	    //
-	    DecompositionProcess* p = new DecompositionProcess(startIndex, pending, this, insertionPoint);
-	    p->pushStrategy(strategyStackManager, failureStrategy);
+	    StrategyStackManager::StackId newPending = strategyStackManager.push(pending, failureStrategy);
+	    resumeOwner(startIndex, newPending, insertionPoint);
 	    break;
 	  }
 	default:

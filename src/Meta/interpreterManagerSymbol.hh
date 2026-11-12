@@ -134,7 +134,10 @@ private:
 				       FreeDagNode* message,
 				       RewritingContext& context,
 				       bool depthFirst) const;
-  
+  StrategySequenceSearch* makeStrategySequenceSearch(ImportModule* m,
+						     FreeDagNode* message,
+						     RewritingContext& context) const;
+
   DagNode* makeNarrowingSearchPath(ImportModule* m, NarrowingSequenceSearch3* state) const;
 
   bool quit(FreeDagNode* message, ObjectSystemRewritingContext& context);
@@ -268,6 +271,9 @@ private:
 				    ObjectSystemRewritingContext& context,
 				    bool returnPath,
 				    Interpreter* interpreter);
+  DagNode* getStrategySearchResult(FreeDagNode* message,
+				   ObjectSystemRewritingContext& context,
+				   Interpreter* interpreter);
   DagNode* upRewriteCount(const RewritingContext* context);
   void errorReply(const Rope& errorMessage,
 		  FreeDagNode* originalMessage,

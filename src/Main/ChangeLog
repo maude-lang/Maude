@@ -1,3 +1,14 @@
+2026-11-12  Rubén Rubio  <rubenrub@ucm.es>
+
+	* metaInterpreter.maude: add getStrategySearchResult and related
+	messages
+
+2026-11-03  Rubén Rubio  <rubenrub@ucm.es>
+
+	* model-checker.maude: added strategy-controlled modelCheck special
+
+	* prelude.maude: added metaStrategySearch and metaStrategySearchPath
+
 2026-10-31  Saruman the White  <eker@eker10>
 
 	* prelude.maude: update comment

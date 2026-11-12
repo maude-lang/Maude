@@ -42,7 +42,7 @@
 #include "subtermStrategy.hh"
 #include "decompositionProcess.hh"
 
-typedef StrategicExecution::Survival Survival;
+using Survival = StrategicExecution::Survival;
 
 //
 // Child task definition and implementation.
@@ -64,15 +64,17 @@ public:
   ChildTask(SubtermTask* parent, int index)
     : StrategicTask(parent->getDummyExecution()),
       parent(parent),
-      index(index) {}
+      index(index)
+  {
+  }
 
   using StrategicTask::getDummyExecution;
 
   //
   //	Virtual in StrategicTask.
   //
-  Survival executionSucceeded(int, StrategicProcess*);
-  Survival executionsExhausted(StrategicProcess*);
+  Survival executionSucceeded(int, StrategicProcess*) override;
+  Survival executionsExhausted(StrategicProcess*) override;
 };
 
 Survival
@@ -218,10 +220,10 @@ SubtermTask::SubtermTask(StrategicSearch& searchObject,
     extensionInfo(extensionInfo),
     searchIndex(searchPosition),
     results(strategy->getStrategies().size()),
-    emptyChildren(results.size()),
-    pending(pending)
+    emptyChildren(results.size())
 {
   Assert(strategy != nullptr, "null strategy");
+  Assert(getTransitionGraph() == nullptr, "SubtermTask used when model checking");
 
   // Uses the substitution from the search to instantiate the subpatterns
   Substitution& subst = *searchState->getContext();
@@ -247,6 +249,8 @@ SubtermTask::SubtermTask(StrategicSearch& searchObject,
 				      child->getDummyExecution(),
 				      insertionPoint);
     }
+
+  StrategicTask::pending = pending;
 }
 
 SubtermTask::~SubtermTask()
@@ -255,12 +259,12 @@ SubtermTask::~SubtermTask()
   delete extensionInfo;
 }
 
-void
-SubtermTask::pushSolution(const Vector<DagNode*>& rewNodes, StrategicProcess* insertionPoint)
+int
+SubtermTask::rebuild(const Vector<DagNode*>& rewSubterms)
 {
   // Rebuils the main pattern from rewritten terms and matched variables
   DagNode* result = strategy->rebuild(searchObject.getValues(getVarsContext()),
-				      rewNodes);
+				      rewSubterms);
 
   // Rebuilds the node from the pattern match to the root
   result = searchState->rebuildDag(result, extensionInfo, searchIndex).first;
@@ -272,15 +276,16 @@ SubtermTask::pushSolution(const Vector<DagNode*>& rewNodes, StrategicProcess* in
   newContext->reduce();
   searchObject.getContext()->transferCountFrom(*newContext);
 
-  // Creates a descomposition process independent of this task
-  // to apply the remaining strategy
-  int ourResultIndex = searchObject.insert(newContext->root());
+  int resultIndex = searchObject.insert(newContext->root());
   delete newContext;
 
-  (void) new DecompositionProcess(ourResultIndex,
-				  pending,
-				  this,
-				  insertionPoint);
+  return resultIndex;
+}
+
+void SubtermTask::pushSolution(const Vector<DagNode *> &rewNodes, StrategicProcess* insertionPoint)
+{
+  int ourResultIndex = rebuild(rewNodes);
+  resumeOwner(ourResultIndex, pending, insertionPoint);
 }
 
 Survival

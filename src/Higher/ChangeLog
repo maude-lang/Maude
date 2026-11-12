@@ -1,3 +1,21 @@
+2026-11-03  Rubén Rubio  <rubenrub@ucm.es>
+
+	* higher.hh: add forward declaration for StrategySequenceSearch
+
+	* strategyModelCheckerSymbol.cc: added
+
+	* strategyModelCheckerSymbol.hh: added
+
+	* strategySequenceSearch.cc: added
+
+	* strategySequenceSearch.hh: added
+
+	* strategyTaskInfo.cc: added
+
+	* strategyTransitionGraph.cc: added
+
+	* strategyTransitionGraph.hh: added
+
 2026-10-14  Saruman the White  <eker@eker10>
 
 	* pattern.cc (Pattern::prepare): call requireAllMatches() rather

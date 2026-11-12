@@ -37,7 +37,10 @@ libstrategyLanguage_a_SOURCES = \
 	strategyStackManager.cc \
 	variableBindingsManager.cc \
 	oneStrategy.cc \
-	oneTask.cc
+	oneTask.cc \
+	modelCheckerSubtermTask.cc \
+	biasedSubtermTask.cc \
+	fullSubtermTask.cc
 
 noinst_HEADERS = \
 	strategyLanguage.hh \
@@ -69,4 +72,7 @@ noinst_HEADERS = \
 	strategyStackManager.hh \
 	variableBindingsManager.hh \
 	oneStrategy.hh \
-	oneTask.hh
+	oneTask.hh \
+	modelCheckerSubtermTask.hh \
+	biasedSubtermTask.hh \
+	fullSubtermTask.hh

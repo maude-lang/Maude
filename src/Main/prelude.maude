@@ -2309,6 +2309,7 @@ fmod META-LEVEL is
   op {_,_,_} : Substitution Substitution Qid -> UnificationTriple [ctor] .
   op {_,_,_,_,_} : Term Substitution Qid Parent Bool -> Variant [ctor] .
   op {_,_,_} : Term Type Rule -> TraceStep [ctor] .
+  op {_,_,_} : Term Type StratDecl -> TraceStep [ctor] .
   op nil : -> Trace [ctor] .
   op __ : Trace Trace -> Trace [ctor assoc id: nil format (d n d)] .
   op {_,_,_,_} : Term Substitution Term Nat -> SmtResult [ctor] .
@@ -2755,6 +2756,7 @@ fmod META-LEVEL is
         op-hook smtResultSymbol		({_,_,_,_} : Term Substitution Term Nat ~> SmtResult)
 
         op-hook traceStepSymbol		({_,_,_} : Term Type Rule ~> TraceStep)
+        op-hook traceStrategyStepSymbol		({_,_,_} : Term Type StratDecl ~> TraceStep)
         op-hook nilTraceSymbol		(nil : ~> Trace)
         op-hook traceSymbol		(__ : Trace Trace ~> Trace)
 
@@ -2882,6 +2884,16 @@ fmod META-LEVEL is
   op metaNarrow : Module Term Qid Bound Bool Nat ~> ResultPair?
         [special (
            id-hook MetaLevelOpSymbol	(metaNarrow2)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaStrategySearch : Module Term Term Condition Qid Strategy QidSet Bound Nat ~> ResultTriple?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaStrategySearch)
+           op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
+
+  op metaStrategySearchPath : Module Term Term Condition Qid Strategy QidSet Bound Nat ~> Trace?
+        [special (
+           id-hook MetaLevelOpSymbol	(metaStrategySearchPath)
            op-hook shareWith		(metaReduce : Module Term ~> ResultPair))] .
 
   op metaGetVariant : Module Term TermList Qid Nat ~> Variant?

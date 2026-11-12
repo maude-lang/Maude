@@ -104,6 +104,7 @@
 #include "assignmentConditionFragment.hh"
 #include "rewriteConditionFragment.hh"
 #include "rewriteSequenceSearch.hh"
+#include "strategySequenceSearch.hh"
 
 //	front end class definitions
 #include "fileTable.hh"

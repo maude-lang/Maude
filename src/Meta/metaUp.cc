@@ -692,6 +692,53 @@ MetaLevel::upTraceStep(const RewriteSequenceSearch& state,
 }
 
 DagNode*
+MetaLevel::upTrace(const StrategySequenceSearch& state, MixfixModule* m)
+{
+  Vector<int> steps;
+  for (int i = state.getStateNr(); i != 0; i = state.getStateParent(i))
+    steps.append(i);
+
+  int nrSteps = steps.size();
+  if (nrSteps == 0)
+    return nilTraceSymbol->makeDagNode();
+
+  Vector<DagNode*> args(nrSteps);
+  PointerMap qidMap;
+  PointerMap dagNodeMap;
+  int j = 0;
+  for (int i = nrSteps - 1; i >= 0; --i, ++j)
+    args[j] = upTraceStep(state, steps[i], m, qidMap, dagNodeMap);
+  return (nrSteps == 1) ? args[0] : traceSymbol->makeDagNode(args);
+}
+
+DagNode*
+MetaLevel::upTraceStep(const StrategySequenceSearch& state,
+		       int stateNr,
+		       MixfixModule* m,
+		       PointerMap& qidMap,
+		       PointerMap& dagNodeMap)
+{
+  static Vector<DagNode*> args(3);
+  int parentNr = state.getStateParent(stateNr);
+  DagNode* dagNode = state.getStateDag(parentNr);
+  args[0] = upDagNode(dagNode, m, qidMap, dagNodeMap);
+  args[1] = upType(dagNode->getSort(), qidMap);
+  const StrategyTransitionGraph::Transition& trans = state.getStateTransition(stateNr);
+  Symbol* stepSymbol;
+  if (trans.getType() == StrategyTransitionGraph::RULE_APPLICATION)
+    {
+      args[2] = upRl(trans.getRule(), m, qidMap);
+      stepSymbol = traceStepSymbol;
+    }
+  else
+    {
+      args[2] = upStratDecl(trans.getStrategy(), m, qidMap);
+      stepSymbol = traceStrategyStepSymbol;
+    }
+  return stepSymbol->makeDagNode(args);
+}
+
+DagNode*
 MetaLevel::upFailureTrace()
 {
   return failureTraceSymbol->makeDagNode();

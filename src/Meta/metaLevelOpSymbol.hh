@@ -97,6 +97,9 @@ private:
   SMT_RewriteSequenceSearch* makeSMT_RewriteSequenceSearch(MetaModule* m,
 							   FreeDagNode* subject,
 							   RewritingContext& context) const;
+  StrategySequenceSearch* makeStrategySequenceSearch(MetaModule* m,
+						     FreeDagNode* subject,
+						     RewritingContext& context) const;
   NarrowingSearchState2* makeNarrowingSearchState2(MetaModule* m,
 						   FreeDagNode* subject,
 						   RewritingContext& context,

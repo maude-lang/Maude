@@ -27,14 +27,16 @@
 #include "equalityConditionFragment.hh"
 #include "SMT_RewriteSequenceSearch.hh"
 #include "narrowingSequenceSearch3.hh"
+#include "strategySequenceSearch.hh"
 #include "narrowing.cc"
 #include "smtSearch.cc"
 
 bool
 Interpreter::checkSearchRestrictions(SearchKind searchKind,
 				     int searchType,
-				     Term* target,				     
+				     Term* target,
 				     const Vector<ConditionFragment*>& condition,
+				     StrategyExpression* strategy,
 				     MixfixModule* module)
 {
   switch (searchKind)
@@ -56,6 +58,11 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
 	  {
 	     IssueWarning(*target << ": =># mode is not currently supported for narrowing.");
 	     return false;
+	  }
+	if (strategy != nullptr)
+	  {
+	    IssueWarning(*target << ": narrowing controlled by a strategy is not supported.");
+	    return false;
 	  }
 	break;
       }
@@ -105,6 +112,11 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
 	  IssueWarning(*target << ": pattern contains a nonlinear variable " << QUOTE(v) << ".");
 	  return false;
 	}
+	if (strategy != nullptr)
+	  {
+	    IssueWarning(*target << ": SMT search controlled by a strategy is not supported.");
+	    return false;
+	  }
 	break;
       }
     default:
@@ -112,7 +124,7 @@ Interpreter::checkSearchRestrictions(SearchKind searchKind,
     }
   return true;
 }
-  
+
 void
 Interpreter::search(const Vector<Token>& bubble,
 		    Int64 limit,
@@ -127,7 +139,9 @@ Interpreter::search(const Vector<Token>& bubble,
   int searchType;
   Term* target;
   Vector<ConditionFragment*> condition;
-  if (!(fm->parseSearchCommand(bubble, initial, searchType, target, condition)))
+  StrategyExpression* strategy = nullptr;
+  set<int> opaques;
+  if (!(fm->parseSearchCommand(bubble, initial, searchType, target, condition, strategy, opaques)))
     return;
   Index nrInitialTerms = initial.size();
   if (nrInitialTerms > 1 && !(searchKind == VU_NARROW || searchKind == FVU_NARROW))
@@ -138,21 +152,25 @@ Interpreter::search(const Vector<Token>& bubble,
       target->deepSelfDestruct();
       for (ConditionFragment* cf : condition)
 	delete cf;
+      delete strategy;
       return;
     }
-  if (!checkSearchRestrictions(searchKind, searchType, target, condition, fm))
+  TermSet nothing;
+  VariableInfo vinfo;
+  if (!checkSearchRestrictions(searchKind, searchType, target, condition, strategy, fm))
     {
       for (Term* t : initial)
 	t->deepSelfDestruct();
       target->deepSelfDestruct();
       for (ConditionFragment* cf : condition)
 	delete cf;
+      delete strategy;
       return;
     }
   Pattern* pattern = (searchKind == VU_NARROW || searchKind == FVU_NARROW || searchKind == SMT_SEARCH) ? 0 :
     new Pattern(target, false, condition);
   //
-  //	Regular seach cannot have unbound variables.
+  //	Regular search cannot have unbound variables.
   //
   if (searchKind == SEARCH && !(pattern->getUnboundVariables().empty()))
     {
@@ -162,7 +180,22 @@ Interpreter::search(const Vector<Token>& bubble,
       for (Term* t : initial)
 	t->deepSelfDestruct();
       delete pattern;
+      delete strategy;
       return;
+    }
+  // Strategy-controlled search cannot have unbound variables in the strategy
+  if (strategy != nullptr)
+    {
+      VariableInfo vars;
+      TermSet dummy;
+      if (!strategy->check(vars, dummy))
+	{
+	  for (Term* t : initial)
+	    t->deepSelfDestruct();
+	  delete pattern;
+	  delete strategy;
+	  return;
+	}
     }
 
   Vector<DagNode*> subjectDags(nrInitialTerms);
@@ -216,12 +249,24 @@ Interpreter::search(const Vector<Token>& bubble,
       if (!condition.empty())
 	{
 	  cout << " such that ";
-	  MixfixModule::printCondition(cout, condition, *this);	  
+	  MixfixModule::printCondition(cout, condition, *this);
+	}
+      if (strategy != nullptr)
+	{
+	  cout << " using " << strategy;
+	  if (!opaques.empty())
+	    {
+	      auto it = opaques.begin();
+	      cout << " such that " << Token::name(*it);
+	      for (++it; it != opaques.end(); ++it)
+	        cout << ", " << Token::name(*it);
+	      cout << " opaque";
+	    }
 	}
       cout << " ." << endl;
 
-      if (xmlBuffer != 0)
-	xmlBuffer->generateSearch(subjectDags[0], pattern, searchTypeSymbol[searchType], limit, depth);  // does this work for narrowing?
+      if (xmlBuffer != nullptr)
+	xmlBuffer->generateSearch(subjectDags[0], pattern, searchTypeSymbol[searchType], limit, depth, strategy);  // does this work for narrowing?
     }
   if (latexBuffer != 0)
     {
@@ -231,6 +276,8 @@ Interpreter::search(const Vector<Token>& bubble,
 				  searchType,
 				  target,
 				  condition,
+				  strategy,
+				  opaques,
 				  variantFlags,
 				  limit,
 				  depth,
@@ -241,16 +288,32 @@ Interpreter::search(const Vector<Token>& bubble,
   if (debug)
     UserLevelRewritingContext::setDebug();
   QUANTIFY_START();
-  
+
   if (searchKind == SEARCH)
     {
-      RewriteSequenceSearch* state =
-	new RewriteSequenceSearch(new UserLevelRewritingContext(subjectDags[0]),
-				  static_cast<RewriteSequenceSearch::SearchType>(searchType),
-				  pattern,
-				  depth);
-      Timer timer(getFlag(SHOW_TIMING));
-      doSearching(timer, fm, state, 0, limit);
+      if (strategy == nullptr)
+	{
+	  RewriteSequenceSearch* state =
+	    new RewriteSequenceSearch(new UserLevelRewritingContext(subjectDags[0]),
+				      static_cast<RewriteSequenceSearch::SearchType>(searchType),
+				      pattern,
+				      depth);
+	  Timer timer(getFlag(SHOW_TIMING));
+	  doSearching(timer, fm, state, 0, limit);
+	}
+      else
+	{
+	  strategy->process();
+	  StrategySequenceSearch* state =
+	    new StrategySequenceSearch(new UserLevelRewritingContext(subjectDags[0]),
+				       static_cast<RewriteSequenceSearch::SearchType>(searchType),
+				       pattern,
+				       strategy,
+				       depth,
+				       opaques);
+	  Timer timer(getFlag(SHOW_TIMING));
+	  doStrategySearching(timer, fm, state, 0, limit);
+	}
     }
   else if (searchKind == SMT_SEARCH)
     {
@@ -408,7 +471,7 @@ Interpreter::doSearching(Timer& timer,
   //
   savedState = state;
   savedModule = module;
-  if (i == limit)  
+  if (i == limit)
     {
       //
       //	The loop terminated because we hit user's limit so continuation is still possible.
@@ -417,6 +480,102 @@ Interpreter::doSearching(Timer& timer,
       state->getContext()->clearCount();
       savedSolutionCount = solutionCount;
       continueFunc = &Interpreter::searchCont;
+    }
+  UserLevelRewritingContext::clearDebug();
+}
+
+void
+Interpreter::doStrategySearching(Timer& timer,
+				 VisibleModule* module,
+				 StrategySequenceSearch* state,
+				 Int64 solutionCount,
+				 Int64 limit)
+{
+  const VariableInfo* variableInfo = state->getGoal();
+  Int64 i = 0;
+  for (; i != limit; i++)
+    {
+      bool result = state->findNextMatch();
+      if (UserLevelRewritingContext::aborted())
+	break;  // HACK: Is this safe - shouldn't we destroy context?
+      Int64 real = 0;
+      Int64 virt = 0;
+      Int64 prof = 0;
+      bool showTiming = getFlag(SHOW_TIMING) && timer.getTimes(real, virt, prof);
+      bool showStats = getFlag(SHOW_STATS);
+      if (!result)
+	{
+	  const char* reply = (solutionCount == 0) ? "No solution." : "No more solutions.";
+	  cout << "\n" << reply << endl;
+	  if (showStats)
+	    printStats(*(state->getContext()), prof, real, showTiming, state->getNrStates());
+	  if (xmlBuffer != 0)
+	    {
+	      xmlBuffer->generateSearchResult(NONE,
+					      state,
+					      timer,
+					      getFlag(SHOW_STATS),
+					      getFlag(SHOW_TIMING),
+					      getFlag(SHOW_BREAKDOWN));
+	    }
+	  if (latexBuffer != nullptr)
+	    {
+	      latexBuffer->generateSearchNonResult(state,
+						   reply,
+						   prof,
+						   real,
+						   showStats,
+						   showTiming,
+						   getFlag(SHOW_BREAKDOWN));
+	    }
+	  break;
+	}
+
+      ++solutionCount;
+      cout << "\nSolution " << solutionCount << " (state " << state->getStateNr() << ")\n";
+      if (showStats)
+	printStats(*(state->getContext()), prof, real, showTiming, state->getNrStates());
+      UserLevelRewritingContext::printSubstitution(*(state->getSubstitution()), *variableInfo);
+      if (xmlBuffer != nullptr)
+	{
+	  xmlBuffer->generateSearchResult(solutionCount,
+					  state,
+					  timer,
+					  getFlag(SHOW_STATS),
+					  getFlag(SHOW_TIMING),
+					  getFlag(SHOW_BREAKDOWN));
+	}
+      if (latexBuffer != nullptr)
+	{
+	  latexBuffer->generateSearchResult(state,
+					    solutionCount,
+					    prof,
+					    real,
+					    showStats,
+					    showTiming,
+					    getFlag(SHOW_BREAKDOWN));
+	  latexBuffer->generateSubstitution(*(state->getSubstitution()), *variableInfo);
+	}
+    }
+  QUANTIFY_STOP();
+
+  clearContinueInfo();  // just in case debugger left info
+  //
+  //	We always save these things even if we can't continue
+  //	in order to allow inspection of the search graph.
+  //
+  savedState = state;
+  savedModule = module;
+  if (i == limit)
+    {
+      //
+      //	The loop terminated because we hit user's limit so
+      //	continuation is still possible. We save the state,
+      //	solutionCount and module, and set a continutation function.
+      //
+      state->getContext()->clearCount();
+      savedSolutionCount = solutionCount;
+      continueFunc = &Interpreter::strategySearchCont;
     }
   UserLevelRewritingContext::clearDebug();
 }
@@ -443,6 +602,27 @@ Interpreter::searchCont(Int64 limit, bool debug)
 }
 
 void
+Interpreter::strategySearchCont(Int64 limit, bool debug)
+{
+  StrategySequenceSearch* state = safeCast(StrategySequenceSearch*, savedState);
+  VisibleModule* fm = savedModule;
+  savedState = nullptr;
+  savedModule = nullptr;
+  continueFunc = nullptr;
+  if (xmlBuffer != nullptr && getFlag(SHOW_COMMAND))
+    xmlBuffer->generateContinue("search", fm, limit);
+  if (latexBuffer)
+    latexBuffer->generateContinue(getFlag(SHOW_COMMAND), limit, debug);
+
+  if (debug)
+    UserLevelRewritingContext::setDebug();
+
+  QUANTIFY_START();
+  Timer timer(getFlag(SHOW_TIMING));
+  doStrategySearching(timer, fm, state, savedSolutionCount, limit);
+}
+
+void
 Interpreter::showSearchPath(int stateNr, bool showRule)
 {
   if (NarrowingSequenceSearch3* savedNarrowingSequence = dynamic_cast<NarrowingSequenceSearch3*>(savedState))
@@ -451,9 +631,13 @@ Interpreter::showSearchPath(int stateNr, bool showRule)
       return;
     }
   RewriteSequenceSearch* savedRewriteSequenceSearch = dynamic_cast<RewriteSequenceSearch*>(savedState);
-  if (savedRewriteSequenceSearch == 0)
+  if (savedRewriteSequenceSearch == nullptr)
     {
-      IssueWarning("no state graph.");
+      StrategySequenceSearch* savedStrategySequenceSearch = dynamic_cast<StrategySequenceSearch*>(savedState);
+      if (savedStrategySequenceSearch != nullptr)
+	showStrategySearchPath(savedStrategySequenceSearch, stateNr, showRule);
+      else
+	IssueWarning("no state graph.");
       return;
     }
   if (stateNr < 0 || stateNr >= savedRewriteSequenceSearch->getNrStates())
@@ -503,9 +687,13 @@ void
 Interpreter::showSearchPathLabels(int stateNr)
 {
   RewriteSequenceSearch* savedRewriteSequenceSearch = dynamic_cast<RewriteSequenceSearch*>(savedState);
-  if (savedRewriteSequenceSearch == 0)
+  if (savedRewriteSequenceSearch == nullptr)
     {
-      IssueWarning("no state graph.");
+      StrategySequenceSearch* savedStrategySequenceSearch = dynamic_cast<StrategySequenceSearch*>(savedState);
+      if (savedStrategySequenceSearch != nullptr)
+	showStrategySearchPathLabels(savedStrategySequenceSearch, stateNr);
+      else
+	IssueWarning("no state graph.");
       return;
     }
   if (stateNr < 0 || stateNr >= savedRewriteSequenceSearch->getNrStates())
@@ -521,7 +709,7 @@ Interpreter::showSearchPathLabels(int stateNr)
   if (i < 0)
     cout << "Empty path.\n";
   else
-    { 
+    {
       for (; i >= 0; i--)
 	{
 	  const Label& label = savedRewriteSequenceSearch->getStateRule(steps[i])->getLabel();
@@ -544,9 +732,13 @@ void
 Interpreter::showSearchGraph()
 {
   RewriteSequenceSearch* savedRewriteSequenceSearch = dynamic_cast<RewriteSequenceSearch*>(savedState);
-  if (savedRewriteSequenceSearch == 0)
+  if (savedRewriteSequenceSearch == nullptr)
     {
-      IssueWarning("no state graph.");
+      StrategySequenceSearch* savedStrategySequenceSearch = dynamic_cast<StrategySequenceSearch*>(savedState);
+      if (savedStrategySequenceSearch != nullptr)
+	showStrategySearchGraph(savedStrategySequenceSearch);
+      else
+	IssueWarning("no state graph.");
       return;
     }
 
@@ -576,4 +768,155 @@ Interpreter::showSearchGraph()
     xmlBuffer->generateSearchGraph(savedRewriteSequenceSearch);
   if (latexBuffer)
     latexBuffer->generateSearchGraph(savedRewriteSequenceSearch, getFlag(SHOW_COMMAND));
+}
+
+void
+Interpreter::showStrategySearchPath(StrategySequenceSearch* state, int stateNr, bool showRule)
+{
+  if (stateNr < 0 || stateNr >= state->getNrStates() || !state->validState(stateNr))
+    {
+      IssueWarning("bad state number.");
+      return;
+    }
+  Vector<int> steps;
+  for (int i = stateNr; i != NONE; i = state->getStateParent(i))
+    steps.append(i);
+
+  for (int i = steps.length() - 1; i >= 0; i--)
+    {
+      int sn = steps[i];
+      if (sn != 0) {
+	const StrategyTransitionGraph::Transition& trans = state->getStateTransition(sn);
+	if (showRule)
+	  {
+	    cout << "===[ ";
+	    switch (trans.getType())
+	      {
+		case StrategyTransitionGraph::RULE_APPLICATION:
+		  cout << trans.getRule();
+		  break;
+		case StrategyTransitionGraph::OPAQUE_STRATEGY:
+		  cout << trans.getStrategy();
+		  break;
+		default:
+		  CantHappen("wrong transition type for a search");
+	      }
+	    cout << " ]===>\n";
+	  }
+	else
+	  {
+	    int label = trans.getType() == StrategyTransitionGraph::RULE_APPLICATION
+	              ? trans.getRule()->getLabel().id() : trans.getStrategy()->id();
+	    cout << "---";
+	    if (label != NONE)
+	      cout << ' ' << Token::name(label) << ' ';
+	    cout << "--->\n";
+	  }
+      }
+      DagNode* d = state->getStateDag(sn);
+      cout << "state " << sn << ", " << d->getSort() << ": " << d << '\n';
+    }
+  if (latexBuffer)
+    {
+      latexBuffer->generateStrategySearchPath(state,
+					      steps,
+					      stateNr,
+					      getFlag(SHOW_COMMAND),
+					      showRule);
+    }
+}
+
+void
+Interpreter::showStrategySearchPathLabels(StrategySequenceSearch* state, int stateNr)
+{
+  if (stateNr < 0 || stateNr >= state->getNrStates() || !state->validState(stateNr))
+    {
+      IssueWarning("bad state number.");
+      return;
+    }
+  Vector<int> steps;
+  for (int i = stateNr; i != NONE; i = state->getStateParent(i))
+    steps.append(i);
+
+  int i = steps.length() - 2;
+  if (i < 0)
+    cout << "Empty path.\n";
+  else
+    {
+      for (; i >= 0; i--)
+	{
+	  const StrategyTransitionGraph::Transition& trans = state->getStateTransition(steps[i]);
+	  switch (trans.getType())
+	    {
+	      case StrategyTransitionGraph::RULE_APPLICATION:
+		{
+		  const Label &label = trans.getRule()->getLabel();
+		  if (label.id() == NONE)
+		    cout << "(unlabeled rule)\n";
+		  else
+		    cout << &label << '\n';
+		}
+		break;
+	      case StrategyTransitionGraph::OPAQUE_STRATEGY:
+		cout << Token::name(trans.getStrategy()->id()) << '\n';
+		break;
+	      default:
+		CantHappen("wrong transition type for a search");
+		break;
+	    }
+	}
+    }
+  if (latexBuffer)
+    {
+      latexBuffer->generateStrategySearchPathLabels(state,
+					            steps,
+					            stateNr,
+					            getFlag(SHOW_COMMAND));
+    }
+}
+
+void
+Interpreter::showStrategySearchGraph(StrategySequenceSearch* state)
+{
+  int nrStates = state->getNrStates();
+  for (int i = 0; i < nrStates; i++)
+    {
+      // This state has been merged into another state or it is the
+      // copy of a solution, we do not show it.
+      if (!state->validState(i))
+	continue;
+
+      if (i > 0)
+	cout << '\n';
+      DagNode* d = state->getStateDag(i);
+      cout << "state " << i << ", " << d->getSort() << ": " << d << '\n';
+      StrategyExpression* continuation = state->getStrategyContinuation(i);
+      if (continuation != nullptr)
+	cout << "next strategy: " << continuation << '\n';
+      int arcNr = 0;
+      for (auto &arc : state->getStateFwdArcs(i))
+	{
+	  int nextState = state->getRealStateNr(arc.first);
+	  if (!state->validState(nextState))
+	    continue;
+
+	  cout << "arc " << arcNr << " ===> state " << nextState;
+	  for (const auto &tr : arc.second)
+	    switch (tr.getType())
+	      {
+		case StrategyTransitionGraph::RULE_APPLICATION:
+		  cout << " (" << tr.getRule() << ')';
+		  break;
+		case StrategyTransitionGraph::OPAQUE_STRATEGY:
+		  cout << " (" << tr.getStrategy() << ')';
+		  break;
+		default:
+		  break;
+	      }
+	  cout << '\n';
+	  arcNr++;
+	}
+    }
+  if (latexBuffer)
+    latexBuffer->generateStrategySearchGraph(state, getFlag(SHOW_COMMAND));
 }

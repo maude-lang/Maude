@@ -34,13 +34,12 @@ class CallTask : public StrategicTask
 public:
   CallTask(StrategicSearch& searchObject,
 	   int startIndex,
+	   RewriteStrategy* callee,
 	   StrategyExpression* strategy,
 	   StrategyStackManager::StackId pending,
 	   VariableBindingsManager::ContextId varBinds,
 	   StrategicExecution* sibling,
 	   StrategicProcess* insertionPoint);
-
-  ~CallTask();
 
   //
   //	Call-backs for interesting events.
@@ -48,9 +47,16 @@ public:
   virtual Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint) override;
   virtual Survival executionsExhausted(StrategicProcess* insertionPoint) override;
 
+  bool isExhausted();
+
 private:
   StrategicSearch& searchObject;
-  StrategyStackManager::StackId pending;
+  RewriteStrategy* callee;
 };
+
+inline bool
+CallTask::isExhausted() {
+  return getDummyExecution()->getNextSlave() == getDummyExecution();
+}
 
 #endif

@@ -132,6 +132,7 @@
   MACRO(irreducible, "irreducible")
   MACRO(ellipsis, "...")
   MACRO(vee, "\\/")
+  MACRO(opaque, "opaque")
     //
     //	Special hook identifier tokens.
     //

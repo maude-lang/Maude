@@ -243,6 +243,42 @@ MaudeLatexBuffer::generateSearchResult(RewriteSequenceSearch* state,
 }
 
 void
+MaudeLatexBuffer::generateSearchNonResult(StrategySequenceSearch* state,
+					  const string& message,
+					  int64_t cpuTime,
+					  int64_t realTime,
+					  bool showStats,
+					  bool showTiming,
+					  bool showBreakdown)
+{
+  if (needNewline)
+    output << "\\newline";
+  output << "\\par\\maudeResponse{" << message << "}\n";
+  if (showStats)
+    generateStats(*(state->getContext()), cpuTime, realTime, showTiming, showBreakdown, state->getNrStates());
+  needNewline = false;
+}
+
+void
+MaudeLatexBuffer::generateSearchResult(StrategySequenceSearch* state,
+				       int64_t solutionNr,
+				       int64_t cpuTime,
+				       int64_t realTime,
+				       bool showStats,
+				       bool showTiming,
+				       bool showBreakdown)
+{
+  if (needNewline)
+    output << "\\newline";
+  output << "\\par\\maudeResponse{Solution}\\maudeSpace\\maudeNumber{" << solutionNr <<
+    "}\\maudeSpace\\maudePunctuation{(}\\maudeResponse{state}\\maudeSpace\\maudeNumber{" <<
+    state->getStateNr() << "}\\maudePunctuation{)}\n";
+  if (showStats)
+    generateStats(*(state->getContext()), cpuTime, realTime, showTiming, showBreakdown, state->getNrStates());
+  needNewline = true;
+}
+
+void
 MaudeLatexBuffer::generateSearchPath(const RewriteSequenceSearch* graph,
 				     const Vector<int>& steps,
 				     int stateNr,
@@ -345,6 +381,72 @@ MaudeLatexBuffer::generateStateSet(bool showCommand,
   else
     output << "$";
   output << "\n\\end{maudeResultParagraph}\n%\n%  End of " << command << "\n%\n";   
+}
+
+void
+MaudeLatexBuffer::generateStrategySearchPath(const StrategySequenceSearch* graph,
+				             const Vector<int>& steps,
+				             int stateNr,
+				             bool showCommand,
+				             bool showRule)
+{
+  const char* command = (showRule ? "show path" : "show path state" );
+  //
+  //	Print comment.
+  //
+  startComment();
+  output << command << " " << stateNr;
+  endComment();
+  //
+  //	Print latex version of command.
+  //
+  output << "\\begin{maudeResultParagraph}\n";
+  if (showCommand)
+    output << "\\par\\maudeKeyword{" << command << "}\\maudeSpace\\maudeNumber{" << stateNr << "}\\maudeEndCommand\\newline\n";
+  //
+  //	Print latex version of path.
+  //
+  const VisibleModule* m = safeCastNonNull<VisibleModule*>(graph->getStateDag(0)->symbol()->getModule());
+  for (Index i = steps.size() - 1; i >= 0; --i)
+    {
+      int sn = steps[i];
+      if (sn != 0)  // is this the initial state?
+	{
+	  const StrategyTransitionGraph::Transition& trans = graph->getStateTransition(sn);
+	  if (showRule)
+	    {
+	      output << "\\par$\\maudePathLeft";
+	      switch (trans.getType())
+		{
+		  case StrategyTransitionGraph::RULE_APPLICATION:
+		    m->latexPrintRule(output, nullptr, trans.getRule());
+		    break;
+		  case StrategyTransitionGraph::OPAQUE_STRATEGY:
+		    m->latexPrintStrategyDecl(output, nullptr, trans.getStrategy());
+		    break;
+		  default:
+		    CantHappen("bad transition type for search");
+		}
+	      output << "\\maudePathRight$\n";
+	    }
+	  else
+	    {
+	      int label = trans.getType() == StrategyTransitionGraph::RULE_APPLICATION
+	                ? trans.getRule()->getLabel().id() : trans.getStrategy()->id();
+	      if (label != NONE)
+	      output <<"\\par$\\maudePathWithLabel{\\maudeLabel{" << Token::latexName(label) << "}}$\n";
+	      else
+	      output <<"\\par$\\maudePathWithoutLabel$\n";
+	    }
+	  }
+      DagNode* d = graph->getStateDag(sn);
+      output << "\\par\\maudeResponse{state}\\maudeSpace\\maudeNumber{" << sn << "}\\maudePunctuation{,}\\maudeSpace";
+      generateType(d->getSort());
+      output << "\\maudePunctuation{:}$\\maudeSpace\n";
+      MixfixModule::latexPrintDagNode(output, d);
+      output << "$\n";
+    }
+  output <<"\\end{maudeResultParagraph}\n%\n%  End of show path\n%\n";
 }
 
 void
@@ -461,6 +563,47 @@ MaudeLatexBuffer::generateSearchPathLabels(const RewriteSequenceSearch* graph,
 }
 
 void
+MaudeLatexBuffer::generateStrategySearchPathLabels(const StrategySequenceSearch* graph,
+						   const Vector<int>& steps,
+						   int stateNr,
+						   bool showCommand)
+{
+  //
+  //	Print comment.
+  //
+  startComment();
+  output << "show path labels " << stateNr;
+  endComment();
+  //
+  //	Print latex version of command.
+  //
+  output << "\\begin{maudeResultParagraph}\n";
+  if (showCommand)
+    output << "\\par\\maudeKeyword{show path labels}\\maudeSpace\\maudeNumber{" << stateNr << "}\\maudeEndCommand\\newline\n";
+  //
+  //	Print latex version of labels.
+  //
+  Index nrStates = steps.size();
+  if (nrStates < 2)
+    output << "\\par\\maudeResponse{Empty path.}\n";
+  else
+    {
+      for (Index i = nrStates - 2; i >= 0; --i)  // skip the initial state
+	{
+	  const StrategyTransitionGraph::Transition& trans = graph->getStateTransition(steps[i]);
+	  Assert(trans.getType() != StrategyTransitionGraph::SOLUTION, "no solution transitions in search");
+	  const int label = trans.getType() == StrategyTransitionGraph::RULE_APPLICATION
+	                  ? trans.getRule()->getLabel().id() : trans.getStrategy()->id();
+	  if (label == NONE)
+	    output << "\\par\\maudeMisc{(unlabeled rule)}\n";
+	  else
+	    output << "\\par\\maudeLabel{" << Token::latexName(label) << "}\n";
+	}
+    }
+  output <<"\\end{maudeResultParagraph}\n%\n%  End of show path labels\n%\n";
+}
+
+void
 MaudeLatexBuffer::generateSearchGraph(const RewriteSequenceSearch* graph, bool showCommand)
 {
   //
@@ -506,4 +649,77 @@ MaudeLatexBuffer::generateSearchGraph(const RewriteSequenceSearch* graph, bool s
 	}
     }
   output <<"\\end{maudeResultParagraph}\n%\n%  End of show graph\n%\n";    
+}
+
+void
+MaudeLatexBuffer::generateStrategySearchGraph(const StrategySequenceSearch* graph, bool showCommand)
+{
+  // Almost identical to generateSearchGraph, they could be merged
+
+  //
+  //	Print comment.
+  //
+  startComment();
+  output << "show graph";
+  endComment();
+  //
+  //	Print latex version of command.
+  //
+  output << "\\begin{maudeResultParagraph}\n";
+  if (showCommand)
+    output << "\\par\\maudeKeyword{show graph}\\maudeEndCommand\\newline\n";
+  //
+  //	Print latex version of graph.
+  //
+  const VisibleModule* m = safeCastNonNull<VisibleModule*>(graph->getStateDag(0)->symbol()->getModule());
+  int nrStates = graph->getNrStates();
+  for (int i = 0; i < nrStates; ++i)
+    {
+      if (!graph->validState(i))
+	continue;
+      if (i != 0)
+	output << "\\newline\n";
+      DagNode* d = graph->getStateDag(i);
+      output << "\\par\\maudeResponse{state}\\maudeSpace\\maudeNumber{" << i << "}\\maudePunctuation{,}\\maudeSpace";
+	generateType(d->getSort());
+      output << "\\maudePunctuation{:}$\\maudeSpace\n";
+      MixfixModule::latexPrintDagNode(output, d);
+      output << "$\n";
+      StrategyExpression* continuation = graph->getStrategyContinuation(i);
+      if (continuation != nullptr)
+	{
+	  output << "\\par\\maudeResponse{next strategy}\\maudePunctuation{:}\\maudeSpace ";
+	  m->latexPrintStrategy(output, continuation);
+	  output << '\n';
+	}
+
+      int arcNr = 0;
+      for (auto& arc : graph->getStateFwdArcs(i))
+	{
+	  int nextState = graph->getRealStateNr(arc.first);
+	  if (!graph->validState(nextState))
+	    continue;
+
+	  output << "\\par$\\maudeResponse{arc}\\maudeSpace\\maudeNumber{" << arcNr <<
+	    "}\\maudeArcArrow\\maudeResponse{state}\\maudeSpace\\maudeNumber{" << nextState << "}$\n";
+	  for (const auto &tr : arc.second)
+	    {
+	      output << "$\\maudeSpace\\maudeLeftParen";
+	      switch (tr.getType())
+		{
+		  case StrategyTransitionGraph::RULE_APPLICATION:
+		    m->latexPrintRule(output, nullptr, tr.getRule());
+		    break;
+		  case StrategyTransitionGraph::OPAQUE_STRATEGY:
+		    m->latexPrintStrategyDecl(output, nullptr, tr.getStrategy());
+		    break;
+		  default:
+		    break;
+		}
+	      output << "\\maudeRightParen$\n";
+	    }
+	  ++arcNr;
+	}
+    }
+  output <<"\\end{maudeResultParagraph}\n%\n%  End of show graph\n%\n";
 }

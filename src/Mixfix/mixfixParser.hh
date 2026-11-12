@@ -188,7 +188,9 @@ public:
   void makeSearchCommand(Vector<Term*>& initial,
 			 int& searchType,
 			 Term*& target,
-			 Vector<ConditionFragment*>& condition);
+			 Vector<ConditionFragment*>& condition,
+			 StrategyExpression*& strategy,
+			 set<int>& opaques);
   void makeGetVariantsCommand(Term*& initial, Vector<Term*>& constraint);
   void makeVariantUnifyOrMatchCommand(Vector<Term*>& lhs,
 				      Vector<Term*>& rhs,
@@ -268,6 +270,7 @@ private:
   void makeStrategyList(int node, Vector<StrategyExpression*>& strategies);
   void appendUsingPair(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
   void makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpression*>& strategies);
+  void makeUsingSearchSuffix(int node, StrategyExpression*& strategy, set<int>& opaques);
   void makeTermDisjunction(int node, Vector<Term*>& terms);
   int translateSpecialToken(int code);
   void handleContainsColon(int code, Index index, Index beyondEnd);

@@ -79,6 +79,8 @@ private:
 
   // Builds a solution with the given results and pushes it (as a new descomposition process)
   void pushSolution(const Vector<DagNode*>& rewNodes, StrategicProcess* insertionPoint);
+  // Rebuilds the whole term from the given subterms
+  int rebuild(const Vector<DagNode*> &rewSubterms);
 
   StrategicSearch& searchObject;
   SubtermStrategy* strategy;
@@ -96,8 +98,6 @@ private:
   // Number of empty children (without solutions yet)
   // (it is the count of results[i] s.t. result[i].empty())
   size_t emptyChildren;
-
-  StrategyStackManager::StackId pending;
 
   class ChildTask;		// Nested child task to get in charge of a (Pm, Em) rewriting
   class RemainingProcess;	// Nested child process to generate subterm solution combinations

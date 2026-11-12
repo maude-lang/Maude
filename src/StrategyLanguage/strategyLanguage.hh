@@ -53,6 +53,10 @@ class RewriteTask;
 class SubtermTask;
 class CallTask;
 
+class ModelCheckerSubtermTask;
+class BiasedSubtermTask;
+class FullSubtermTask;
+
 class SharedRewriteSearchState;
 class StrategyStackManager;
 class VariableBindingsManager;

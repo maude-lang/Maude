@@ -21,7 +21,7 @@
 */
 
 //
-//	Code for metaSearch()/metaSearchPath()/metaSmtSearch() descent functions.
+//	Code for metaSearch()/metaSearchPath()/metaSmtSearch()/metaStrategySearch() descent functions.
 //
 
 RewriteSequenceSearch*
@@ -254,6 +254,160 @@ MetaLevelOpSymbol::metaSmtSearch(FreeDagNode* subject, RewritingContext& context
 	      (void) m->unprotect();
 	      return context.builtInReplace(subject, result);
 	    }
+	}
+    }
+  return false;
+}
+
+#include "strategySequenceSearch.hh"
+
+StrategySequenceSearch*
+MetaLevelOpSymbol::makeStrategySequenceSearch(MetaModule* m,
+					      FreeDagNode* subject,
+					      RewritingContext& context) const
+{
+  RewriteSequenceSearch::SearchType searchType;
+  int maxDepth;
+  if (metaLevel->downSearchType(subject->getArgument(4), searchType) &&
+      metaLevel->downBound(subject->getArgument(7), maxDepth))
+    {
+      Term* s;
+      Term* g;
+      if (metaLevel->downTermPair(subject->getArgument(1), subject->getArgument(2), s, g, m))
+	{
+	  if (StrategyExpression* e = metaLevel->downStratExpr(subject->getArgument(5), m))
+	    {
+	      TermSet boundVars;
+	      VariableInfo vinfo;
+	      if (e->check(vinfo, boundVars))
+		{
+		  Vector<int> ids;
+		  if (metaLevel->downQidSet(subject->getArgument(6), ids))
+		    {
+		      Vector<ConditionFragment*> condition;
+		      if (metaLevel->downCondition(subject->getArgument(3), m, condition))
+			{
+			  m->protect();
+			  Pattern* goal = new Pattern(g, false, condition);
+			  RewritingContext* subjectContext = term2RewritingContext(s, context);
+			  context.addInCount(*subjectContext);
+			  e->process();
+			  return new StrategySequenceSearch(subjectContext,
+							    searchType,
+							    goal,
+							    e,
+							    maxDepth,
+							    set<int>(ids.begin(), ids.end()));
+			}
+		    }
+		}
+	      else
+		{
+		  DebugAdvisory("bad metastrategy (check) " << QUOTE(e));
+		}
+	      delete e;
+	    }
+	  else
+	    {
+	      DebugAdvisory("bad metastrategy " << QUOTE(subject->getArgument(5)));
+	    }
+	  g->deepSelfDestruct();
+	  s->deepSelfDestruct();
+	}
+    }
+  return nullptr;
+}
+
+bool
+MetaLevelOpSymbol::metaStrategySearch(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //	op metaStrategySearch : Module Term Term Condition Qid Strategy QidSet Bound Nat ~> ResultTriple?
+  //
+  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      Int64 solutionNr;
+      if (metaLevel->downSaturate64(subject->getArgument(8), solutionNr) &&
+	  solutionNr >= 0)
+	{
+	  StrategySequenceSearch* state;
+	  Int64 lastSolutionNr;
+	  if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
+	    m->protect();  // Use cached state
+	  else if ((state = makeStrategySequenceSearch(m, subject, context)))
+	    lastSolutionNr = -1;
+	  else
+	    return false;
+
+	  DagNode* result;
+	  while (lastSolutionNr < solutionNr)
+	    {
+	      bool success = state->findNextMatch();
+	      state->transferCountTo(context);
+	      Verbose("metaStrategySearch: visited " << state->getNrStates() << " states.");
+	      if (!success)
+		{
+		  delete state;
+		  result = metaLevel->upFailureTriple();
+		  goto fail;
+		}
+	      ++lastSolutionNr;
+	    }
+	  m->insert(subject, state, solutionNr);
+	  {
+	    result = metaLevel->upResultTriple(state->getStateDag(state->getStateNr()),
+					       *(state->getSubstitution()),
+					       *(state->getGoal()),
+					       m);
+	  }
+	fail:
+	  (void) m->unprotect();
+	  return context.builtInReplace(subject, result);
+	}
+    }
+  return false;
+}
+
+bool
+MetaLevelOpSymbol::metaStrategySearchPath(FreeDagNode* subject, RewritingContext& context)
+{
+  //
+  //	op metaStrategySearchPath : Module Term Term Condition Qid Strategy QidSet Bound Nat ~> Trace?
+  //
+  if (MetaModule* m = metaLevel->downModule(subject->getArgument(0)))
+    {
+      Int64 solutionNr;
+      if (metaLevel->downSaturate64(subject->getArgument(8), solutionNr) &&
+	  solutionNr >= 0)
+	{
+	  StrategySequenceSearch* state;
+	  Int64 lastSolutionNr;
+	  if (m->getCachedStateObject(subject, context, solutionNr, state, lastSolutionNr))
+	    m->protect();  // Use cached state
+	  else if ((state = makeStrategySequenceSearch(m, subject, context)))
+	    lastSolutionNr = -1;
+	  else
+	    return false;
+
+	  DagNode* result;
+	  while (lastSolutionNr < solutionNr)
+	    {
+	      bool success = state->findNextMatch();
+	      state->transferCountTo(context);
+	      Verbose("metaStrategySearchPath: visited " << state->getNrStates() << " states.");
+	      if (!success)
+		{
+		  delete state;
+		  result = metaLevel->upFailureTrace();
+		  goto fail;
+		}
+	      ++lastSolutionNr;
+	    }
+	  m->insert(subject, state, solutionNr);
+	  result = metaLevel->upTrace(*state, m);
+	fail:
+	  (void) m->unprotect();
+	  return context.builtInReplace(subject, result);
 	}
     }
   return false;

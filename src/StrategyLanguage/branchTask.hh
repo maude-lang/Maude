@@ -61,7 +61,6 @@ private:
   StrategyExpression* const successStrategy;
   BranchStrategy::Action failureAction;
   StrategyExpression* const failureStrategy;
-  StrategyStackManager::StackId pending;
   bool success;
 };
 

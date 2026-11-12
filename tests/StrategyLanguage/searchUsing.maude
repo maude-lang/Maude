@@ -1,0 +1,112 @@
+set show timing off .
+set show advisories off .
+
+smod LETTER is
+  sort Letter .
+
+  ops a b c d e : -> Letter [ctor] .
+
+  var L : Letter .
+
+  rl [ab] : a => b .
+  rl [bc] : b => c .
+  rl [bd] : b => d .
+  rl [xe] : L => e .
+  rl [ca] : c => a .
+
+  strat ac @ Letter .
+  sd ac := ab ; bc .
+
+  strat rec @ Letter .
+  sd rec := (ab | bc | ca) ; rec .
+
+  strat xew : Letter @ Letter .
+  sd xew(L) := xe[L <- L] .
+endsm
+
+*** simple sequence of rewrites
+search a =>* L using ac .
+show path 2 .
+show path labels 2 .
+show path states 2 .
+show search graph .
+search a =>1 L using ac .
+search a =>+ L using ac .
+search a =>! L using ac .
+search a =>* L using ac such that ac opaque .
+show path 1 .
+show path labels 1 .
+show path states 1 .
+show search graph .
+search a =>1 L using ab such that ac opaque .
+search a =>1 L using ac such that rec opaque .
+search a =>1 L using ac such that ac, rec opaque .
+
+*** failure
+search a =>* L using ab ; ca .
+search a =>* L using ab ; bc ; bc .
+
+*** parsing
+search a =>* c using ac ; match L such that L == c .
+search a =>* c using matchrew L by L using (ab ; bc) .
+
+*** iteration and non-terminating recursion
+search a =>* L using all * .
+show search graph .
+search b =>* L using (ab | bc | ca) * .
+show search graph .
+search a =>! L using all ! .
+search a =>! L using (ab | bc | bd | ca) ! .
+search a =>+ L using rec .
+
+*** conditional
+search a =>1 L using xe ? idle : ab .
+search a =>1 L using bc ? idle : xe .
+search b =>1 L using test(bc) ; bd .
+search b =>1 L using try(bc) .
+search b =>1 L using not(ac) ; bc .
+search a =>1 L using not(ab) ? ac : xe .
+
+*** misc
+search b =>1 L using xe[L <- b] .
+search b =>1 L using xe[L <- c] .
+search b =>1 L using one(bc | bd) .
+search e =>* L using idle .
+search e =>* L using fail .
+search b =>1 L using xew(a) .
+search b =>1 L using xew(b) .
+
+*** unbound variables
+search c =>* L using match M:Letter such that M:Letter == L .
+search c =>* L using matchrew L by M:Letter using idle .
+search c =>* L using matchrew L such that L == M:Letter by L using idle .
+search c =>* L using ab[L <- M:Letter] .
+search c =>* L using xew(M:Letter) .
+
+smod LETTER-BOX is
+	protecting LETTER .
+
+	sort Box .
+
+	op <_> : Letter -> Box [ctor] .
+	op {_,_} : Box Box -> Box [ctor] .
+
+	vars L L1 L2 : Letter .
+	vars B B1 B2 : Box .
+
+	crl [box] : < L1 > => < L2 > if L1 => L2 [nonexec] .
+endsm
+
+*** subterm rewriting
+search < a > =>+ < L > using box{ab} .
+search < a > =>+ < L > using box{ab ; bc} .
+search < a > =>+ B using ab .
+search < a > =>+ B using top(ab) .
+search < b > =>+ B using matchrew < L > by L using bd .
+search {< a >, < b >} =>+ B using ab | bc .
+search {< a >, < b >} =>+ B using ac .
+search {< a >, < b >} =>+ B using ac such that ac opaque .
+search {< b >, < b >} =>+ B using matchrew {B1, B2} by B1 using bc, B2 using bd .
+show search graph .
+search {{< a >, < b >}, < c >} =>+ B using matchrew {B1, B2} by B1 using (matchrew {< L1 >, < L2 >} by L1 using ac) .
+search {{< a >, < b >}, < c >} =>+ B using matchrew {B1, B2} by B1 using (matchrew {< L1 >, < L2 >} by L1 using ac) such that ac opaque .

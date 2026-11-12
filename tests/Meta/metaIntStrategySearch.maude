@@ -1,0 +1,115 @@
+set show timing off .
+set show advisories off .
+
+***
+*** Test strategy search in the meta-interpreter without and with path.
+***
+
+load metaInterpreter
+
+smod LETTER is
+  sort Letter .
+
+  ops a b c d e : -> Letter [ctor] .
+
+  var L : Letter .
+
+  rl [ab] : a => b .
+  rl [bc] : b => c .
+  rl [bd] : b => d .
+  rl [xe] : L => e .
+  rl [ca] : c => a .
+
+  strat ac @ Letter .
+  sd ac := ab ; bc .
+
+  strat rec @ Letter .
+  sd rec := (ab | bc | ca) ; rec .
+
+  strat xew : Letter @ Letter .
+  sd xew(L) := xe[L <- L] .
+endsm
+
+mod SEARCH-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+  op strat:_ : Strategy -> Attribute .
+  op opaques:_ : QidSet -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var S : Strategy .
+  var QS : QidSet .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('LETTER, true)) .
+
+  rl < X : User | soln: N, strat: S, opaques: QS, AS > insertedModule(X, Y) =>
+     < X : User | AS > getStrategySearchResult(Y, X, 'LETTER, 'a.Letter, 'L:Letter, nil, '+, S, QS, unbounded, N) .
+endm
+
+erew in SEARCH-TEST : <> 
+< me : User | soln: 0, strat: ('ac[[empty]]), opaques: none > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-TEST : <> 
+< me : User | soln: 1, strat: ('ac[[empty]]), opaques: none > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-TEST : <> 
+< me : User | soln: 2, strat: ('ac[[empty]]), opaques: none > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-TEST : <> 
+< me : User | soln: 0, strat: ('ac[[empty]]), opaques: ('ac ; 'rec) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-TEST : <> 
+< me : User | soln: 1, strat: ('ac[[empty]]), opaques: ('ac ; 'rec) > 
+createInterpreter(interpreterManager, me, none) .
+
+mod SEARCH-PATH-TEST is
+  pr META-INTERPRETER .
+
+  op me : -> Oid .
+  op User : -> Cid .
+  op soln:_ : Nat -> Attribute .
+  op strat:_ : Strategy -> Attribute .
+  op opaques:_ : QidSet -> Attribute .
+
+  vars X Y Z : Oid .
+  var AS : AttributeSet .
+  var N : Nat .
+  var S : Strategy .
+  var QS : QidSet .
+
+  rl < X : User | AS > createdInterpreter(X, Y, Z) =>
+     < X : User | AS > insertModule(Z, X, upModule('LETTER, true)) .
+
+  rl < X : User | soln: N, strat: S, opaques: QS, AS > insertedModule(X, Y) =>
+     < X : User | AS > getStrategySearchResultAndPath(Y, X, 'LETTER, 'a.Letter, 'L:Letter, '_==_['L:Letter, 'a.Letter] = 'false.Bool, '+, S, QS, unbounded, N) .
+endm
+
+erew in SEARCH-PATH-TEST : <> 
+< me : User | soln: 0, strat: ('ac[[empty]]), opaques: none > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-PATH-TEST : <> 
+< me : User | soln: 1, strat: ('ac[[empty]]), opaques: none > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-PATH-TEST : <> 
+< me : User | soln: 2, strat: ('ac[[empty]]), opaques: none > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-PATH-TEST : <> 
+< me : User | soln: 0, strat: ('ac[[empty]]), opaques: ('ac ; 'rec) > 
+createInterpreter(interpreterManager, me, none) .
+
+erew in SEARCH-PATH-TEST : <> 
+< me : User | soln: 1, strat: ('ac[[empty]]), opaques: ('ac ; 'rec) > 
+createInterpreter(interpreterManager, me, none) .
