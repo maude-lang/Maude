@@ -51,7 +51,8 @@ typedef VariableBindingsManager::ContextId ContextId;
 const Vector<DagNode*> VariableBindingsManager::emptyVector;
 
 VariableBindingsManager::VariableBindingsManager(int substitutionSize)
-  : contextTable(0),
+  : contextShare(DeepComparison(*this)),
+    contextTable(0),
     substitution(substitutionSize, 0),
     currentContext(EMPTY_CONTEXT)
 {
@@ -66,7 +67,8 @@ VariableBindingsManager::~VariableBindingsManager()
 
 ContextId
 VariableBindingsManager::openContext(const Substitution& subst,
-				     const Vector<int>& contextSpec)
+				     const Vector<int>& contextSpec,
+				     void* filter)
 {
   // The position of contextTable where we will write the entry
   int insertionPoint;
@@ -81,6 +83,7 @@ VariableBindingsManager::openContext(const Substitution& subst,
       insertionPoint = contextTable.length();
       contextTable.expandBy(1);
       contextTable[insertionPoint] = new Entry;
+      contextTable[insertionPoint]->shareRef = contextShare.end();
     }
 
   // The number of variables in the context
@@ -91,6 +94,22 @@ VariableBindingsManager::openContext(const Substitution& subst,
 
   for (size_t i = 0; i < nrVars; i++)
     values[i] = subst.value(contextSpec[i]);
+
+  // Checks if the context already exists
+  if (filter != nullptr)
+    {
+      ShareSet::const_iterator alreadyExist = contextShare.find(make_pair(filter, insertionPoint));
+
+      if (alreadyExist != contextShare.end())
+	{
+	  closeContext(insertionPoint);
+	  contextTable[alreadyExist->second]->usersCount++;
+	  insertionPoint = alreadyExist->second;
+	}
+      else
+	contextTable[insertionPoint]->shareRef =
+	  contextShare.insert(make_pair(filter, insertionPoint)).first;
+    }
 
   return insertionPoint;
 }
@@ -112,6 +131,7 @@ ContextId VariableBindingsManager::openContext(ContextId parent,
       insertionPoint = contextTable.length();
       contextTable.expandBy(1);
       contextTable[insertionPoint] = new Entry;
+      contextTable[insertionPoint]->shareRef = contextShare.end();
     }
 
   // The number of variables in the context
@@ -180,6 +200,39 @@ VariableBindingsManager::Entry::markReachableNodes()
 inline void
 VariableBindingsManager::Entry::init(size_t nrVars)
 {
+  usersCount = 1;
   values.expandTo(nrVars);
   //  link();
+}
+
+inline
+VariableBindingsManager::DeepComparison::DeepComparison(VariableBindingsManager& vbm)
+  : vbm(vbm)
+{
+}
+
+bool VariableBindingsManager::DeepComparison::operator()(const VariableBindingsManager::SearchEntry& lhs,
+							 const VariableBindingsManager::SearchEntry& rhs) const
+{
+  // Compares the filter
+  if (lhs.first < rhs.first)	return true;
+  if (lhs.first > rhs.first)	return false;
+
+  // Then, we compare the entries
+  const Vector<DagNode*> &lhsEntries = vbm.contextTable[lhs.second]->values;
+  const Vector<DagNode*> &rhsEntries = vbm.contextTable[rhs.second]->values;
+
+  size_t nrEntries = lhsEntries.length();
+  if (nrEntries < rhsEntries.size())		return true;
+  else if (nrEntries > rhsEntries.size())	return false;
+
+  for (size_t i = 0; i < nrEntries; i++)
+    {
+      int comparison = lhsEntries[i]->compare(rhsEntries[i]);
+
+      if (comparison < 0)	return true;
+      else if (comparison > 0)	return false;
+    }
+
+  return false;
 }

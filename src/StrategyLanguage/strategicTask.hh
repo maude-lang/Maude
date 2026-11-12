@@ -29,6 +29,7 @@
 #include "strategicExecution.hh"
 #include "strategyStackManager.hh"
 #include "variableBindingsManager.hh"
+#include "higher.hh"
 
 class StrategicTask : public StrategicExecution
 {
@@ -49,12 +50,36 @@ public:
   bool alreadySeen(int dagIndex, StrategyStackManager::StackId stackId);
 
   //
-  // Each task has a variable bindings context associated
+  // Tasks represent executions contexts, and so they are linked
+  // to both a variable context and a continuation.
   //
   VariableBindingsManager::ContextId getVarsContext() const;
+  StrategyStackManager::StackId getContinuation() const;
+
+  //
+  // Model checking stuff
+  //
+
+  // The strategy transition graph. It is the connection point between
+  // the execution infrastructure and the model checker. This pointer
+  // will be null in normal execution or when model checking is disabled.
+  StrategyTransitionGraph* getTransitionGraph() const;
+  // Gets the enclosing SubtermTask (if any) for DAG node reconstruction.
+  ModelCheckerSubtermTask* getEnclosingSubtermTask() const;
+  // Gets the task information associated to the task
+  TaskInfo* getTaskInfo() const;
+
+  // Transition graphs and enclosing tasks are inherited by default
+  void setTransitionGraph(StrategyTransitionGraph* stg);
+  void setEnclosingSubtermTask(ModelCheckerSubtermTask* subterm);
+  void setTaskInfo(TaskInfo* taskInfo);
 
 protected:
   StrategicExecution* getDummyExecution();
+  StrategyStackManager::StackId pending;
+
+  // Convenient functions to reduce the model checker interference
+  void resumeOwner(int dagNode, int pending, StrategicProcess* insertionPoint);
 
 private:
   //
@@ -70,7 +95,17 @@ private:
   StrategicExecution slaveList;
   SeenSet seenSet;
 
+  //
+  // Variable context
+  //
   VariableBindingsManager::ContextId varsContext;
+
+  //
+  // Model checking stuff
+  //
+  StrategyTransitionGraph* transitionGraph;
+  ModelCheckerSubtermTask* enclosingSubtermTask;
+  TaskInfo* taskInfo;
 };
 
 inline StrategicExecution*
@@ -83,6 +118,49 @@ inline VariableBindingsManager::ContextId
 StrategicTask::getVarsContext() const
 {
   return varsContext;
+}
+
+inline StrategyTransitionGraph*
+StrategicTask::getTransitionGraph() const
+{
+  return transitionGraph;
+}
+
+inline void
+StrategicTask::setTransitionGraph(StrategyTransitionGraph* stg)
+{
+  transitionGraph = stg;
+}
+
+inline ModelCheckerSubtermTask*
+StrategicTask::getEnclosingSubtermTask() const
+{
+  return enclosingSubtermTask;
+}
+
+inline void
+StrategicTask::setEnclosingSubtermTask(ModelCheckerSubtermTask* stsk)
+{
+  enclosingSubtermTask = stsk;
+}
+
+inline StrategyStackManager::StackId
+StrategicTask::getContinuation() const
+{
+  return pending;
+}
+
+inline TaskInfo*
+StrategicTask::getTaskInfo() const
+{
+  return taskInfo;
+}
+
+inline void
+StrategicTask::setTaskInfo(TaskInfo* givenTaskInfo)
+{
+  Assert(taskInfo == nullptr, "overriding task information");
+  taskInfo = givenTaskInfo;
 }
 
 #endif

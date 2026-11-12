@@ -80,6 +80,7 @@
 #include "assignmentConditionFragment.hh"
 #include "rewriteConditionFragment.hh"
 #include "rewriteSequenceSearch.hh"
+#include "strategySequenceSearch.hh"
 #include "pattern.hh"
 
 //	strategy language class definitions
@@ -189,7 +190,8 @@ MaudemlBuffer::generateSearch(DagNode* subject,
 			      PreEquation* pattern,
 			      const string& searchType,
 			      Int64 limit,
-			      Int64 depth)
+			      Int64 depth,
+			      StrategyExpression* strategy)
 {
   beginElement("search");
   attributePair("module", Token::name(subject->symbol()->getModule()->id()));
@@ -202,6 +204,8 @@ MaudemlBuffer::generateSearch(DagNode* subject,
   generate(pattern->getLhs());
   if (pattern->hasCondition())
     generateCondition(pattern->getCondition());
+  if (strategy != nullptr)
+    generate(strategy);
   endElement();
 }
 
@@ -224,6 +228,33 @@ MaudemlBuffer::generateSearchResult(Int64 number,
 				    bool showTiming,
 				    bool showBreakdown)
 {
+  beginElement("search-result");
+  if (number == NONE)
+    attributePair("solution-number", "NONE");
+  else
+    {
+      attributePair("solution-number", int64ToString(number));
+      attributePair("state-number", int64ToString(state->getStateNr()));
+    }
+  if (showStats)
+    {
+      attributePair("total-states", int64ToString(state->getNrStates()));
+      generateStats(*(state->getContext()), timer, showTiming, showBreakdown);
+    }
+  if (number != NONE)
+    generateSubstitution(state->getSubstitution(), state->getGoal());
+  endElement();
+}
+
+void
+MaudemlBuffer::generateSearchResult(Int64 number,
+				    StrategySequenceSearch* state,
+				    const Timer& timer,
+				    bool showStats,
+				    bool showTiming,
+				    bool showBreakdown)
+{
+  // Exactly the same code as the other MaudemlBuffer::generateSearchResult
   beginElement("search-result");
   if (number == NONE)
     attributePair("solution-number", "NONE");

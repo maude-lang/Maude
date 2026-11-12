@@ -76,10 +76,8 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
     rule(rule),  // copy rule pointer
     fragmentNr(fragmentNr),  // copy fragment number
     strategies(strategies),  // share reference to strategies vector
-    strategyNr(strategyNr),  // copy strategy number
-    pending(pending)  // copy pending stack
+    strategyNr(strategyNr)  // copy strategy number
 {
-
   //
   //	Find the L => R fragment that we are going to test.
   //
@@ -108,6 +106,12 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
 				  searchObject.push(StrategyStackManager::EMPTY_STACK, substrategy),
 				  getDummyExecution(),
 				  insertionPoint);
+  //
+  // Rewriting fragments are opaque for the model checker
+  //
+  setTransitionGraph(nullptr);
+
+  StrategicTask::pending = pending;
 }
 
 RewriteTask::~RewriteTask()

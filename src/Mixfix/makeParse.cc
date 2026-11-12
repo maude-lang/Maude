@@ -178,7 +178,9 @@ void
 MixfixParser::makeSearchCommand(Vector<Term*>& initial,
 				int& searchType,
 				Term*& target,
-				Vector<ConditionFragment*>& condition)
+				Vector<ConditionFragment*>& condition,
+				StrategyExpression*& strategy,
+				set<int>& opaques)
 {
   Assert(nrParses > 0, "no parses");
   int node = ROOT_NODE;
@@ -192,8 +194,15 @@ MixfixParser::makeSearchCommand(Vector<Term*>& initial,
   searchType = actions[parser.getProductionNumber(arrowType)].data;
   target = makeTerm(parser.getChild(searchPair, 2));
 
-  if (actions[parser.getProductionNumber(node)].action == CONDITIONAL_COMMAND)
+  bool conditionalCommand = actions[parser.getProductionNumber(node)].action == CONDITIONAL_COMMAND;
+
+  if (conditionalCommand)
     makeCondition(parser.getChild(node, 2), condition);
+
+  // Using clause with a strategy
+  if (parser.getNumberOfChildren(node) == 4 ||
+      (!conditionalCommand && parser.getNumberOfChildren(node) == 2))
+    makeUsingSearchSuffix(parser.getChild(node, conditionalCommand ? 3 : 1), strategy, opaques);
 }
 
 void
@@ -453,6 +462,24 @@ MixfixParser::makeUsingList(int node, Vector<Term*>& terms, Vector<StrategyExpre
   Assert(actions[parser.getProductionNumber(node)].action == PASS_THRU,
 	 "unexpected action: " << actions[parser.getProductionNumber(node)].action);
   appendUsingPair(parser.getChild(node, 0), terms, strategies);
+}
+
+void
+MixfixParser::makeUsingSearchSuffix(int node, StrategyExpression*& strategy, set<int>& opaques)
+{
+  strategy = makeStrategy(parser.getChild(node, 0));
+
+  // Parse the list of opaque strategies (if given)
+  if (parser.getNumberOfChildren(node) > 1)
+    {
+      node = parser.getChild(node, 2);
+      while (parser.getNumberOfChildren(node) > 1)
+	{
+	  opaques.insert(actions[parser.getProductionNumber(parser.getChild(node, 0))].data);
+	  node = parser.getChild(node, 1);
+	}
+	opaques.insert(actions[parser.getProductionNumber(parser.getChild(node, 0))].data);
+    }
 }
 
 void

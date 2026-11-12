@@ -81,6 +81,7 @@
 #include "assignmentConditionFragment.hh"
 #include "rewriteConditionFragment.hh"
 #include "rewriteSequenceSearch.hh"
+#include "strategySequenceSearch.hh"
 #include "pattern.hh"
 #include "narrowingSequenceSearch3.hh"
 

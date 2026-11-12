@@ -63,6 +63,14 @@ OneStrategy::process()
 StrategicExecution::Survival
 OneStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* remainder)
 {
+  // When model checking, we omit the one
+  if (remainder->getOwner()->getTransitionGraph() != nullptr)
+    {
+      remainder->pushStrategy(searchObject, strategy);
+
+      return StrategicExecution::SURVIVE;
+    }
+
   (void) new OneTask(searchObject,
 		     remainder->getDagIndex(),
 		     strategy,

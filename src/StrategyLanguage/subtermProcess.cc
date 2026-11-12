@@ -45,6 +45,8 @@
 #include "strategicSearch.hh"
 #include "subtermProcess.hh"
 #include "subtermTask.hh"
+#include "biasedSubtermTask.hh"
+#include "fullSubtermTask.hh"
 #include "subtermStrategy.hh"
 
 SubtermProcess::SubtermProcess(MatchSearchState* matchState,
@@ -77,20 +79,35 @@ SubtermProcess::run(StrategicSearch& searchObject)
       if (extensionInfo)
 	extensionInfo = !extensionInfo->matchedWhole() ? extensionInfo->makeClone() : nullptr;
 
-      VariableBindingsManager::ContextId varBinds = getOwner()->getVarsContext();
+      VariableBindingsManager::ContextId outerBinds = getOwner()->getVarsContext();
       const Vector<int>& contextSpec = strategy->getContextSpec();
 
-      (void) new SubtermTask(searchObject, strategy,
-			     matchState, extensionInfo,
-			     matchState->getPositionIndex(),
-			     pending,
-			     contextSpec.empty()
-			       ? VariableBindingsManager::EMPTY_CONTEXT
-			       : searchObject.openContext(varBinds,
-							  *matchState->getContext(),
-							  contextSpec),
-			     this,
-			     this);
+      // The variable inside the matchrew context mix those of the outer
+      // context with those from the matching
+      VariableBindingsManager::ContextId innerBinds = contextSpec.empty()
+		? VariableBindingsManager::EMPTY_CONTEXT
+		: searchObject.openContext(outerBinds, *matchState->getContext(), contextSpec);
+
+      // If we are model checking, we use a specific implementation
+      // of the matchrew operator. Otherwise, we use another one
+      // optimized for execution.
+      StrategyTransitionGraph* graph = getOwner()->getTransitionGraph();
+      if (graph != nullptr)
+	if (strategy->getSubterms().size() == 1 || graph->useBiasedMatchrew())
+	  (void) new BiasedSubtermTask(searchObject, strategy,
+				      matchState, extensionInfo,
+				      matchState->getPositionIndex(),
+				      pending, innerBinds, this, this);
+	else
+	  (void) new FullSubtermTask(searchObject, strategy,
+				      matchState, extensionInfo,
+				      matchState->getPositionIndex(),
+				      pending, innerBinds, this, this);
+      else
+	(void) new SubtermTask(searchObject, strategy,
+			       matchState, extensionInfo,
+			       matchState->getPositionIndex(),
+			       pending, innerBinds, this, this);
 
       return StrategicExecution::SURVIVE;
     }

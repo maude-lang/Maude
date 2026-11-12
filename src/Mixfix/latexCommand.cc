@@ -344,6 +344,8 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
 				 int searchType,
 				 Term* target,
 				 const Vector<ConditionFragment*>& condition,
+				 StrategyExpression* strategy,
+				 set<int>& opaques,
 				 int variantFlags,
 				 int64_t limit,
 				 int64_t depth,
@@ -409,6 +411,21 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
       output << " such that ";
       MixfixModule::printCondition(output, condition, commentSettings);
     }
+  if (strategy != nullptr)
+    {
+      output << " using " << strategy;
+      if (!opaques.empty())
+	{
+	  output << " such that ";
+	  const char* sep = "";
+	  for (int id : opaques)
+	    {
+	      output << sep << Token::name(id);
+	      sep = ", ";
+	    }
+	  output << " opaque";
+	}
+    }
   endComment();
   //
   //	Print latex version of command.
@@ -457,7 +474,7 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
 	    MixfixModule::latexPrintDagNode(output, d);
 	    sep = "\\maudeDisjunction";
 	  }
-      }	
+      }
       output << searchTypeLatex[searchType];
       MixfixModule::latexPrettyPrint(output, target);
 
@@ -465,6 +482,22 @@ MaudeLatexBuffer::generateSearch(bool showCommand,
 	{
 	  output << "\\maudeSpace\\maudeKeyword{such that}\\maudeSpace";
 	  VisibleModule::latexPrintCondition(output, condition);
+	}
+      if (strategy != nullptr)
+        {
+	  output << "\\maudeSpace\\maudeKeyword{using}\\maudeSpace";
+          safeCastNonNull<const VisibleModule*>(module)->latexPrintStrategy(output, strategy);
+	  if (!opaques.empty())
+	    {
+	      output << "\\maudeSpace\\maudeKeyword{such that}\\maudeSpace";
+	      const char* sep = "";
+	      for (int id : opaques)
+		{
+		  output << sep << "\\maudeIdentifier{" << Token::name(id) << "}";
+		  sep = "\\maudePunctuation{,}\\maudeSpace";
+		}
+	      output << "\\maudeSpace\\maudeKeyword{opaque}";
+	    }
 	}
       output << "$\\maudeEndCommand\n";
     }

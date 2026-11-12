@@ -1,0 +1,160 @@
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], none, unbounded, 0) .
+rewrites: 4
+result ResultTriple: {'a.Letter, 'Letter, 
+  'L:Letter <- 'a.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], none, unbounded, 1) .
+rewrites: 2
+result ResultTriple: {'b.Letter, 'Letter, 
+  'L:Letter <- 'b.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], none, unbounded, 2) .
+rewrites: 2
+result ResultTriple: {'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], none, unbounded, 3) .
+rewrites: 2
+result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], none, unbounded, 4) .
+rewrites: 4
+result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '!, 'ac[[empty]], none, unbounded, 0) .
+rewrites: 4
+result ResultTriple: {'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '!, 'ac[[empty]], none, unbounded, 1) .
+rewrites: 2
+result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '+, 'ac[[empty]], none, 1, 0) .
+rewrites: 4
+result ResultTriple: {'b.Letter, 'Letter, 
+  'L:Letter <- 'b.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '+, 'ac[[empty]], none, 1, 1) .
+rewrites: 2
+result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], 'ac, unbounded, 0) .
+rewrites: 4
+result ResultTriple: {'a.Letter, 'Letter, 
+  'L:Letter <- 'a.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], 'ac, unbounded, 1) .
+rewrites: 2
+result ResultTriple: {'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '*, 'ac[[empty]], 'ac, unbounded, 2) .
+rewrites: 2
+result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '+, 'ac[[empty]], 'ac ; 'rec, 1, 0) .
+rewrites: 4
+result ResultTriple: {'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '+, 'ac[[empty]], 'ac ; 'rec, 1, 1) .
+rewrites: 2
+result ResultTriple?: (failure).ResultTriple?
+==========================================
+reduce in META-LEVEL : metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter,
+    nil, '*, 'ac[[empty]], 'rec, unbounded, 0) .
+rewrites: 4
+result Trace: (nil).Trace
+==========================================
+reduce in META-LEVEL : metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter,
+    nil, '*, 'ac[[empty]], 'rec, unbounded, 1) .
+rewrites: 2
+result TraceStep: {'a.Letter, 'Letter, rl 'a.Letter => 'b.Letter [label('ab)]
+    .}
+==========================================
+reduce in META-LEVEL : metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter,
+    nil, '!, 'ac[[empty]], none, unbounded, 0) .
+rewrites: 4
+result Trace: {'a.Letter, 'Letter, rl 'a.Letter => 'b.Letter [label('ab)] .}
+{'b.Letter, 'Letter, rl 'b.Letter => 'c.Letter [label('bc)] .}
+==========================================
+reduce in META-LEVEL : metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter,
+    nil, '!, 'ac[[empty]], none, unbounded, 1) .
+rewrites: 2
+result Trace?: (failure).Trace?
+==========================================
+reduce in META-LEVEL : metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter,
+    nil, '!, 'ac[[empty]], 'ac, unbounded, 0) .
+rewrites: 4
+result TraceStep: {'a.Letter, 'Letter, strat 'ac : nil @ 'Letter [none] .}
+==========================================
+reduce in META-LEVEL : metaStrategySearchPath(['LETTER], 'a.Letter, 'L:Letter,
+    nil, '!, 'ac[[empty]], 'ac, unbounded, 1) .
+rewrites: 2
+result Trace?: (failure).Trace?
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'b.Letter, 'L:Letter, nil,
+    '!, matchrew 'L:Letter s.t. nil by 'L:Letter using 'bc[none]{empty}, none,
+    unbounded, 0) .
+rewrites: 3
+result ResultTriple: {'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter}
+==========================================
+reduce in META-LEVEL : metaStrategySearchPath(['LETTER], 'b.Letter, 'L:Letter,
+    nil, '!, matchrew 'L:Letter s.t. nil by 'L:Letter using 'bc[none]{empty},
+    none, unbounded, 0) .
+rewrites: 3
+result TraceStep: {'b.Letter, 'Letter, rl 'b.Letter => 'c.Letter [label('bc)]
+    .}
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '+, 'xe[
+  'L:Letter <- 'L:Letter]{empty}, none, unbounded, 0) .
+Warning: <automatic>: unbound variable L:Letter in application strategy
+    substitution for L:Letter.
+rewrites: 1
+result [ResultTriple?]: metaStrategySearch(sth 'LETTER is
+  including 'LETTER .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth, 'a.Letter, 'L:Letter, nil, '+, 'xe[
+  'L:Letter <- 'L:Letter]{empty}, none, unbounded, 0)
+==========================================
+reduce in META-LEVEL : metaStrategySearch(['LETTER], 'a.Letter, 'L:Letter, nil,
+    '+, 'xew[['M:Letter]], none, unbounded, 0) .
+Warning: <automatic>: unbound variable M:Letter in strategy call argument.
+rewrites: 1
+result [ResultTriple?]: metaStrategySearch(sth 'LETTER is
+  including 'LETTER .
+  sorts none .
+  none
+  none
+  none
+  none
+  none
+  none
+  none
+endsth, 'a.Letter, 'L:Letter, nil, '+, 'xew[['M:Letter]], none, unbounded, 0)
+Bye.

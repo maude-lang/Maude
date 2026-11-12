@@ -1,0 +1,71 @@
+==========================================
+erewrite in SEARCH-TEST : <> < me : User | soln: 0, strat: ('ac[[empty]]),
+    opaques: none > createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > gotStrategySearchResult(me,
+    interpreter(0), 2, 'b.Letter, 'Letter, 
+  'L:Letter <- 'b.Letter)
+==========================================
+erewrite in SEARCH-TEST : <> < me : User | soln: 1, strat: ('ac[[empty]]),
+    opaques: none > createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > gotStrategySearchResult(me,
+    interpreter(0), 2, 'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter)
+==========================================
+erewrite in SEARCH-TEST : <> < me : User | soln: 2, strat: ('ac[[empty]]),
+    opaques: none > createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > noSuchResult(me, interpreter(0),
+    2)
+==========================================
+erewrite in SEARCH-TEST : <> < me : User | soln: 0, strat: ('ac[[empty]]),
+    opaques: ('ac ; 'rec) > createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > gotStrategySearchResult(me,
+    interpreter(0), 2, 'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter)
+==========================================
+erewrite in SEARCH-TEST : <> < me : User | soln: 1, strat: ('ac[[empty]]),
+    opaques: ('ac ; 'rec) > createInterpreter(interpreterManager, me, none) .
+rewrites: 5
+result Configuration: <> < me : User | none > noSuchResult(me, interpreter(0),
+    2)
+==========================================
+erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 0, strat: ('ac[[empty]]),
+    opaques: none > createInterpreter(interpreterManager, me, none) .
+rewrites: 6
+result Configuration: <> < me : User | none > gotStrategySearchResultAndPath(
+    me, interpreter(0), 3, 'b.Letter, 'Letter, 
+  'L:Letter <- 'b.Letter, {'a.Letter, 'Letter, rl 'a.Letter => 'b.Letter [
+    label('ab)] .})
+==========================================
+erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 1, strat: ('ac[[empty]]),
+    opaques: none > createInterpreter(interpreterManager, me, none) .
+rewrites: 7
+result Configuration: <> < me : User | none > gotStrategySearchResultAndPath(
+    me, interpreter(0), 4, 'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter, {'a.Letter, 'Letter, rl 'a.Letter => 'b.Letter [
+    label('ab)] .}
+{'b.Letter, 'Letter, rl 'b.Letter => 'c.Letter [label('bc)] .})
+==========================================
+erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 2, strat: ('ac[[empty]]),
+    opaques: none > createInterpreter(interpreterManager, me, none) .
+rewrites: 7
+result Configuration: <> < me : User | none > noSuchResult(me, interpreter(0),
+    4)
+==========================================
+erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 0, strat: ('ac[[empty]]),
+    opaques: ('ac ; 'rec) > createInterpreter(interpreterManager, me, none) .
+rewrites: 6
+result Configuration: <> < me : User | none > gotStrategySearchResultAndPath(
+    me, interpreter(0), 3, 'c.Letter, 'Letter, 
+  'L:Letter <- 'c.Letter, {'a.Letter, 'Letter, strat 'ac : nil @ 'Letter [none]
+    .})
+==========================================
+erewrite in SEARCH-PATH-TEST : <> < me : User | soln: 1, strat: ('ac[[empty]]),
+    opaques: ('ac ; 'rec) > createInterpreter(interpreterManager, me, none) .
+rewrites: 6
+result Configuration: <> < me : User | none > noSuchResult(me, interpreter(0),
+    3)
+Bye.

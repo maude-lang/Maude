@@ -47,6 +47,7 @@
 
 //	higher class definitions
 #include "searchState.hh"
+#include "strategyTransitionGraph.hh"
 
 //	strategy language class definitions
 #include "strategicSearch.hh"
@@ -100,16 +101,20 @@ CallStrategy::process()
 }
 
 inline bool
-CallStrategy::tailCall(DecompositionProcess* remainder)
+tailCall(DecompositionProcess* remainder, StrategyTransitionGraph* transitionGraph)
 {
+  // Due to the optimized way the call task are managed in the usual
+  // strategies execution, we do not treat as tail call those whose
+  // caller is not inside a CallTask.
   return remainder->getPending() == StrategyStackManager::EMPTY_STACK
-	  && dynamic_cast<CallTask*>(remainder->getOwner()) != nullptr;
+    && (transitionGraph != nullptr || dynamic_cast<CallTask*>(remainder->getOwner()) != nullptr);
 }
 
 StrategicExecution::Survival
 CallStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* remainder)
 {
   RewritingContext* context = searchObject.getContext();
+  StrategyTransitionGraph* transitionGraph = remainder->getOwner()->getTransitionGraph();
 
   if (strategy->getDefinitions().empty())
     {
@@ -132,27 +137,42 @@ CallStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* rem
 				   context);
 
       //
-      // For tail calls, the strategy expression can even simply be pushed
-      // on top of the stack. Otherwise, it creates a call task to run the
-      // strategy code.
+      // For non-opaque tail calls, the strategy expression can simply be
+      // pushed on top of the stack. Otherwise, we create a call task to
+      // run the strategy code.
       //
       // Both actions are correct no matter if the call is tail, but the
       // advantages of pushing the strategy on top of the stack are lost
       // when it is not.
       //
-      if (tailCall(remainder))
+      bool isOpaque = transitionGraph != nullptr && transitionGraph->isOpaque(strategy->id());
+      bool isTail = tailCall(remainder, transitionGraph);
+      if (isTail && !isOpaque)
 	{
-	  remainder->pushStrategy(searchObject, strategy->getDefinitions()[0]->getRhs());
+	  remainder->pushStrategy(searchObject, definition->getRhs());
+	  // Avoid cycling on strategy definitions like st := st
+	  if (transitionGraph != nullptr
+	      && !transitionGraph->onCheckpoint(remainder->getDagIndex(), remainder,
+						remainder->getPending(), remainder))
+	    return StrategicExecution::DIE;
 	  return StrategicExecution::SURVIVE;
 	}
 
-      (void) new CallTask(searchObject,
+      CallTask* callTask = new CallTask(searchObject,
 			  remainder->getDagIndex(),
+			  strategy,
 			  definition->getRhs(),
 			  remainder->getPending(),
 			  VariableBindingsManager::EMPTY_CONTEXT,
 			  remainder,
 			  remainder);
+
+      // If no process has been created, we should remove the call task
+      if (callTask->isExhausted())
+	{
+	  callTask->executionsExhausted(remainder);
+	  delete callTask;
+	}
 
       return StrategicExecution::DIE;
     }
@@ -165,8 +185,9 @@ CallStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* rem
 
   // Instantiates the call arguments with the current variable substitution and reduce them
   VariableBindingsManager::ContextId varBinds = remainder->getOwner()->getVarsContext();
-  RewritingContext* callContext = context->makeSubcontext(
-      callTerm.getTerm()->ground() ? callTerm.getDag() : searchObject.instantiate(varBinds, callTerm.getDag()));
+  DagNode* instantiatedCall = callTerm.getTerm()->ground() ? callTerm.getDag() :
+				searchObject.instantiate(varBinds, callTerm.getDag());
+  RewritingContext* callContext = context->makeSubcontext(instantiatedCall);
   callContext->reduce();
   //
   // Due to sharing, the reduction of the instantiated call term may have
@@ -185,6 +206,7 @@ CallStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess* rem
 			 callContext,
 			 remainder->getDagIndex(),
 			 remainder->getPending(),
+			 tailCall(remainder, transitionGraph),
 			 remainder,
 			 remainder);
 

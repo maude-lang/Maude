@@ -4,6 +4,110 @@
 	change 0 to nullptr and change loop to range for
 	(ApplicationProcess::~ApplicationProcess): change loop to range for
 
+	* applicationProcess.cc (ApplicationProcess::run): call commitState
+	when model checking
+	(resolveRemainingConditionFragments): call commitState when model
+	checking
+
+	* biasedSubtermTask.cc: added
+
+	* biasedSubtermTask.hh: added
+
+	* branchTask.cc (BranchTask::BranchTask): disable model checking for
+	fail and idle actions
+	(BranchTask::executionSucceeded): use resumeOwner instead of new
+	DecompositionProcess and call onCheckPoint in iteration
+
+	* branchTask.hh (class BranchTask): move pending to the parent class
+
+	* callProcess.cc (CallProcess::run): open variable context with filter
+	and handle tail calls for model checking
+
+	* callProcess.hh (class CallProcess): new tailCall attribute and
+	constructor argument
+
+	* callStrategy.cc (CallStrategy::tailCall): more restrictive notion of
+	tail call when model checking
+	(CallStrategy::decompose): call onCheckpoint and onTailStrategyCall to
+	avoid trivial loops and handle calls when model checking
+
+	* callStrategy.hh (class CallStrategy): tailCall is no longer a
+	method, but a function in callStrategy.cc
+
+	* callTask.cc (CallTask::CallTask): receive the callee and handle
+	model-checking stuff
+	(CallTask::~CallTask): removed
+	(CallTask::executionSucceeded): call commitState
+	(CallTask::executionsExhausted): call closeContext (instead of doing
+	it in ~CallStack)
+
+	* callTask.hh (class CallTask): new attribute and constructor argument
+	callee, remove destructor, move pending to base class, add isExhauted
+	method
+
+	* decompositionProcess.cc (DecompositionProcess::decompose): do not
+	use alreadySeen when model checking
+
+	* fullSubtermTask.cc: added
+
+	* fullSubtermTask.hh: added
+
+	* iterationStrategy.cc (IterationStrategy::decompose): call
+	onCheckPoint
+
+	* modelCheckerSubtermTask.cc: added
+
+	* modelCheckerSubtermTask.hh: added
+
+	* oneStrategy.cc (OneStrategy::decompose): ignore one and do not
+	create a OneTask when model checking
+
+	* rewriteTask.cc (RewriteTask::RewriteTask): move pending attribute to
+	the base class and set the model-checking graph to nullptr
+
+	* rewiteTask.hh (class RewriteTask): move pending attribute to base
+	class
+
+	* strategySearch.cc (StrategySearch::StrategicSearch): set pending to
+	NONE
+
+	* strategicTask.cc (StrategicTask::StrategicTask): set pending to
+	EMPTY_STACK, initialize new attributes transitionGraph,
+	enclosingSubtermTask, and taskInfo
+	(StrategicTask::resumeOwner): add method
+
+	* strategicTask.hh (class StrategicTask): add attributes pending,
+	transitionGraph, enclosingSubtermTask, and taskInfo, and getters and
+	setters for the last three, add getContinuation method
+
+	* strategyLanguage.hh: add forward declarations for
+	ModelCheckerSubtermTask, BiasedSubtermTask, and FullSubtermTask
+
+	* subtermProcess.cc (SubtermProcess::run): handle model-checking stuff
+
+	* subtermTask.cc (SubtermTask::SubtermTask): move pending to base
+	class and assert model-checking graph is null
+	(SubtermTask::rebuild): add method
+	(SubtermTask::pushSolution): use rebuild and resumeOwner
+
+	* subtermTask.hh (class SubtermTask): add rebuild method, remove
+	pending attribute
+
+	* variableBindingManager.cc
+	(VariableBindingsManager::VariableBindingsManager): initialize
+	contextShare
+	(VariableBindingsManager::openContext): handle contextShare and filter
+	(VariableBindingsManager::Entry::init): initialize usersCount
+	(VariableBindingsManager::DeepComparison): added methods
+
+	* variableBindingsManager.hh (class VariableBindingsManager): add
+	protect method, SearchEntry and ShareSet aliases, and DeepComparison
+	and Entry structs
+	(VariableBindingsManager::openContext):	take filter argument
+	(VariableBindingsManager::closeContext): handle context
+
+2026-10-30  Rubén Rubio <rubenrub@ucm.es>
+
 	* applicationProcess.hh (class ApplicationProcess): add overrides
 	declaration
 

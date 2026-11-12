@@ -10,7 +10,9 @@ libhigher_a_CPPFLAGS = \
 	-I$(top_srcdir)/src/FreeTheory \
 	-I$(top_srcdir)/src/NA_Theory \
 	-I$(top_srcdir)/src/BuiltIn \
-	-I$(top_srcdir)/src/Mixfix
+	-I$(top_srcdir)/src/Mixfix \
+	-I$(top_srcdir)/src/StrategyLanguage \
+	-I$(top_srcdir)/src/S_Theory
 
 libhigher_a_SOURCES = \
 	rewriteSearchState.cc \
@@ -45,7 +47,13 @@ libhigher_a_SOURCES = \
 	irredundantUnificationProblem.cc \
 	variantUnifierFilter.cc \
 	filteredVariantUnifierSearch.cc \
-	variantMatchingProblem.cc
+	variantMatchingProblem.cc \
+	strategyModelCheckerSymbol.cc \
+	strategyTransitionGraph.cc \
+	strategySequenceSearch.cc
+
+EXTRA_DIST = \
+	strategyTaskInfo.cc
 
 noinst_HEADERS = \
 	assignmentConditionFragment.hh \
@@ -83,4 +91,7 @@ noinst_HEADERS = \
 	irredundantUnificationProblem.hh \
 	variantUnifierFilter.hh \
 	filteredVariantUnifierSearch.hh \
-	variantMatchingProblem.hh
+	variantMatchingProblem.hh \
+	strategyModelCheckerSymbol.hh \
+	strategyTransitionGraph.hh \
+	strategySequenceSearch.hh

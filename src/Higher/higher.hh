@@ -35,6 +35,7 @@ class MatchSearchState;
 class CacheableState;
 class SequenceSearch;
 class RewriteSequenceSearch;
+class StrategySequenceSearch;
 
 class StateTransitionGraph3;
 class StateTransitionGraph;
@@ -73,5 +74,8 @@ class VariantUnifierFilter;
 class FilteredVariantUnifierSearch;
 
 class VariantMatchingProblem;
+
+class StrategyTransitionGraph;
+struct TaskInfo;
 
 #endif

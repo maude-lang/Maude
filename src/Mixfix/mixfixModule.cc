@@ -122,6 +122,7 @@
 //	higher class definitions
 #include "rewriteSequenceSearch.hh"
 #include "modelCheckerSymbol.hh"
+#include "strategyModelCheckerSymbol.hh"
 #include "satSolverSymbol.hh"
 #include "equalityConditionFragment.hh"
 #include "sortTestConditionFragment.hh"

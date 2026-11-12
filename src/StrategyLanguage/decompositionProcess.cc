@@ -36,6 +36,9 @@
 //	interface class definitions
 #include "dagNode.hh"
 
+//	higuer class definitions
+#include "strategyTransitionGraph.hh"
+
 //	strategy language class definitions
 #include "decompositionProcess.hh"
 #include "strategyExpression.hh"
@@ -72,7 +75,9 @@ DecompositionProcess::run(StrategicSearch& searchObject)
   DebugAdvisory("DecompositionProcess::run(), dagIndex = " << dagIndex <<
 		" for " << searchObject.getCanonical(dagIndex));
 
-  if (getOwner()->alreadySeen(dagIndex, pending))
+  // When model checking, the seen sets are not used but custom seen tables
+  // managed by the model checker itself
+  if (getOwner()->getTransitionGraph() == nullptr && getOwner()->alreadySeen(dagIndex, pending))
     {
       DebugAdvisory("we've already been here: " << searchObject.getCanonical(dagIndex) <<
 		    ", " << pending);

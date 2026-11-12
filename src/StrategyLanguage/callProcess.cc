@@ -44,6 +44,7 @@
 
 //	higher class definitions
 #include "searchState.hh"
+#include "strategyTransitionGraph.hh"
 
 //	strategy language class definitions
 #include "strategicSearch.hh"
@@ -55,6 +56,7 @@ CallProcess::CallProcess(RewriteStrategy* namedStrategy,
 			 RewritingContext* callContext,
 			 int subjectDagIndex,
 			 StrategyStackManager::StackId pending,
+			 bool tailCall,
 			 StrategicExecution* taskSibling,
 			 StrategicProcess* insertionPoint)
   : StrategicProcess(taskSibling, insertionPoint),
@@ -64,7 +66,8 @@ CallProcess::CallProcess(RewriteStrategy* namedStrategy,
     subjectDagIndex(subjectDagIndex),
     pending(pending),
     defIndex(0),
-    first(true)
+    first(true),
+    tailCall(tailCall)
 {
   Assert(callContext->root() != nullptr, "empty call term");
   Assert(callContext->root()->getSort() != nullptr, "call term sort missing");
@@ -124,21 +127,50 @@ CallProcess::run(StrategicSearch& searchObject)
       // We need to open a new variable context for its execution
       // and recover the original context when its execution finishes,
       // so we create a CallTask.
+      StrategyTransitionGraph* transitionGraph = getOwner()->getTransitionGraph();
       const Vector<int>& contextSpec = sdef->getContextSpec();
+
+      // When model checking a tail call, variable contexts are compared to detect
+      // cycles. The comparison scope is defined by the TaskInfo parent
+      void* filter = transitionGraph != nullptr && tailCall ?
+		       transitionGraph->getContextGroup(getOwner()) : nullptr;
 
       VariableBindingsManager::ContextId cid = contextSpec.empty()
 		? VariableBindingsManager::EMPTY_CONTEXT
-		: searchObject.openContext(*callContext,
-			contextSpec
-		);
+		: searchObject.openContext(*callContext, contextSpec, filter);
 
-      (void) new CallTask(searchObject,
-			  subjectDagIndex,
-			  sdef->getRhs(),
-			  pending,
-			  cid,
-			  this,
-			  this);
+      // Tail calls are optimized except when model checking. Call tasks
+      // are created one level up in the task hierarchy, so that the tail
+      // call graph is flattened at the same task level. This requires
+      // fixing the owner as the sibling and its continuation as the pending
+      // stack (if tail call, pending is always the original empty stack).
+      //
+      // When model checking, we compare variable contexts to detect cycles
+      // so we need to mantain them alive as long as a coincidence is
+      // possible. Hence, we need to maintain the full call tail graph, unless
+      // variable contexts are not closed.
+      const bool optimizedCall = tailCall && transitionGraph == nullptr &&
+      // It is not enough to check that the transition graph of the owner
+      // task is empty, because we could be in a opaque strategy but
+      // model checking one level up. In this case, we must not optimize,
+      // since this would get rewrites out of the opacity.
+      (getOwner()->getOwner() == nullptr || getOwner()->getOwner()->getTransitionGraph() == nullptr);
+
+      CallTask* callTask = new CallTask(searchObject,
+		subjectDagIndex,
+		strategy,
+		sdef->getRhs(),
+		optimizedCall ? getOwner()->getContinuation() : pending,
+		cid,
+		optimizedCall ? static_cast<StrategicExecution*>(getOwner()) : this,
+		this);
+
+      // If no process has been created, we should remove the call task
+      if (callTask->isExhausted())
+	{
+	  callTask->executionsExhausted(this);
+	  delete callTask;
+	}
 
       // Other solutions may be available
       return StrategicExecution::SURVIVE;

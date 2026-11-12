@@ -252,9 +252,11 @@ VisibleModule::latexShowRls(ostream& s, const char* indent, bool all) const
 }
 
 void
-VisibleModule::latexPrintStrategyDecl(ostream& s, const char* indent, const RewriteStrategy* rs)
+VisibleModule::latexPrintStrategyDecl(ostream& s, const char* indent, const RewriteStrategy* rs) const
 {
-  s << "\\par$" << indent << "\\maudeKeyword{strat}\\maudeSpace" << Token::latexIdentifier(rs->id());
+  if (indent)
+    s << "\\par$" << indent;
+  s << "\\maudeKeyword{strat}\\maudeSpace" << Token::latexIdentifier(rs->id());
   const Vector<Sort*>& domain = rs->getDomain();
   int arity = rs->arity();
   if (arity > 0)
@@ -270,7 +272,9 @@ VisibleModule::latexPrintStrategyDecl(ostream& s, const char* indent, const Rewr
       s << "\\maudeSpace\\maudeLeftBracket\\maudeKeyword{metadata}\\maudeSpace" <<
 	latexString(metadata) << "\\maudeRightBracket";
     }
-  s << "$\\maudeEndStatement\n";
+  if (indent)
+    s << "$";
+  s << "\\maudeEndStatement\n";
 }
 
 void
@@ -288,7 +292,7 @@ VisibleModule::latexShowStrats(ostream& s, const char* indent, bool all)
 }
 
 void
-VisibleModule::latexPrintStrategyDefinition(ostream& s, const char* indent, const StrategyDefinition* e)
+VisibleModule::latexPrintStrategyDefinition(ostream& s, const char* indent, const StrategyDefinition* e) const
 {
   s << "\\par$" << indent << (e->hasCondition() ? "\\maudeKeyword{csd}" : "\\maudeKeyword{sd}") << "\\maudeSpace";
   latexPrintStrategyTerm(s, e->getStrategy(), e->getLhs());

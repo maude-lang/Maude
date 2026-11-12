@@ -187,7 +187,9 @@ public:
 			  Vector<Term*>& initial,
 			  int& searchType,
 			  Term*& target,
-			  Vector<ConditionFragment*>& condition);
+			  Vector<ConditionFragment*>& condition,
+			  StrategyExpression*& strategy,
+			  set<int>& opaques);
   bool parseMatchCommand(const Vector<Token>& bubble,
 			 Term*& pattern,
 			 Term*& subject,
@@ -502,11 +504,14 @@ private:
 
     USING_PAIR = SIMPLE_BASE - 19,
     USING_LIST = SIMPLE_BASE - 20,
+    STRATEGY_NAME = SIMPLE_BASE - 21,
+    STRATEGY_NAME_LIST = SIMPLE_BASE - 22,
+    USING_SEARCH_SUFFIX = SIMPLE_BASE - 23,
 
-    SD_BODY = SIMPLE_BASE - 21,
-    STRATEGY_PAIR = SIMPLE_BASE - 22,
+    SD_BODY = SIMPLE_BASE - 24,
+    STRATEGY_PAIR = SIMPLE_BASE - 25,
 
-    COMPLEX_BASE = SIMPLE_BASE - 23
+    COMPLEX_BASE = SIMPLE_BASE - 26
   };
 
   enum NonTerminalType

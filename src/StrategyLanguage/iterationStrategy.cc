@@ -33,6 +33,9 @@
 #include "core.hh"
 #include "strategyLanguage.hh"
 
+//	higher class definitions
+#include "strategyTransitionGraph.hh"
+
 //	strategy language class definitions
 #include "iterationStrategy.hh"
 #include "decompositionProcess.hh"
@@ -72,5 +75,13 @@ IterationStrategy::decompose(StrategicSearch& searchObject, DecompositionProcess
       remainder->pushStrategy(searchObject, this);
     }
   remainder->pushStrategy(searchObject, child);
+
+  // Stop iterating if the state has already been seen
+  // (it is indispensable to detect cycles in idle* or equivalent cases)
+  StrategyTransitionGraph* transitionGraph = remainder->getOwner()->getTransitionGraph();
+  if (transitionGraph != nullptr && !transitionGraph->onCheckpoint(remainder->getDagIndex(),
+	    remainder, remainder->getPending(), remainder))
+    return StrategicExecution::DIE;
+
   return StrategicExecution::SURVIVE;  // remainder should not request deletion
 }

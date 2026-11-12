@@ -76,7 +76,9 @@ TESTS = \
 	metaIntStrategy \
 	checkUnifiers \
 	meta-oo-list-2 \
-	metaGeneratedBy
+	metaGeneratedBy \
+	metaStrategySearch \
+	metaIntStrategySearch
 
 MAUDE_FILES = \
 	metaProcPrelude.maude \
@@ -156,7 +158,9 @@ MAUDE_FILES = \
 	metaIntStrategy.maude \
 	checkUnifiers.maude \
 	meta-oo-list-2.maude \
-	metaGeneratedBy.maude
+	metaGeneratedBy.maude \
+	metaStrategySearch.maude \
+	metaIntStrategySearch.maude
 
 RESULT_FILES = \
 	metaProcPrelude.expected \
@@ -238,6 +242,8 @@ RESULT_FILES = \
 	metaIntStrategy.expected \
 	checkUnifiers.expected \
 	meta-oo-list-2.expected \
-	metaGeneratedBy.expected
+	metaGeneratedBy.expected \
+	metaStrategySearch.expected \
+	metaIntStrategySearch.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

@@ -1,0 +1,506 @@
+==========================================
+search in LETTER : a =>* L using ac .
+
+Solution 1 (state 0)
+states: 3  rewrites: 2
+L --> a
+
+Solution 2 (state 1)
+states: 3  rewrites: 2
+L --> b
+
+Solution 3 (state 2)
+states: 3  rewrites: 2
+L --> c
+
+No more solutions.
+states: 3  rewrites: 2
+state 0, Letter: a
+===[ rl [ab] : a => b . ]===>
+state 1, Letter: b
+===[ rl [bc] : b => c . ]===>
+state 2, Letter: c
+ab
+bc
+state 0, Letter: a
+--- ab --->
+state 1, Letter: b
+--- bc --->
+state 2, Letter: c
+state 0, Letter: a
+next strategy: ab ; bc
+arc 0 ===> state 1 (rl [ab] : a => b .)
+
+state 1, Letter: b
+next strategy: bc
+arc 0 ===> state 2 (rl [bc] : b => c .)
+
+state 2, Letter: c
+==========================================
+search in LETTER : a =>1 L using ac .
+
+Solution 1 (state 1)
+states: 3  rewrites: 2
+L --> b
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER : a =>+ L using ac .
+
+Solution 1 (state 1)
+states: 3  rewrites: 2
+L --> b
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+L --> c
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER : a =>! L using ac .
+
+Solution 1 (state 2)
+states: 3  rewrites: 2
+L --> c
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER : a =>* L using ac such that ac opaque .
+
+Solution 1 (state 0)
+states: 2  rewrites: 2
+L --> a
+
+Solution 2 (state 1)
+states: 2  rewrites: 2
+L --> c
+
+No more solutions.
+states: 2  rewrites: 2
+state 0, Letter: a
+===[ strat ac @ Letter . ]===>
+state 1, Letter: c
+ac
+state 0, Letter: a
+--- ac --->
+state 1, Letter: c
+state 0, Letter: a
+next strategy: ac
+arc 0 ===> state 1 (strat ac @ Letter .)
+
+state 1, Letter: c
+==========================================
+search in LETTER : a =>1 L using ab such that ac opaque .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> b
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER : a =>1 L using ac such that rec opaque .
+
+Solution 1 (state 1)
+states: 3  rewrites: 2
+L --> b
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER : a =>1 L using ac such that ac, rec opaque .
+
+Solution 1 (state 1)
+states: 2  rewrites: 2
+L --> c
+
+No more solutions.
+states: 2  rewrites: 2
+==========================================
+search in LETTER : a =>* L using ab ; ca .
+
+No solution.
+states: 2  rewrites: 1
+==========================================
+search in LETTER : a =>* L using ab ; bc ; bc .
+
+No solution.
+states: 3  rewrites: 2
+==========================================
+search in LETTER : a =>* c using ac ; match L such that L == c = true .
+
+Solution 1 (state 2)
+states: 3  rewrites: 3
+empty substitution
+
+No more solutions.
+states: 3  rewrites: 3
+==========================================
+search in LETTER : a =>* c using matchrew L by L using (ab ; bc) .
+
+Solution 1 (state 2)
+states: 3  rewrites: 2
+empty substitution
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER : a =>* L using all * .
+
+Solution 1 (state 0)
+states: 2  rewrites: 1
+L --> a
+
+Solution 2 (state 1)
+states: 3  rewrites: 2
+L --> b
+
+Solution 3 (state 3)
+states: 4  rewrites: 4
+L --> e
+
+Solution 4 (state 2)
+states: 4  rewrites: 5
+L --> c
+
+Solution 5 (state 4)
+states: 5  rewrites: 7
+L --> d
+
+No more solutions.
+states: 5  rewrites: 9
+state 0, Letter: a
+next strategy: all *
+arc 0 ===> state 1 (rl [ab] : a => b .)
+arc 1 ===> state 3 (rl [xe] : L => e .)
+
+state 1, Letter: b
+next strategy: all *
+arc 0 ===> state 2 (rl [bc] : b => c .)
+arc 1 ===> state 3 (rl [xe] : L => e .)
+arc 2 ===> state 4 (rl [bd] : b => d .)
+
+state 2, Letter: c
+next strategy: all *
+arc 0 ===> state 0 (rl [ca] : c => a .)
+arc 1 ===> state 3 (rl [xe] : L => e .)
+
+state 3, Letter: e
+next strategy: all *
+arc 0 ===> state 3 (rl [xe] : L => e .)
+
+state 4, Letter: d
+next strategy: all *
+arc 0 ===> state 3 (rl [xe] : L => e .)
+==========================================
+search in LETTER : b =>* L using (ab | bc | ca)* .
+
+Solution 1 (state 0)
+states: 2  rewrites: 1
+L --> b
+
+Solution 2 (state 1)
+states: 3  rewrites: 2
+L --> c
+
+Solution 3 (state 2)
+states: 3  rewrites: 3
+L --> a
+
+No more solutions.
+states: 3  rewrites: 3
+state 0, Letter: b
+next strategy: (ab | bc | ca)*
+arc 0 ===> state 1 (rl [bc] : b => c .)
+
+state 1, Letter: c
+next strategy: (ab | bc | ca)*
+arc 0 ===> state 2 (rl [ca] : c => a .)
+
+state 2, Letter: a
+next strategy: (ab | bc | ca)*
+arc 0 ===> state 0 (rl [ab] : a => b .)
+==========================================
+search in LETTER : a =>! L using all ! .
+
+No solution.
+states: 5  rewrites: 9
+==========================================
+search in LETTER : a =>! L using (ab | bc | bd | ca)! .
+
+Solution 1 (state 3)
+states: 4  rewrites: 4
+L --> d
+
+No more solutions.
+states: 4  rewrites: 4
+==========================================
+search in LETTER : a =>+ L using rec .
+
+Solution 1 (state 1)
+states: 3  rewrites: 3
+L --> b
+
+Solution 2 (state 2)
+states: 3  rewrites: 3
+L --> c
+
+Solution 3 (state 0)
+states: 3  rewrites: 3
+L --> a
+
+No more solutions.
+states: 3  rewrites: 3
+==========================================
+search in LETTER : a =>1 L using xe ? idle : ab .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> e
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER : a =>1 L using bc ? idle : xe .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> e
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER : b =>1 L using test(bc) ; bd .
+
+Solution 1 (state 1)
+states: 2  rewrites: 2
+L --> d
+
+No more solutions.
+states: 2  rewrites: 2
+==========================================
+search in LETTER : b =>1 L using try(bc) .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> c
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER : b =>1 L using not(ac) ; bc .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> c
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER : a =>1 L using not(ab) ? ac : xe .
+
+Solution 1 (state 1)
+states: 2  rewrites: 2
+L --> e
+
+No more solutions.
+states: 2  rewrites: 2
+==========================================
+search in LETTER : b =>1 L using xe[L <- b] .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> e
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER : b =>1 L using xe[L <- c] .
+
+No solution.
+states: 1  rewrites: 0
+==========================================
+search in LETTER : b =>1 L using one(bc | bd) .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> c
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+L --> d
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER : e =>* L using idle .
+
+Solution 1 (state 0)
+states: 1  rewrites: 0
+L --> e
+
+No more solutions.
+states: 1  rewrites: 0
+==========================================
+search in LETTER : e =>* L using fail .
+
+No solution.
+states: 1  rewrites: 0
+==========================================
+search in LETTER : b =>1 L using xew(a) .
+
+No solution.
+states: 1  rewrites: 0
+==========================================
+search in LETTER : b =>1 L using xew(b) .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+L --> e
+
+No more solutions.
+states: 2  rewrites: 1
+Warning: <standard input>, line 80: variable L is used before it is bound in
+    condition of test strategy.
+Warning: <standard input>, line 81: variable M:Letter (1) is not a subterm of
+    the main pattern in matchrew strategy.
+Warning: <standard input>, line 82: variable M:Letter is used before it is
+    bound in condition of matchrew strategy.
+Warning: <standard input>, line 83: unbound variable M:Letter in application
+    strategy substitution for L.
+Warning: <standard input>, line 84: unbound variable M:Letter in strategy call
+    argument.
+==========================================
+search in LETTER-BOX : < a > =>+ < L > using box{ab} .
+
+Solution 1 (state 1)
+states: 2  rewrites: 2
+L --> b
+
+No more solutions.
+states: 2  rewrites: 2
+==========================================
+search in LETTER-BOX : < a > =>+ < L > using box{ab ; bc} .
+
+Solution 1 (state 1)
+states: 2  rewrites: 3
+L --> c
+
+No more solutions.
+states: 2  rewrites: 3
+==========================================
+search in LETTER-BOX : < a > =>+ B using ab .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+B --> < b >
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER-BOX : < a > =>+ B using top(ab) .
+
+No solution.
+states: 1  rewrites: 0
+==========================================
+search in LETTER-BOX : < b > =>+ B using matchrew < L > by L using bd .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+B --> < d >
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in LETTER-BOX : {< a >, < b >} =>+ B using ab | bc .
+
+Solution 1 (state 1)
+states: 2  rewrites: 1
+B --> {< b >, < b >}
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+B --> {< a >, < c >}
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER-BOX : {< a >, < b >} =>+ B using ac .
+
+Solution 1 (state 1)
+states: 3  rewrites: 2
+B --> {< b >, < b >}
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+B --> {< c >, < b >}
+
+Solution 3 (state 3)
+states: 4  rewrites: 3
+B --> {< b >, < c >}
+
+No more solutions.
+states: 4  rewrites: 3
+==========================================
+search in LETTER-BOX : {< a >, < b >} =>+ B using ac such that ac opaque .
+
+Solution 1 (state 1)
+states: 2  rewrites: 2
+B --> {< c >, < b >}
+
+Solution 2 (state 2)
+states: 3  rewrites: 3
+B --> {< b >, < c >}
+
+No more solutions.
+states: 3  rewrites: 3
+==========================================
+search in LETTER-BOX : {< b >, < b >} =>+ B using matchrew {B1, B2} by B1 using
+    bc, B2 using bd .
+
+Solution 1 (state 1)
+states: 3  rewrites: 2
+B --> {< c >, < b >}
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+B --> {< c >, < d >}
+
+No more solutions.
+states: 3  rewrites: 2
+state 0, Box: {< b >, < b >}
+next strategy: matchrew {B1, B2} by B1 using bc, B2 using bd
+arc 0 ===> state 1 (rl [bc] : b => c .)
+
+state 1, Box: {< c >, < b >}
+arc 0 ===> state 2 (rl [bd] : b => d .)
+
+state 2, Box: {< c >, < d >}
+==========================================
+search in LETTER-BOX : {{< a >, < b >}, < c >} =>+ B using matchrew {B1, B2} by
+    B1 using (matchrew {< L1 >, < L2 >} by L1 using ac) .
+
+Solution 1 (state 1)
+states: 3  rewrites: 2
+B --> {{< b >, < b >}, < c >}
+
+Solution 2 (state 2)
+states: 3  rewrites: 2
+B --> {{< c >, < b >}, < c >}
+
+No more solutions.
+states: 3  rewrites: 2
+==========================================
+search in LETTER-BOX : {{< a >, < b >}, < c >} =>+ B using matchrew {B1, B2} by
+    B1 using (matchrew {< L1 >, < L2 >} by L1 using ac) such that ac opaque .
+
+Solution 1 (state 1)
+states: 2  rewrites: 2
+B --> {{< c >, < b >}, < c >}
+
+No more solutions.
+states: 2  rewrites: 2
+Bye.

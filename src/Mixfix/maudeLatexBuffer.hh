@@ -90,6 +90,8 @@ public:
 		      int searchType,
 		      Term* target,
 		      const Vector<ConditionFragment*>& condition,
+		      StrategyExpression* strategy,
+		      set<int>& opaques,
 		      int variantFlags,
 		      int64_t limit,
 		      int64_t depth,
@@ -146,6 +148,20 @@ public:
 			    bool showStats,
 			    bool showTiming,
 			    bool showBreakdown);
+  void generateSearchNonResult(StrategySequenceSearch* state,
+			       const string& message,
+			       int64_t cpuTime,
+			       int64_t realTime,
+			       bool showStats,
+			       bool showTiming,
+			       bool showBreakdown);
+  void generateSearchResult(StrategySequenceSearch* state,
+			    int64_t solutionNr,
+			    int64_t cpuTime,
+			    int64_t realTime,
+			    bool showStats,
+			    bool showTiming,
+			    bool showBreakdown);
   void generateDecisionTime(int64_t cpuTime, int64_t realTime);
   void generateNonResult(const string& message);
   void generateResult(const string& message, int64_t solutionNr);
@@ -159,6 +175,11 @@ public:
 			  int stateNr,
 			  bool showCommand,
 			  bool showRule);
+  void generateStrategySearchPath(const StrategySequenceSearch* graph,
+			          const Vector<int>& steps,
+			          int stateNr,
+			          bool showCommand,
+			          bool showRule);
   void generateNarrowingSearchPath(const NarrowingSequenceSearch3* state,
 				   const Vector<int>& steps,
 				   int stateNr,
@@ -168,7 +189,12 @@ public:
 				const Vector<int>& steps,
 				int stateNr,
 				bool showCommand);
+  void generateStrategySearchPathLabels(const StrategySequenceSearch* graph,
+				        const Vector<int>& steps,
+				        int stateNr,
+				        bool showCommand);
   void generateSearchGraph(const RewriteSequenceSearch* graph, bool showCommand);
+  void generateStrategySearchGraph(const StrategySequenceSearch* graph, bool showCommand);
   void generateStateSet(bool showCommand,
 			const char* command,
 			const Vector<DagNode*>& firstPart,
