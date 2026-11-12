@@ -106,7 +106,7 @@ BranchTask::executionSucceeded(int resultIndex, StrategicProcess* insertionPoint
 	//	We set up another branch task on the new result and we stay alive to
 	//	process any new results.
 	//
-	  (void) new BranchTask(strategyStackManager,
+	(void) new BranchTask(strategyStackManager,
 				this,
 				resultIndex,
 				initialStrategy,

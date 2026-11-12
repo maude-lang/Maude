@@ -39,7 +39,7 @@
 StrategicProcess::StrategicProcess(StrategicExecution* taskSibling, StrategicProcess* other)
   : StrategicExecution(taskSibling)
 {
-  if (other == 0)
+  if (other == nullptr)
     {
       //
       //	Make degenerate circular list.

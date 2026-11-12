@@ -39,7 +39,7 @@ public:
 		 StrategicExecution* taskSibling,
 		 StrategicProcess* insertionPoint);
 
-  Survival run(StrategicSearch& searchObject);
+  Survival run(StrategicSearch& searchObject) override;
 
 private:
   // Will be shared with the matchrew tasks it will create

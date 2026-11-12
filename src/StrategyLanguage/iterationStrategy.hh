@@ -36,10 +36,10 @@ public:
   StrategyExpression* getStrategy() const;
   bool getZeroAllowed() const;
 
-  bool check(VariableInfo& indices, const TermSet& boundVars);
-  void process();
+  bool check(VariableInfo& indices, const TermSet& boundVars) override;
+  void process() override;
 
-  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
+  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder) override;
 
 private:
   StrategyExpression* const child;
@@ -55,7 +55,7 @@ IterationStrategy::getStrategy() const
 inline bool
 IterationStrategy::getZeroAllowed() const
 {
-  return star == 0;
+  return star == nullptr;
 }
 
 #endif

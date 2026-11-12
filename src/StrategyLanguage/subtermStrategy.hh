@@ -81,8 +81,8 @@ public:
   //
   const Vector<std::pair<int, int> >& getIndexTranslation() const;
 
-  bool check(VariableInfo& indices, const TermSet& boundVars);
-  void process();
+  bool check(VariableInfo& indices, const TermSet& boundVars) override;
+  void process() override;
 
   //
   // Rebuild the subject node with modified subterms.
@@ -93,7 +93,7 @@ public:
   //
   DagNode* rebuild(const Vector<DagNode*>& matchSubst, const Vector<DagNode*>& results) const;
 
-  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
+  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder) override;
 
 private:
   bool checkSubterms();

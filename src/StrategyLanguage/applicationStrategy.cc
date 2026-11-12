@@ -65,12 +65,11 @@ ApplicationStrategy::ApplicationStrategy(int label,
 
 ApplicationStrategy::~ApplicationStrategy()
 {
-  int nrVariables = variables.size();
-  for (int i = 0; i < nrVariables; ++i)
-    variables[i]->deepSelfDestruct();
-  int nrStrategies = strategies.size();
-  for (int i = 0; i < nrStrategies; ++i)
-    delete strategies[i];
+  for (Term* var : variables)
+    var->deepSelfDestruct();
+
+  for (StrategyExpression* expr : strategies)
+    delete expr;
 }
 
 bool
@@ -105,9 +104,8 @@ ApplicationStrategy::check(VariableInfo& indices, const TermSet& boundVars)
 
   // Index and check variables in the rewriting condition strategies
 
-  size_t nrStrategies = strategies.length();
-  for (size_t i = 0; i < nrStrategies; i++)
-    if (!strategies[i]->check(indices, boundVars))
+  for (StrategyExpression* expr : strategies)
+    if (!expr->check(indices, boundVars))
       return false;
 
   return true;
@@ -127,9 +125,8 @@ ApplicationStrategy::process()
     }
 
   // And follows recusively
-  int nrStrategies = strategies.length();
-  for (int i = 0; i < nrStrategies; i++)
-    strategies[i]->process();
+  for (StrategyExpression* expr : strategies)
+    expr->process();
 }
 
 StrategicExecution::Survival

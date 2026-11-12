@@ -44,7 +44,7 @@ public:
 
   ~ApplicationProcess();
 
-  Survival run(StrategicSearch& searchObject);
+  Survival run(StrategicSearch& searchObject) override;
 
   static StrategicExecution::Survival
     resolveRemainingConditionFragments(StrategicSearch& searchObject,

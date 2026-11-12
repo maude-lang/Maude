@@ -70,7 +70,7 @@ MatchProcess::MatchProcess(const shared_ptr<RewriteSearchState>& rewriteState,
   : StrategicProcess(taskSibling, insertionPoint),
     rewriteState(rewriteState),  // share rewrite state
     redexIndex(redexIndex),  // copy redex index
-    extensionInfoCopy((extensionInfo == 0) ? 0 : extensionInfo->makeClone()),  // clone extension info
+    extensionInfoCopy((extensionInfo == nullptr) ? nullptr : extensionInfo->makeClone()),  // clone extension info
     matchContext(matchContext),  // take over ownership of matchContext
     subproblem(subproblem),  // take over ownership of subproblem
     rule(rule),  // copy rule pointer

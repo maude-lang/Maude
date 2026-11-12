@@ -37,12 +37,12 @@ public:
   Term* getTerm() const;
   RewriteStrategy* getStrategy() const;
 
-  bool check(VariableInfo& indices, const TermSet& boundVars);
-  void process();
+  bool check(VariableInfo& indices, const TermSet& boundVars) override;
+  void process() override;
 
-  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder);
+  StrategicExecution::Survival decompose(StrategicSearch& searchObject, DecompositionProcess* remainder) override;
 
-  bool equal(const StrategyExpression& other) const;
+  bool equal(const StrategyExpression& other) const override;
 
 private:
   RewriteStrategy* strategy;

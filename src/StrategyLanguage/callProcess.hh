@@ -39,7 +39,7 @@ public:
 	      StrategicExecution* taskSibling,
 	      StrategicProcess* insertionPoint);
 
-  Survival run(StrategicSearch& searchObject);
+  Survival run(StrategicSearch& searchObject) override;
 
 private:
   RewriteStrategy* strategy;

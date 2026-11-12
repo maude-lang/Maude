@@ -42,7 +42,7 @@ public:
   //
   //	Find the next solution using a depth-first search
   //
-  DagNode* findNextSolution();
+  DagNode* findNextSolution() override;
 
 private:
   //

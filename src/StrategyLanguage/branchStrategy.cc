@@ -51,10 +51,10 @@ BranchStrategy::BranchStrategy(StrategyExpression* initialStrategy,
     failureAction(failureAction)
 {
   Assert(successAction >= FAIL && successAction <= ITERATE, "bad success action");
-  Assert((successAction == NEW_STRATEGY) == (successStrategy != 0), "success inconsistancy");
+  Assert((successAction == NEW_STRATEGY) == (successStrategy != nullptr), "success inconsistancy");
   Assert(failureAction == FAIL || failureAction == IDLE || failureAction == NEW_STRATEGY,
 	 "bad failure action");
-  Assert((failureAction == NEW_STRATEGY) == (failureStrategy != 0), "failure inconsistancy");
+  Assert((failureAction == NEW_STRATEGY) == (failureStrategy != nullptr), "failure inconsistancy");
 }
 
 BranchStrategy::~BranchStrategy()

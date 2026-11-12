@@ -46,7 +46,7 @@ FairStrategicSearch::FairStrategicSearch(RewritingContext* initial, StrategyExpr
   nextToRun = new DecompositionProcess(insert(initial->root()),
 				       push(EMPTY_STACK, strategy),
 				       getDummyExecution(),
-				       0);
+				       nullptr);
 }
 
 DagNode*
@@ -87,5 +87,5 @@ FairStrategicSearch::findNextSolution()
       if (solutionIndex != NONE)
 	return getCanonical(solutionIndex);
     }
-  return 0;
+  return nullptr;
 }

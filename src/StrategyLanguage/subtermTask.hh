@@ -74,8 +74,8 @@ private:
   //
   //	Virtual in StrategicTask.
   //
-  Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint); // used in a non-standard way
-  Survival executionsExhausted(StrategicProcess* insertionPoint);
+  Survival executionSucceeded(int resultIndex, StrategicProcess* insertionPoint) override; // used in a non-standard way
+  Survival executionsExhausted(StrategicProcess* insertionPoint) override;
 
   // Builds a solution with the given results and pushes it (as a new descomposition process)
   void pushSolution(const Vector<DagNode*>& rewNodes, StrategicProcess* insertionPoint);
@@ -91,7 +91,6 @@ private:
 
   // Store of the results of rewriting the subterms according to their strategies
   // (the first coordinate selects the subpattern, the second the result)
-  //  std::vector<std::vector<DagNode*> > results;		// TODO Change to Vector?
   Vector<Vector<DagNode*>> results;
 
   // Number of empty children (without solutions yet)

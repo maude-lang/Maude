@@ -72,7 +72,7 @@ RewriteTask::RewriteTask(StrategicSearch& searchObject,
     hashConsSet(searchObject),
     rewriteState(rewriteState),  // share rewrite state
     redexIndex(redexIndex),  // copy redex index
-    extensionInfoCopy((extensionInfo == 0) ? 0 : extensionInfo->makeClone()),  // clone extension info
+    extensionInfoCopy((extensionInfo == nullptr) ? nullptr : extensionInfo->makeClone()),  // clone extension info
     rule(rule),  // copy rule pointer
     fragmentNr(fragmentNr),  // copy fragment number
     strategies(strategies),  // share reference to strategies vector

@@ -48,7 +48,7 @@ DepthFirstStrategicSearch::DepthFirstStrategicSearch(RewritingContext* initial,
     new DecompositionProcess(insert(initial->root()),
 			     push(EMPTY_STACK, strategy),
 			     getDummyExecution(),
-			     0);
+			     nullptr);
   //
   // stackTop is a ghost node to access the top of the process stack.
   // It must never be run. The stack is empty is stackTop->getNextProcess()
@@ -87,5 +87,5 @@ DepthFirstStrategicSearch::findNextSolution()
 	return getCanonical(solutionIndex);
     }
   exhausted = true;
-  return 0;
+  return nullptr;
 }

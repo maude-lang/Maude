@@ -66,8 +66,8 @@ CallProcess::CallProcess(RewriteStrategy* namedStrategy,
     defIndex(0),
     first(true)
 {
-  Assert(callContext->root() != 0, "empty call term");
-  Assert(callContext->root()->getSort() != 0, "call term sort missing");
+  Assert(callContext->root() != nullptr, "empty call term");
+  Assert(callContext->root()->getSort() != nullptr, "call term sort missing");
   Assert(namedStrategy->getDefinitions().length() > 0, "strategy must have a definition here");
 
   // We are matching on top, so only one position is considered

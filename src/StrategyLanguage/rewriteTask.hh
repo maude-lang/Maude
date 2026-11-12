@@ -50,8 +50,8 @@ public:
   //
   //	Call-backs for interesting events.
   //
-  virtual Survival executionSucceeded(int resultindex, StrategicProcess* insertionPoint);
-  virtual Survival executionsExhausted(StrategicProcess* insertionPoint);
+  virtual Survival executionSucceeded(int resultindex, StrategicProcess* insertionPoint) override;
+  virtual Survival executionsExhausted(StrategicProcess* insertionPoint) override;
 
 private:
   const HashConsSet& hashConsSet;			// reference to shared hash cons set
@@ -62,7 +62,7 @@ private:
   const int fragmentNr;					// number of condition fragment within rule
   const Vector<StrategyExpression*>& strategies;	// vector of strategies for rewrite fragments
   const int strategyNr;					// number of next strategy to use
-  StrategyStackManager::StackId pending;       		// continuation once we finally do a rewrite
+  StrategyStackManager::StackId pending;		// continuation once we finally do a rewrite
 
   RewriteConditionFragment* rcf;
   //

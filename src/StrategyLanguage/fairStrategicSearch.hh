@@ -41,7 +41,7 @@ public:
   //
   //	Find the next solution using a fair (Round Robin) search
   //
-  DagNode* findNextSolution();
+  DagNode* findNextSolution() override;
 
 private:
   StrategicProcess* nextToRun;

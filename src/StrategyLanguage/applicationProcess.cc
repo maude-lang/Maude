@@ -115,8 +115,8 @@ ApplicationProcess::ApplicationProcess(StrategicSearch& searchObject,
       //
       if (strategy->areSubsDagsReduced())
 	{
-	  for (int i = 0; i < nrValues; ++i)
-	    values[i].getDag()->computeBaseSortForGroundSubterms(false);
+	  for (CachedDag& cdag : values)
+	    cdag.getDag()->computeBaseSortForGroundSubterms(false);
 	  strategy->setSubsDagsReduced();
 	}
 
@@ -128,9 +128,8 @@ ApplicationProcess::ApplicationProcess(StrategicSearch& searchObject,
 
 ApplicationProcess::~ApplicationProcess()
 {
-  int nrValues = instedSubstitution.size();
-  for (int i = 0; i < nrValues; i++)
-    delete instedSubstitution[i];
+  for (DagRoot* dagRoot : instedSubstitution)
+    delete dagRoot;
 }
 
 StrategicExecution::Survival
@@ -290,7 +289,7 @@ ApplicationProcess::resolveRemainingConditionFragments(StrategicSearch& searchOb
   for (; fragmentNr < nrFragments; ++fragmentNr)
     {
       ConditionFragment* fragment = fragments[fragmentNr];
-      if (dynamic_cast<RewriteConditionFragment*>(fragment) != 0)
+      if (dynamic_cast<RewriteConditionFragment*>(fragment) != nullptr)
 	{
 	  (void) new RewriteTask(searchObject,
 				 rewriteState,

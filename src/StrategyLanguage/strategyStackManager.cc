@@ -44,7 +44,7 @@ StrategyStackManager::StrategyStackManager()
   //	Create empty stack entry.
   //
   Entry& e = stackTable[0];
-  e.strategy = 0;
+  e.strategy = nullptr;
   e.restOfStack = NONE;
   e.firstSuccessor = NONE;
   e.nextPeer = NONE;
