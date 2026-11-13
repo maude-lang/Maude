@@ -1,3 +1,13 @@
+2026-11-12  Saruman the White  <eker@eker10>
+
+	* interpreter.cc (Interpreter::handleArgument): break out of
+	switch after reporting an instantiation with both a theory-view
+	and a view with bound parameters from enclosing object; remove
+	Nonfinal from the warning for symmetry with the previous warning -
+	we don't know if there is a further instantiation
+	(Interpreter::makeModule): remove Nonfinal from the warning for
+	the same reason
+
 2026-11-04  Saruman the White  <eker@eker10>
 
 	* interact.cc

@@ -1,0 +1,15 @@
+*** Claude-found bug: nonfinal-view-instantiation-bound-parameters-crash
+
+set show advisories off .
+
+*** A nonfinal module instantiation mixing a theory-view and a view with bound
+*** parameters is refused with a warning.
+fmod MODCASE{Y :: TRIV} is
+  inc MAP{TRIV, Set{Y}} .
+endfm
+
+*** The same mix in a view instantiation gives the same warning and then
+*** Maude internal error.
+fmod VIEWCASE{Y :: TRIV} is
+  inc LIST{Map{TRIV, Set{Y}}} .
+endfm

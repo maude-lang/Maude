@@ -1,0 +1,11 @@
+Warning: Instantiation MAP{TRIV, Set{Y}} uses both a theory-view and a view
+    with bound parameters from enclosing module MODCASE.
+Warning: <standard input>, line 7 (fmod MODCASE): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Warning: Instantiation Map{TRIV, Set{Y}} uses both a theory-view and a view
+    with bound parameters from enclosing module VIEWCASE.
+Warning: <standard input>, line 13 (fmod VIEWCASE): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+Bye.

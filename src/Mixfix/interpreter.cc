@@ -816,10 +816,11 @@ Interpreter::handleArgument(const ViewExpression* expr,
 	  }
 	if (hasTheoryView && hasViewWithBoundParameters)
 	  {
-	    IssueWarning("Nonfinal instantiation " << QUOTE(expr) <<
+	    IssueWarning("Instantiation " << QUOTE(expr) <<
 			 " uses both a theory-view and a view with bound parameters from enclosing " <<
 			 enclosingObject->getObjectType() << " " <<
 			 QUOTE(enclosingObject->getObjectName()) << '.');
+	    break;
 	  }
 	return makeViewInstantiation(baseView, arguments);
       }
@@ -1001,7 +1002,7 @@ Interpreter::makeModule(const ModuleExpression* expr, EnclosingObject* enclosing
 	      }
 	    if (hasTheoryView && hasViewWithBoundParameters)
 	      {
-		IssueWarning("Nonfinal instantiation " << QUOTE(expr) <<
+		IssueWarning("Instantiation " << QUOTE(expr) <<
 			     " uses both a theory-view and a view with bound parameters from enclosing " <<
 			     enclosingObject->getObjectType() << " " <<
 			     QUOTE(enclosingObject->getObjectName()) << '.');

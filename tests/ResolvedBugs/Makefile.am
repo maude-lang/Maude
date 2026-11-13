@@ -92,7 +92,8 @@ TESTS = \
 	metaSmtSearchBranchNovember2026 \
 	metaSmtSearchSubstitutionNovember2026 \
 	miNarrowingSeachCountNotTransferredNovember2026 \
-	miMessageOfArityOneCrashNovember2026
+	miMessageOfArityOneCrashNovember2026 \
+	nonfinalViewInstantiationBoundParametersCrashNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -188,7 +189,8 @@ MAUDE_FILES = \
 	metaSmtSearchBranchNovember2026.maude \
 	metaSmtSearchSubstitutionNovember2026.maude \
 	miNarrowingSeachCountNotTransferredNovember2026.maude \
-	miMessageOfArityOneCrashNovember2026.maude
+	miMessageOfArityOneCrashNovember2026.maude \
+	nonfinalViewInstantiationBoundParametersCrashNovember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -284,6 +286,7 @@ RESULT_FILES = \
 	metaSmtSearchBranchNovember2026.expected \
 	metaSmtSearchSubstitutionNovember2026.expected \
 	miNarrowingSeachCountNotTransferredNovember2026.expected \
-	miMessageOfArityOneCrashNovember2026.expected
+	miMessageOfArityOneCrashNovember2026.expected \
+	nonfinalViewInstantiationBoundParametersCrashNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
