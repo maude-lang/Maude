@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2023-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -105,8 +105,6 @@ CounterSymbol::ruleRewrite(DagNode* subject, RewritingContext& context)
 	}
       DagNode* r = succSymbol->makeNatDag(currentValue);
       ++currentValue;
-      if (RewritingContext::getTraceStatus())
-	context.tracePostRuleRewrite(r);
       context.incrementRlCount();
       return r;
     }

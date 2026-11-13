@@ -1,0 +1,40 @@
+==========================================
+rewrite in C : counter .
+*********** rule
+(built-in rule for symbol counter)
+counter
+--->
+0
+rewrites: 1
+result Zero: 0
+==========================================
+frewrite in C : counter .
+*********** rule
+(built-in rule for symbol counter)
+counter
+--->
+0
+rewrites: 1
+result Zero: 0
+==========================================
+rewrite in C : a .
+*********** rule
+rl [r] : a => b .
+empty substitution
+a
+--->
+b
+rewrites: 1
+result S: b
+==========================================
+rewrite in C : counter .
+*********** rule
+(built-in rule for symbol counter)
+Old: counter
+counter
+--->
+0
+New: 0
+rewrites: 1
+result Zero: 0
+Bye.

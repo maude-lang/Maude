@@ -1,3 +1,9 @@
+2026-11-12  Saruman the White  <eker@eker10>
+
+	* counterSymbol.cc (CounterSymbol::ruleRewrite): don't call
+	tracePostRuleRewrite() since the convention for both rew and
+	frew/erew is that the caller calls tracePostRuleRewrite()
+
 2026-09-23  Saruman the White  <eker@eker10>
 
 	* numberOpSymbol.cc (NumberOpSymbol::eqRewrite): fix Claude

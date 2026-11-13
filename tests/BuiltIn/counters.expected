@@ -110,12 +110,10 @@ nil
 counter
 --->
 0
-0
 *********** rule
 (built-in rule for symbol counter)
 counter
 --->
-1
 1
 ==========================================
 rewrite in COUNTER-TEST3 : counter .
@@ -160,12 +158,10 @@ nil
 counter
 --->
 0
-0
 *********** rule
 (built-in rule for symbol counter)
 counter
 --->
-1
 1
 ==========================================
 rewrite in COUNTER-TEST3 : counter .

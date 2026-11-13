@@ -1,0 +1,24 @@
+*** Claude found bug: counter-trace-replacement-twice
+
+set show timing off .
+set show advisories off .
+
+*** The trace of the built-in rule of counter prints the replacement twice.
+*** The user rule r, traced in the same way, prints it once.
+mod C is
+  inc COUNTER .
+  sort S .
+  ops a b : -> S .
+  rl [r] : a => b .
+endm
+
+set trace on .
+
+rew counter .
+frew counter .
+rew a .
+
+*** With the whole term traced, the first New: shows the term before the rewrite.
+set trace whole on .
+
+rew counter .
