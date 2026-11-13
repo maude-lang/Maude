@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude \
+  < $srcdir/inColonReadsPastBubbleNovember2026.maude -no-banner -no-advise \
+  > inColonReadsPastBubbleNovember2026.out 2>&1
+
+diff $srcdir/inColonReadsPastBubbleNovember2026.expected inColonReadsPastBubbleNovember2026.out > /dev/null 2>&1

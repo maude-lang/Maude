@@ -1,0 +1,17 @@
+*** Claude found bug: in-colon-reads-past-bubble
+
+set show timing off .
+set show advisories off .
+
+*** red in : t . warns that module expressions are not supported, but at the wrong
+*** line: the three commands on lines 10-12 are all reported at line 9, the line of
+*** the previous command. Expected: each warning at its own command's line.
+fmod A is
+  sort S .
+  op a : -> S .
+endfm
+
+red in A : a .
+red in : a .
+red in : a .
+red in : a .

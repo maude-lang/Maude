@@ -1,3 +1,8 @@
+2026-11-13  Saruman the White  <eker@eker10>
+
+	* main.cc (main): decide ansiColor and lineWrapping before
+	outputting error messages
+
 2026-10-31  Saruman the White  <eker@eker10>
 
 	* prelude.maude: update comment

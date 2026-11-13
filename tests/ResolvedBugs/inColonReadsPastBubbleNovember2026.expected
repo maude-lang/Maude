@@ -1,0 +1,8 @@
+==========================================
+reduce in A : a .
+rewrites: 0
+result S: a
+Warning: <standard input>, line 15: no module expression provided in command.
+Warning: <standard input>, line 16: no module expression provided in command.
+Warning: <standard input>, line 17: no module expression provided in command.
+Bye.

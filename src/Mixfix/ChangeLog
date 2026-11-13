@@ -1,3 +1,8 @@
+2026-11-13  Saruman the White  <eker@eker10>
+
+	* interpreter.cc (Interpreter::setCurrentModule): check for
+	nrTokens == 0 and don't access moduleExpr[start] in this case
+
 2026-11-12  Saruman the White  <eker@eker10>
 
 	* interpreter.cc (Interpreter::handleArgument): break out of

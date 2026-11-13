@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2021 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -88,16 +88,57 @@ main(int argc, char* argv[])
   bool findExecutableDirectory(string& directory, string& executable);
   bool findPrelude(string& directory, string& fileName);
   void checkForPending();
+  {
+    //
+    //	Before processing anything that might produce warnings with ANSI
+    //	escape codes and line wrapping, we first decide if ANSI escape codes
+    //	and line wrapping should be used.
+    //
+    int ansiColor = UNDECIDED;
+    bool lineWrapping = true;
 
-  bool lineWrapping = true;
+    for (int i = 1; i < argc; ++i)
+      {
+	const char* arg = argv[i];
+	if (strcmp(arg, "-ansi-color") == 0)
+	  ansiColor = true;
+	else if (strcmp(arg, "-no-ansi-color") == 0)
+	  ansiColor = false;
+	else if (strcmp(arg, "-no-wrap") == 0)
+	  lineWrapping = false;
+      }
+    if (ansiColor == UNDECIDED)
+      {
+	//
+	//	By default we allow ANSI escape codes unless
+	//	environment variable TERM is set to dumb; or
+	//	our standard output is not a terminal.
+	//
+	ansiColor = true;
+	const char* term = getenv("TERM");
+	if ((term != 0 && strcmp("dumb", term) == 0) ||
+	    isatty(STDOUT_FILENO) == 0)
+	  ansiColor = false;
+      }
+    Tty::setEscapeSequencesAllowed(ansiColor);
+    //
+    //	We pass all output to terminal through wrapping code to
+    //	avoid writing while a nonblocking getLine is in progress.
+    //
+    ioManager.setAutoWrap(lineWrapping);
+    //
+    //	Make sure we flush cout before we output any error messages so things
+    //	hit the tty in a consistent order.
+    //
+    (void) cerr.tie(&cout);
+  }
   bool handleCtrlC = true;
   bool readPrelude = true;
   bool forceInteractive = false;
   bool outputBanner = true;
-  int ansiColor = UNDECIDED;
   int useTecla = UNDECIDED;
  
-  for (int i = 1; i < argc; i++)
+  for (int i = 1; i < argc; ++i)
     {
       char* arg = argv[i];
       if (arg[0] == '-')
@@ -126,10 +167,6 @@ main(int argc, char* argv[])
 	    printVersion();
 	  else if (strcmp(arg, "-no-mixfix") == 0)
 	    interpreter.setPrintFlag(PrintSettings::PRINT_MIXFIX, false);
-	  else if (strcmp(arg, "-ansi-color") == 0)
-	    ansiColor = true;
-	  else if (strcmp(arg, "-no-ansi-color") == 0)
-	    ansiColor = false;
 	  else if (strcmp(arg, "-tecla") == 0)
 	    useTecla = true;
 	  else if (strcmp(arg, "-no-tecla") == 0)
@@ -150,8 +187,6 @@ main(int argc, char* argv[])
 	    }
 	  else if (strcmp(arg, "-debug") == 0)
 	    globalDebugFlag = true;
-	  else if (strcmp(arg, "-no-wrap") == 0)
-	    lineWrapping = false;
 	  else if (strcmp(arg, "-batch") == 0)
 	    handleCtrlC = false;
 	  else if (strcmp(arg, "-interactive") == 0)
@@ -176,6 +211,10 @@ main(int argc, char* argv[])
 	    }
 	  else if (const char* s = isFlag(arg, "-early-quit="))
 	    MemoryCell::setEarlyQuit(strtoul(s, 0, 0));
+	  else if (strcmp(arg, "-ansi-color") == 0 ||
+		   strcmp(arg, "-no-ansi-color") == 0 ||
+		   strcmp(arg, "-no-wrap") == 0)
+	    ;  // already dealt with
 	  else
 	    {
 	      IssueWarning(LineNumber(FileTable::COMMAND_LINE) <<
@@ -185,28 +224,6 @@ main(int argc, char* argv[])
       else
 	pendingFiles.append(arg);
     }
-
-  //
-  //	We pass all output to terminal through wrapping code to
-  //	avoid writing while a nonblocking getLine is in progress.
-  //
-  ioManager.setAutoWrap(lineWrapping);
-
-  if (ansiColor == UNDECIDED)
-    {
-      //
-      //	By default we allow ANSI escape codes unless
-      //	environment variable TERM is set to dumb; or
-      //	our standard output is not a terminal.
-      //
-      ansiColor = true;
-      const char* term = getenv("TERM");
-      if ((term != 0 && strcmp("dumb", term) == 0) ||
-	  isatty(STDOUT_FILENO) == 0)
-	ansiColor = false;
-    }
-  Tty::setEscapeSequencesAllowed(ansiColor);
-
   bool inputIsTerminal = (isatty(STDIN_FILENO) == 1);
   if (useTecla == UNDECIDED)
     {
@@ -222,12 +239,6 @@ main(int argc, char* argv[])
 	  !inputIsTerminal)
 	useTecla = false;
     }
-  //
-  //	Make sure we flush cout before we output any error messages so things
-  //	hit the tty in a consistent order.
-  //
-  (void) cerr.tie(&cout);
-
   if (outputBanner)
     {
       const char* date = __DATE__;
@@ -237,7 +248,6 @@ main(int argc, char* argv[])
       printBanner(cout, date, time, t.tv_sec);
       interpreter.outputBanner(date, time, t.tv_sec);
     }
-
   createRootBuffer(stdin, forceInteractive);
   UserLevelRewritingContext::setHandlers(handleCtrlC);
   if (useTecla)

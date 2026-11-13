@@ -250,7 +250,12 @@ Interpreter::setCurrentModule(const Vector<Token>& moduleExpr, int start)
 	  IssueWarning(moduleExpr[start].getLineNr() << ": no module " <<
 		       QUOTE(moduleExpr[start]) << '.');
 	}
-      else 
+      else if (nrTokens == 0)
+	{
+	  IssueWarning(moduleExpr[0].getLineNr() <<
+		       ": no module expression provided in command.");
+	}
+      else
 	{
 	  IssueWarning(moduleExpr[start].getLineNr() <<
 		       ": module expressions not supported in commands.");
