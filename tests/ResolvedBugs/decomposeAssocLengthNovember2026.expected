@@ -1,0 +1,5 @@
+==========================================
+reduce in ASSOC-LENGTH : n(a) ; n(b) ; n(c) .=. n(X:L) ; n(b) .
+rewrites: 1
+result Bool: false
+Bye.

@@ -1,0 +1,24 @@
+*** Claude discovered bug: decompose-ac-pairing
+
+set show timing off .
+set show advisories off .
+
+*** _.=._ on two assoc comm terms says false where an instance makes them equal.
+*** With X = Y = a both sides are e(a), e(a). Expected for the first reduction: the term
+*** left as it is (or an equivalent decomposition), never false. Maude gives false.
+*** The other two reductions are for contrast: without the repeated argument the term is
+*** left as it is, and the ground instance reduces to true.
+
+fmod AC-PAIRING is
+  protecting INITIAL-EQUALITY-PREDICATE .
+  sort M .
+  ops a b : -> M [ctor] .
+  op e : M -> M [ctor] .
+  op _,_ : M M -> M [ctor assoc comm] .
+endfm
+
+red e(X:M), e(X:M) .=. e(a), e(Y:M) .
+
+red e(X:M), e(Z:M) .=. e(a), e(Y:M) .
+
+red e(a), e(a) .=. e(a), e(a) .

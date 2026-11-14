@@ -73,11 +73,12 @@
 //	mixfix class defintions.
 #include "mixfixModule.hh"
 
-CommutativeDecomposeEqualitySymbol::CommutativeDecomposeEqualitySymbol(int id, const Vector<int>& strategy)
+CommutativeDecomposeEqualitySymbol::CommutativeDecomposeEqualitySymbol(int id,
+								       const Vector<int>& strategy)
   : CUI_Symbol(id, strategy, false, COMM)
 {
-  conjunctionSymbol = 0;
-  disjunctionSymbol = 0;
+  conjunctionSymbol = nullptr;
+  disjunctionSymbol = nullptr;
 }
 
 bool
@@ -411,7 +412,7 @@ CommutativeDecomposeEqualitySymbol::decompose(DagNode* l, DagNode* r)
     return associativeDecompose(f, l, r);
   else if (ACU_Symbol* f = dynamic_cast<ACU_Symbol*>(topSymbol))
     return acDecompose(f, l, r);
-  return 0;
+  return nullptr;
 }
 
 DagNode*
@@ -434,12 +435,12 @@ CommutativeDecomposeEqualitySymbol::associativeDecompose(AU_Symbol* f, DagNode* 
   Vector<DagNode*> rightPeels;
   Index leftEnd = leftArgs.size();
   Index rightEnd = rightArgs.size();
-  Index maxEnd = max(leftEnd, rightEnd);
+  Index minEnd = min(leftEnd, rightEnd);
   Index startMarker = 0;
   //
   //	Peel arguments from the start.
   //
-  for (; startMarker < maxEnd; ++startMarker)
+  for (; startMarker < minEnd; ++startMarker)
     {
       DagNode* leftArg = leftArgs[startMarker];
       DagNode* rightArg = rightArgs[startMarker];
@@ -472,6 +473,8 @@ CommutativeDecomposeEqualitySymbol::associativeDecompose(AU_Symbol* f, DagNode* 
     }
   //
   //	Peel arguments from the end.
+  //	If we already reached startMarker == minEnd in the above loop, this loop
+  //	will execute 0 times.
   //
   for (--leftEnd, --rightEnd; leftEnd >= startMarker && rightEnd >= startMarker; --leftEnd, --rightEnd)
     {
@@ -511,16 +514,20 @@ CommutativeDecomposeEqualitySymbol::associativeDecompose(AU_Symbol* f, DagNode* 
   Index rightSideRemaining = rightEnd + 1 - startMarker;
   if ((leftSideRemaining == 0) != (rightSideRemaining == 0))
     return notEqualTerm.getDag();  // decompose to false
-  //
-  //	See if we can prove not equal on the remainders by using the commutative axiom.
-  //
-  DagNodeMultiset leftMultiset = makeMultiset(leftArgs, startMarker, leftEnd);
-  DagNodeMultiset rightMultiset = makeMultiset(rightArgs, startMarker, rightEnd);
-  if (acProvablyUnequal(leftMultiset, rightMultiset))
-    return notEqualTerm.getDag();  // decompose to false
+
+  if (leftSideRemaining != 0)
+    {
+      //
+      //	See if we can prove not equal on the remainders by using the commutative axiom.
+      //
+      DagNodeMultiset leftMultiset = makeMultiset(leftArgs, startMarker, leftEnd);
+      DagNodeMultiset rightMultiset = makeMultiset(rightArgs, startMarker, rightEnd);
+      if (acProvablyUnequal(leftMultiset, rightMultiset))
+	return notEqualTerm.getDag();  // decompose to false
+    }
   Index leftSideTotal = leftArgs.size();
   if (leftSideRemaining == leftSideTotal)
-    return 0;  // no progress - need to exit to avoid an infinite loop
+    return nullptr;  // no progress - need to exit to avoid an infinite loop
   //
   //	Make decomposition.
   //
@@ -564,9 +571,8 @@ CommutativeDecomposeEqualitySymbol::associativeDecompose(AU_Symbol* f, DagNode* 
 	}
       return (arity == 1) ? andArgs[0] : conjunctionSymbol->makeDagNode(andArgs);
     }
-  return 0;  // can't do anything
+  return nullptr;  // can't do anything
 }
-
 
 DagNode*
 CommutativeDecomposeEqualitySymbol::acDecompose(ACU_Symbol* f, DagNode* l, DagNode* r)
@@ -584,7 +590,7 @@ CommutativeDecomposeEqualitySymbol::acDecompose(ACU_Symbol* f, DagNode* l, DagNo
   if (leftSideRemaining < nrLeftArgs)
     {
       //
-      //	acProvablyUnequal() did some cancelation.
+      //	acProvablyUnequal() did some cancellation.
       //
       Vector<DagNode*> pair(2);
       if (leftSideRemaining == 1)
@@ -610,15 +616,16 @@ CommutativeDecomposeEqualitySymbol::acDecompose(ACU_Symbol* f, DagNode* l, DagNo
 	}
       return makeDagNode(pair);
     }
-  return 0;
+  return nullptr;
 }
 
 bool
-CommutativeDecomposeEqualitySymbol::acProvablyUnequal(DagNodeMultiset& leftMultiset, DagNodeMultiset& rightMultiset)
+CommutativeDecomposeEqualitySymbol::acProvablyUnequal(DagNodeMultiset& leftMultiset,
+						      DagNodeMultiset& rightMultiset)
 {
   //
   //	We try to prove that the left multiset of subterms can never be equal to the right
-  //	set multiset of subterms, under stubstitution, axioms and equational rewriting.
+  //	set multiset of subterms, under substitution, axioms and equational rewriting.
   //	We return true if we have a proof, and false if we don't.
   //	As a side effect, we delete common subterms from the multisets.
   //
@@ -652,24 +659,43 @@ CommutativeDecomposeEqualitySymbol::acProvablyUnequal(DagNodeMultiset& leftMulti
     {
       if (leftMultiset.size() > rightMultiset.size())
 	return true;  // proof by cardinality argument
+      //
+      //	Because the dagnodes in rightMultiset have fixed top symbols we can
+      //	go through leftMultiset, trying to find a dagnode with a fixed top
+      //	symbol that can't be paired off.
+      //
       swapMultisets = true;
-      tryPairingTopSymbols = true;  // we can go through rightSet, trying to find something that can't be paired
+      tryPairingTopSymbols = true;
     }
+  //
+  //	We still try the other way, even if rightMultiset was equationally stable or ground
+  //	because we might have a cardinality argument.
+  //
   if (equationallyStableOrGround(leftMultiset))
     {
       if (leftMultiset.size() < rightMultiset.size())
 	return true;  // proof by cardinality argument
+      //
+      //	Because the dagnodes in leftMultiset have fixed top symbols we can
+      //	go through rightMultiset, trying to find a dagnode with a fixed top
+      //	symbol that can't be paired off.
+      //
       swapMultisets = false;
-      tryPairingTopSymbols = true;  // we can go through rightSet, trying to find something that can't be paired
+      tryPairingTopSymbols = true;
     }
+  //
+  //	If both sides have fixed top symbols, and there is no cardinality argument,
+  //	their cardinalities must be equal and we can try pairing them either way around.
+  //
   if (tryPairingTopSymbols)
     {
       if (swapMultisets)
 	leftMultiset.swap(rightMultiset);
       //
-      //	We know the leftMultiset only has subterms that can't change their top symbols by
-      //	instantiation, axioms and equational rewriting. We now go throught rightMultiset and
-      //	look for subterms with the same property that can be cancelled with leftMutliset subterms.
+      //	We know the leftMultiset only has subterms that can't change their top symbols
+      //	by instantiation, axioms and equational rewriting. We now go through
+      //	rightMultiset and look for subterms with the same property that can be
+      //	cancelled with leftMultiset subterms.
       //	If we ever fail to get a cancellation, we have a proof of inequality.
       //
       DagNodeMultiset leftCopy(leftMultiset);
@@ -680,17 +706,19 @@ CommutativeDecomposeEqualitySymbol::acProvablyUnequal(DagNodeMultiset& leftMulti
 	    {
 	      //
 	      //	Can only equal something with rs on top.
+	      //	Must erase only one copy of such a dagnode.
 	      //
-	      for (DagNode* l : leftCopy)
+	      for (auto l = leftCopy.begin(); l != leftCopy.end(); ++l)
 		{
-		  if (l->symbol() == rs)
+		  if ((*l)->symbol() == rs)
 		    {
 		      leftCopy.erase(l);
 		      goto nextRightSubterm;
 		    }
 		}
 	      //
-	      //	There is nothing left in leftMultiset that could be equal to r so we have our proof.
+	      //	There is nothing left in leftMultiset that could be equal to r
+	      //	so we have our proof.
 	      //
 	      return true;
 	    nextRightSubterm:

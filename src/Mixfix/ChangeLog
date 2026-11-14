@@ -1,5 +1,15 @@
 2026-11-13  Saruman the White  <eker@eker10>
 
+	* commutativeDecomposeEqualitySymbol.cc
+	(CommutativeDecomposeEqualitySymbol::acProvablyUnequal): fix bug
+	where we were erasing all copies of a lhs dagnode that was paired
+	with a rhs dagnode
+	(CommutativeDecomposeEqualitySymbol::associativeDecompose): fix
+	bug where we were iterating to the max(leftEnd, rightEnd) rather
+	than min(leftEnd, rightEnd); don't try acProvablyUnequal() if
+	we've exhausted leftSide (rightSide must also be exhausted by
+	previous test)
+
 	* interpreter.cc (Interpreter::setCurrentModule): check for
 	nrTokens == 0 and don't access moduleExpr[start] in this case
 

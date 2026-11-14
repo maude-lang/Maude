@@ -1,5 +1,14 @@
 2026-11-13  Saruman the White  <eker@eker10>
 
+	* tests/ResolvedBugs/upTransformationWithoutInputViewsNovember2026.maude:
+	must turn timing off
+
+	* tests/ResolvedBugs/decomposeAssocLengthNovember2026.maude: added
+
+	* tests/ResolvedBugs/inColonReadsPastBubbleNovember2026.maude: added
+
+	* tests/ResolvedBugs/decomposeAC_PairingNovember2026.maude: added
+
 	* tests/ResolvedBugs/upTransformationWithoutInputViewsNovember2026.maude: added
 
 2026-11-12  Saruman the White  <eker@eker10>

@@ -1,0 +1,18 @@
+*** Claude discovered bug: decompose-assoc-length
+
+set show timing off .
+set show advisories off .
+
+*** _.=._ on two assoc terms of different lengths reads past the shorter one.
+*** Expected: false (a list of two cannot equal a list of three whose elements are
+*** all headed by stable constructors). Maude ends with "Maude internal error".
+
+fmod ASSOC-LENGTH is
+  protecting INITIAL-EQUALITY-PREDICATE .
+  sort L .
+  ops a b c : -> L [ctor] .
+  op n : L -> L [ctor] .
+  op _;_ : L L -> L [ctor assoc] .
+endfm
+
+red n(X:L) ; n(b) .=. n(a) ; n(b) ; n(c) .

@@ -1,0 +1,13 @@
+==========================================
+reduce in AC-PAIRING : e(X:M), e(X:M) .=. e(a), e(Y:M) .
+rewrites: 0
+result Bool: e(X:M), e(X:M) .=. e(a), e(Y:M)
+==========================================
+reduce in AC-PAIRING : e(a), e(Y:M) .=. e(Z:M), e(X:M) .
+rewrites: 0
+result Bool: e(a), e(Y:M) .=. e(Z:M), e(X:M)
+==========================================
+reduce in AC-PAIRING : e(a), e(a) .=. e(a), e(a) .
+rewrites: 1
+result Bool: true
+Bye.

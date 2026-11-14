@@ -1,5 +1,6 @@
 *** Claude found bug: up-transformation-without-input-views
 
+set show timing off .
 set show advisories off .
 
 *** A transformation with no input views: upImports writes its fourth argument as a _,_
