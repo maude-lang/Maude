@@ -1,5 +1,8 @@
 2026-11-13  Saruman the White  <eker@eker10>
 
+	* search.cc (Interpreter::search): fix bug where normalization in
+	Pattern() left target pointer stale
+
 	* commutativeDecomposeEqualitySymbol.cc
 	(CommutativeDecomposeEqualitySymbol::acProvablyUnequal): fix bug
 	where we were erasing all copies of a lhs dagnode that was paired

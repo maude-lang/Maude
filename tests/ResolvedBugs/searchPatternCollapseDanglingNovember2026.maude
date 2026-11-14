@@ -1,0 +1,24 @@
+*** Claude discovered bug: search-pattern-collapse-dangling
+
+set show timing off .
+set show advisories off .
+
+*** A search whose pattern collapses under the identity of its top symbol: the pattern term is
+*** deleted when it is normalized, and the command goes on using it.
+*** The first search, whose pattern X . e . b loses an identity but does not collapse, is for
+*** contrast: it runs, and its echo shows the pattern normalized in place, X . b.
+*** Expected for the second search: its echo and its solution, as for a . b =>* X.
+*** Maude ends the session with "Maude internal error" when it echoes the command.
+
+set include BOOL off .
+
+mod COLLAPSE is
+  sort S .
+  ops a b e : -> S [ctor] .
+  op _._ : S S -> S [ctor assoc id: e] .
+  var X : S .
+endm
+
+search [3] in COLLAPSE : a . b =>* X . e . b .
+
+search [3] in COLLAPSE : a . b =>* X . e .

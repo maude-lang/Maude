@@ -149,8 +149,12 @@ Interpreter::search(const Vector<Token>& bubble,
 	delete cf;
       return;
     }
-  Pattern* pattern = (searchKind == VU_NARROW || searchKind == FVU_NARROW || searchKind == SMT_SEARCH) ? 0 :
-    new Pattern(target, false, condition);
+  Pattern* pattern = nullptr;
+  if (searchKind == SEARCH || searchKind == NARROW || searchKind == XG_NARROW)
+    {
+      pattern = new Pattern(target, false, condition);
+      target = pattern->getLhs();  // may have been normalized
+    }
   //
   //	Regular seach cannot have unbound variables.
   //

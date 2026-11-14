@@ -98,7 +98,8 @@ TESTS = \
 	inColonReadsPastBubbleNovember2026 \
 	upTransformationWithoutInputViewsNovember2026 \
 	decomposeAC_PairingNovember2026 \
-	decomposeAssocLengthNovember2026
+	decomposeAssocLengthNovember2026 \
+	searchPatternCollapseDanglingNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -200,7 +201,8 @@ MAUDE_FILES = \
 	inColonReadsPastBubbleNovember2026.maude \
 	upTransformationWithoutInputViewsNovember2026.maude \
 	decomposeAC_PairingNovember2026.maude \
-	decomposeAssocLengthNovember2026.maude
+	decomposeAssocLengthNovember2026.maude \
+	searchPatternCollapseDanglingNovember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -302,6 +304,7 @@ RESULT_FILES = \
 	inColonReadsPastBubbleNovember2026.expected \
 	upTransformationWithoutInputViewsNovember2026.expected \
 	decomposeAC_PairingNovember2026.expected \
-	decomposeAssocLengthNovember2026.expected
+	decomposeAssocLengthNovember2026.expected \
+	searchPatternCollapseDanglingNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

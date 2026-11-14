@@ -1,0 +1,19 @@
+==========================================
+search [3] in COLLAPSE : a . b =>* X . b .
+
+Solution 1 (state 0)
+states: 1  rewrites: 0
+X --> a
+
+No more solutions.
+states: 1  rewrites: 0
+==========================================
+search [3] in COLLAPSE : a . b =>* X .
+
+Solution 1 (state 0)
+states: 1  rewrites: 0
+X --> a . b
+
+No more solutions.
+states: 1  rewrites: 0
+Bye.

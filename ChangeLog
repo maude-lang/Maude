@@ -1,5 +1,7 @@
 2026-11-13  Saruman the White  <eker@eker10>
 
+	* tests/ResolvedBugs/searchPatternCollapseDanglingNovember2026.maude: added
+
 	* tests/ResolvedBugs/upTransformationWithoutInputViewsNovember2026.maude:
 	must turn timing off
 
