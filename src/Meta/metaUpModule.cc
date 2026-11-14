@@ -277,14 +277,20 @@ MetaLevel::upModuleExpressionList(const Vector<ModuleExpression*>& modExprList,
 DagNode*
 MetaLevel::upArguments(const Vector<ViewExpression*>& arguments, PointerMap& qidMap)
 {
-  int nrArguments = arguments.size();
-  Assert(nrArguments >= 1, "no arguments");
+  Index nrArguments = arguments.size();
+  //
+  //	We need to handle the empty case becaue we're used both for the argument list
+  //	of an instantiation and the view expression list of a transformation, the
+  //	latter of which is usually empty.
+  //
+  if (nrArguments == 0)
+    return emptyTermListSymbol->makeDagNode();  // because we share a kind with TermList
   if (nrArguments == 1)
     return upArgument(arguments[0], qidMap);
   Vector<DagNode*> args(nrArguments);
-  for (int i = 0; i < nrArguments; ++i)
+  for (Index i = 0; i < nrArguments; ++i)
     args[i] = upArgument(arguments[i], qidMap);
-  return metaArgSymbol->makeDagNode(args);
+  return metaArgSymbol->makeDagNode(args);  // because we share a kind with TermList
 }
 
 DagNode*

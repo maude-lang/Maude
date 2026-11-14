@@ -1,3 +1,10 @@
+2026-11-13  Saruman the White  <eker@eker10>
+
+	* metaUpModule.cc (MetaLevel::upArguments):
+	(Vector<ModuleExpression*> version): handle empty Vector of
+	arguments (needed for TRANSFORMATION case); use Index rather than
+	int
+
 2026-11-08  Saruman the White  <eker@eker10>
 
 	* interpreterManagerSymbol.cc

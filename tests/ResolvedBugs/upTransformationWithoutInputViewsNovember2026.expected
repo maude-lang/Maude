@@ -1,0 +1,11 @@
+==========================================
+reduce in META-LEVEL : upImports('A) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result [ImportList]: including 'BOOL .
+protecting 'TUPLE[empty]('2)[empty]{'Nat, 'Nat} .
+==========================================
+reduce in META-LEVEL : upImports('B) .
+rewrites: 1 in 0ms cpu (0ms real) (~ rewrites/second)
+result ImportList: including 'BOOL .
+protecting 'LIST{'@['NAT]('NzNat)[empty]} .
+Bye.

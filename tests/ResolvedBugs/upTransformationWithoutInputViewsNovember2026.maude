@@ -1,0 +1,22 @@
+*** Claude found bug: up-transformation-without-input-views
+
+set show advisories off .
+
+*** A transformation with no input views: upImports writes its fourth argument as a _,_
+*** with no arguments, printed "_, _".
+*** Expected for A: 'TUPLE[empty]('2)[empty]{'Nat, 'Nat} (at the kind all the same, its
+*** second argument empty not being a ModuleExpression in META-LEVEL).
+*** Expected for B: the sort ImportList and 'LIST{'@['NAT]('NzNat)[empty]}; here the
+*** broken node is the only thing that leaves the result at the kind.
+
+fmod A is
+  protecting TUPLE(2){Nat, Nat} .
+endfm
+
+fmod B is
+  protecting LIST{@[NAT](NzNat)} .
+endfm
+
+red in META-LEVEL : upImports('A) .
+
+red in META-LEVEL : upImports('B) .
