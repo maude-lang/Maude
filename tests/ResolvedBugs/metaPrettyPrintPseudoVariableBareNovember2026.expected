@@ -1,0 +1,23 @@
+==========================================
+reduce in PV : g((X:Foo).Foo) .
+rewrites: 0
+result Foo: g((X:Foo).Foo)
+==========================================
+reduce in META-LEVEL : metaPrintToString(['PV], none, 'g['X:Foo], mixfix, none)
+    .
+rewrites: 2
+result String: "g((X:Foo).Foo)"
+==========================================
+reduce in META-LEVEL : metaPrettyPrint(['PV], none, 'g['X:Foo], mixfix, none) .
+rewrites: 2
+result NeQidList: 'g '`( '`( 'X:Foo '`) '.Foo '`)
+==========================================
+reduce in META-LEVEL : metaParse(['PV], none, 'g '`( 'X:Foo '`), anyType) .
+rewrites: 2
+result ResultPair?: ambiguity({'g['X:Foo], 'Foo}, {'g['X:Foo.Bar], 'Bar})
+==========================================
+reduce in META-LEVEL : metaParse(['PV], none, 'g '`( '`( 'X:Foo '`) '.Foo '`),
+    anyType) .
+rewrites: 2
+result ResultPair: {'g['X:Foo], 'Foo}
+Bye.

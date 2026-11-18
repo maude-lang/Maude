@@ -694,7 +694,7 @@ private:
 		   int rightCapture,
 		   const ConnectedComponent* rightCaptureComponent,
 		   bool rangeKnown);
-  void handleVariable(Vector<int>& buffer, Term* term, const PrintSettings& printSettings);
+  void handleVariable(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings);
   bool handleIter(Vector<int>& buffer, Term* term, SymbolInfo& si, bool rangeKnown, const PrintSettings& printSettings);
   bool handleMinus(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings);
   bool handleDivision(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings);

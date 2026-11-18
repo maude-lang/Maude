@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -183,7 +183,10 @@ MixfixModule::handleString(Vector<int>& buffer, Term* term, bool rangeKnown, con
 }
 
 void
-MixfixModule::handleQuotedIdentifier(Vector<int>& buffer, Term* term, bool rangeKnown, const PrintSettings& printSettings)
+MixfixModule::handleQuotedIdentifier(Vector<int>& buffer,
+				     Term* term,
+				     bool rangeKnown,
+				     const PrintSettings& printSettings)
 {
   int qidCode = safeCast(QuotedIdentifierTerm*, term)->getIdIndex();
   bool needDisambig = printSettings.getPrintFlag(PrintSettings::PRINT_DISAMBIG_CONST) ||
@@ -194,12 +197,22 @@ MixfixModule::handleQuotedIdentifier(Vector<int>& buffer, Term* term, bool range
 }
 
 void
-MixfixModule::handleVariable(Vector<int>& buffer, Term* term, const PrintSettings& printSettings)
+MixfixModule::handleVariable(Vector<int>& buffer,
+			     Term* term,
+			     bool rangeKnown,
+			     const PrintSettings& printSettings)
 {
   VariableTerm* v = safeCast(VariableTerm*, term);
   int id = v->id();
   Sort* sort = v->getSort();
-  
+  pair<int, int> p(id, sort->id());
+  //
+  //	We don't handle overloading by constants that look like kind variables;
+  //	for example X:[Foo], X:[Foo, Bar] etc
+  //
+  bool needDisambig = !rangeKnown && overloadedVariables.count(p); 
+  prefix(buffer, needDisambig);
+
   AliasMap::const_iterator i = variableAliases.find(id);
   if (i != variableAliases.end() && (*i).second == sort)
     {
@@ -221,6 +234,7 @@ MixfixModule::handleVariable(Vector<int>& buffer, Term* term, const PrintSetting
     }
   else
     printVarSort(buffer, fullName, sort, printSettings);
+  suffix(buffer, term, needDisambig, printSettings);
 }
 
 void
@@ -311,7 +325,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
       }
     case SymbolType::VARIABLE:
       {
-	handleVariable(buffer, term, printSettings);
+	handleVariable(buffer, term, rangeKnown, printSettings);
 	return;
       }
     case SymbolType::SMT_NUMBER_SYMBOL:

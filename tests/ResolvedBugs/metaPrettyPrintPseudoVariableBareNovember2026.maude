@@ -1,0 +1,23 @@
+*** Claude discovered bug: metaprettyprint-pseudo-variable-bare.maude
+
+set show timing off .
+set show advisories off .
+
+*** Make sure overloaded variable X:Foo is properly disambiguated.
+
+fmod PV is
+  sorts Foo Bar .
+  op g : Bar -> Bar .
+  op g : Foo -> Foo .
+  op X:Foo : -> Bar .
+endfm
+
+red g((X:Foo).Foo) .
+
+red in META-LEVEL : metaPrintToString(['PV], none, 'g['X:Foo], mixfix, none) .
+
+red in META-LEVEL : metaPrettyPrint(['PV], none, 'g['X:Foo], mixfix, none) .
+
+red in META-LEVEL : metaParse(['PV], none, 'g '`( 'X:Foo '`), anyType) .
+
+red in META-LEVEL : metaParse(['PV], none, 'g '`( '`( 'X:Foo '`) '.Foo '`), anyType) .

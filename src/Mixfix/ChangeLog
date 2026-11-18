@@ -1,3 +1,15 @@
+2026-11-17  Saruman the White  <eker@eker10>
+
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	handleVariable(), buffer version
+
+	* bufferPrint.cc (MixfixModule::prettyPrint): pass rangeKnown to
+	handleVariable()
+	(MixfixModule::handleQuotedIdentifier): reformatted
+	(MixfixModule::handleVariable): take rangeKnown
+	(MixfixModule::handleVariable): compute needDisambig, call
+	prefix(), suffix()
+
 2026-11-13  Saruman the White  <eker@eker10>
 
 	* search.cc (Interpreter::search): fix bug where normalization in

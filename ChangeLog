@@ -1,3 +1,7 @@
+2026-11-17  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/metaPrettyPrintPseudoVariableBareNovember2026.maude: added
+
 2026-11-13  Saruman the White  <eker@eker10>
 
 	* tests/ResolvedBugs/searchPatternCollapseDanglingNovember2026.maude: added
