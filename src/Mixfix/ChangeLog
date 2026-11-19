@@ -1,4 +1,25 @@
+2026-11-18  Saruman the White  <eker@eker10>
+
+	* mixfixParser.cc (MixfixParser::classicParse): dump terminal
+	numbers and meaning in PARSER_DEBUG mode
+	(MixfixParser::insertProduction): dump prodution rule in
+	PARSER_DEBUG mode
+
+	* makeGrammar.cc (MixfixModule::makeStrategyLanguageProductions):
+	moved stategy definitions, conditional strategy definitions and
+	strategy pairs here from makeStatementProductions() to fix a
+	subtle bug where strategy productions were ending up in simple
+	parsers and double-using nonterminals causing the error location
+	to be wrong in syntax errors and potentially causing ambiguities
+	(MixfixModule::makeComponentProductions): added DebugInfo() to
+	dump nonterminals for each component
+
 2026-11-17  Saruman the White  <eker@eker10>
+
+	* extendedParse.cc (MixfixParser::extendedParse): added
+	DebugInfo()
+
+	* mixfixParser.cc (MixfixParser::classicParse): added DebugInfo()
 
 	* mixfixModule.hh (class MixfixModule): updated decl for
 	handleVariable(), buffer version

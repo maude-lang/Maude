@@ -167,6 +167,18 @@ MixfixParser::insertProduction(int lhs,
     }
 #endif
 
+#if PARSER_DEBUG
+  cout << "<" << lhs << "> ::=";
+  for (int t : productionRhs)
+    {
+      if (t >= 0)
+	cout << " \"" << Token::name(tokenSet.ithElement(t)) << "\"";
+      else
+	cout << " <" << t << ">";
+    }
+  cout << endl;
+#endif
+
   parser.insertProd(lhs, productionRhs, prec, gather);
   int nrActions = actions.length();
   actions.expandBy(1);
@@ -291,15 +303,28 @@ MixfixParser::classicParse(int root, int& firstBad, int nrTokens)
   for (int i = 0; i < sentence.length(); i++)
     cout << sentence[i] << ' ';
   cout << ", " << root << '\n';
+  for (int i = 0; i < sentence.length(); i++)
+    cout << " \"" << Token::name(tokenSet.ithElement(sentence[i])) << "\"";
+  cout << endl;
+
+  int nrTerminals = tokenSet.size();
+  for (int i = 0; i < nrTerminals; ++i)
+    cout << i << " |-> " << Token::name(tokenSet.ithElement(i)) << endl;
 #endif
 
   nrParses = parser.parseSentence(sentence, root);
   DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
   if (nrParses == 0)  // no parse
-    firstBad = currentOffset + parser.getErrorPosition();
+    {
+      //
+      //	No parse; find the first bad token in *currentSentence.
+      //
+      firstBad = currentOffset + parser.getErrorPosition();
+      DebugInfo("firstBad = " << firstBad);
+    }
   
 #if PARSER_DEBUG
-  parser.printCurrentParse();
+  //parser.printCurrentParse();
 #endif
   
   return nrParses;

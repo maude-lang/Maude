@@ -300,7 +300,38 @@ MixfixModule::makeStrategyLanguageProductions()
   cout << "<Strategy Language productions>\n";
 #endif
 
-  static Vector<int> rhs(3);
+  Vector<int> rhs(4);
+  //
+  //	Strategy definitions.
+  //
+  rhs.resize(2);
+  rhs[0] = sd;
+  rhs[1] = SD_BODY;
+  parser->insertProduction(STATEMENT_PART, rhs, 0, gatherAny, MixfixParser::MAKE_SD);
+  //
+  //	Conditional definitions.
+  //
+  rhs.resize(4);
+  rhs[0] = csd;
+  rhs[1] = SD_BODY;
+  rhs[2] = ifToken;
+  rhs[3] = CONDITION;
+  parser->insertProduction(STATEMENT_PART, rhs, 0, gatherAnyAny, MixfixParser::MAKE_CSD);
+  //
+  //	Strategy definition bodies without labels.
+  //
+  rhs.resize(1);
+  rhs[0] = STRATEGY_PAIR;
+  parser->insertProduction(SD_BODY, rhs, 0, gatherAny);
+  //
+  //	Strategy pair (can be SD_BODY directly, with some changes)
+  //	<strategy pair> ::= <strategy call expr> := <strategy expression>
+  //
+  rhs.resize(3);
+  rhs[0] = STRATEGY_CALL_EXPRESSION;
+  rhs[1] = assign;
+  rhs[2] = STRATEGY_EXPRESSION;
+  parser->insertProduction(STRATEGY_PAIR, rhs, 0, gatherAnyAny);
   //
   //	We assume that rules have been flattened in. For each label occuring in a rule,
   //	we add a production.
@@ -728,10 +759,6 @@ MixfixModule::makeStatementProductions()
   rhs[0] = rl;
   rhs[1] = RL_BODY;
   parser->insertProduction(STATEMENT_PART, rhs, 0, gatherAny, MixfixParser::MAKE_RL);
-
-  rhs[0] = sd;
-  rhs[1] = SD_BODY;
-  parser->insertProduction(STATEMENT_PART, rhs, 0, gatherAny, MixfixParser::MAKE_SD);
   //
   //	Conditional statement parts.
   //
@@ -755,11 +782,6 @@ MixfixModule::makeStatementProductions()
   rhs[1] = RL_BODY;
   rhs[3] = RULE_CONDITION;
   parser->insertProduction(STATEMENT_PART, rhs, 0, gatherAnyAny, MixfixParser::MAKE_CRL);
-
-  rhs[0] = csd;
-  rhs[1] = SD_BODY;
-  rhs[3] = CONDITION;
-  parser->insertProduction(STATEMENT_PART, rhs, 0, gatherAnyAny, MixfixParser::MAKE_CSD);
   //
   //	Statement bodies without labels.
   //
@@ -772,19 +794,6 @@ MixfixModule::makeStatementProductions()
 
   rhs[0] = ARROW_PAIR;
   parser->insertProduction(RL_BODY, rhs, 0, gatherAny);
-
-  rhs[0] = STRATEGY_PAIR;
-  parser->insertProduction(SD_BODY, rhs, 0, gatherAny);
-
-  //
-  //	Strategy pair (can be SD_BODY directly, with some changes)
-  //	<strategy pair> ::= <strategy call expr> := <strategy expression>
-  //
-  rhs.resize(3);
-  rhs[0] = STRATEGY_CALL_EXPRESSION;
-  rhs[1] = assign;
-  rhs[2] = STRATEGY_EXPRESSION;
-  parser->insertProduction(STRATEGY_PAIR, rhs, 0, gatherAnyAny);
   //
   //	Statement bodies with labels.
   //
@@ -899,6 +908,14 @@ MixfixModule::makeComponentProductions()
 	//	if they doesn't have a more specific mapping.
 	//
 	Sort* kind = component->sort(Sort::KIND);
+
+	DebugInfo("for " << kind <<
+		  "\n  termNt = " << termNt <<
+		  "\n  sortNt = " << sortNt <<
+		  "\n  dotSortNt = " << dotSortNt <<
+		  "\n  assocListNt = " << assocListNt <<
+		  "\n  sortListNt = " << sortListNt);
+		    
 	string kindName(Token::name(kind->id()));
 	int t = Token::encode((kindName + " kind terminal").c_str());
 	parser->insertComponentTerminal(i, t);
@@ -952,7 +969,7 @@ MixfixModule::makeComponentProductions()
 	      parts[0] = Token::dotNameCode(lead);
 	      parser->insertProduction(dotSortNt, parts, 0, emptyGather);
 	      //
-	      //	Syntax for on-the-fly  variable of structured sort.
+	      //	Syntax for on-the-fly variable of structured sort.
 	      //
 	      parts[0] = leadTokens[lead];  // nonterminal
 	      parser->insertProduction(termNt, parts, 0, gatherAny,
@@ -973,7 +990,7 @@ MixfixModule::makeComponentProductions()
 	      //	with
 	      //	  <nonterminal> ::= terminal
 	      //	We use the nonterminal for on-the-fly variables
-	      //	  <FooTerm> ::= nonterminal
+	      //	  <FooTerm> ::= <nonterminal>
 	      //	so we can handle X:Foo where X:Foo is part of the user's
 	      //	syntax by adding a production
 	      //	  <nonterminal> ::= X:Foo

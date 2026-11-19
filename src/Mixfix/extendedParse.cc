@@ -158,6 +158,7 @@ MixfixParser::handleEndsInColon(int code, Index index, Index beyondEnd)
 int
 MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 {
+  DebugEnter("root = " << root << "  firstBad = " << firstBad << "  nrTokens = " << nrTokens);
   //
   //	Parse using wildcards and extended scope for otf variables.
   //	We assume that all tokens < firstBad have their classic translation
@@ -273,6 +274,7 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 	}
       if (j == firstBad && !usedExtendedTranslation)
 	{
+	  DebugInfo("giving up because we reached firstBad without using the extended translation");
 	  //
 	  //	Extended translation won't resolve the failure to parse
 	  //	in the classic translation. Because we didn't encounter
@@ -303,9 +305,13 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 
   nrParses = parser.parseSentence(sentence, root, terminalLists);
   DebugAdvisoryCheck(nrParses == 1, "New parser returned " << nrParses << " parses");
-  if (nrParses == 0)  // no parse
+  if (nrParses == 0)
     {
+      //
+      //	No parse; find the first bad token in *currentSentence.
+      //
       int newFirstBad = currentOffset + parser.getErrorPosition();
+      DebugInfo("newFirstBad = " << newFirstBad);
       if (newFirstBad > firstBad)
 	{
 	  //

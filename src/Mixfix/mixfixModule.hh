@@ -776,7 +776,7 @@ private:
   ConditionFragment* makeConditionFragment(int node);
   void makeCommand(int node, Vector<Term*>& terms);
   MixfixParser* parser;
- //
+  //
   //	These two data structures are filled out during the construction
   //	of a grammar and cleared immediately after. Thus they need not
   //	be preserved during parser swapping.
@@ -786,6 +786,7 @@ private:
   IntMap leadTokens;  // maps from lead tokens of structured sort to unique nonterminals
 
   typedef unordered_map<int, Sort*> SortMap;
+  //typedef map<int, Sort*> SortMap;
   SortMap sortNames;  // maps from name codes to sort pointers
 
   IntMap firstSymbols;  // names from name codes to index of first symbol with that name

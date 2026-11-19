@@ -1,7 +1,7 @@
 Grammar:
 	nonterminals: 253
 	terminals: 966
-	productions: 2553
+	productions: 2549
 
 Term rewriting system:
 	kinds: 44
@@ -17,7 +17,7 @@ Term rewriting system:
 Grammar:
 	nonterminals: 253
 	terminals: 966
-	productions: 2553
+	productions: 2549
 
 Term rewriting system:
 	kinds: 44
