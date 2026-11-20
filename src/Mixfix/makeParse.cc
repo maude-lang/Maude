@@ -1187,12 +1187,19 @@ MixfixParser::makeStatementPart(int node,
    case MAKE_SD:
    case MAKE_CSD:
       {
+	WarningCheck(!(flags.getFlag(VARIANT)),
+		     LineNumber(lineNumber) <<
+		     ": variant attribute not allowed for strategy definitions.");
 	WarningCheck(!(flags.getFlag(NARROWING)),
 		LineNumber(lineNumber) <<
 		": narrowing attribute not allowed for strategy definitions.");
 	WarningCheck(!(flags.getFlag(OWISE)),
 		LineNumber(lineNumber) <<
 		": otherwise attribute not allowed for strategy definitions.");
+	WarningCheck(!(flags.getFlag(EXTENSION)),
+		     LineNumber(lineNumber) <<
+		     ": extension attribute not allowed for strategy definitions.");
+	Assert(!(flags.getFlag(DNT)), "DNT flag shouldn't be set for a non-OO client");
 	pair<RewriteStrategy*, Term*> call = makeStrategyCall(parser.getChild(pairNode, 0));
 	StrategyExpression* rhs = makeStrategy(parser.getChild(pairNode, 1));
 	StrategyDefinition* sdef = new StrategyDefinition(label, call.first, call.second, rhs, condition);

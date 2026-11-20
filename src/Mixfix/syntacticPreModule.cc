@@ -297,28 +297,38 @@ void
 SyntacticPreModule::addStatement(const Vector<Token>& statement)
 {
   //
-  // Checks if this module admits the statement and issues a warning if
-  // it does not.
+  //	Checks if this module admits the statement and issues a warning if
+  //	it does not.
   //
   int keywordCode = statement[0].code();
   {
     MixfixModule::ModuleType moduleType = getModuleType();
-    bool isStrategic = MixfixModule::isStrategic(moduleType);
-    const char* modorth = MixfixModule::isTheory(moduleType) ? "theory." : "module.";
-
     if (keywordCode == rl || keywordCode == crl)
       {
-	if (moduleType == MixfixModule::FUNCTIONAL_MODULE ||
-	    moduleType == MixfixModule::FUNCTIONAL_THEORY)
-	  IssueWarning(LineNumber(statement[0].lineNumber()) <<
-		       ": rule not allowed in a functional " << modorth);
+	if (moduleType == MixfixModule::FUNCTIONAL_MODULE)
+	  {
+	     IssueWarning(LineNumber(statement[0].lineNumber()) <<
+			  ": rule not allowed in a functional module.");
+	     return;
+	  }
+	if (moduleType == MixfixModule::FUNCTIONAL_THEORY)
+	  {
+	     IssueWarning(LineNumber(statement[0].lineNumber()) <<
+			  ": rule not allowed in a functional theory.");
+	     return;
+	  }
       }
-    else if ((keywordCode == sd || keywordCode == csd) && !isStrategic)
+    bool isStrategic = MixfixModule::isStrategic(moduleType);
+    if ((keywordCode == sd || keywordCode == csd) && !isStrategic)
+      {
 	IssueWarning(LineNumber(statement[0].lineNumber()) <<
-	  ": strategy definition only allowed in a strategy module or theory.");
+		     ": strategy definition only allowed in a strategy module or theory.");
+	return;
+      }
   }
 
-  if (statement[1].code() == leftBracket &&
+  Index i = statement.size();
+  if (i > 4 && statement[1].code() == leftBracket &&
       statement[3].code() == rightBracket &&
       statement[4].code() == colon)
     {
@@ -327,11 +337,11 @@ SyntacticPreModule::addStatement(const Vector<Token>& statement)
 	(void) potentialRuleLabels.insert(statement[2].code());
     }
 
-  int i = statement.length() - 1;
+  --i;
   if (statement[i].code() == rightBracket)
     {
       int bracketCount = 1;
-      for (i -= 2; i >= 4; i--)
+      for (--i; i >= 5; --i)  // 5 is the earliest the label attribute could appear
 	{
 	  int t = statement[i].code();
 	  if (t == leftBracket)
@@ -350,7 +360,7 @@ SyntacticPreModule::addStatement(const Vector<Token>& statement)
 	    ++bracketCount;
 	}
     }
-  statements.append(statement);
+  statements.push_back(statement);
 }
 
 void

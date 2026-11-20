@@ -156,7 +156,7 @@ VisibleModule::latexPrintMembershipAxiom(ostream& s, const char* indent, const S
 		       false,
 		       false,
 		       false,
-		       mb->isExtension());
+		       false);
   s << "$\\maudeEndStatement\n";
 }
 

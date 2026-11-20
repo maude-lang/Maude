@@ -1,3 +1,23 @@
+2026-11-19  Saruman the White  <eker@eker10>
+
+	* makeParse.cc (MixfixParser::makeStatementPart): warn about
+	variant and extension attributes in strategy definition; assert
+	that DNT flag can't be set for a strategy definition since its
+	not part of an OO module
+
+	* mixfixParser.hh (enum Flags): added comments to explain what all
+	the flags are for
+
+	* syntacticPreModule.cc (SyntacticPreModule::addStatement): don't
+	allow rules to be added to functional theories/modules nor
+	strategy definitions to be added to non-strategic theories/modules
+	(SyntacticPreModule::addStatement): fix bug where we were
+	accessing 5th token of a 4 token statement
+
+	* latexModulePrint.cc (VisibleModule::latexPrintMembershipAxiom):
+	pass false rather than mb->isExtension() because we don't have any
+	kind of narrowing for mbs and therefore don't allow extension mbs
+
 2026-11-18  Saruman the White  <eker@eker10>
 
 	* mixfixParser.cc (MixfixParser::classicParse): dump terminal

@@ -225,13 +225,17 @@ private:
 
   enum Flags
   {
-    NONEXEC = 1,
-    OWISE = 2,
-    PRINT = 4,
-    VARIANT = 8,
-    NARROWING = 16,
-    EXTENSION = 32,
-    DNT = 128
+    //
+    //	Statements can have attributes that are stored as flags by mixfix parser.
+    //	Note that metadata and label attributes are not stored as flags.
+    //
+    NONEXEC = 1,	// non-executable
+    OWISE = 2,		// otherwise equation
+    PRINT = 4,		// has print attribute
+    VARIANT = 8,	// variant equation usable for variant narrowing
+    NARROWING = 16,	// narrowing rule usable for narrowing with variant unification
+    EXTENSION = 32,	// equation/rule added for extension completion; only used for narrowing
+    DNT = 128		// Do Not Transform; disappears after the OO transform phase
   };
 
   struct Action
