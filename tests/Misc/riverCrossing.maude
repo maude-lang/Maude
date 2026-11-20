@@ -1,0 +1,150 @@
+set show timing off .
+set show advisories off .
+
+fmod RIVER is
+  sort River Side Group .
+  subsort Side < Group .
+
+  op  _|_ : Group Group -> River [ctor comm] .
+  ops left right : -> Side [ctor] .
+  ops shepherd wolf goat cabbage : -> Group [ctor] .
+  ops __ : Group Group -> Group [ctor assoc comm prec 40] .
+
+  op initial : -> River .
+  eq initial = left shepherd wolf goat cabbage | right .
+endfm
+
+mod RIVER-CROSSING is
+  protecting RIVER .
+
+  vars G G' : Group .
+
+  rl [wolf-eats] : wolf goat G | shepherd G' => wolf G | shepherd G' .
+  rl [goat-eats] : cabbage goat G | shepherd G' => goat G | shepherd G' .
+
+  rl [alone] : shepherd G | G' => G | shepherd G' .
+  rl [wolf] : shepherd wolf G | G' => G | shepherd wolf G' .
+  rl [goat] : shepherd goat G | G' => G | shepherd goat G' .
+  rl [cabbage] : shepherd cabbage G | G' => G | shepherd cabbage G'  .
+endm
+
+smod RIVER-CROSSING-STRAT is
+  protecting RIVER-CROSSING .
+
+  strats safe solution eagerEating @ River .
+
+  var G : Group .
+
+  *** A well-known solution to the problem
+  sd solution := goat ; alone ; cabbage ; goat ; wolf ; alone ; goat .
+
+  *** Bad states (in which an animal can be eaten) are avoided
+  sd safe := match left | G ? idle : (oneCrossing ; not(eating) ; safe) .
+  *** Eating happens eagerly, always before moving
+  sd eagerEating := match left | G cabbage goat ? idle : ((eating or-else oneCrossing) ; eagerEating) .
+
+  strats oneCrossing eating @ River .
+
+  sd oneCrossing := alone | wolf | goat | cabbage .
+  sd eating := wolf-eats | goat-eats .
+  sd cross&eat := oneCrossing ; eating ! .
+
+  *** eagerEating, but it is exhaustively done after crossing
+  strat eagerEating2 cross&eat @ River .
+  sd eagerEating2 := match left | G cabbage goat ? idle : (cross&eat ; eagerEating2) .
+
+  *** Dummy strategy to exercise checks
+  strat stargs : Group @ River .
+  sd stargs(G) := idle .
+endsm
+
+sload model-checker
+
+mod RIVER-CROSSING-PREDS is
+  protecting RIVER-CROSSING .
+  including SATISFACTION .
+
+  subsort River < State .
+
+  ops goal death bad : -> Prop [ctor] .
+
+  var  R    : River .
+  vars G G' : Group .
+
+  eq left | right shepherd wolf goat cabbage |= goal = true .
+  eq R |= goal = false [owise] .
+
+  *** One or more characters are dead
+  eq G cabbage | G' goat |= death = false .
+  eq G cabbage goat | G' |= death = false .
+  eq R |= death = true [owise] .
+
+  *** A character (wolf or cabbage) can eat another character
+  eq G wolf goat | G' shepherd |= bad = true .
+  eq G goat cabbage | G' shepherd |= bad = true .
+  eq R |= bad = false [owise] .
+endm
+
+smod RIVER-CROSSING-SCHECK is
+  protecting RIVER-CROSSING-STRAT .
+  protecting RIVER-CROSSING-PREDS .
+  including MODEL-CHECKER .
+
+  var R : River .
+endsm
+
+*** Check whether the goal is reachable in the unrestricted system
+*** (the counterexample solution is not admissible)
+red modelCheck(initial, [] ~ goal) .
+
+*** This counterexample is an admissible solution
+red modelCheck(initial, [] ~ goal, using('eagerEating)) .
+red modelCheck(initial, [] ~ goal, using('safe)) .
+
+*** No bad state is ever visited with safe
+red modelCheck(initial, [] ~ bad, using('safe)) .
+
+*** If cross&eat is seen as an atomic action, they are also avoided with eagerEating2
+red modelCheck(initial, [] ~ bad, using('eagerEating2) opaque('cross&eat)) .
+red modelCheck(initial, [] ~ bad, using('eagerEating2)) .
+
+*** Bad states are not resolved to deaths in the unrestricted system
+red modelCheck(initial, [] (bad -> <> death)) .
+red modelCheck(initial, [] (bad -> <> death), using('eagerEating)) .
+red modelCheck(initial, [] (bad -> O death), using('eagerEating)) .
+
+*** Wrong calls to modelCheck
+red modelCheck(initial, <> goal, using('missing)) .
+red modelCheck(initial, <> goal, using('stargs)) .
+red modelCheck(initial, <> goal, opaque('safe)) .
+red modelCheck(initial, <> goal, full-matchrew) .
+
+*** Search for solution
+search initial =>* R s.t. R |= goal .
+show path states 32 .
+search initial =>* R s.t. R |= goal using eagerEating . 
+show path states 30 .
+
+*** Test for full-matchrew
+smod FULL-MATCHREW-TEST is
+  including RIVER-CROSSING-SCHECK .
+
+  rl [wolf-eats2] : wolf goat => wolf .
+  rl [goat-eats2] : goat cabbage => goat .
+
+  strat each @ River .
+  vars G1 G2 : Group .
+  sd each := matchrew G1 | G2 by G1 using wolf-eats2, G2 using goat-eats2 .
+
+  op initial2 : -> River .
+  eq initial2 = wolf goat left | goat cabbage right .
+
+  ops hasGoat hasCabbage : -> Prop [ctor] .
+  eq wolf goat G1 | G2 |= hasGoat = true .
+  eq goat cabbage G1 | G2 |= hasCabbage = true .
+  eq G1 | G2 |= hasGoat = false [owise] .
+  eq G1 | G2 |= hasCabbage = false [owise] .
+endsm
+
+red modelCheck(initial2, [] (hasGoat -> hasCabbage), using('each)) .
+red modelCheck(initial2, [] (hasGoat -> hasCabbage), using('each) full-matchrew) .

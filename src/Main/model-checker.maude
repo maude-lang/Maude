@@ -219,7 +219,7 @@ fmod SATISFACTION is
   op _|=_ : State Prop ~> Bool [frozen] .
 endfm
 
-fmod MODEL-CHECKER-COMMON is
+fmod MODEL-CHECKER is
   protecting QID .
   including SATISFACTION .
   including LTL .
@@ -230,17 +230,23 @@ fmod MODEL-CHECKER-COMMON is
   subsort Qid < RuleName .
   subsort Transition < TransitionList .
   subsort Bool < ModelCheckResult .
-  ops unlabeled deadlock : -> RuleName .
+  ops unlabeled deadlock solution : -> RuleName .
+  op strat : Qid -> RuleName [ctor] .
   op {_,_} : State RuleName -> Transition [ctor] .
   op nil : -> TransitionList [ctor] .
   op __ : TransitionList TransitionList -> TransitionList [ctor assoc id: nil] .
   op counterexample : TransitionList TransitionList -> ModelCheckResult [ctor] .
-endfm
 
-fmod MODEL-CHECKER is
-  including MODEL-CHECKER-COMMON .
+  *** model checker options
+  sorts ModelCheckOption ModelCheckOptionSet .
+  subsort ModelCheckOption < ModelCheckOptionSet .
+  op using : Qid -> ModelCheckOption [ctor] .
+  op full-matchrew : -> ModelCheckOption [ctor] .
+  op opaque : Qid -> ModelCheckOption [ctor] .
+  op none : -> ModelCheckOptionSet [ctor] .
+  op __ : ModelCheckOptionSet ModelCheckOptionSet -> ModelCheckOptionSet [ctor assoc id: none] .
 
-  op modelCheck : State Formula ~> ModelCheckResult
+  op modelCheck : State Formula ModelCheckOptionSet ~> ModelCheckResult
 	[special (
 	   id-hook ModelCheckerSymbol
 	   op-hook trueSymbol           (True : ~> Formula)
@@ -255,14 +261,25 @@ fmod MODEL-CHECKER is
 	   op-hook qidSymbol		(<Qids> : ~> Qid)
 	   op-hook unlabeledSymbol	(unlabeled : ~> RuleName)
 	   op-hook deadlockSymbol	(deadlock : ~> RuleName)
+	   op-hook solutionSymbol	(solution : ~> RuleName)
+	   op-hook stratSymbol		(strat : Qid ~> RuleName)
 	   op-hook transitionSymbol	({_,_} : State RuleName ~> Transition)
 	   op-hook transitionListSymbol
 		   (__ : TransitionList TransitionList ~> TransitionList)
 	   op-hook nilTransitionListSymbol	(nil : ~> TransitionList)
 	   op-hook counterexampleSymbol
 		   (counterexample : TransitionList TransitionList ~> ModelCheckResult)
+	   op-hook usingSymbol		(using : Qid ~> ModelCheckOption)
+	   op-hook opaqueSymbol		(opaque : Qid ~> ModelCheckOption)
+	   op-hook fullMatchrewSymbol	(full-matchrew : ~> ModelCheckOption)
+	   op-hook noneOptionSetSymbol	(none : ~> ModelCheckOptionSet)
+	   op-hook optionSetSymbol	(__ : ModelCheckOptionSet ModelCheckOptionSet ~> ModelCheckOptionSet)
 	   term-hook trueTerm		(true)
 	 )] .
+
+  *** for backwards compatibility
+  op modelCheck : State Formula -> ModelCheckResult .
+  eq modelCheck(S:[State], F:[Formula]) = modelCheck(S:[State], F:[Formula], none) .
 endfm
 
 fmod LTL+ is
@@ -287,13 +304,16 @@ fmod MODEL-CHECKER+ is
 
   op witness : TransitionList TransitionList -> ModelCheck+Result [ctor] .
   op modelCheck+ : State Formula+ ~> ModelCheck+Result .
+  op modelCheck+ : State Formula+ ModelCheckOptionSet ~> ModelCheck+Result .
   op neg : ModelCheck+Result -> ModelCheck+Result .
 
-  var f : Formula .  var st : State .
+  var f : Formula . var g : Formula+ . var st : State .
   vars TL1 TL2 : TransitionList .
+  vars OS : ModelCheckOptionSet .
 
-  eq modelCheck+(st, (E f)) = neg(modelCheck(st, (~ f))) .
-  eq modelCheck+(st, (A f)) = modelCheck(st, f) .
+  eq modelCheck+(st, g) = modelCheck+(st, g, none) .
+  eq modelCheck+(st, (E f), OS) = neg(modelCheck(st, (~ f), OS)) .
+  eq modelCheck+(st, (A f), OS) = modelCheck(st, f, OS) .
 
   eq neg(true) = false .
   eq neg(false) = true .
@@ -301,47 +321,3 @@ fmod MODEL-CHECKER+ is
   eq neg(witness(TL1, TL2)) = counterexample(TL1, TL2) .
 endfm
 
-fmod STRATEGY-MODEL-CHECKER is
-  including MODEL-CHECKER-COMMON .
-  protecting QID-LIST .
-
-  *** extended transition causes
-  op solution : -> RuleName .
-  op opaque : Qid -> RuleName [ctor] .
-
-  op modelCheck : State Formula Qid QidList Bool ~> ModelCheckResult
-	[special (
-	   id-hook StrategyModelCheckerSymbol
-	   op-hook trueSymbol           (True : ~> Formula)
-	   op-hook falseSymbol		(False : ~> Formula)
-	   op-hook notSymbol		(~_ : Formula ~> Formula)
-	   op-hook nextSymbol		(O_ : Formula ~> Formula)
-	   op-hook andSymbol		(_/\_ : Formula Formula ~> Formula)
-	   op-hook orSymbol		(_\/_ : Formula Formula ~> Formula)
-	   op-hook untilSymbol		(_U_ : Formula Formula ~> Formula)
-	   op-hook releaseSymbol	(_R_ : Formula Formula ~> Formula)
-	   op-hook satisfiesSymbol      (_|=_ : State Formula ~> Bool)
-	   op-hook qidSymbol		(<Qids> : ~> Qid)
-	   op-hook unlabeledSymbol	(unlabeled : ~> RuleName)
-	   op-hook solutionSymbol	(solution : ~> RuleName)
-	   op-hook opaqueSymbol		(opaque : Qid ~> RuleName)
-	   op-hook transitionSymbol	({_,_} : State RuleName ~> Transition)
-	   op-hook transitionListSymbol
-		   (__ : TransitionList TransitionList ~> TransitionList)
-	   op-hook nilTransitionListSymbol	(nil : ~> TransitionList)
-	   op-hook counterexampleSymbol
-		   (counterexample : TransitionList TransitionList ~> ModelCheckResult)
-	   term-hook trueTerm		(true)
-	 )] .
-
-  *** simplified interfaces
-  var S : [State] .
-  var F : [Formula] .
-  var Q : Qid .
-  var QL : QidList .
-
-  op modelCheck : State Formula Qid ~> ModelCheckResult [strategy (1 3 0)] .
-  op modelCheck : State Formula Qid QidList ~> ModelCheckResult [strategy (1 3 4 0)] .
-  eq modelCheck(S, F, Q) = modelCheck(S, F, Q, nil, false) .
-  eq modelCheck(S, F, Q, QL) = modelCheck(S, F, Q, QL, false) .
-endfm

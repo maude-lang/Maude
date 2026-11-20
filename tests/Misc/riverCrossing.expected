@@ -1,0 +1,157 @@
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, []~ goal) .
+rewrites: 89
+result ModelCheckResult: counterexample({right | left shepherd wolf goat
+    cabbage, 'wolf} {left goat cabbage | right shepherd wolf, 'alone} {right
+    wolf | left shepherd goat cabbage, 'goat} {left cabbage | right shepherd
+    wolf goat, 'alone} {left shepherd cabbage | right wolf goat, 'cabbage} {
+    left | right shepherd wolf goat cabbage, 'alone} {left shepherd | right
+    wolf goat cabbage, 'wolf-eats} {left shepherd | right wolf cabbage, 'alone}
+    {left | right shepherd wolf cabbage, 'wolf} {right cabbage | left shepherd
+    wolf, 'alone} {left wolf | right shepherd cabbage, 'cabbage}, {right | left
+    shepherd wolf cabbage, 'alone} {right shepherd | left wolf cabbage,
+    'alone})
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, []~ goal, using(
+    'eagerEating)) .
+rewrites: 94
+result ModelCheckResult: counterexample({right | left shepherd wolf goat
+    cabbage, 'goat} {left wolf cabbage | right shepherd goat, 'alone} {right
+    goat | left shepherd wolf cabbage, 'wolf} {left cabbage | right shepherd
+    wolf goat, 'goat} {right wolf | left shepherd goat cabbage, 'cabbage} {left
+    goat | right shepherd wolf cabbage, 'alone} {left shepherd goat | right
+    wolf cabbage, 'goat}, {left | right shepherd wolf goat cabbage, solution})
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, []~ goal, using('safe)) .
+rewrites: 36
+result ModelCheckResult: counterexample({right | left shepherd wolf goat
+    cabbage, 'goat} {left wolf cabbage | right shepherd goat, 'alone} {right
+    goat | left shepherd wolf cabbage, 'wolf} {left cabbage | right shepherd
+    wolf goat, 'goat} {right wolf | left shepherd goat cabbage, 'cabbage} {left
+    goat | right shepherd wolf cabbage, 'alone} {left shepherd goat | right
+    wolf cabbage, 'goat}, {left | right shepherd wolf goat cabbage, solution})
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, []~ bad, using('safe)) .
+rewrites: 58
+result Bool: true
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, []~ bad, using(
+    'eagerEating2) opaque('cross&eat)) .
+rewrites: 117
+result Bool: true
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, []~ bad, using(
+    'eagerEating2)) .
+rewrites: 12
+result ModelCheckResult: counterexample({right | left shepherd wolf goat
+    cabbage, 'alone} {right shepherd | left wolf goat cabbage, 'wolf-eats} {
+    right shepherd | left wolf cabbage, 'alone}, {right | left shepherd wolf
+    cabbage, 'alone} {right shepherd | left wolf cabbage, 'alone})
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, [](bad -> <> death)) .
+rewrites: 45
+result ModelCheckResult: counterexample({right | left shepherd wolf goat
+    cabbage, 'alone} {right shepherd | left wolf goat cabbage, 'alone} {right |
+    left shepherd wolf goat cabbage, 'wolf} {left goat cabbage | right shepherd
+    wolf, 'alone} {right wolf | left shepherd goat cabbage, 'goat} {left
+    cabbage | right shepherd wolf goat, 'alone} {left shepherd cabbage | right
+    wolf goat, 'cabbage}, {left | right shepherd wolf goat cabbage, 'alone} {
+    left shepherd | right wolf goat cabbage, 'alone})
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, [](bad -> <> death),
+    using('eagerEating)) .
+rewrites: 133
+result Bool: true
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, [](bad -> O death),
+    using('eagerEating)) .
+rewrites: 127
+result Bool: true
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, <> goal, using('missing))
+    .
+Warning: no strategy named missing in scope.
+rewrites: 0
+result [ModelCheckResult]: modelCheck(initial, True U goal, using('missing))
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, <> goal, using('stargs))
+    .
+Warning: the strategy given to modelCheck must not have parameters.
+rewrites: 0
+result [ModelCheckResult]: modelCheck(initial, True U goal, using('stargs))
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, <> goal, opaque('safe)) .
+rewrites: 23
+result ModelCheckResult: counterexample({right | left shepherd wolf goat
+    cabbage, 'alone} {right shepherd | left wolf goat cabbage, 'wolf-eats} {
+    right shepherd | left wolf cabbage, 'alone} {right | left shepherd wolf
+    cabbage, 'wolf} {left cabbage | right shepherd wolf, 'alone} {right wolf |
+    left shepherd cabbage, 'cabbage}, {left | right shepherd wolf cabbage,
+    'alone} {left shepherd | right wolf cabbage, 'alone})
+==========================================
+reduce in RIVER-CROSSING-SCHECK : modelCheck(initial, <> goal, full-matchrew) .
+rewrites: 23
+result ModelCheckResult: counterexample({right | left shepherd wolf goat
+    cabbage, 'alone} {right shepherd | left wolf goat cabbage, 'wolf-eats} {
+    right shepherd | left wolf cabbage, 'alone} {right | left shepherd wolf
+    cabbage, 'wolf} {left cabbage | right shepherd wolf, 'alone} {right wolf |
+    left shepherd cabbage, 'cabbage}, {left | right shepherd wolf cabbage,
+    'alone} {left shepherd | right wolf cabbage, 'alone})
+==========================================
+search in RIVER-CROSSING-SCHECK : initial =>* R such that R |= goal = true .
+
+Solution 1 (state 32)
+states: 33  rewrites: 97
+R --> left | right shepherd wolf goat cabbage
+
+No more solutions.
+states: 36  rewrites: 125
+state 0, River: right | left shepherd wolf goat cabbage
+--- wolf --->
+state 2, River: left goat cabbage | right shepherd wolf
+--- alone --->
+state 8, River: right wolf | left shepherd goat cabbage
+--- goat --->
+state 16, River: left cabbage | right shepherd wolf goat
+--- alone --->
+state 24, River: left shepherd cabbage | right wolf goat
+--- cabbage --->
+state 32, River: left | right shepherd wolf goat cabbage
+==========================================
+search in RIVER-CROSSING-SCHECK : initial =>* R such that R |= goal = true
+    using eagerEating .
+
+Solution 1 (state 30)
+states: 36  rewrites: 107
+R --> left | right shepherd wolf goat cabbage
+
+No more solutions.
+states: 36  rewrites: 111
+state 0, River: right | left shepherd wolf goat cabbage
+--- goat --->
+state 23, River: left wolf cabbage | right shepherd goat
+--- alone --->
+state 24, River: right goat | left shepherd wolf cabbage
+--- wolf --->
+state 25, River: left cabbage | right shepherd wolf goat
+--- goat --->
+state 27, River: right wolf | left shepherd goat cabbage
+--- cabbage --->
+state 28, River: left goat | right shepherd wolf cabbage
+--- alone --->
+state 29, River: left shepherd goat | right wolf cabbage
+--- goat --->
+state 30, River: left | right shepherd wolf goat cabbage
+==========================================
+reduce in FULL-MATCHREW-TEST : modelCheck(initial2, [](hasGoat -> hasCabbage),
+    using('each)) .
+rewrites: 14
+result Bool: true
+==========================================
+reduce in FULL-MATCHREW-TEST : modelCheck(initial2, [](hasGoat -> hasCabbage),
+    using('each) full-matchrew) .
+rewrites: 16
+result ModelCheckResult: counterexample({left wolf goat | right goat cabbage,
+    'goat-eats2} {right goat | left wolf goat, 'wolf-eats2}, {left wolf | right
+    goat, solution})
+Bye.

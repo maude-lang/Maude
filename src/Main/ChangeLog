@@ -1,3 +1,9 @@
+2026-11-20  Rubén Rubio  <rubenrub@ucm.es>
+
+	* model-checker.maude: remove STRATEGY-MODEL-CHECKER and modify
+	MODEL-CHECKER with ModelCheckOptionSet to access strategy-controlled
+	model checking
+
 2026-11-12  Rubén Rubio  <rubenrub@ucm.es>
 
 	* metaInterpreter.maude: add getStrategySearchResult and related

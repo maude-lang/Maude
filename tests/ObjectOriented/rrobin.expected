@@ -29,24 +29,28 @@ op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
 op __ left-identity collapse from [State] to State is unequal.
 op __ left-identity collapse from TransitionList to Transition is unequal.
 op __ right-identity collapse from TransitionList to Transition is unequal.
+op __ left-identity collapse from ModelCheckOptionSet to ModelCheckOption is
+    unequal.
+op __ right-identity collapse from ModelCheckOptionSet to ModelCheckOption is
+    unequal.
 ==========================================
 reduce in CHECK-RROBIN-5 : modelCheck(init, []~ twoInCrit) .
 ModelChecker: Property automaton has 2 states.
 ModelCheckerSymbol: Examined 10 system states.
-rewrites: 52
+rewrites: 53
 result Bool: true
 ==========================================
 reduce in CHECK-RROBIN-5 : modelCheck(init, []guaranteedReentrance) .
 ModelChecker: Property automaton has 52 states.
 ModelCheckerSymbol: Examined 10 system states.
-rewrites: 2263
+rewrites: 2264
 result Bool: true
 ==========================================
 reduce in CHECK-RROBIN-5 : modelCheck(init, [](inCrit([1]) -> O O O inCrit([
     1]))) .
 ModelChecker: Property automaton has 5 states.
 ModelCheckerSymbol: Examined 10 system states.
-rewrites: 67
+rewrites: 68
 result ModelCheckResult: counterexample({go([0]) < [0] : Proc | mode : wait > <
     [1] : Proc | mode : wait > < [2] : Proc | mode : wait > < [3] : Proc | mode
     : wait > < [4] : Proc | mode : wait >, 'enter} {< [0] : Proc | mode :
