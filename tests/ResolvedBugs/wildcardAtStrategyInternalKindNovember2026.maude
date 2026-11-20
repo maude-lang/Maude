@@ -1,0 +1,32 @@
+*** Claude discovered bug: wildcard-at-strategy-internal-kind
+
+set show timing off .
+set show advisories off .
+
+*** In a strategy module the wildcard is also read at the internal kind [strategy[internal]].
+
+set include BOOL off .
+
+fmod M is
+  sort S .
+  op c : -> S .
+endfm
+
+smod SM is
+  protecting M .
+  strat st @ S .
+endsm
+
+smod SM0 is
+  protecting M .
+endsm
+
+red in M : _ .
+red in SM0 : _ .
+
+srew in SM : c using match _ .
+srew in SM : c using match (_).S .
+
+red in META-LEVEL : metaParse(upModule('SM, false), none, '_, anyType) .
+
+show kinds SM .

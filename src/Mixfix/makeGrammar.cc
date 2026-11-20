@@ -893,6 +893,16 @@ MixfixModule::makeComponentProductions()
 
   const Vector<ConnectedComponent*>& components = getConnectedComponents();
   Index nrComponents = components.size();
+  if (isStrategic())
+    {
+      //
+      //	Strategy language adds an internal sort and component which
+      //	must be skipped - we will never want to parse it.
+      //
+      --nrComponents;
+      Assert(strategyRangeSort->component()->getIndexWithinModule() == nrComponents,
+	     "strategy language internal sort component not where expected");
+    }
   for (Index i = 0; i < nrComponents; ++i)
     {
       int termNt = nonTerminal(i, TERM_TYPE);

@@ -1,0 +1,33 @@
+==========================================
+reduce in M : _:[S] .
+rewrites: 0
+result [S]: _:[S]
+==========================================
+reduce in SM0 : _:[S] .
+rewrites: 0
+result [S]: _:[S]
+==========================================
+srewrite in SM : c using match _:[S] .
+
+Solution 1
+rewrites: 0
+result S: c
+
+No more solutions.
+rewrites: 0
+==========================================
+srewrite in SM : c using match _:[S] .
+
+Solution 1
+rewrites: 0
+result S: c
+
+No more solutions.
+rewrites: 0
+==========================================
+reduce in META-LEVEL : metaParse(upModule('SM, false), none, '_, anyType) .
+rewrites: 2
+result ResultPair: {'_:`[S`], '`[S`]}
+[S] (error free):
+	1	S
+Bye.

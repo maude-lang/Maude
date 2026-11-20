@@ -1,3 +1,9 @@
+2026-11-20  Saruman the White  <eker@eker10>
+
+	* makeGrammar.cc (MixfixModule::makeComponentProductions): skip
+	last component in a strategy module/theory because it will be the
+	component for internal sort strategyRangeSort
+
 2026-11-19  Saruman the White  <eker@eker10>
 
 	* makeParse.cc (MixfixParser::makeStatementPart): warn about
