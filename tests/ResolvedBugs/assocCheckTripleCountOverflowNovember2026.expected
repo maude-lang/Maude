@@ -1,0 +1,18 @@
+Warning: sort declarations for associative operator f are non-associative on
+    1656369 out of 2151685171 sort triples. First such triple is (A, X, X):
+  f(f(X:A, X:X), X:X)
+has sort A, while
+  f(X:A, f(X:X, X:X))
+has sort K.
+Warning: ctor declarations for associative operator f conflict on 1656369 out
+    of 2151685171 sort triples. First such triple is (A, X, X).
+In
+  f(f(X:A, X:X), X:X)
+both operators are constructors, while in
+  f(X:A, f(X:X, X:X))
+neither operator is a constructor.
+==========================================
+reduce in ASSOC-BIG-KIND : f(X:K, Y:K) .
+rewrites: 0
+result K: f(X:K, Y:K)
+Bye.

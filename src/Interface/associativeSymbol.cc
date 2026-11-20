@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ AssociativeSymbol::associativeSortCheck()
   //
   //   Sort table is not uniform so check all triples to see if it is associative.
   //
-  int nrBadTriples = 0;
+  Int64 nrBadTriples = 0;  // to avoid overflowing 32-bit int
   int bad1 = 0;
   int bad2 = 0;
   int bad3 = 0;
@@ -179,7 +179,7 @@ AssociativeSymbol::associativeSortCheck()
     //
     //	First invert the first step of the sort diagram.
     //
-    for (int i = 0; i < nrSorts; i++)
+    for (int i = 0; i < nrSorts; ++i)
       {
 	int step = traverse(0, i);
 	pair<InvMap::iterator, bool> p = invMap.insert(InvMap::value_type(step, Inv()));
@@ -198,11 +198,11 @@ AssociativeSymbol::associativeSortCheck()
     for (InvMap::const_iterator i = invMap.begin(); i != e; ++i)
       {
 	int step_i = i->first;
-	for (int j = 0; j < nrSorts; j++)
+	for (int j = 0; j < nrSorts; ++j)
 	{
 	  int step_j = traverse(0, j);
 	  int step_ij = traverse(0, traverse(step_i, j));
-	  for (int k = 1; k < nrSorts; k++)
+	  for (int k = 1; k < nrSorts; ++k)
 	    {
 	      int leftAssocResult = traverse(step_ij, k);
 	      int rightAssocResult = traverse(step_i, traverse(step_j, k));
@@ -222,10 +222,11 @@ AssociativeSymbol::associativeSortCheck()
 	}
       }
   }
+  Int64 nrSorts64 = nrSorts;  // so that nrSorts^3 doesn't overflow
   WarningCheck(nrBadTriples == 0,
 	       "sort declarations for associative operator " << QUOTE(this) <<
 	       " are non-associative on " << nrBadTriples <<
-	       " out of " << nrSorts * nrSorts *  nrSorts << 
+	       " out of " << nrSorts64 * nrSorts64 *  nrSorts64 << 
 	       " sort triples. First such triple is (" <<
 	       QUOTE(component->sort(bad1)) << ", " << 
 	       QUOTE(component->sort(bad2)) << ", " << 
@@ -262,7 +263,7 @@ AssociativeSymbol::associativeCtorCheck()
   int nrSorts = component->nrSorts();
 
 
-  int nrBadTriples = 0;
+  Int64 nrBadTriples = 0;  // to avoid overflowing 32-bit int
   int bad1 = 0;
   int bad2 = 0;
   int bad3 = 0;
@@ -280,12 +281,13 @@ AssociativeSymbol::associativeCtorCheck()
     //
     //	First invert the first step of the sort and ctor diagrams.
     //
-    for (int x = 0; x < nrSorts; x++)
+    for (int x = 0; x < nrSorts; ++x)
       {
 	int sortStep = traverse(0, x);
 	int ctorStep = ctorTraverse(0, x);
 
-	pair<InvMap::iterator, bool> p = invMap.insert(InvMap::value_type(IntPair(sortStep, ctorStep), Inv()));
+	pair<InvMap::iterator, bool> p = invMap.insert(InvMap::value_type(IntPair(sortStep, ctorStep),
+									  Inv()));
 	if  (p.second)
 	  {
 	    p.first->second.sortIndex = x;
@@ -339,10 +341,11 @@ AssociativeSymbol::associativeCtorCheck()
     "only the outer operator is a constructor",
     "both operators are constructors"
   };
+  Int64 nrSorts64 = nrSorts;  // so that nrSorts^3 doesn't overflow
   WarningCheck(nrBadTriples == 0,
 	       "ctor declarations for associative operator " << QUOTE(this) <<
 	       " conflict on " << nrBadTriples <<
-	       " out of " << nrSorts * nrSorts *  nrSorts << 
+	       " out of " << nrSorts64 * nrSorts64 * nrSorts64 << 
 	       " sort triples. First such triple is (" <<
 	       QUOTE(component->sort(bad1)) << ", " << 
 	       QUOTE(component->sort(bad2)) << ", " << 
