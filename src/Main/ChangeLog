@@ -2,6 +2,12 @@
 
 	* prelude.maude: added extension attribute to metalevel
 
+2026-11-20  Rubén Rubio  <rubenrub@ucm.es>
+
+	* model-checker.maude: remove STRATEGY-MODEL-CHECKER and modify
+	MODEL-CHECKER with ModelCheckOptionSet to access strategy-controlled
+	model checking
+
 2026-11-13  Saruman the White  <eker@eker10>
 
 	* main.cc (main): decide ansiColor and lineWrapping before

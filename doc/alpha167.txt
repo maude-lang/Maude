@@ -1,0 +1,79 @@
+Alpha 167 release notes
+========================
+
+New features
+============
+
+(1) An extension of the search command to restrict the search space using strategies.
+
+  <SearchCommand> ::= search <Term> <Arrow> <Term> [s.t. <Condition>] using <StrategyExpression> [such that <NameList> opaque]
+
+The new optional suffix "using <StrategyExpression>" limits the search to the subset of terms that can be reached by rewriting with the given strategy.
+However, the strategy-controlled rewrite graph is not a subgraph of the original rewrite graph, since a term may appear multiple times with different
+successors in different execution points of the strategy. The meaning of the arrows =>*, =>+, =>1, and =># is the same as in the standard search
+(for the restricted model), but =>! finds those states that are solutions to the strategy, i.e., where the strategy program halts.
+Indeed, "search t =>! X using α" is almost equivalent to "srewrite t using α".
+
+The show path, show path labels, show path states, and show search graph commands can also be used for the strategy-controlled search with the same
+syntax and output.
+
+The transitions of the strategy-controlled search graph are rule applications, like in the standard search command. However, aggregating the
+work done by a strategy can be sometimes convenient. The "such that name1, ..., namen opaque" suffix allows specifying one or more names of strategies
+whose complete execution will be seen as a single atomic step of the graph, labeled by the strategy. In other words, only the result of the "opaque" 
+strategy and not the intermediate states will be visible.
+
+More details on the strategy-controlled rewrite graph can be found in R. Rubio, N. Martí-Oliet, I. Pita, A. Verdejo. Strategies, model checking and
+branching-time properties in Maude. J. Log. Algebraic Methods Program. 123 (2021), and S. Eker, N. Martí-Oliet, J. Meseguer, R. Rubio, A. Verdejo.
+The Maude strategy language. J. Log. Algebraic Methods Program. 134 (2023).
+
+(2) The strategy-controlled search command is reflected at the metalevel with metaStrategySearch and metaStrategySearchPath:
+
+  op metaStrategySearch : Module Term Term Condition Qid Strategy QidSet Bound Nat ~> ResultTriple? [special (...)].
+  op metaStrategySearchPath : Module Term Term Condition Qid Strategy QidSet Bound Nat ~> Trace? [special (...)] .
+
+The first five and the last two arguments are the same as in metaSearch and metaSearchPath, but the sixth argument (of sort Strategy) is the
+metarepresentation of the strategy expression that controls rewriting, and the seventh argument (of sort QidSet) is the set of opaque strategy names.
+
+(3) An extension of the Maude LTL model checker to deal with strategy-controlled systems. The modelCheck operator in the MODEL-CHECKER module
+of the model-checker.maude file now takes a set of strategy-related model-checking options as third argument.
+
+  op modelCheck : State Formula ModelCheckOptionSet ~> ModelCheckResult [special (...)] .
+
+  sorts ModelCheckOption ModelCheckOptionSet .
+  subsort ModelCheckOption < ModelCheckOptionSet .
+  op using : Qid -> ModelCheckOption [ctor] .
+  op full-matchrew : -> ModelCheckOption [ctor] .
+  op opaque : Qid -> ModelCheckOption [ctor] .
+  op none : -> ModelCheckOptionSet [ctor] .
+  op __ : ModelCheckOptionSet ModelCheckOptionSet -> ModelCheckOptionSet [ctor assoc id: none] .
+
+When no option is given, modelCheck(S, F, none), the standard LTL model checker is invoked. For backwards compatibility, an overload with two arguments
+is provided
+
+  op modelCheck : State Formula -> ModelCheckResult .
+  eq modelCheck(S:[State], F:[Formula]) = modelCheck(S:[State], F:[Formula], none) .
+
+The strategy that controls rewriting is specified with the using('name) option, where "name" should be the name of a strategy without arguments
+defined in the module. In the strategy-controlled rewrite graph, the transitions are still rule applications, so the syntax of counterexamples is
+shared with the standard model checker. However, the special rule name "deadlock" is replaced by "solution" in the strategy case, since solutions
+of a strategy (the final state of a finite execution, what is obtained with srewrite) are not necessarily deadlocks. 
+
+Like in the strategy-controlled search command, opaque strategies can be specified with one or more opaque('name) options. Opaque strategy transitions
+would appear in counterexamples as strat('name) where "name" is the name of the strategy. Finally, the "full-matchrew" option enables the generation
+of the full interleaving combinations of parallel rewrite paths in any matchrew operator with more than one strategy. By default, the rewrites in the
+first subterm are executed before the rewrites in the second subterm, and so on. "full-matchrew", i.e. the concurrent semantics of matchrew, is not
+enabled by default because of its huge computational cost.
+
+This strategy-controlled model checker has previously existed as a separate extension of the Maude interpreter in https://github.com/fadoss/maudesmc.
+Their foundations are explained in the paper R. Rubio, N. Martí-Oliet, I. Pita, A. Verdejo. Model checking strategy-controlled systems in rewriting logic.
+Autom. Softw. Eng. 29(1): 7 (2022).
+
+(4) The extension of modelCheck is reproduced in the modelCheck+ operator for obtaining witnesses of existential properties
+in the MODEL-CHECK+ module:
+
+  op modelCheck+ : State Formula+ ModelCheckOptionSet ~> ModelCheck+Result .
+
+Bug fixes
+=========
+
+Fixes for several bugs reported by Julia Sapiña with Claude assistance.

@@ -29,6 +29,7 @@
 #include "cachedDag.hh"
 #include "modelChecker2.hh"
 #include "stateTransitionGraph.hh"
+#include "strategyTransitionGraph.hh"
 
 class ModelCheckerSymbol : public TemporalSymbol
 {
@@ -58,26 +59,60 @@ protected:
   void reset();
 
 private:
-  struct SystemAutomaton : public ModelChecker2::System
+  struct BaseAutomaton : public ModelChecker2::System
   {
-    int getNextState(int stateNr, int transitionNr);
-    bool checkProposition(int stateNr, int propositionIndex) const;
+    bool checkPropositionAux(DagNode* state, DagNode* proposition) const;
+    virtual ~BaseAutomaton() = default;
 
     DagNodeSet propositions;
     Symbol* satisfiesSymbol;
     RewritingContext* parentContext;
     DagNode* trueTerm;
-    StateTransitionGraph* systemStates;
+  };
+
+  struct SystemAutomaton : public BaseAutomaton
+  {
+    ~SystemAutomaton() override;
+
+    int getNextState(int stateNr, int transitionNr);
+    bool checkProposition(int stateNr, int propositionIndex) const;
+
+    StateTransitionGraph* systemStates = nullptr;
+  };
+
+  struct StrategyAutomaton : public BaseAutomaton
+  {
+    ~StrategyAutomaton() override;
+
+    int getNextState(int stateNr, int transitionNr);
+    bool checkProposition(int stateNr, int propositionIndex) const;
+
+    StrategyTransitionGraph* systemStates = nullptr;
+
+    #ifndef NO_SMC_2NDCACHE
+    using PropositionCache = std::map<std::pair<DagNode*, int>, bool>;
+    mutable PropositionCache propositionCache;
+    #endif
   };
 
   static bool eqRewrite(Symbol* symbol, DagNode* subject, RewritingContext& context);
 
+  bool parseOptionSet(DagNode* options, StrategyExpression*& strategy, bool& fullMatchrew, std::set<int>& opaques);
+  bool parseOption(DagNode* option, StrategyExpression*& strategy, bool& fullMatchrew, std::set<int>& opaques);
+
   void dump(const StateTransitionGraph& states, const list<int>& path);
+  void dump(const StrategyTransitionGraph& states, const list<int>& path);
   DagNode* makeTransition(const StateTransitionGraph& states, int stateNr, int target);
+  DagNode* makeTransition(const StrategyTransitionGraph& states, int stateNr, int target);
   DagNode* makeTransitionList(const StateTransitionGraph& states,
 			      const list<int>& path,
 			      int lastTarget);
+  DagNode* makeTransitionList(const StrategyTransitionGraph& states,
+			      const list<int>& path,
+			      int lastTarget,
+			      bool firstPath);
   DagNode* makeCounterexample(const StateTransitionGraph& states, const ModelChecker2& mc);
+  DagNode* makeCounterexample(const StrategyTransitionGraph& states, const ModelChecker2& mc);
 
   Symbol* satisfiesSymbol;
   //
@@ -86,10 +121,17 @@ private:
   QuotedIdentifierSymbol* qidSymbol;
   Symbol* unlabeledSymbol;
   Symbol* deadlockSymbol;
+  Symbol* solutionSymbol;
+  Symbol* stratSymbol;
   Symbol* transitionSymbol;
   Symbol* transitionListSymbol;
   Symbol* nilTransitionListSymbol;
   Symbol* counterexampleSymbol;
+  Symbol* usingSymbol;
+  Symbol* opaqueSymbol;
+  Symbol* fullMatchrewSymbol;
+  Symbol* noneOptionSetSymbol;
+  Symbol* optionSetSymbol;
 
   CachedDag trueTerm;
 };

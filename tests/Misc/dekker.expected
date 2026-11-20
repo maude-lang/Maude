@@ -1,10 +1,10 @@
 ==========================================
 reduce in CHECK : modelCheck(initial, []~ (enterCrit(1) /\ enterCrit(2))) .
-rewrites: 1048
+rewrites: 1049
 result Bool: true
 ==========================================
 reduce in CHECK : modelCheck(initial, []<> exec(1) -> []<> enterCrit(1)) .
-rewrites: 100
+rewrites: 101
 result ModelCheckResult: counterexample({{[1, repeat 'c1 := 0 ; while 'c2 = 0
     do if 'turn = 2 then 'c1 := 1 ; while 'turn = 2 do skip od ; 'c1 := 0 fi od
     ; crit ; 'turn := 2 ; 'c1 := 1 ; rem forever] | [2, repeat 'c2 := 0 ; while
@@ -100,6 +100,6 @@ result ModelCheckResult: counterexample({{[1, repeat 'c1 := 0 ; while 'c2 = 0
 ==========================================
 reduce in CHECK : modelCheck(initial, []<> exec(1) /\ []<> exec(2) -> []<>
     enterCrit(1) /\ []<> enterCrit(2)) .
-rewrites: 1319
+rewrites: 1320
 result Bool: true
 Bye.

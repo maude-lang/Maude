@@ -43,7 +43,6 @@
   MACRO(LoopSymbol, SymbolType::LOOP_SYMBOL)
   MACRO(Bubble, SymbolType::BUBBLE)
   MACRO(ModelCheckerSymbol, SymbolType::MODEL_CHECKER_SYMBOL)
-  MACRO(StrategyModelCheckerSymbol, SymbolType::STRATEGY_MODEL_CHECKER_SYMBOL)
   MACRO(SatSolverSymbol, SymbolType::SAT_SOLVER_SYMBOL)
   MACRO(SuccSymbol, SymbolType::SUCC_SYMBOL)
   MACRO(MinusSymbol, SymbolType::MINUS_SYMBOL)

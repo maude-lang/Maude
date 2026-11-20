@@ -46,6 +46,7 @@ TESTS = \
 	attributeConsistency \
 	makeCommand \
 	printAttributeSelect \
+	riverCrossing \
 	extensionAttribute
 
 MAUDE_FILES = \
@@ -96,7 +97,8 @@ MAUDE_FILES = \
 	attributeConsistency.maude \
 	makeCommand.maude \
 	printAttributeSelect.maude \
-	extensionAttribute
+	riverCrossing.maude \
+	extensionAttribute.maude
 
 RESULT_FILES = \
 	directoryTest.expected \
@@ -146,6 +148,7 @@ RESULT_FILES = \
 	attributeConsistency.expected \
 	makeCommand.expected \
 	printAttributeSelect.expected \
-	extensionAttribute
+	riverCrossing.expected \
+	extensionAttribute.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

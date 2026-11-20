@@ -37,6 +37,15 @@
 	a baseModule (i.e. a renaming, an instantiation, or a parameter
 	theory copy) ask our baseModule to donate it's original statements
 
+2026-11-20  Rubén Rubio  <rubenrub@ucm.es>
+
+	* fancySimbols.cc: remove STRATEGY_MODEL_CHECKER_SYMBOL
+
+	* specialSymbolTypes.cc: remove StrategyModelCheckerSymbol
+
+	* symbolType.hh (SymbolType::BasicTypes): remove
+	STRATEGY_MODEL_CHECKER_SYMBOL
+
 2026-11-20  Saruman the White  <eker@eker10>
 
 	* makeGrammar.cc (MixfixModule::makeComponentProductions): skip

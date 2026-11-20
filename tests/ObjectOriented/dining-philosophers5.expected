@@ -75,13 +75,17 @@ op _`,_ left-identity collapse from AttributeSet to Attribute is unequal.
 op __ left-identity collapse from Configuration to Object is unequal.
 op __ left-identity collapse from TransitionList to Transition is unequal.
 op __ right-identity collapse from TransitionList to Transition is unequal.
+op __ left-identity collapse from ModelCheckOptionSet to ModelCheckOption is
+    unequal.
+op __ right-identity collapse from ModelCheckOptionSet to ModelCheckOption is
+    unequal.
 ==========================================
 reduce in DINING-PHILOSOPHERS-5-CHECK : modelCheck(initState, []~ (phil-sticks(
     4, 1) /\ (phil-sticks(3, 1) /\ (phil-sticks(2, 1) /\ (phil-sticks(0, 1) /\
     phil-sticks(1, 1)))))) .
 ModelChecker: Property automaton has 2 states.
 ModelCheckerSymbol: Examined 459 system states.
-rewrites: 48194
+rewrites: 48195
 result ModelCheckResult: counterexample({{< 0 : Philosopher | status :
     thinking, chopsticks : 0, timer : 0 > < 0 : Chopstick | none > < 1 :
     Philosopher | status : thinking, chopsticks : 0, timer : 0 > < 1 :
