@@ -4,6 +4,8 @@
 	variant and extension attributes in strategy definition; assert
 	that DNT flag can't be set for a strategy definition since its
 	not part of an OO module
+	(MixfixParser::makeStatementPart): don't allow variant attribute
+	for owise equations
 
 	* mixfixParser.hh (enum Flags): added comments to explain what all
 	the flags are for

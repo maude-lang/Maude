@@ -1,3 +1,8 @@
+2026-11-19  Saruman the White  <eker@eker10>
+
+	* metaDown.cc (MetaLevel::downEquation): don't allow variable
+	attribute for owise equation
+
 2026-11-13  Saruman the White  <eker@eker10>
 
 	* metaUpModule.cc (MetaLevel::upArguments):

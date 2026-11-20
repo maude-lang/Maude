@@ -991,10 +991,18 @@ MetaLevel::downEquation(DagNode* metaEquation, MixfixModule* m)
 		    eq->setNonexec();
 		  if (ai.flags.getFlag(VARIANT))
 		    {
-		      if (condition.empty())
-			eq->setVariant();
+		      if (!condition.empty())
+			{
+			  IssueAdvisory("variant attribute not allowed for conditional equation in meta-module " <<
+					QUOTE(m) << '.');
+			}
+		      else if (ai.flags.getFlag(OWISE))
+			{
+			  IssueAdvisory("variant attribute not allowed for owise equation in meta-module " <<
+					QUOTE(m) << '.');
+			}
 		      else
-			IssueAdvisory("variant attribute not allowed for conditional equation in meta-module " << QUOTE(m) << '.');
+			eq->setVariant();
 		    }
 		  m->insertEquation(eq);
 		  m->checkEquation(eq);

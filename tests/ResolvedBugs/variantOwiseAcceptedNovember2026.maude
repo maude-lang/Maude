@@ -1,0 +1,48 @@
+*** Claude discovered bug: variant-owise-accepted
+
+set show timing off .
+set show advisories off .
+
+*** We shouldn't allow an equation to be both owise and variant.
+
+fmod OWV is
+  sort S .
+  ops a b : -> S [ctor] .
+  op f : S -> S .
+  eq f(a) = a [variant] .
+  eq f(X:S) = b [owise variant] .
+endfm
+
+fmod NOW is
+  sort S .
+  ops a b : -> S [ctor] .
+  op f : S -> S .
+  eq f(a) = a [variant] .
+  eq f(b) = b [variant] .
+endfm
+
+mod OWVR is
+  pr OWV .
+  ops g h : S -> S [ctor] .
+  rl [r] : g(Y:S) => h(f(Y:S)) [narrowing] .
+endm
+
+mod NOWR is
+  pr NOW .
+  ops g h : S -> S [ctor] .
+  rl [r] : g(Y:S) => h(f(Y:S)) [narrowing] .
+endm
+
+red in OWV : f(a) .
+red in OWV : f(b) .
+
+get variants in OWV : f(Y:S) .
+get variants in NOW : f(Y:S) .
+
+variant unify in OWV : f(Y:S) =? a .
+variant unify in NOW : f(Y:S) =? a .
+
+vu-narrow in OWVR : g(Z:S) =>1 h(a) .
+vu-narrow in NOWR : g(Z:S) =>1 h(a) .
+
+red in META-LEVEL : metaVariantUnify(upModule('OWV, false), 'f['Y:S] =? 'a.S, empty, 0, 0) .

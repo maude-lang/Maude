@@ -100,7 +100,8 @@ TESTS = \
 	decomposeAC_PairingNovember2026 \
 	decomposeAssocLengthNovember2026 \
 	searchPatternCollapseDanglingNovember2026 \
-	metaPrettyPrintPseudoVariableBareNovember2026
+	metaPrettyPrintPseudoVariableBareNovember2026 \
+	variantOwiseAcceptedNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -204,7 +205,8 @@ MAUDE_FILES = \
 	decomposeAC_PairingNovember2026.maude \
 	decomposeAssocLengthNovember2026.maude \
 	searchPatternCollapseDanglingNovember2026.maude \
-	metaPrettyPrintPseudoVariableBareNovember2026.maude
+	metaPrettyPrintPseudoVariableBareNovember2026.maude \
+	variantOwiseAcceptedNovember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -308,6 +310,7 @@ RESULT_FILES = \
 	decomposeAC_PairingNovember2026.expected \
 	decomposeAssocLengthNovember2026.expected \
 	searchPatternCollapseDanglingNovember2026.expected \
-	metaPrettyPrintPseudoVariableBareNovember2026.expected
+	metaPrettyPrintPseudoVariableBareNovember2026.expected \
+	variantOwiseAcceptedNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

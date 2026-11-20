@@ -1118,11 +1118,18 @@ MixfixParser::makeStatementPart(int node,
 	  eq->setNonexec();
 	if (flags.getFlag(VARIANT))
 	  {
-	    if (condition.empty())
-	      eq->setVariant();
+	    if (!condition.empty())
+	      {
+		IssueWarning(LineNumber(lineNumber) <<
+			     ": variant attribute not allowed for conditional equations.");
+	      }
+	    else if (flags.getFlag(OWISE))
+	      {
+		IssueWarning(LineNumber(lineNumber) <<
+			     ": variant attribute not allowed for owise equations.");
+	      }
 	    else
-	      IssueWarning(LineNumber(lineNumber) <<
-			   ": variant attribute not allowed for conditional equations.");
+	      eq->setVariant();
 	  }
 	if (flags.getFlag(EXTENSION))
 	  {

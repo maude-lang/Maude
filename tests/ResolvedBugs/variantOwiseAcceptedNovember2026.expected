@@ -1,0 +1,78 @@
+Warning: <standard input>, line 13 (fmod OWV): variant attribute not allowed
+    for owise equations.
+==========================================
+reduce in OWV : f(a) .
+rewrites: 1
+result S: a
+==========================================
+reduce in OWV : f(b) .
+rewrites: 1
+result S: b
+==========================================
+get variants in OWV : f(Y:S) .
+
+Variant 1
+rewrites: 1
+S: b
+Y:S --> #1:S
+
+No more variants.
+rewrites: 1
+==========================================
+get variants in NOW : f(Y:S) .
+
+Variant 1
+rewrites: 0
+S: f(#1:S)
+Y:S --> #1:S
+
+Variant 2
+rewrites: 2
+S: a
+Y:S --> a
+
+Variant 3
+rewrites: 2
+S: b
+Y:S --> b
+
+No more variants.
+rewrites: 2
+==========================================
+variant unify in OWV : f(Y:S) =? a .
+
+No unifiers.
+rewrites: 1
+==========================================
+variant unify in NOW : f(Y:S) =? a .
+
+Unifier 1
+rewrites: 2
+Y:S --> a
+
+No more unifiers.
+rewrites: 2
+==========================================
+vu-narrow in OWVR : g(Z:S) =>1 h(a) .
+
+No solution.
+rewrites: 2
+==========================================
+vu-narrow in NOWR : g(Z:S) =>1 h(a) .
+
+Solution 1
+rewrites: 3
+state: h(f(@1:S))
+accumulated substitution:
+Z:S --> @1:S
+variant unifier:
+@1:S --> a
+
+No more solutions.
+rewrites: 3
+==========================================
+reduce in META-LEVEL : metaVariantUnify(upModule('OWV, false), 'f['Y:S] =?
+    'a.S, (empty).GroundTermList, 0, 0) .
+rewrites: 2
+result UnificationPair?: (noUnifier).UnificationPair?
+Bye.
