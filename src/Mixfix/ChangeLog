@@ -1,3 +1,17 @@
+2026-11-22  Saruman the White  <eker@eker10>
+
+	* renameModule.cc (ImportModule::finishCopy): donate our local
+	statements to copy
+
+2026-11-21  Saruman the White  <eker@eker10>
+
+	* importModule.cc (ImportModule::finishFlattening): added
+	DebugInfo()s
+	(ImportModule::importSorts): formatting
+	(ImportModule::importStatements): if we are a canonicalRenaming of
+	a baseModule (i.e. a renaming, an instantiation, or a parameter
+	theory copy) ask our baseModule to donate it's original statements
+
 2026-11-20  Saruman the White  <eker@eker10>
 
 	* makeGrammar.cc (MixfixModule::makeComponentProductions): skip

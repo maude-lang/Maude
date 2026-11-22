@@ -101,6 +101,14 @@ ImportModule::finishCopy(ImportModule* copy, Renaming* canonical)
 	    {
 	      copy->closeFixUps();
 	      //
+	      //	Now that we expose the contents of copies via the
+	      //	transformer mechanism, we need to copy our local
+	      //	statements into the copy.
+	      //
+	      ImportTranslation importTranslation(copy, canonical);
+	      donateStatements2(copy, importTranslation);
+	      //	
+	      //
 	      //	Statements are not copied so we have no local statements.
 	      //
 	      copy->localStatementsComplete();

@@ -423,6 +423,7 @@ ImportModule::importSorts()
   //
   //	We first go through our parameter theories and ask them
   //	to donate their sorts.
+  //
   for (ImportModule* i : parameterTheories)
     i->donateSorts(this);
   //
@@ -574,7 +575,7 @@ void
 ImportModule::importStrategies()
 {
   //
-  //	We first fo through our parameter theories and ask them
+  //	We first go through our parameter theories and ask them
   //	to donate their strategies.
   //
   for (ImportModule* m : parameterTheories)
@@ -594,7 +595,7 @@ ImportModule::importStrategies()
   //	Keep track of which strategies were imported from parameter
   //	theories or regular imports.
   //
-  nrImportedStrategies = getStrategies().length();
+  nrImportedStrategies = getStrategies().size();
 }
 
 void
@@ -966,6 +967,8 @@ ImportModule::resetImportPhase()
 void
 ImportModule::finishFlattening()
 {
+  DebugInfo("-------- flattening " << this << " --------");
+  DebugInfo("nrEquations = " << getEquations().size());
   //
   //	This is intended to be called on modules which have had their
   //	signatures flattened, but have not had their statements flattened
@@ -994,6 +997,7 @@ ImportModule::finishFlattening()
       //	have been compiled since it relied on VariableInfo being filled out.
       //
       checkFreshVariableNames();
+      DebugInfo("after flattening: nrEquations = " << getEquations().size());
     }
 }
 

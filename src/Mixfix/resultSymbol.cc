@@ -311,7 +311,6 @@ ResultSymbol::upViewList(const Vector<View*>& inputViews, PointerMap& qidMap) co
     viewListSymbol->makeDagNode(metaViews);
 }
 
-
 DagNode*
 ResultSymbol::makeStartDag(const Vector<ImportModule*>& inputModules,
 			   DagNode* metaOptions,
