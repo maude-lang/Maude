@@ -1,0 +1,33 @@
+==========================================
+rewrite in POLY-FROZEN : h(a, a) .
+rewrites: 1
+result [S]: h(b, a)
+==========================================
+rewrite in POLY-FROZEN : k(a, a) .
+rewrites: 1
+result S: k(b, a)
+==========================================
+vu-narrow in POLY-FROZEN : k(a, a) =>1 X:S .
+
+Solution 1
+rewrites: 1
+state: k(b, a)
+accumulated substitution:
+variant unifier:
+X:S --> k(b, a)
+
+No more solutions.
+rewrites: 1
+==========================================
+vu-narrow in POLY-FROZEN : h(a, a) =>1 X:[S] .
+
+Solution 1
+rewrites: 1
+state: h(b, a)
+accumulated substitution:
+variant unifier:
+X:[S] --> h(b, a)
+
+No more solutions.
+rewrites: 1
+Bye.

@@ -1,4 +1,15 @@
+2026-11-23  Saruman the White  <eker@eker10>
+
+	* mixfixModule.cc (MixfixModule::instantiatePolymorph): fix
+	polymorph-frozen-ignored bug
+
 2026-11-22  Saruman the White  <eker@eker10>
+
+	* fixUp.cc (SyntacticPreModule::fixUpPolymorph): fix typo
+
+	* validateAttributes.cc (MixfixModule::validateAttributes): fix
+	typo
+	(MixfixModule::validateAttributes): fix typos
 
 	* extendedParse.cc (MixfixParser::extendedParse): fix bug where
 	firstBad wasn't being updated if we got further with exact parsing

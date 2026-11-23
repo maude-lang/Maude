@@ -1,8 +1,23 @@
+2026-11-23  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/polymorphFrozenIgnoredNovember2026.maude: added
+
+	* tests/ResolvedBugs/strategyDefAttributesNovember2026.maude: added
+
+	* tests/ResolvedBugs/ruleAcceptedIntoFmodNovember2026.maude: added
+
+2026-11-22  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/extendedParseModeWrongErrorLocationNovember2026.maude:
+	added
+
+	* tests/ResolvedBugs/flattenInstantiationNovember2026.maude: added
+
 2026-11-20  Saruman the White  <eker@eker10>
 
-	* tests/ResolvedBugs/assocCheckTripleCountOverflowNovember2026.maude: added
-
 	* tests/ResolvedBugs/wildcardAtStrategyInternalKindNovember2026.maude: added
+
+	* tests/ResolvedBugs/assocCheckTripleCountOverflowNovember2026.maude: added
 
 2026-11-17  Saruman the White  <eker@eker10>
 

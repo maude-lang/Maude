@@ -107,7 +107,8 @@ TESTS = \
 	flattenInstantiationNovember2026 \
 	extendedParseModeWrongErrorLocationNovember2026 \
 	ruleAcceptedIntoFmodNovember2026 \
-	strategyDefAttributesNovember2026
+	strategyDefAttributesNovember2026 \
+	polymorphFrozenIgnoredNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -218,7 +219,8 @@ MAUDE_FILES = \
 	flattenInstantiationNovember2026.maude \
 	extendedParseModeWrongErrorLocationNovember2026.maude \
 	ruleAcceptedIntoFmodNovember2026.maude \
-	strategyDefAttributesNovember2026.maude 
+	strategyDefAttributesNovember2026.maude \
+	polymorphFrozenIgnoredNovember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -329,6 +331,7 @@ RESULT_FILES = \
 	flattenInstantiationNovember2026.expected \
 	extendedParseModeWrongErrorLocationNovember2026.expected \
 	ruleAcceptedIntoFmodNovember2026.expected \
-	strategyDefAttributesNovember2026.expected
+	strategyDefAttributesNovember2026.expected \
+	polymorphFrozenIgnoredNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

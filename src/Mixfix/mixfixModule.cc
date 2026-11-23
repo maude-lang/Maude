@@ -906,6 +906,8 @@ MixfixModule::instantiatePolymorph(int polymorphIndex, int kindIndex)
 					     symbolType.hasFlag(SymbolType::MEMO));
 	  symbolType.clearFlags(SymbolType::AXIOMS | SymbolType::ITER);
 	}
+      if (symbolType.hasFlag(SymbolType::FROZEN))
+	symbol->setFrozen(p.frozen);
       symbol->setLineNumber(p.name.lineNumber());
       symbol->addOpDeclaration(domainAndRange, symbolType.hasFlag(SymbolType::CTOR));
       //

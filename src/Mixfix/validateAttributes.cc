@@ -167,7 +167,7 @@ MixfixModule::validateAttributes(Token prefixName,
 	    {
 	      IssueWarning(LineNumber(lineNr) <<
 			   ": comm operator " << QUOTE(prefixName) <<
-			   " must either have both domain sorts polymorhic or neither.");
+			   " must either have both domain sorts polymorphic or neither.");
 	      symbolType.clearFlags(SymbolType::COMM);
 	    }
 	}
@@ -230,7 +230,7 @@ MixfixModule::validateAttributes(Token prefixName,
 		{
 		  IssueWarning(LineNumber(lineNr) <<
 			       ": id operator " << QUOTE(prefixName) <<
-			       " must have right domain sort and range sort polymophic.");
+			       " must have right domain sort and range sort polymorphic.");
 		  symbolType.clearFlags(SymbolType::LEFT_ID | SymbolType::RIGHT_ID);
 		}
 	    }
@@ -270,7 +270,7 @@ MixfixModule::validateAttributes(Token prefixName,
 		{
 		  IssueWarning(LineNumber(lineNr) <<
 			       ": id operator " << QUOTE(prefixName) <<
-			       " must have left domain sort and range sort polymophic.");
+			       " must have left domain sort and range sort polymorphic.");
 		  symbolType.clearFlags(SymbolType::LEFT_ID | SymbolType::RIGHT_ID);
 		}
 	    }

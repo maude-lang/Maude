@@ -1,0 +1,18 @@
+*** Claude discovered bug: polymorph-frozen-ignored
+
+set show timing off .
+set show advisories off .
+
+mod POLY-FROZEN is
+  sort S .
+  ops a b : -> S .
+  op h : Universal Universal -> Universal [poly (1 2 0) frozen (2)] .
+  op k : S S -> S [frozen (2)] .
+  rl [r] : a => b [narrowing] .
+endm
+
+rew h(a, a) .
+rew k(a, a) .
+
+vu-narrow k(a, a) =>1 X:S .
+vu-narrow h(a, a) =>1 X:[S] .

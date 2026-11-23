@@ -270,7 +270,7 @@ SyntacticPreModule::fixUpPolymorph(const OpDecl& opDecl)
 	{
 	  int nonPolyIndex = polymorphType.hasFlag(SymbolType::LEFT_ID) ? 0 : 1;
 	  Sort* wanted = opDef.domainAndRange[nonPolyIndex];
-	  Assert(wanted != 0, "illegal polymophic arg - should have be fixed by validation");
+	  Assert(wanted != 0, "illegal polymorphic arg - should have be fixed by validation");
 	  Term* id = flatModule->parseTerm(opDef.identity, wanted->component());
 	  if (id == 0)
 	    FIX_UP_FAILED;
