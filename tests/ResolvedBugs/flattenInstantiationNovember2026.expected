@@ -1,0 +1,184 @@
+*********** equation
+eq trans(M:ModuleList, _:[ModuleExpressionList,ParameterList,GTermList,QidSet,
+    QidList,TypeListSet,Type?,Header], _1:[ModuleExpressionList,ParameterList,
+    GTermList,QidSet,QidList,TypeListSet,Type?,Header], _2:[ViewList], _3:[
+    ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header], FM:ModuleList) = {nil, nil} .
+M:ModuleList --> fmod '"P{E}" is
+  protecting 'ELT .
+  sorts 'Pair`{E`} .
+  none
+  op '<_`,_> : 'Elt 'Elt -> 'Pair`{E`} [ctor] .
+  op 'swap : 'Pair`{E`} -> 'Pair`{E`} [none] .
+  none
+  eq 'swap['<_`,_>['A:Elt, 'B:Elt]] = '<_`,_>['B:Elt, 'A:Elt] [metadata(
+    "from fmod P{}")] .
+endfm
+_:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> (nil).TypeList
+_1:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> 'P{'E}
+_2:[ViewList] --> (nil).ViewList
+_3:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> (empty).EmptyCommaList
+FM:ModuleList --> fmod '"P{E}" is
+  nil
+  sorts 'Elt ; 'Pair`{E`} .
+  none
+  op '<_`,_> : 'Elt 'Elt -> 'Pair`{E`} [ctor] .
+  op 'a : nil -> 'Elt [none] .
+  op 'b : nil -> 'Elt [none] .
+  op 'swap : 'Pair`{E`} -> 'Pair`{E`} [none] .
+  none
+  eq 'a.Elt = 'b.Elt [metadata("from fmod ELT")] .
+  eq 'swap['<_`,_>['A:Elt, 'B:Elt]] = '<_`,_>['B:Elt, 'A:Elt] [metadata(
+    "from fmod P{}")] .
+endfm
+trans(fmod '"P{E}" is
+  protecting 'ELT .
+  sorts 'Pair`{E`} .
+  none
+  op '<_`,_> : 'Elt 'Elt -> 'Pair`{E`} [ctor] .
+  op 'swap : 'Pair`{E`} -> 'Pair`{E`} [none] .
+  none
+  eq 'swap['<_`,_>['A:Elt, 'B:Elt]] = '<_`,_>['B:Elt, 'A:Elt] [metadata(
+    "from fmod P{}")] .
+endfm, nil, 'P{'E}, nil, empty, fmod '"P{E}" is
+  nil
+  sorts 'Elt ; 'Pair`{E`} .
+  none
+  op '<_`,_> : 'Elt 'Elt -> 'Pair`{E`} [ctor] .
+  op 'a : nil -> 'Elt [none] .
+  op 'b : nil -> 'Elt [none] .
+  op 'swap : 'Pair`{E`} -> 'Pair`{E`} [none] .
+  none
+  eq 'a.Elt = 'b.Elt [metadata("from fmod ELT")] .
+  eq 'swap['<_`,_>['A:Elt, 'B:Elt]] = '<_`,_>['B:Elt, 'A:Elt] [metadata(
+    "from fmod P{}")] .
+endfm)
+--->
+{(nil).ModuleList, (nil).SystemMsgList}
+Warning: <standard input>, line 43 (make TRANS-PE): this module contains one or
+    more errors that could not be patched up and thus it cannot be used or
+    imported.
+*********** equation
+eq trans(M:ModuleList, _:[ModuleExpressionList,ParameterList,GTermList,QidSet,
+    QidList,TypeListSet,Type?,Header], _1:[ModuleExpressionList,ParameterList,
+    GTermList,QidSet,QidList,TypeListSet,Type?,Header], _2:[ViewList], _3:[
+    ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header], FM:ModuleList) = {nil, nil} .
+M:ModuleList --> fmod '"ELT * (op b to c)" is
+  nil
+  sorts 'Elt .
+  none
+  op 'a : nil -> 'Elt [none] .
+  op 'c : nil -> 'Elt [none] .
+  none
+  eq 'a.Elt = 'c.Elt [metadata("from fmod ELT")] .
+endfm
+_:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> (nil).TypeList
+_1:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> 'ELT * (
+  op 'b to 'c [none]
+)
+_2:[ViewList] --> (nil).ViewList
+_3:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> (empty).EmptyCommaList
+FM:ModuleList --> fmod '"ELT * (op b to c)" is
+  nil
+  sorts 'Elt .
+  none
+  op 'a : nil -> 'Elt [none] .
+  op 'c : nil -> 'Elt [none] .
+  none
+  eq 'a.Elt = 'c.Elt [metadata("from fmod ELT")] .
+endfm
+trans(fmod '"ELT * (op b to c)" is
+  nil
+  sorts 'Elt .
+  none
+  op 'a : nil -> 'Elt [none] .
+  op 'c : nil -> 'Elt [none] .
+  none
+  eq 'a.Elt = 'c.Elt [metadata("from fmod ELT")] .
+endfm, nil, 'ELT * (
+  op 'b to 'c [none]
+), nil, empty, fmod '"ELT * (op b to c)" is
+  nil
+  sorts 'Elt .
+  none
+  op 'a : nil -> 'Elt [none] .
+  op 'c : nil -> 'Elt [none] .
+  none
+  eq 'a.Elt = 'c.Elt [metadata("from fmod ELT")] .
+endfm)
+--->
+{(nil).ModuleList, (nil).SystemMsgList}
+Warning: <standard input>, line 52 (make TRANS-RELT): this module contains one
+    or more errors that could not be patched up and thus it cannot be used or
+    imported.
+*********** equation
+eq trans(M:ModuleList, _:[ModuleExpressionList,ParameterList,GTermList,QidSet,
+    QidList,TypeListSet,Type?,Header], _1:[ModuleExpressionList,ParameterList,
+    GTermList,QidSet,QidList,TypeListSet,Type?,Header], _2:[ViewList], _3:[
+    ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header], FM:ModuleList) = {nil, nil} .
+M:ModuleList --> fmod '"ELT2 * (op b to c)" is
+  including 'ELT * (
+    op 'b to 'c [none]
+  ) .
+  sorts none .
+  none
+  op 'e : nil -> 'Elt [none] .
+  none
+  eq 'e.Elt = 'a.Elt [metadata("from fmod ELT2")] .
+endfm
+_:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> (nil).TypeList
+_1:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> 'ELT2 * (
+  op 'b to 'c [none]
+)
+_2:[ViewList] --> (nil).ViewList
+_3:[ModuleExpressionList,ParameterList,GTermList,QidSet,QidList,TypeListSet,
+    Type?,Header] --> (empty).EmptyCommaList
+FM:ModuleList --> fmod '"ELT2 * (op b to c)" is
+  nil
+  sorts 'Elt .
+  none
+  op 'a : nil -> 'Elt [none] .
+  op 'c : nil -> 'Elt [none] .
+  op 'e : nil -> 'Elt [none] .
+  none
+  eq 'a.Elt = 'c.Elt [metadata("from fmod ELT")] .
+  eq 'e.Elt = 'a.Elt [metadata("from fmod ELT2")] .
+endfm
+trans(fmod '"ELT2 * (op b to c)" is
+  including 'ELT * (
+    op 'b to 'c [none]
+  ) .
+  sorts none .
+  none
+  op 'e : nil -> 'Elt [none] .
+  none
+  eq 'e.Elt = 'a.Elt [metadata("from fmod ELT2")] .
+endfm, nil, 'ELT2 * (
+  op 'b to 'c [none]
+), nil, empty, fmod '"ELT2 * (op b to c)" is
+  nil
+  sorts 'Elt .
+  none
+  op 'a : nil -> 'Elt [none] .
+  op 'c : nil -> 'Elt [none] .
+  op 'e : nil -> 'Elt [none] .
+  none
+  eq 'a.Elt = 'c.Elt [metadata("from fmod ELT")] .
+  eq 'e.Elt = 'a.Elt [metadata("from fmod ELT2")] .
+endfm)
+--->
+{(nil).ModuleList, (nil).SystemMsgList}
+Warning: <standard input>, line 64 (make TRANS-RELT2): this module contains one
+    or more errors that could not be patched up and thus it cannot be used or
+    imported.
+Bye.

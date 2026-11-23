@@ -1,0 +1,64 @@
+*** Bug where instantiations and renamings didn't get base module's statements when
+*** flattened. Normally we can't see the contents of these modules - they can
+*** only be imported or used in module expressions that bypasses this bug
+*** because the missing statements aren't local. However module transformers
+*** expose the meta version of such a module's contents
+
+set show timing off .
+set show advisories off .
+
+set include BOOL off .
+
+fmod P{X :: TRIV} is
+  sort Pair{X} .
+  op <_,_> : X$Elt X$Elt -> Pair{X} [ctor] .
+  op swap : Pair{X} -> Pair{X} .
+vars A B : X$Elt .
+  eq swap(< A, B >) = < B, A > [metadata "from fmod P{}"] .
+endfm
+
+fmod ELT is
+  sort Elt .
+  ops a b : -> Elt .
+  eq a = b [metadata "from fmod ELT"] .
+endfm
+
+view E from TRIV to ELT is
+  sort Elt to Elt .
+endv
+
+fmod TRANS is
+  protecting MODULE-TRANSFORMER .
+  op trans : ModuleList QidList ModuleExpressionList ViewList ParameterList
+              ModuleList -> ModuleResult [metadata "transformer"] .
+  eq trans(M:ModuleList,_,_,_,_, FM:ModuleList) = {nil, nil} .
+endfm
+
+set trace on .
+
+*** Trace to see what trans() is actually passed:
+*** M should be assigned the structured version of P{E} with the statement from P only.
+*** FM should be assigned the flattened version of P{E} with both statements.
+
+make TRANS-PE is TRANS[P{E}] endm
+
+---
+
+*** Similar issue with renamings:
+*** M should be assigned the structured version of ELT * (op b to c) with
+*** the renamed statement from ELT.
+*** Because there are no imports FM should get the same.
+
+make TRANS-RELT is TRANS[ELT * (op b to c)] endm
+
+fmod ELT2 is
+  inc ELT .
+  op e : -> Elt .
+  eq e = a [metadata "from fmod ELT2"] .
+endfm
+
+*** M should be assigned the structured version of ELT2 * (op b to c)
+*** with an import of ELT * (op b to c) and the statement from ELT2.
+*** FM should have the statement from fmod ELT also and no import.
+
+make TRANS-RELT2 is TRANS[ELT2 * (op b to c)] endm

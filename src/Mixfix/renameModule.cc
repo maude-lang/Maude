@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -100,14 +100,6 @@ ImportModule::finishCopy(ImportModule* copy, Renaming* canonical)
 	  if (!(copy->isBad()))
 	    {
 	      copy->closeFixUps();
-	      //
-	      //	Now that we expose the contents of copies via the
-	      //	transformer mechanism, we need to copy our local
-	      //	statements into the copy.
-	      //
-	      ImportTranslation importTranslation(copy, canonical);
-	      donateStatements2(copy, importTranslation);
-	      //	
 	      //
 	      //	Statements are not copied so we have no local statements.
 	      //

@@ -1,5 +1,16 @@
 2026-11-22  Saruman the White  <eker@eker10>
 
+	* importModule.cc (ImportModule::importStatements): if we're a
+	renamed copy, ask our base module for its local statements and
+	treat them as our local statements
+
+	* renameModule.cc (ImportModule::finishCopy): reverse previous
+	change - we don't want to pull in statements until the module is
+	flattened
+
+	* importModule.cc (ImportModule::donateStatements2): added
+	DebugEnter()
+
 	* renameModule.cc (ImportModule::finishCopy): donate our local
 	statements to copy
 

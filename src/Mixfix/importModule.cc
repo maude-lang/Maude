@@ -602,6 +602,32 @@ void
 ImportModule::importStatements()
 {
   DebugEnter("for module " << this);
+  if (canonicalRenaming != nullptr)
+    {
+      //
+      //	We are a renaming of baseModule. This can arise
+      //	in three ways:
+      //	(1) A normal renaming of a module, M * R
+      //	(2) An instantation of a module, M{V1,..., Vn}
+      //	(3) An parameter copy of a theory, X :: T
+      //
+      //	We should not have any statements at the moment but
+      //	if we're going to be examined we will need them all,
+      //	including the renamed ones from our base module.
+      //
+      ImportTranslation importTranslation(this, canonicalRenaming);    
+      baseModule->donateStatements2(this, importTranslation);
+      //
+      //	Because they came from our base module, rather than
+      //	from imports, we will treat them as original statements,
+      //	because otherwise they would be missing from the
+      //	nonflat version.
+      //
+      nrOriginalMembershipAxioms = getSortConstraints().size();
+      nrOriginalEquations = getEquations().size();
+      nrOriginalRules = getRules().size();
+      nrOriginalStrategyDefinitions = getStrategyDefinitions().size();
+    }
   //
   //	We first go through our parameter theories and ask them
   //	to donate their statements.
@@ -797,6 +823,7 @@ ImportModule::donateStrategies2(ImportModule* importer, Renaming* renaming)
 void
 ImportModule::donateStatements2(ImportModule* importer, ImportTranslation& importTranslation)
 {
+  DebugEnter("donating from " << this << " to " << importer);
   if (canonicalRenaming != 0)
     {
       importTranslation.push(canonicalRenaming, this);
