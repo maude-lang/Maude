@@ -105,7 +105,9 @@ TESTS = \
 	assocCheckTripleCountOverflowNovember2026 \
 	wildcardAtStrategyInternalKindNovember2026 \
 	flattenInstantiationNovember2026 \
-	extendedParseModeWrongErrorLocationNovember2026
+	extendedParseModeWrongErrorLocationNovember2026 \
+	ruleAcceptedIntoFmodNovember2026 \
+	strategyDefAttributesNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -214,7 +216,9 @@ MAUDE_FILES = \
 	assocCheckTripleCountOverflowNovember2026.maude \
 	wildcardAtStrategyInternalKindNovember2026.maude \
 	flattenInstantiationNovember2026.maude \
-	extendedParseModeWrongErrorLocationNovember2026.maude 
+	extendedParseModeWrongErrorLocationNovember2026.maude \
+	ruleAcceptedIntoFmodNovember2026.maude \
+	strategyDefAttributesNovember2026.maude 
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -323,6 +327,8 @@ RESULT_FILES = \
 	assocCheckTripleCountOverflowNovember2026.expected \
 	wildcardAtStrategyInternalKindNovember2026.expected \
 	flattenInstantiationNovember2026.expected \
-	extendedParseModeWrongErrorLocationNovember2026.expected
+	extendedParseModeWrongErrorLocationNovember2026.expected \
+	ruleAcceptedIntoFmodNovember2026.expected \
+	strategyDefAttributesNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

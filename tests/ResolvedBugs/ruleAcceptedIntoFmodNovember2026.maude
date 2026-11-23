@@ -1,0 +1,16 @@
+*** Rule accepted into fmod despite warning
+
+set show timing off .
+set show advisories off .
+
+set include BOOL off .
+
+fmod FOO is
+  sort Foo .
+  ops a b : -> Foo .
+  rl a => b .
+endfm
+
+show all .
+
+rew a .

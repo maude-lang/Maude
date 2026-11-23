@@ -1,0 +1,12 @@
+Warning: <standard input>, line 12 (smod FOO): variant attribute not allowed
+    for strategy definitions.
+Warning: <standard input>, line 12 (smod FOO): extension attribute not allowed
+    for strategy definitions.
+smod FOO is
+  sort Foo .
+  op a : -> Foo .
+  op b : -> Foo .
+  strat s @ Foo .
+  sd s := idle .
+endsm
+Bye.

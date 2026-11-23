@@ -1,0 +1,15 @@
+*** variant and extension attributes are illegal for
+*** strategy definitions but are silently ignored.
+
+set show advisories off .
+
+set include BOOL off .
+
+smod FOO is
+  sort Foo .
+  ops a b : -> Foo .
+  strat s @ Foo .
+  sd s := idle [variant extension] .
+endsm
+
+show all .
