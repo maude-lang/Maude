@@ -1,0 +1,11 @@
+*** We have a syntax error that is later in extended parse mode than in classic parse
+*** mode and should be indicated as the correct error location.
+
+set show advisories off .
+
+fmod TRANS is
+  protecting MODULE-TRANSFORMER .
+  op trans : ModuleList QidList ModuleExpressionList ViewList ParameterList
+              ModuleList -> ModuleResult [metadata "transformer"] .
+  eq trans(_,_,_,_,_, FM:ModuleList) = {nil, none} .
+endfm

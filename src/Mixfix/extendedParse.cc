@@ -317,11 +317,9 @@ MixfixParser::extendedParse(int root, int& firstBad, int nrTokens)
 	  //
 	  //	We got further, but that maybe due to inexactness.
 	  //
+	  firstBad = newFirstBad;
 	  if (inexact)
-	    {
-	      Verbose("Reported error may not be the earliest due to inexact parsing.");
-	      firstBad = newFirstBad;
-	    }
+	    Verbose("Reported error may not be the earliest due to inexact parsing.");
 	}
     }
   else if (inexact)

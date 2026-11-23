@@ -1,5 +1,8 @@
 2026-11-22  Saruman the White  <eker@eker10>
 
+	* extendedParse.cc (MixfixParser::extendedParse): fix bug where
+	firstBad wasn't being updated if we got further with exact parsing
+
 	* importModule.cc (ImportModule::importStatements): if we're a
 	renamed copy, ask our base module for its local statements and
 	treat them as our local statements

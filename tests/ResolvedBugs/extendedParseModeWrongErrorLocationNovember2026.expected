@@ -1,0 +1,5 @@
+Warning: <standard input>, line 10 (fmod TRANS): didn't expect token none:
+eq trans ( _ , _ , _ , _ , _ , FM:ModuleList ) = { nil , none <---*HERE*
+Warning: <standard input>, line 10 (fmod TRANS): no parse for statement
+eq trans (_, _, _, _, _, FM:ModuleList) = {nil, none} .
+Bye.
