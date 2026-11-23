@@ -411,6 +411,7 @@ ModelCheckerSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 	delete optContext;
 	d->getArgument(0)->computeTrueSort(*sysContext);
 	context.addInCount(*sysContext);
+	delete sysContext;
 	delete newContext;
 	delete strategy;
 	return tryEquations(subject, context);
@@ -440,8 +441,10 @@ ModelCheckerSymbol::eqRewrite(DagNode* subject, RewritingContext& context)
 		    " did not reduce to a valid negative normal form.");
       d->getArgument(0)->computeTrueSort(*sysContext);
       context.addInCount(*sysContext);
+      delete sysContext;
       delete newContext;
       delete strategy;
+      delete system;
       return tryEquations(subject, context);
     }
   context.addInCount(*newContext);
@@ -528,7 +531,7 @@ ModelCheckerSymbol::parseOption(DagNode* option, StrategyExpression*& strategy,
     {
       if (strategy != nullptr)
 	{
-	  IssueWarning("the " << QUOTE("opaque") << " option is given twice.");
+	  IssueWarning("the " << QUOTE("using") << " option is given twice.");
 	  return false;
 	}
       DagNode* argument = safeCastNonNull<FreeDagNode*>(option)->getArgument(0);

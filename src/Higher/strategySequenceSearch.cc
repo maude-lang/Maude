@@ -57,10 +57,14 @@ StrategySequenceSearch::StrategySequenceSearch(RewritingContext* initial,
   matchState = nullptr;
   explore = -1;
   exploreDepth = -1;
+  firstDeeperNodeNr = 0;
+  returnedStateAlready = false;
+  returnedStateDag = NONE;
   needToTryInitialState = (searchType == ANY_STEPS);
   normalFormNeeded = (searchType == NORMAL_FORM);
+  branchNeeded = (searchType == BRANCH);
   nextArc = NONE;
-  stateInfo.append({NONE, 0, PENDING});
+  stateInfo.append({NONE, PENDING});
 }
 
 StrategySequenceSearch::~StrategySequenceSearch()
@@ -111,7 +115,7 @@ StrategySequenceSearch::findNextInterestingState()
 
       needToTryInitialState = false;  // don't do this again
 
-      if (result == IN_SOLUTION || result == IN_LOOP)
+      if (result != FAILED)
 	{
 	  seenSolutions.insert(0);
 	  return 0;
@@ -127,47 +131,67 @@ StrategySequenceSearch::findNextInterestingState()
       //	Get next state to explore.
       //
       ++explore;
-      // Finish since there is no more states
+      returnedStateAlready = false;  // needed for BRANCH search type
+      returnedStateDag = NONE;
       if (explore == graph.getNrStates())
-	break;
-      // Unexplored state, it may not be valid, we should explore it
+	break;   // all states explored
+      //
+      //	Are we at the first node of the next level?
+      //
+      if (explore == firstDeeperNodeNr)
+	{
+	  ++exploreDepth;
+	  if (normalFormNeeded || branchNeeded)
+	    {
+	      //
+	      //	If we're looking for a state that has a certain number of successors we need to
+	      //	search one level beyond maxDepth
+	      //
+	      if (maxDepth != NONE && exploreDepth > maxDepth)
+		break;
+	    }
+	  else
+	    {
+	      //
+	      //	Otherwise we just search to maxDepth (which will never be true if maxDepth == NONE).
+	      //
+	      if (exploreDepth == maxDepth)
+		break;
+	    }
+	  //
+	  //	Next state generated (if there is one) will be the first node of the following level.
+	  //
+	  firstDeeperNodeNr = getNrStates();
+	}
+      //
+      //	Unexplored state, it may not be valid, we should explore it
+      //
       if (stateInfo[explore].flag == PENDING)
 	if (exploreState(explore) == PENDING)
 	  return NONE;
-
-      // Only valid states whose depth is within bounds are visited (if we are
-      // looking for solutions, the children of explore may need to be
-      // generated to decide whether explore is a solution)
-      exploreDepth = stateInfo[explore].depth;
-      if (!validState(explore) || (maxDepth > 0 && exploreDepth >= maxDepth && (normalFormNeeded || exploreDepth != maxDepth)))
+      //
+      //	Skip invalid states
+      //
+      if (!validState(explore))
 	continue;
       nextArc = 0;
-
+      //
+      //	Explore the arcs of the current state.
+      //
     exploreArcs:
       int nrStates = graph.getNrStates();
       int nextStateNr;
       while ((nextStateNr = graph.getNextState(explore, nextArc)) != NONE)
 	{
 	  ++nextArc;
-
-	  // A new state has been found, we store its parent and depth
+	  //
+	  //	The state is not explored yet (it may not be a valid state), so we have to explore it now
+	  //
 	  if (nextStateNr == nrStates)
 	    {
-	      stateInfo.append({explore, exploreDepth + 1, PENDING});
-	      nrStates++;
+	      stateInfo.append({explore, PENDING});
+	      nrStates = graph.getNrStates();
 	    }
-
-	  // At the depth limit, children are not explored
-	  if (maxDepth > 0 && exploreDepth >= maxDepth)
-	    {
-	      if (graph.isSolutionState(explore))
-		break;
-	      else
-		continue;
-	    }
-
-	  // The state is not explored yet (it may not be a valid state),
-	  // so we have to explore it now
 	  if (stateInfo[nextStateNr].flag == PENDING)
 	    {
 	      if (exploreState(nextStateNr) == PENDING)
@@ -176,8 +200,41 @@ StrategySequenceSearch::findNextInterestingState()
 	      // should keep nrStates updated to detect new states here
 	      nrStates = graph.getNrStates();
 	    }
-
-	  if (!normalFormNeeded && validState(nextStateNr) && newSolution(nextStateNr))
+	  //
+	  //	Skip invalid states
+	  //
+	  if (!validState(nextStateNr))
+	    continue;
+	  //
+	  //	Set parent if not yet seen
+	  //
+	  if (stateInfo[nextStateNr].parent == NONE)
+	    stateInfo[nextStateNr].parent = explore;
+	  if (normalFormNeeded)
+	    {
+	      if (graph.isSolutionState(explore))
+		break; // the solution will be returned below
+	    }
+	  else if (branchNeeded)
+	    {
+	      //
+	      //	Branch is having two different terms as successors
+	      //
+	      if (!returnedStateAlready)
+		{
+		  int thisDag = graph.getStatePoint(nextStateNr).first;
+		  if (returnedStateDag == NONE)
+		    returnedStateDag = thisDag;
+		  else if (returnedStateDag != thisDag)
+		  {
+		    returnedStateAlready = true;  // so we don't return the state again if we see another distinct next state
+		    if (newSolution(nextStateNr))
+			return explore;
+		  }
+		}
+	    }
+	  // A new solution has been found
+	  else if (newSolution(nextStateNr))
 	    return nextStateNr;
 	}
       if (graph.getContext()->traceAbort())
@@ -215,7 +272,7 @@ StrategySequenceSearch::exploreState(int stateNr)
     {
       // The successor is a new state
       if (nextStateNr == stateInfo.size())
-	stateInfo.append({stateNr, stateInfo[stateNr].depth + 1, PENDING});
+	stateInfo.append({NONE, PENDING});
 
       // Check whether the current state is a solution of the strategy
       if (graph.isSolutionState(stateNr))

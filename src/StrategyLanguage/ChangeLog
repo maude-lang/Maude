@@ -1,3 +1,9 @@
+2026-11-23  Rubén Rubio  <rubenrub@ucm.es>
+
+	* modelCheckerSubtermTask.cc
+	(ModelCheckerSubtermTask::ModelCheckerSubtermTask): clone extensionInfo
+	and protect variable context to avoid use after free
+
 2026-10-30  Rubén Rubio <rubenrub@ucm.es>
 
 	* applicationProcess.cc (ApplicationProcess::ApplicationProcess):

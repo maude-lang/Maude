@@ -81,17 +81,18 @@ ModelCheckerSubtermTask::ModelCheckerSubtermTask(StrategicSearch &searchObject,
 }
 
 ModelCheckerSubtermTask::ModelCheckerSubtermTask(ModelCheckerSubtermTask &task,
-	const Vector<DagNode*> &subterms
+						 const Vector<DagNode*> &subterms
 )
   : StrategicTask(&task, task.getVarsContext()),
     searchState(task.searchState),
-    extensionInfo(task.extensionInfo),
+    extensionInfo((task.extensionInfo == nullptr) ? nullptr : task.extensionInfo->makeClone()),
     searchIndex(task.searchIndex),
     searchObject(task.searchObject),
     strategy(task.strategy),
     subterms(subterms)
 {
   setEnclosingSubtermTask(this);
+  searchObject.protect(task.getVarsContext());
   StrategicTask::pending = task.pending;
 }
 

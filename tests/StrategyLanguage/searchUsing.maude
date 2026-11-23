@@ -32,6 +32,7 @@ show path states 2 .
 show search graph .
 search a =>1 L using ac .
 search a =>+ L using ac .
+search a =># L using ac .
 search a =>! L using ac .
 search a =>* L using ac such that ac opaque .
 show path 1 .
@@ -82,6 +83,10 @@ search c =>* L using matchrew L by M:Letter using idle .
 search c =>* L using matchrew L such that L == M:Letter by L using idle .
 search c =>* L using ab[L <- M:Letter] .
 search c =>* L using xew(M:Letter) .
+
+*** multiple successors
+search a =># L using all * .
+search a =># L using (ab | bc | bd | ca) * .
 
 smod LETTER-BOX is
 	protecting LETTER .

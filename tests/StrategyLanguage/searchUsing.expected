@@ -59,6 +59,11 @@ L --> c
 No more solutions.
 states: 3  rewrites: 2
 ==========================================
+search in LETTER : a =># L using ac .
+
+No solution.
+states: 3  rewrites: 2
+==========================================
 search in LETTER : a =>! L using ac .
 
 Solution 1 (state 2)
@@ -363,16 +368,42 @@ L --> e
 
 No more solutions.
 states: 2  rewrites: 1
-Warning: <standard input>, line 80: variable L is used before it is bound in
+Warning: <standard input>, line 81: variable L is used before it is bound in
     condition of test strategy.
-Warning: <standard input>, line 81: variable M:Letter (1) is not a subterm of
+Warning: <standard input>, line 82: variable M:Letter (1) is not a subterm of
     the main pattern in matchrew strategy.
-Warning: <standard input>, line 82: variable M:Letter is used before it is
+Warning: <standard input>, line 83: variable M:Letter is used before it is
     bound in condition of matchrew strategy.
-Warning: <standard input>, line 83: unbound variable M:Letter in application
+Warning: <standard input>, line 84: unbound variable M:Letter in application
     strategy substitution for L.
-Warning: <standard input>, line 84: unbound variable M:Letter in strategy call
+Warning: <standard input>, line 85: unbound variable M:Letter in strategy call
     argument.
+==========================================
+search in LETTER : a =># L using all * .
+
+Solution 1 (state 0)
+states: 4  rewrites: 4
+L --> a
+
+Solution 2 (state 1)
+states: 5  rewrites: 7
+L --> b
+
+Solution 3 (state 2)
+states: 5  rewrites: 9
+L --> c
+
+No more solutions.
+states: 5  rewrites: 9
+==========================================
+search in LETTER : a =># L using (ab | bc | bd | ca)* .
+
+Solution 1 (state 1)
+states: 4  rewrites: 4
+L --> b
+
+No more solutions.
+states: 4  rewrites: 4
 ==========================================
 search in LETTER-BOX : < a > =>+ < L > using box{ab} .
 

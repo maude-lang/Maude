@@ -69,7 +69,6 @@ private:
 
   struct MoreStateInfo {
     int parent;
-    int depth;
     StateFlag flag;
   };
 
@@ -89,9 +88,13 @@ private:
   const int maxDepth;
   int explore;
   int exploreDepth;
+  int firstDeeperNodeNr;
   int nextArc;
+  bool returnedStateAlready;  // state indexed by explore has already been returned in branchNeeded search
+  int returnedStateDag;
   bool needToTryInitialState;
   bool normalFormNeeded;
+  bool branchNeeded;
   MatchSearchState* matchState;
   int stateNr;
 };

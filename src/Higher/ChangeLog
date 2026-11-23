@@ -3,6 +3,20 @@
 	* rewriteSearchState.cc (RewriteSearchState::findNextRewrite):
 	don't use rules with extension attribute
 
+2026-11-23  Rubén Rubio  <rubenrub@ucm.es>
+
+	* modelCheckerSymbol.cc: fixed memory leaks and typo
+
+	* strategySequenceSearch.cc
+	(StrategySequenceSearch::findNextInterestingState): change search to
+	handle =># and other fixes
+	(StrategySequenceSearch::exploreState): change data appended to stateInfo
+
+	* strategySequenceSearch.hh (class StrategySequenceSearch): add
+	attributes firstDeeperNodeNr, returnedStateAlready, returnedStateDag,
+	branchNeeded
+	(struct StrategySequenceSearch::MoreStateInfo): remove depth field
+
 2026-11-20  Rubén Rubio  <rubenrub@ucm.es>
 
 	* strategyModelCheckerSymbol.cc: removed

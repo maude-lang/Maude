@@ -11,8 +11,10 @@ New features
 The new optional suffix "using <StrategyExpression>" limits the search to the subset of terms that can be reached by rewriting with the given strategy.
 However, the strategy-controlled rewrite graph is not a subgraph of the original rewrite graph, since a term may appear multiple times with different
 successors in different execution points of the strategy. The meaning of the arrows =>*, =>+, =>1, and =># is the same as in the standard search
-(for the restricted model), but =>! finds those states that are solutions to the strategy, i.e., where the strategy program halts.
-Indeed, "search t =>! X using α" is almost equivalent to "srewrite t using α".
+(for the restricted model), but =>! finds those states that are solutions to the strategy, i.e., where the strategy program halts. Indeed,
+"search t =>! X using α" is almost equivalent to "srewrite t using α". Notice that, due to the backtracking semantics of the strategy language,
+a single execution step may not be confirmed until the whole execution or a significant part finishes. Hence, a depth-bounded strategy-controlled
+search may not terminate.
 
 The show path, show path labels, show path states, and show search graph commands can also be used for the strategy-controlled search with the same
 syntax and output.
