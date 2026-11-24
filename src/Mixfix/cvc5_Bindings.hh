@@ -62,6 +62,7 @@ private:
   cvc5::Term makeBooleanExpr(DagNode* dag);
   cvc5::Term makeNumberConstant(const mpq_class& rational, bool isInteger);
   cvc5::Term dagToCvc5(DagNode* dag);
+  cvc5::Sort getSmtSort(const Sort* sort);
 
   const SMT_Info& smtInfo;
 

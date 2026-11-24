@@ -1,0 +1,20 @@
+#!/bin/sh
+
+#
+#	The finite set theory is only implemented for the cvc5 bindings, so
+#	skip rather than fail for the other solvers or for no SMT at all.
+#
+if grep "#define USE_CVC5" ../../config.h ; # are we using cvc5?
+then
+  echo "testing cvc5"
+else
+  echo "finite set theory needs cvc5"
+  exit 77 # tell the harness to skip this test
+fi
+
+MAUDE_LIB=$srcdir/../../src/Main
+export MAUDE_LIB
+
+../../src/Main/maude < $srcdir/smtSetTest.maude -no-banner -no-advise > smtSetTest.out 2>&1
+
+diff $srcdir/smtSetTest.expected smtSetTest.out > /dev/null 2>&1

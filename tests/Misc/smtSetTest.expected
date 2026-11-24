@@ -1,0 +1,245 @@
+[Boolean] (error free):
+	1	Boolean
+
+[Integer] (error free):
+	1	Integer
+
+[Real] (error free):
+	1	Real
+
+[SmtSet{Boolean}] (error free):
+	1	SmtSet{Boolean}
+
+[SmtSet{Integer}] (error free):
+	1	SmtSet{Integer}
+
+[SmtSet{Real}] (error free):
+	1	SmtSet{Real}
+==========================================
+check in TEST-SET : setMembership(I, setSingleton(I)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setSingleton(J)) and I =/== J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, (setEmpty).SmtSet{Integer}) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, (setUniverse).SmtSet{Integer}) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : not setMembership(I, (setUniverse).SmtSet{Integer}) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setUnion(setSingleton(I), setSingleton(
+    J))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setIntersection(setSingleton(I),
+    setSingleton(I))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setIntersection(setSingleton(I),
+    setSingleton(J))) and I =/== J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, setDifference(setSingleton(I),
+    setSingleton(J))) and I =/== J .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setDifference(setSingleton(I),
+    setSingleton(I))) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, setComplement(setSingleton(J))) and I =/==
+    J .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setComplement(setSingleton(I))) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, setInsert(I, (setEmpty).SmtSet{Integer}))
+    .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, setInsert(J, (setEmpty).SmtSet{Integer}))
+    and I =/== J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, setRemove(I, (setUniverse).SmtSet{
+    Integer})) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, setRemove(J, (setUniverse).SmtSet{
+    Integer})) and I =/== J .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setRemove(I, setInsert(I, S)) === setRemove(I, S) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setRemove(I, setInsert(I, S)) =/== setRemove(I, S) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(I, S) and setRemove(I, setInsert(I, S)) =/==
+    S .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : not setMembership(I, S) and setRemove(I, setInsert(I, S))
+    =/== S .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setSubset((setEmpty).SmtSet{Integer}, S) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : not setSubset((setEmpty).SmtSet{Integer}, S) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setSubset(S, (setUniverse).SmtSet{Integer}) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : not setSubset(S, (setUniverse).SmtSet{Integer}) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setSubset(S, S1) and setMembership(I, S) and not
+    setMembership(I, S1) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setSubset(setSingleton(I), setInsert(J, setSingleton(I))) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setCardinality((setEmpty).SmtSet{Integer}) === (0).Integer
+    .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setCardinality((setEmpty).SmtSet{Integer}) =/== (0).Integer
+    .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setCardinality(setSingleton(I)) === (1).Integer .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setCardinality(setSingleton(I)) === (2).Integer .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setCardinality(setInsert(I, setSingleton(J))) === (
+    2).Integer and I =/== J .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setCardinality(setInsert(I, setSingleton(J))) === (
+    2).Integer and I === J .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setSubset(S, S1) and setCardinality(S) > setCardinality(S1)
+    .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : not setMembership(I, S) and setCardinality(setInsert(I, S))
+    === setCardinality(S) + (1).Integer .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, S) and setCardinality(setInsert(I, S)) ===
+    setCardinality(S) + (1).Integer .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : S === S1 .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : S === S1 and setMembership(I, S) and not setMembership(I,
+    S1) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : S =/== S1 and setSubset(S, S1) and setSubset(S1, S) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : S === (B ? S1 : S2) and B and S =/== S1 .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : S === (B ? S1 : S2) and not B and S === S2 .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : S =/== S1 and setCardinality(setDifference(S, S1)) === (
+    0).Integer and setCardinality(setDifference(S1, S)) === (0).Integer .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(R1, setSingleton(R1)) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, (setEmpty).SmtSet{Real}) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(R1, RS) and setMembership(R2, RS) and R1 =/==
+    R2 .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(R1, RS) and RS === (setEmpty).SmtSet{Real} .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setCardinality(setInsert(R1, setSingleton(R2))) === (
+    1).Integer and R1 =/== R2 .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setMembership(B, BS) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(B, BS) and setMembership(B1, BS) and B =/==
+    B1 .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setCardinality(BS) > (2).Integer .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setCardinality(BS) === (2).Integer .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : not setMembership(I, S) and S1 === setInsert(I, S) and
+    setMembership(I, S1) and setCardinality(S1) === setCardinality(S) + (
+    1).Integer .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, S) and S1 === setRemove(I, S) and not
+    setMembership(I, S1) and setCardinality(S1) + (1).Integer ===
+    setCardinality(S) .
+Result from sat solver is: sat
+==========================================
+check in TEST-SET : setMembership(I, S) and S1 === setRemove(I, S) and
+    setMembership(I, S1) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setIntersection(S, S1) === (setEmpty).SmtSet{Integer} and
+    setMembership(I, S) and setMembership(I, S1) .
+Result from sat solver is: unsat
+==========================================
+check in TEST-SET : setIntersection(S, S1) === (setEmpty).SmtSet{Integer} and
+    setMembership(I, S) and setIntersection(setRemove(I, S), setInsert(I, S1))
+    =/== (setEmpty).SmtSet{Integer} .
+Result from sat solver is: unsat
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(setMembership(
+    I, S))) .
+rewrites: 3
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(setMembership(
+    I, (setEmpty).SmtSet{Integer}))) .
+rewrites: 3
+result Bool: (false).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('SMT-SET, false), upTerm(S === S1)) .
+rewrites: 3
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('INTEGER-SET, false), upTerm(
+    setMembership(I, setSingleton(I)))) .
+rewrites: 3
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('REAL-SET, false), upTerm(
+    setMembership(R1, RS))) .
+rewrites: 3
+result Bool: (true).Bool
+==========================================
+reduce in TEST-SET : metaCheck(upModule('BOOLEAN-SET, false), upTerm(
+    setMembership(B, BS))) .
+rewrites: 3
+result Bool: (true).Bool
+Bye.
