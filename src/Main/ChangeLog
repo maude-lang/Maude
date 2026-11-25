@@ -1,3 +1,7 @@
+2026-11-24  Saruman the White  <eker@eker10>
+
+	* prelude.maude: added extension attribute to metalevel
+
 2026-11-13  Saruman the White  <eker@eker10>
 
 	* main.cc (main): decide ansiColor and lineWrapping before

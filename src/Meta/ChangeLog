@@ -1,3 +1,18 @@
+2026-11-24  Saruman the White  <eker@eker10>
+
+	* metaUpModule.cc (MetaLevel::upStatementAttributes): handle
+	extension attribute
+
+	* metaLevel.hh (enum Flags): added EXTENSION to flags
+
+	* metaDown.cc (MetaLevel::downStatementAttr): handle extension
+	attribute
+	(MetaLevel::downMembAx): advise about extension attribute
+	(MetaLevel::downEquation): handle extension attribute
+	(MetaLevel::downRule): handle extension attribute
+
+	* metaLevelSignature.cc: added extensionSymbol
+
 2026-11-19  Saruman the White  <eker@eker10>
 
 	* metaDown.cc (MetaLevel::downEquation): don't allow variable

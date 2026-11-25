@@ -1,13 +1,13 @@
 Grammar:
 	nonterminals: 253
 	terminals: 966
-	productions: 2549
+	productions: 2550
 
 Term rewriting system:
 	kinds: 44
 	sorts: 151
-	user symbols: 463
-	total symbols: 540
+	user symbols: 464
+	total symbols: 541
 	polymorphic operators: 5
 	membership axioms: 0
 	equations: 251
@@ -17,13 +17,13 @@ Term rewriting system:
 Grammar:
 	nonterminals: 253
 	terminals: 966
-	productions: 2549
+	productions: 2550
 
 Term rewriting system:
 	kinds: 44
 	sorts: 151
-	user symbols: 463
-	total symbols: 463
+	user symbols: 464
+	total symbols: 464
 	polymorphic operators: 5
 	membership axioms: 0
 	equations: 0

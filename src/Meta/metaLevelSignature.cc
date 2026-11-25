@@ -197,6 +197,7 @@
      MACRO(variantAttrSymbol, Symbol, 0, 0)
      MACRO(narrowingSymbol, Symbol, 0, 0)
      MACRO(nonexecSymbol, Symbol, 0, 0)
+     MACRO(extensionSymbol, Symbol, 0, 0)
      MACRO(printSymbol, FreeSymbol, 0, 1)
 
      MACRO(emptyAttrSetSymbol, Symbol, 0, 0)

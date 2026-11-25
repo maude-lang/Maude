@@ -834,6 +834,8 @@ MetaLevel::downStatementAttr(DagNode* metaAttr, MixfixModule* m, StatementAttrib
     ai.flags.setFlags(VARIANT);
   else if (ma == nonexecSymbol)
     ai.flags.setFlags(NONEXEC);
+  else if (ma == extensionSymbol)
+    ai.flags.setFlags(EXTENSION);
   else if (ma == narrowingSymbol)
     ai.flags.setFlags(NARROWING);
   else if (ma == printSymbol && !ai.flags.getFlag(PRINT))
@@ -936,6 +938,11 @@ MetaLevel::downMembAx(DagNode* metaMembAx, MixfixModule* m)
 		  SortConstraint* mb = new SortConstraint(ai.label, l, sort, condition);
 		  if (ai.flags.getFlag(NONEXEC))
 		    mb->setNonexec();
+		  if (ai.flags.getFlag(EXTENSION))
+		    {
+		      IssueAdvisory("extension attribute not allowed for membership axiom in meta-module " <<
+				    QUOTE(m) << '.');
+		    }
 		  m->insertSortConstraint(mb);
 		  m->checkSortConstraint(mb);
 		  if (ai.metadata != NONE)
@@ -989,6 +996,8 @@ MetaLevel::downEquation(DagNode* metaEquation, MixfixModule* m)
 					      ai.flags.getFlag(OWISE), condition);
 		  if (ai.flags.getFlag(NONEXEC))
 		    eq->setNonexec();
+		  if (ai.flags.getFlag(EXTENSION))
+		    eq->setExtension();
 		  if (ai.flags.getFlag(VARIANT))
 		    {
 		      if (!condition.empty())
@@ -1057,6 +1066,8 @@ MetaLevel::downRule(DagNode* metaRule, MixfixModule* m)
 		  Rule* rl = new Rule(ai.label, l, r, condition);
 		  if (ai.flags.getFlag(NONEXEC))
 		    rl->setNonexec();
+		  if (ai.flags.getFlag(EXTENSION))
+		    rl->setExtension();
 		  if (ai.flags.getFlag(NARROWING))
 		    {
 		      if (condition.empty())

@@ -1197,6 +1197,8 @@ MetaLevel::upStatementAttributes(MixfixModule* m,
     }
   if (pe->isNonexec())
     args.append(nonexecSymbol->makeDagNode());
+  if (pe->isExtension())
+    args.append(extensionSymbol->makeDagNode());
   const PrintAttribute* p = m->getPrintAttribute(type, pe);
   if (p != 0)
     {

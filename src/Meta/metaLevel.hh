@@ -418,7 +418,8 @@ private:
     OWISE = 2,
     PRINT = 4,
     VARIANT = 8,
-    NARROWING = 16
+    NARROWING = 16,
+    EXTENSION = 32
   };
 
   struct AttributeInfo

@@ -549,36 +549,38 @@ result Configuration: <> < me : User | pending(nil) > reducedTerm(me,
     'op-hook[''variantAttrSymbol.Sort, ''variant.Sort, 'nil.TypeList,
     ''Attr.Sort], 'op-hook[''narrowingSymbol.Sort, ''narrowing.Sort,
     'nil.TypeList, ''Attr.Sort], 'op-hook[''nonexecSymbol.Sort, ''nonexec.Sort,
-    'nil.TypeList, ''Attr.Sort], 'op-hook[''printSymbol.Sort, ''print.Sort,
-    ''QidList.Sort, ''Attr.Sort], 'op-hook[''emptyAttrSetSymbol.Sort,
-    ''none.Sort, 'nil.TypeList, ''AttrSet.Sort], 'op-hook[''attrSetSymbol.Sort,
-    ''__.Sort, '__[''AttrSet.Sort, ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[
-    ''opDeclSymbol.Sort, ''op_:_->_`[_`]..Qid, '__[''Qid.Sort, ''TypeList.Sort,
-    ''Type.Sort, ''AttrSet.Sort], ''OpDecl.Sort], 'op-hook[
-    ''opDeclSetSymbol.Sort, ''__.Sort, '__[''OpDeclSet.Sort, ''OpDeclSet.Sort],
-    ''OpDeclSet.Sort], 'op-hook[''emptyOpDeclSetSymbol.Sort, ''none.Sort,
-    'nil.TypeList, ''OpDeclSet.Sort], 'op-hook[''mbSymbol.Sort,
-    ''mb_:_`[_`]..Qid, '__[''Term.Sort, ''Sort.Sort, ''AttrSet.Sort],
-    ''MembAx.Sort], 'op-hook[''cmbSymbol.Sort, ''cmb_:_if_`[_`]..Qid, '__[
-    ''Term.Sort, ''Sort.Sort, ''EqCondition.Sort, ''AttrSet.Sort],
-    ''MembAx.Sort], 'op-hook[''emptyMembAxSetSymbol.Sort, ''none.Sort,
-    'nil.TypeList, ''MembAxSet.Sort], 'op-hook[''membAxSetSymbol.Sort,
-    ''__.Sort, '__[''MembAxSet.Sort, ''MembAxSet.Sort], ''MembAxSet.Sort],
-    'op-hook[''eqSymbol.Sort, ''eq_=_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort,
-    ''AttrSet.Sort], ''Equation.Sort], 'op-hook[''ceqSymbol.Sort,
-    ''ceq_=_if_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort, ''EqCondition.Sort,
-    ''AttrSet.Sort], ''Equation.Sort], 'op-hook[''emptyEquationSetSymbol.Sort,
-    ''none.Sort, 'nil.TypeList, ''EquationSet.Sort], 'op-hook[
-    ''equationSetSymbol.Sort, ''__.Sort, '__[''EquationSet.Sort,
-    ''EquationSet.Sort], ''EquationSet.Sort], 'op-hook[''rlSymbol.Sort,
-    ''rl_=>_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort, ''AttrSet.Sort],
-    ''Rule.Sort], 'op-hook[''crlSymbol.Sort, ''crl_=>_if_`[_`]..Qid, '__[
-    ''Term.Sort, ''Term.Sort, ''Condition.Sort, ''AttrSet.Sort], ''Rule.Sort],
-    'op-hook[''emptyRuleSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
-    ''RuleSet.Sort], 'op-hook[''ruleSetSymbol.Sort, ''__.Sort, '__[
-    ''RuleSet.Sort, ''RuleSet.Sort], ''RuleSet.Sort], 'op-hook[
-    ''stratDeclSymbol.Sort, ''strat_:_@_`[_`]..Qid, '__[''Qid.Sort,
-    ''TypeList.Sort, ''Type.Sort, ''AttrSet.Sort], ''StratDecl.Sort], 'op-hook[
+    'nil.TypeList, ''Attr.Sort], 'op-hook[''extensionSymbol.Sort,
+    ''extension.Sort, 'nil.TypeList, ''Attr.Sort], 'op-hook[''printSymbol.Sort,
+    ''print.Sort, ''QidList.Sort, ''Attr.Sort], 'op-hook[
+    ''emptyAttrSetSymbol.Sort, ''none.Sort, 'nil.TypeList, ''AttrSet.Sort],
+    'op-hook[''attrSetSymbol.Sort, ''__.Sort, '__[''AttrSet.Sort,
+    ''AttrSet.Sort], ''AttrSet.Sort], 'op-hook[''opDeclSymbol.Sort,
+    ''op_:_->_`[_`]..Qid, '__[''Qid.Sort, ''TypeList.Sort, ''Type.Sort,
+    ''AttrSet.Sort], ''OpDecl.Sort], 'op-hook[''opDeclSetSymbol.Sort,
+    ''__.Sort, '__[''OpDeclSet.Sort, ''OpDeclSet.Sort], ''OpDeclSet.Sort],
+    'op-hook[''emptyOpDeclSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
+    ''OpDeclSet.Sort], 'op-hook[''mbSymbol.Sort, ''mb_:_`[_`]..Qid, '__[
+    ''Term.Sort, ''Sort.Sort, ''AttrSet.Sort], ''MembAx.Sort], 'op-hook[
+    ''cmbSymbol.Sort, ''cmb_:_if_`[_`]..Qid, '__[''Term.Sort, ''Sort.Sort,
+    ''EqCondition.Sort, ''AttrSet.Sort], ''MembAx.Sort], 'op-hook[
+    ''emptyMembAxSetSymbol.Sort, ''none.Sort, 'nil.TypeList, ''MembAxSet.Sort],
+    'op-hook[''membAxSetSymbol.Sort, ''__.Sort, '__[''MembAxSet.Sort,
+    ''MembAxSet.Sort], ''MembAxSet.Sort], 'op-hook[''eqSymbol.Sort,
+    ''eq_=_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort, ''AttrSet.Sort],
+    ''Equation.Sort], 'op-hook[''ceqSymbol.Sort, ''ceq_=_if_`[_`]..Qid, '__[
+    ''Term.Sort, ''Term.Sort, ''EqCondition.Sort, ''AttrSet.Sort],
+    ''Equation.Sort], 'op-hook[''emptyEquationSetSymbol.Sort, ''none.Sort,
+    'nil.TypeList, ''EquationSet.Sort], 'op-hook[''equationSetSymbol.Sort,
+    ''__.Sort, '__[''EquationSet.Sort, ''EquationSet.Sort],
+    ''EquationSet.Sort], 'op-hook[''rlSymbol.Sort, ''rl_=>_`[_`]..Qid, '__[
+    ''Term.Sort, ''Term.Sort, ''AttrSet.Sort], ''Rule.Sort], 'op-hook[
+    ''crlSymbol.Sort, ''crl_=>_if_`[_`]..Qid, '__[''Term.Sort, ''Term.Sort,
+    ''Condition.Sort, ''AttrSet.Sort], ''Rule.Sort], 'op-hook[
+    ''emptyRuleSetSymbol.Sort, ''none.Sort, 'nil.TypeList, ''RuleSet.Sort],
+    'op-hook[''ruleSetSymbol.Sort, ''__.Sort, '__[''RuleSet.Sort,
+    ''RuleSet.Sort], ''RuleSet.Sort], 'op-hook[''stratDeclSymbol.Sort,
+    ''strat_:_@_`[_`]..Qid, '__[''Qid.Sort, ''TypeList.Sort, ''Type.Sort,
+    ''AttrSet.Sort], ''StratDecl.Sort], 'op-hook[
     ''emptyStratDeclSetSymbol.Sort, ''none.Sort, 'nil.TypeList,
     ''StratDeclSet.Sort], 'op-hook[''stratDeclSetSymbol.Sort, ''__.Sort, '__[
     ''StratDeclSet.Sort, ''StratDeclSet.Sort], ''StratDeclSet.Sort], 'op-hook[

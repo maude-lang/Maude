@@ -1951,6 +1951,7 @@ fmod META-MODULE is
   op metadata : String -> Attr [ctor] .
   op owise : -> Attr [ctor] .
   op nonexec : -> Attr [ctor] .
+  op extension : -> Attr [ctor] .
   op variant : -> Attr [ctor] .
   op narrowing : -> Attr [ctor] .
   op print : QidList -> Attr [ctor] .
@@ -2639,6 +2640,7 @@ fmod META-LEVEL is
         op-hook variantAttrSymbol	(variant : ~> Attr)
         op-hook narrowingSymbol		(narrowing : ~> Attr)
         op-hook nonexecSymbol		(nonexec : ~> Attr)
+        op-hook extensionSymbol		(extension : ~> Attr)
         op-hook printSymbol		(print : QidList ~> Attr)
 
         op-hook opDeclSymbol		(op_:_->_[_]. : Qid TypeList Type AttrSet ~> OpDecl)
