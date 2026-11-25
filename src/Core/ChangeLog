@@ -1,3 +1,15 @@
+2026-11-24  Saruman the White  <eker@eker10>
+
+	* ruleTable.cc (RuleTable::applyRules): don't use extension rules
+	(RuleTable::compileRules): don't compile lhs of rules with
+	extension attribute
+
+	* equationTable.cc (EquationTable::applyReplace): don't apply
+	extension equations
+	(EquationTable::applyReplaceNoOwise): ditto
+	(EquationTable::compileEquations): don't compile lhs of equations with
+	the extension attribute
+
 2026-10-14  Saruman the White  <eker@eker10>
 
 	* rule.cc (Rule::getNonExtLhsAutomaton): call requireAllMatches()

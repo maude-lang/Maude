@@ -282,7 +282,7 @@ FreeSymbol::chooseEqRewriteFunction() const
   int nrArgs = arity();
   if (nrArgs <= 3 && standardStrategy())
     {
-      if (getEquations().size() == 0)
+      if (discriminationNet.getMaxNrRemainders() == 0)
 	{
 	  //
 	  //	Pure constructor case.

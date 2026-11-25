@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -89,7 +89,8 @@ RewriteSearchState::findNextRewrite()
 	  for (int nrRules = rules.length(); ruleIndex < nrRules; ruleIndex++)
 	    {
 	      Rule* rl = rules[ruleIndex];
-	      if ((allowNonexec || !(rl->isNonexec())) &&
+	      if (!(rl->isExtension()) &&  // never use rules with extension attribute
+		  (allowNonexec || !(rl->isNonexec())) &&
 		  (label == UNDEFINED || rl->getLabel().id() == label))
 		{
 		  LhsAutomaton* a = withExtension ? rl->getExtLhsAutomaton() :

@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,10 +95,20 @@ FreePreNet::buildNet(FreeSymbol* symbol)
   patterns.expandTo(nrEquations);
   LiveSet liveSet;
   LiveSet potentialSubsumers;
-  for (int i = 0; i < nrEquations; i++)
+  for (int i = 0; i < nrEquations; ++i)
     {
-      int flags = 0;
       Equation* e = equations[i];
+      if (e->isExtension())
+	{
+	  //
+	  //	We never match extension equations because we do
+	  //	matching with extension instead.
+	  //
+	  patterns[i].term = nullptr;
+	  patterns[i].flags = 0;
+	  continue;
+	}
+      int flags = 0;
       Term* p = e->getLhs();
       patterns[i].term = p;
       for (int j : potentialSubsumers)

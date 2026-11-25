@@ -1,3 +1,8 @@
+2026-11-24  Saruman the White  <eker@eker10>
+
+	* rewriteSearchState.cc (RewriteSearchState::findNextRewrite):
+	don't use rules with extension attribute
+
 2026-10-14  Saruman the White  <eker@eker10>
 
 	* pattern.cc (Pattern::prepare): call requireAllMatches() rather

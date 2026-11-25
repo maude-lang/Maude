@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2003 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -49,9 +49,15 @@
 void
 EquationTable::compileEquations()
 {
-  int nrEquations = equations.length();
-  for (int i = 0; i < nrEquations; i++)
-    equations[i]->compile(true);
+  for (Equation* eq : equations)
+    {
+      //
+      //	Extension equations are never used for matching - we use
+      //	matching with extension instead, so there is no need to compile
+      //	matching automata for the lhs.
+      //
+      eq->compile(!(eq->isExtension()));
+    }
 }
 
 bool
@@ -61,6 +67,8 @@ EquationTable::applyReplace(DagNode* subject,
 {
   for (Equation* eq : equations)
     {
+      if (eq->isExtension())
+	continue;
       Subproblem* sp;
       long nrVariables = eq->fastNrVariables();
       if (nrVariables >= 0)
@@ -145,6 +153,8 @@ EquationTable::applyReplaceNoOwise(DagNode* subject,
 {
   for (Equation* eq : equations)
     {
+      if (eq->isExtension())
+	continue;
       Subproblem* sp;
       //
       //	Except for this one if statement, this fuction is identical

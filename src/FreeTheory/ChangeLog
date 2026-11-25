@@ -1,3 +1,13 @@
+2026-11-24  Saruman the White  <eker@eker10>
+
+	* freeSymbol.cc (FreeSymbol::chooseEqRewriteFunction): use
+	discriminationNet.getMaxNrRemainders() == 0 rather than
+	getEquations().size() == 0 for because we could have equations
+	with the extension attribute that are ignored
+
+	* freePreNet.cc (FreePreNet::buildNet): don't compile extension
+	equations into the discrimination net
+
 2026-09-17  Saruman the White  <eker@eker10>
 
 	* freeFast2RhsAutomaton.cc (FreeFast2RhsAutomaton::fillOutArgs):

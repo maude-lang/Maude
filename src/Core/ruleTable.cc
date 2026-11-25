@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2023 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -54,9 +54,15 @@ RuleTable::RuleTable()
 void
 RuleTable::compileRules()
 {
-  int nrRules = rules.length();
-  for (int i = 0; i < nrRules; i++)
-    rules[i]->compile(true);
+  for (Rule* rl : rules)
+    {
+      //
+      //	Extension rules are never used for matching - we use
+      //	matching with extension instead, so there is no need to compile
+      //	matching automata for the lhs.
+      //
+      rl->compile(!(rl->isExtension()));
+    }
 }
 
 void
@@ -84,7 +90,7 @@ RuleTable::applyRules(DagNode* subject,
       if (n >= nrRules)
 	n = n - nrRules;
       Rule* rl = rules[n];
-      if (rl->isNonexec())
+      if (rl->isNonexec() || rl->isExtension())
 	continue;
       int nrVariables = rl->getNrProtectedVariables();
       context.clear(nrVariables);
