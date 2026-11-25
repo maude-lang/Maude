@@ -1,5 +1,8 @@
 2026-11-24  Saruman the White  <eker@eker10>
 
+	* metaDownStrats.cc (MetaLevel::downStratDef): advise about
+	extension attribute
+
 	* metaUpModule.cc (MetaLevel::upStatementAttributes): handle
 	extension attribute
 

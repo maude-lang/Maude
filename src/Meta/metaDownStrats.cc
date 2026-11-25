@@ -337,6 +337,11 @@ MetaLevel::downStratDef(DagNode* metaStratDef, MixfixModule* m)
 		  StrategyDefinition* sdef = new StrategyDefinition(ai.label, strat, callTerm, r, condition);
 		  if (ai.flags.getFlag(NONEXEC))
 		    sdef->setNonexec();
+		  if (ai.flags.getFlag(EXTENSION))
+		    {
+		      IssueAdvisory("extension attribute not allowed for strategy definition in meta-module " <<
+				    QUOTE(m) << '.');
+		    }
 		  m->insertStrategyDefinition(sdef);
 		  if (ai.metadata != NONE)
 		    m->insertMetadata(MixfixModule::STRAT_DEF, sdef, ai.metadata);

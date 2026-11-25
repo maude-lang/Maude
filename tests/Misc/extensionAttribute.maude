@@ -1,0 +1,45 @@
+*** check that extension attribute prohibits rewriting with equations/rules.
+
+set show timing off .
+set show advisories off .
+
+mod FOO is
+  sort Foo .
+  ops a b c d e : -> Foo .
+  op f : Foo Foo -> Foo [assoc comm] .
+
+  eq a = b .
+  eq b = c [extension] .
+  eq f(X:Foo, b) = c .
+  rl c => d .
+  rl d => e [extension] .
+  rl f(X:Foo, d) => c .
+endm
+
+red a .
+rew c .
+red f(a, b, c) .
+rew f(a, d, c) .
+search c =>* X:Foo .
+search f(e, d, c) =>* X:Foo .
+
+mod FOO2 is
+  sort Foo .
+  ops a b c d e : -> Foo .
+  op f : Foo Foo -> Foo [assoc comm] .
+
+  eq a = b .
+  eq b = c [extension] .
+  eq f(X:Foo, b) = c [extension] .
+  rl c => d .
+  rl d => e [extension] .
+  rl f(X:Foo, d) => c [extension] .
+endm
+
+red f(a, b, c) .
+rew f(a, d, c) .
+search f(e, d, c) =>* X:Foo .
+
+red in META-LEVEL : upModule('FOO2, false) .
+
+red in META-LEVEL : metaReduce(upModule('FOO, false), 'a.Foo) .

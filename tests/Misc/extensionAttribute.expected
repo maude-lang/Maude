@@ -1,0 +1,117 @@
+==========================================
+reduce in FOO : a .
+rewrites: 1
+result Foo: b
+==========================================
+rewrite in FOO : c .
+rewrites: 1
+result Foo: d
+==========================================
+reduce in FOO : f(a, b, c) .
+rewrites: 2
+result Foo: c
+==========================================
+rewrite in FOO : f(a, c, d) .
+rewrites: 3
+result Foo: d
+==========================================
+search in FOO : c =>* X:Foo .
+
+Solution 1 (state 0)
+states: 1  rewrites: 0
+X:Foo --> c
+
+Solution 2 (state 1)
+states: 2  rewrites: 1
+X:Foo --> d
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+search in FOO : f(c, d, e) =>* X:Foo .
+
+Solution 1 (state 0)
+states: 1  rewrites: 0
+X:Foo --> f(c, d, e)
+
+Solution 2 (state 1)
+states: 2  rewrites: 1
+X:Foo --> c
+
+Solution 3 (state 2)
+states: 3  rewrites: 2
+X:Foo --> f(c, c)
+
+Solution 4 (state 3)
+states: 4  rewrites: 3
+X:Foo --> f(c, e)
+
+Solution 5 (state 4)
+states: 5  rewrites: 4
+X:Foo --> f(d, d, e)
+
+Solution 6 (state 5)
+states: 6  rewrites: 5
+X:Foo --> d
+
+Solution 7 (state 6)
+states: 7  rewrites: 6
+X:Foo --> f(c, d)
+
+Solution 8 (state 7)
+states: 8  rewrites: 7
+X:Foo --> f(d, e)
+
+Solution 9 (state 8)
+states: 9  rewrites: 12
+X:Foo --> f(d, d)
+
+No more solutions.
+states: 9  rewrites: 14
+==========================================
+reduce in FOO2 : f(a, b, c) .
+rewrites: 1
+result Foo: f(b, b, c)
+==========================================
+rewrite in FOO2 : f(a, c, d) .
+rewrites: 2
+result Foo: f(b, d, d)
+==========================================
+search in FOO2 : f(c, d, e) =>* X:Foo .
+
+Solution 1 (state 0)
+states: 1  rewrites: 0
+X:Foo --> f(c, d, e)
+
+Solution 2 (state 1)
+states: 2  rewrites: 1
+X:Foo --> f(d, d, e)
+
+No more solutions.
+states: 2  rewrites: 1
+==========================================
+reduce in META-LEVEL : upModule('FOO2, false) .
+rewrites: 1
+result SModule: mod 'FOO2 is
+  including 'BOOL .
+  sorts 'Foo .
+  none
+  op 'a : nil -> 'Foo [none] .
+  op 'b : nil -> 'Foo [none] .
+  op 'c : nil -> 'Foo [none] .
+  op 'd : nil -> 'Foo [none] .
+  op 'e : nil -> 'Foo [none] .
+  op 'f : 'Foo 'Foo -> 'Foo [assoc comm] .
+  none
+  eq 'a.Foo = 'b.Foo [none] .
+  eq 'b.Foo = 'c.Foo [extension] .
+  eq 'f['b.Foo, 'X:Foo] = 'c.Foo [extension] .
+  rl 'c.Foo => 'd.Foo [none] .
+  rl 'd.Foo => 'e.Foo [extension] .
+  rl 'f['d.Foo, 'X:Foo] => 'c.Foo [extension] .
+endm
+==========================================
+reduce in META-LEVEL : metaReduce(upModule('FOO, false), 'a.Foo) .
+rewrites: 3
+result ResultPair: {'b.Foo, 'Foo}
+Bye.

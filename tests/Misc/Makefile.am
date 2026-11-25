@@ -45,7 +45,8 @@ TESTS = \
 	rpo \
 	attributeConsistency \
 	makeCommand \
-	printAttributeSelect
+	printAttributeSelect \
+	extensionAttribute
 
 MAUDE_FILES = \
 	directoryTest.maude \
@@ -94,7 +95,8 @@ MAUDE_FILES = \
 	rpo.maude \
 	attributeConsistency.maude \
 	makeCommand.maude \
-	printAttributeSelect.maude
+	printAttributeSelect.maude \
+	extensionAttribute
 
 RESULT_FILES = \
 	directoryTest.expected \
@@ -143,6 +145,7 @@ RESULT_FILES = \
 	rpo.expected \
 	attributeConsistency.expected \
 	makeCommand.expected \
-	printAttributeSelect.expected
+	printAttributeSelect.expected \
+	extensionAttribute
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)
