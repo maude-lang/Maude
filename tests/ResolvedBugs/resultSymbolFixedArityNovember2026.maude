@@ -1,0 +1,24 @@
+*** Claude discovered bug: result-symbol-fixed-arity
+
+*** A ModuleResultSymbol (or ViewResultSymbol) is always made with two arguments,
+*** whatever its declaration says.
+*** R3: declared with three arguments, show ops prints it with two. Expected: a warning
+*** about the declaration, or the declaration as written.
+*** R1: declared with one argument, the module ends the session with "Maude internal
+*** error". Expected: a warning about the declaration. A constant does the same.
+
+set include BOOL off .
+
+fmod R3 is
+  sort S .
+  op a : S S S -> S [special (id-hook ModuleResultSymbol)] .
+endfm
+
+show ops .
+
+fmod R1 is
+  sort S .
+  op a : S -> S [special (id-hook ModuleResultSymbol)] .
+endfm
+
+show ops .

@@ -1,0 +1,19 @@
+Warning: <standard input>, line 14 (fmod R3): ModuleResultSymbol must have
+    exactly 2 arguments
+Warning: <standard input>, line 14 (fmod R3): failed to attach id-hook
+    ModuleResultSymbol to a.
+Warning: <standard input>, line 14 (fmod R3): bad special for operator a.
+Warning: <standard input>, line 12 (fmod R3): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+Warning: <standard input>, line 12 (fmod R3): module R3 is unusable due to
+    unpatchable errors.
+Warning: <standard input>, line 21 (fmod R1): ModuleResultSymbol must have
+    exactly 2 arguments
+Warning: <standard input>, line 21 (fmod R1): failed to attach id-hook
+    ModuleResultSymbol to a.
+Warning: <standard input>, line 21 (fmod R1): bad special for operator a.
+Warning: <standard input>, line 19 (fmod R1): this module contains one or more
+    errors that could not be patched up and thus it cannot be used or imported.
+Warning: <standard input>, line 19 (fmod R1): module R1 is unusable due to
+    unpatchable errors.
+Bye.

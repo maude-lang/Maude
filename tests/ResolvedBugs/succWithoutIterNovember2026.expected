@@ -1,0 +1,28 @@
+Warning: <standard input>, line 18 (fmod P): SuccSymbol s will be treated as
+    having the iter attribute.
+==========================================
+reduce in P : 3 .
+rewrites: 0
+result N: 3
+==========================================
+reduce in P : p(3) .
+rewrites: 1
+result N: 2
+==========================================
+reduce in P : p(p(3)) .
+rewrites: 2
+result N: 1
+==========================================
+reduce in P : p(p(p(3))) .
+rewrites: 3
+result N: z
+==========================================
+reduce in P : s^3(z) .
+rewrites: 0
+result N: s^3(z)
+==========================================
+reduce in META-LEVEL : getTerm(metaReduce(upModule('P, false), 'p['s['s['s[
+    'z.N]]]])) .
+rewrites: 4
+result GroundTerm: 's^2['z.N]
+Bye.

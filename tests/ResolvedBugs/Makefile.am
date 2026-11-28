@@ -109,7 +109,9 @@ TESTS = \
 	ruleAcceptedIntoFmodNovember2026 \
 	strategyDefAttributesNovember2026 \
 	polymorphFrozenIgnoredNovember2026 \
-	viewModuleSortMappingNovember2026
+	viewModuleSortMappingNovember2026 \
+	resultSymbolFixedArityNovember2026 \
+	succWithoutIterNovember2026
 
 MAUDE_FILES = \
 	CUIbug12-22-09.maude \
@@ -222,7 +224,9 @@ MAUDE_FILES = \
 	ruleAcceptedIntoFmodNovember2026.maude \
 	strategyDefAttributesNovember2026.maude \
 	polymorphFrozenIgnoredNovember2026.maude \
-	viewModuleSortMappingNovember2026.maude
+	viewModuleSortMappingNovember2026.maude \
+	resultSymbolFixedArityNovember2026.maude \
+	succWithoutIterNovember2026.maude
 
 RESULT_FILES = \
 	CUIbug12-22-09.expected \
@@ -335,6 +339,8 @@ RESULT_FILES = \
 	ruleAcceptedIntoFmodNovember2026.expected \
 	strategyDefAttributesNovember2026.expected \
 	polymorphFrozenIgnoredNovember2026.expected \
-	viewModuleSortMappingNovember2026.expected
+	viewModuleSortMappingNovember2026.expected \
+	resultSymbolFixedArityNovember2026.expected \
+	succWithoutIterNovember2026.expected
 
 EXTRA_DIST = $(TESTS) $(MAUDE_FILES) $(RESULT_FILES)

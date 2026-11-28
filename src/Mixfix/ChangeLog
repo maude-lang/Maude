@@ -1,5 +1,14 @@
 2026-11-27  Saruman the White  <eker@eker10>
 
+	* mixfixModule.hh (class MixfixModule): updated decl for
+	newFancySymbol()
+
+	* fancySymbols.cc (MixfixModule::newFancySymbol): check nrArgs for
+	MODULE_RESULT_SYMBOL and VIEW_RESULT_SYMBOL
+	(MixfixModule::newFancySymbol): set SymbolType::ITER for
+	SUCC_SYMBOL
+	(MixfixModule::newFancySymbol): pass symbolType by reference
+
 	* view.cc (View::checkSorts): just give up if the user tries to
 	rename a sort declared in a module; trying to recover leads to
 	further problems

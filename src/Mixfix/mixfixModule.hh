@@ -623,7 +623,7 @@ private:
 
   Symbol* newFancySymbol(Token prefixName,
 			 const Vector<Sort*>& domainAndRange,
-			 SymbolType symbolType,
+			 SymbolType& symbolType,
 			 const Vector<int>& strategy);
   Symbol* newAssociativeSymbol(int name,
 			       const Vector<Sort*>& domainAndRange,

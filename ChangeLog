@@ -1,3 +1,11 @@
+2026-11-27  Saruman the White  <eker@eker10>
+
+	* tests/ResolvedBugs/resultSymbolFixedArityNovember2026.maude: added
+
+	* tests/ResolvedBugs/succWithoutIterNovember2026.maude: added
+
+	* tests/ResolvedBugs/viewModuleSortMappingNovember2026.maude: added
+
 2026-11-23  Saruman the White  <eker@eker10>
 
 	* tests/ResolvedBugs/polymorphFrozenIgnoredNovember2026.maude: added

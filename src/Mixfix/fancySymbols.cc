@@ -94,7 +94,7 @@ MixfixModule::newAxiomSymbol(int name,
 Symbol*
 MixfixModule::newFancySymbol(Token prefixName,
 			     const Vector<Sort*>& domainAndRange,
-			     SymbolType symbolType,
+			     SymbolType& symbolType,
 			     const Vector<int>& strategy)
 {
   int name = prefixName.code();
@@ -133,6 +133,12 @@ MixfixModule::newFancySymbol(Token prefixName,
       return new SatSolverSymbol(name);
     case SymbolType::SUCC_SYMBOL:
       {
+	if (!(symbolType.hasFlag(SymbolType::ITER)))
+	  {
+	    IssueWarning(LineNumber(prefixName.lineNumber()) << ": SuccSymbol " <<
+			 prefixName << " will be treated as having the iter attribute.");
+	    symbolType.setFlags(SymbolType::ITER);
+	  }
 	pair<set<int>::iterator, bool> p = kindsWithSucc.insert(kindIndex);
 	if (!(p.second))
 	  {
@@ -194,9 +200,25 @@ MixfixModule::newFancySymbol(Token prefixName,
     case SymbolType::OBJECT_CONSTRUCTOR_SYMBOL:
       return new ObjectConstructorSymbol(name);
     case SymbolType::MODULE_RESULT_SYMBOL:
-      return new ModuleResultSymbol(name);
+      {
+	if (nrArgs != 2)
+	  {
+	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
+			 ": ModuleResultSymbol must have exactly 2 arguments");
+	    return nullptr;
+	  }
+	return new ModuleResultSymbol(name);
+      }
     case SymbolType::VIEW_RESULT_SYMBOL:
-      return new ViewResultSymbol(name);
+      {
+	if (nrArgs != 2)
+	  {
+	    IssueWarning(LineNumber(prefixName.lineNumber()) <<
+			 ": ViewResultSymbol must have exactly 2 arguments");
+	    return nullptr;
+	  }
+	return new ViewResultSymbol(name);
+      }
     }
   //
   //	Handle regular symbols that have semantic attributes.
@@ -211,5 +233,5 @@ MixfixModule::newFancySymbol(Token prefixName,
     return newAssociativeSymbol(name, domainAndRange, symbolType, strategy);
   if (symbolType.hasFlag(SymbolType::AXIOMS))
     return newAxiomSymbol(name, domainAndRange, symbolType, strategy);
-  return 0;
+  return nullptr;
 }

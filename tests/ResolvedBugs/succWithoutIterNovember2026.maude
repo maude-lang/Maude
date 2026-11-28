@@ -1,0 +1,31 @@
+*** Claude discovered bug: succ-without-iter
+
+set show timing off .
+set show advisories off .
+
+*** A SuccSymbol declared without iter: terms are still stored with a count, but the
+*** count is lost when printing and when going up to the metalevel.
+*** Expected: s(s(s(z))) printed as such (echo and results), and 's['s['z.N]] (or
+*** 's^2['z.N]) from the metaReduce. Maude prints every tower of s as s(z), and the
+*** metaReduce gives 's['z.N], a different term. The reductions themselves are right:
+*** three p take s(s(s(z))) to z.
+
+set include BOOL off .
+
+fmod P is
+  sort N .
+  op z : -> N [ctor] .
+  op s : N -> N [ctor special (id-hook SuccSymbol term-hook zeroTerm (z))] .
+  op p : N -> N .
+  eq p(s(X:N)) = X:N .
+endfm
+
+red s(s(s(z))) .
+red p(s(s(s(z)))) .
+red p(p(s(s(s(z))))) .
+red p(p(p(s(s(s(z)))))) .
+
+set print number off .
+
+red s(s(s(z))) .
+red in META-LEVEL : getTerm(metaReduce(upModule('P, false), 'p['s['s['s['z.N]]]])) .
