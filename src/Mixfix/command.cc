@@ -448,5 +448,5 @@ SyntacticPreModule::printAttributes(ostream& s, const StratDecl& stratDecl)
 {
   if (stratDecl.metadata == NONE)
     return;
-  s << "[metadata " << Token::name(stratDecl.metadata) << ']';
+  s << "[metadata " << Token::name(stratDecl.metadata) << "] ";
 }

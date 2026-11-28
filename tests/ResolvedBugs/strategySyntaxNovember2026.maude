@@ -1,0 +1,71 @@
+set show timing off .
+set show advisories off .
+
+*** syntax (c)sd [label] for parsing and printing
+
+smod SD-LABEL is
+  strat st @ Bool .
+  sd [didle] : st := idle .
+  sd st := fail [label dfail] .
+  csd [cidle] : st := idle if true .
+  csd st := fail if false [label cfail] .
+endsm
+
+show sds .
+show desugared .
+
+set print label attribute on .
+
+show sds .
+show desugared .
+
+*** views
+
+sth STRIV is
+  including TRIV .
+  strat st @ Elt .
+endsth
+
+smod SMOD is
+  sort Elt .
+  strat fooSt @ Elt .
+endsm
+
+view SMod from STRIV to SMOD is
+  strat st to fooSt .
+endv
+
+show view .
+show processed view .
+
+*** strategy mapping not a call
+
+view SNat from STRIV to NAT is
+  sort Elt to Nat .
+  strat st to expr idle .
+  strat idle to expr fail .
+endv
+
+*** strategy renamings
+
+smod A is
+  protecting NAT .
+  protecting FLOAT .
+  strat s1 : Nat @ Bool .
+  strat s1 : Float @ Bool .
+  strat s1 @ Bool .
+  strat s2 : Float @ Float .
+  strat s2 @ Nat .
+endsm
+
+smod B is
+  protecting A * (
+    strat s1 : Nat @ Bool to st1,
+    strat s1 @ Bool to st2,
+    strat s2 to st3
+  ) .
+endsm
+
+show strats .
+show module .
+show desugared .

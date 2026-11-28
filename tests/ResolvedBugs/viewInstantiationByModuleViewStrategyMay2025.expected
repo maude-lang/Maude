@@ -1,2 +1,2 @@
-sd s(N:Num) := match N:Num .
+sd ["raw thumb"] : s(N:Num) := match N:Num .
 Bye.

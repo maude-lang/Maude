@@ -261,15 +261,18 @@ SyntacticView::handleTermAndExprMappings()
       for (const BubblePair& bpair : stratExprList)
 	{
 	  StrategyExpression* from = fromTheory->parseStrategyExpr(bpair.fromBubble);
-	  CallStrategy* callFrom = static_cast<CallStrategy*>(from);
-	  if (callFrom == 0)
+	  CallStrategy* callFrom = dynamic_cast<CallStrategy*>(from);
+	  if (callFrom == nullptr)
 	    {
+	      IssueWarning(LineNumber(bpair.fromBubble[0].lineNumber()) <<
+			   ": left-hand side " << QUOTE(from) <<
+			   " of strat-to-expr mapping is not a strategy call.");
 	      delete from;
 	      result = false;
 	      break;
 	    }
 	  StrategyExpression* toExpr = toModule->parseStrategyExpr(bpair.toBubble, 1);
-	  if (toExpr == 0)
+	  if (toExpr == nullptr)
 	    {
 	      delete from;
 	      result = false;
@@ -317,7 +320,7 @@ SyntacticView::showView(ostream& s)
     }
   s << " from " << getFrom() << " to " << getTo() << " is\n";
   printRenaming(s, "  ", " .\n  ");
-  if (getNrSortMappings() + getNrOpMappings() + getNrClassMappings() > 0)
+  if (getNrSortMappings() + getNrOpMappings() + getNrStratMappings() + getNrClassMappings() > 0)
     s << " .\n";
   if (!varDecls.empty())
     {
@@ -380,7 +383,7 @@ SyntacticView::showProcessedView(ostream& s)
   toModule->printModuleExpression(s, false);
   s << " is\n";
   printRenaming(s, "  ", " .\n  ", true);
-  if (getNrSortMappings() + getNrOpMappings() > 0)
+  if (getNrSortMappings() + getNrOpMappings() + getNrStratMappings() > 0)
     s << " .\n";
   //
   //	Print from aliases.

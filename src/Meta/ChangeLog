@@ -1,3 +1,8 @@
+2026-11-27  Rubén Rubio  <rubenrub@ucm.es>
+
+	* metaDownView.cc (MetaLevel::downStratMapping): change safeCast by
+	dynamic_cast
+
 2026-11-24  Saruman the White  <eker@eker10>
 
 	* metaDownStrats.cc (MetaLevel::downStratDef): advise about

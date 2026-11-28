@@ -529,6 +529,8 @@ UserLevelRewritingContext::printStatusReport(DagNode* subject, const PreEquation
     cerr << "equation:\n  " << eq << '\n';
   else if (const Rule* rl = dynamic_cast<const Rule*>(pe))
     cerr << "rule:\n  " << rl << '\n';
+  else if (const StrategyDefinition* sd = dynamic_cast<const StrategyDefinition*>(pe))
+    cerr << "strategy definition:\n  " << sd << '\n';
   else
     CantHappen("unidentified statement");
   cerr << "on redex:\n" << subject << endl;

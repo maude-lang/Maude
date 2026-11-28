@@ -778,7 +778,7 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 		needParen = requiredPrec < STRAT_ORELSE_PREC;
 		if (needParen)
 		  buffer.append(leftParen);
-		prettyPrint(buffer, printSettings, b->getInitialStrategy(), STRAT_ORELSE_PREC);
+		prettyPrint(buffer, printSettings, b->getInitialStrategy(), STRAT_ORELSE_PREC - 1);
 		buffer.append(orelse);
 		prettyPrint(buffer, printSettings, b->getFailureStrategy(), STRAT_ORELSE_PREC);
 	      }
@@ -790,9 +790,9 @@ MixfixModule::prettyPrint(Vector<int>& buffer,
 	    needParen = requiredPrec < STRAT_BRANCH_PREC;
 	    if (needParen)
 	      buffer.append(leftParen);
-	    prettyPrint(buffer, printSettings, b->getInitialStrategy(), STRAT_BRANCH_PREC);
+	    prettyPrint(buffer, printSettings, b->getInitialStrategy(), STRAT_BRANCH_PREC - 1);
 	    buffer.append(query);
-	    prettyPrint(buffer, printSettings, b->getSuccessStrategy(), STRAT_BRANCH_PREC);
+	    prettyPrint(buffer, printSettings, b->getSuccessStrategy(), UNBOUNDED);
 	    buffer.append(colon);
 	    prettyPrint(buffer, printSettings, b->getFailureStrategy(), STRAT_BRANCH_PREC);
 	    break;

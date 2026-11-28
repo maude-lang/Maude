@@ -347,7 +347,7 @@ MetaLevel::downStratExprMapping(DagNode* metaStratMapping,
   if (metaStratMapping->symbol() == stratExprMappingSymbol)
     {
       FreeDagNode* f = safeCast(FreeDagNode*, metaStratMapping);
-      if (CallStrategy* lhs = safeCast(CallStrategy*,
+      if (CallStrategy* lhs = dynamic_cast<CallStrategy*>(
 				       downStratExpr(f->getArgument(0), fromTheory)))
 	{
 	  if (StrategyExpression* rhs = downStratExpr(f->getArgument(1), toModule))

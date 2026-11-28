@@ -154,7 +154,7 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 		needParen = requiredPrec < STRAT_ORELSE_PREC;
 		if (needParen)
 		  s << '(';
-		(void) prettyPrint(s, b->getInitialStrategy(), STRAT_ORELSE_PREC, printSettings);
+		(void) prettyPrint(s, b->getInitialStrategy(), STRAT_ORELSE_PREC - 1, printSettings);
 		s << " or-else ";
 		(void) prettyPrint(s, b->getFailureStrategy(), STRAT_ORELSE_PREC, printSettings);
 	      }
@@ -166,9 +166,9 @@ MixfixModule::prettyPrint(ostream& s, StrategyExpression* strategy, int required
 	    needParen = requiredPrec < STRAT_BRANCH_PREC;
 	    if (needParen)
 	      s << '(';
-	    (void) prettyPrint(s, b->getInitialStrategy(), STRAT_BRANCH_PREC, printSettings);
+	    (void) prettyPrint(s, b->getInitialStrategy(), STRAT_BRANCH_PREC - 1, printSettings);
 	    s << " ? ";
-	    (void) prettyPrint(s, b->getSuccessStrategy(), STRAT_BRANCH_PREC, printSettings);
+	    (void) prettyPrint(s, b->getSuccessStrategy(), UNBOUNDED, printSettings);
 	    s << " : ";
 	    (void) prettyPrint(s, b->getFailureStrategy(), STRAT_BRANCH_PREC, printSettings);
 	    break;

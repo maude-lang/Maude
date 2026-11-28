@@ -2,9 +2,9 @@
 srewrite in NONEXEC : < a > using try(all) ; ab .
 
 Solution 1
-rewrites: 1
+rewrites: 2
 result Bar: < b >
 
 No more solutions.
-rewrites: 1
+rewrites: 2
 Bye.

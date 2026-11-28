@@ -324,7 +324,17 @@ MixfixModule::makeStrategyLanguageProductions()
   rhs[0] = STRATEGY_PAIR;
   parser->insertProduction(SD_BODY, rhs, 0, gatherAny);
   //
-  //	Strategy pair (can be SD_BODY directly, with some changes)
+  //	Strategy definition bodies with labels.
+  //
+  rhs.expandTo(5);
+  rhs[0] = leftBracket;
+  rhs[1] = LABEL;
+  rhs[2] = rightBracket;
+  rhs[3] = colon;
+  rhs[4] = STRATEGY_PAIR;
+  parser->insertProduction(SD_BODY, rhs, 0, gatherAnyAny, MixfixParser::MAKE_LABEL);
+  //
+  //	Strategy pair
   //	<strategy pair> ::= <strategy call expr> := <strategy expression>
   //
   rhs.resize(3);

@@ -1,2 +1,2 @@
-sd h(N:Y$Little) := match N:Y$Little .
+sd ["raw thumb"] : h(N:Y$Little) := match N:Y$Little .
 Bye.

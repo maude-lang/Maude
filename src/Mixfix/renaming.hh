@@ -203,6 +203,7 @@ private:
   struct StratMapping
   {
     Vector<IdSet> types;	// rename operator with specific arity only
+    IdSet subjectType;		// subject type
     int name;			// new name
     CallStrategy* fromCall;	// not used for renaming but useful for view instantiation and debugging
     StrategyExpression* expr;	// for strat->expr mappings

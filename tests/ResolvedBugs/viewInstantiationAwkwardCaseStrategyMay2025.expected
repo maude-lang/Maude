@@ -1,2 +1,2 @@
-sd s(N:Nat) := match N:Nat .
+sd ["raw thumb"] : s(N:Nat) := match N:Nat .
 Bye.

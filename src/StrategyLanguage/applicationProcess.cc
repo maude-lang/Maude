@@ -136,7 +136,9 @@ ApplicationProcess::~ApplicationProcess()
 StrategicExecution::Survival
 ApplicationProcess::run(StrategicSearch& searchObject)
 {
-  if (rewriteState->findNextRewrite())
+  bool found = rewriteState->findNextRewrite();
+  searchObject.getContext()->transferCountFrom(*rewriteState->getContext());
+  if (found)
     {
       Rule* rule = rewriteState->getRule();
       if (strategy->getLabel() != UNDEFINED && rule->hasCondition())
@@ -146,8 +148,7 @@ ApplicationProcess::run(StrategicSearch& searchObject)
 	  //
 	  int nrStrategies = strategy->getStrategies().size();
 	  int nrRewriteFragments = 0;
-	  const Vector<ConditionFragment*>& condition = rule->getCondition();
-	  for (ConditionFragment* cf : condition)
+	  for (ConditionFragment* cf : rule->getCondition())
 	    {
 	      if (dynamic_cast<RewriteConditionFragment*>(cf))
 		++nrRewriteFragments;

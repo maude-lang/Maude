@@ -238,6 +238,12 @@ operator<<(ostream& s, const StrategyDefinition* e)
   if (e->hasCondition())
     s << 'c';
   s << "sd ";
+  if (!interpreter.getPrintFlag(PrintSettings::PRINT_LABEL_ATTRIBUTE))
+    {
+      const Label& l = e->getLabel();
+      if (l.id() != NONE)
+	s << "[" << &l << "] : ";
+    }
   // Prints the LHS with the strategy label
   MixfixModule* m = safeCast(MixfixModule*, e->getModule());
   m->printStrategyTerm(s, e->getStrategy(), e->getLhs());
@@ -319,7 +325,7 @@ operator<<(ostream& s, const RewriteStrategy* rs)
   MixfixModule* m = safeCast(MixfixModule*, rs->getModule());
   int metadata = m->getMetadata(MixfixModule::STRAT_DECL, rs);
   if (metadata != NONE)
-    s << " [metadata " << Token::name(metadata) << "] ";
+    s << " [metadata " << Token::name(metadata) << "]";
   s << " .";
   return s;
 }

@@ -1,3 +1,40 @@
+2026-11-27  Rubén Rubio  <rubenrub@ucm.es>
+
+	* bufferPrint.cc (MixfixModule::prettyPrint): adjust precedences with
+	respect to the grammar
+
+	* command.cc (SyntacticPreModule::printAttributes): add space after
+	attribute block
+
+	* global.cc (operator<<): print label of strategy definitions when
+	PRINT_LABEL_ATTRIBUTE is on
+	(operator<<): print space after strategy declaration attribute block
+
+	* interact.cc (UserLevelRewritingContext::printStatusReport): consider
+	strategy definition case
+
+	* makeGrammar.cc (MixfixModule::makeStrategyLanguageProductions): add
+	production for strategy definition with label after the keyword
+
+	* renaming.cc (Renaming::cannonicalizeStrategyMappings): use empty
+	subjectType to mean generic mapping, copy name and subject type
+	(Renaming::renameStrat): use empty subjectType to mean generic mapping
+	(Renaming::addStratMappingPartialCopy): use nullptr instead of 0
+	(Renaming::addStratTarget): save subject type in a new attribute 
+	(Renaming::addStratTarget): use nullptr instead of 0
+	(Renaming::printRenaming): print subject type
+
+	* renaming.hh (struct Renaming::StratMapping): add attribute for the
+	subject type
+
+	* strategyPrint.cc (MixfixModule::prettyPrint): adjust precedences
+	with respect to the grammar
+
+	* synacticView.cc (SyntacticView::handleTermAndExprMappings): use
+	dynamic cast instead of static cast
+	(SyntacticView::showView,SyntacticView::showProcessedView): put final
+	dot if there are strategy mappings
+
 2026-11-23  Saruman the White  <eker@eker10>
 
 	* mixfixModule.cc (MixfixModule::instantiatePolymorph): fix

@@ -1,0 +1,47 @@
+sd [didle] : st := idle .
+sd [dfail] : st := fail .
+csd [cidle] : st := idle if true = true .
+csd [cfail] : st := fail if false = true .
+smod SD-LABEL is
+  including BOOL .
+  strat st @ Bool .
+  sd [didle] : st := idle .
+  sd [dfail] : st := fail .
+  csd [cidle] : st := idle if true = true .
+  csd [cfail] : st := fail if false = true .
+endsm
+sd st := idle [label didle] .
+sd st := fail [label dfail] .
+csd st := idle if true = true [label cidle] .
+csd st := fail if false = true [label cfail] .
+smod SD-LABEL is
+  including BOOL .
+  strat st @ Bool .
+  sd st := idle [label didle] .
+  sd st := fail [label dfail] .
+  csd st := idle if true = true [label cidle] .
+  csd st := fail if false = true [label cfail] .
+endsm
+view SMod from STRIV to SMOD is
+  strat st to fooSt .
+endv
+view SMod from STRIV to SMOD is
+  strat st to fooSt .
+endv
+Warning: <standard input>, line 46 (view SNat): left-hand side idle of
+    strat-to-expr mapping is not a strategy call.
+strat st1 : Nat @ Bool .
+strat s1 : Float @ Bool .
+strat st2 @ Bool .
+strat st3 : Float @ Float .
+strat st3 @ Nat .
+smod B is
+  protecting A * (strat s1 : [Nat] @ [Bool] to st1, strat s1 @ [Bool] to st2,
+    strat s2 to st3) .
+endsm
+smod B is
+  including BOOL .
+  protecting A * (strat s1 : [Zero,NzNat,Nat] @ [Bool] to st1, strat s1 @ [
+    Bool] to st2, strat s2 to st3) .
+endsm
+Bye.
