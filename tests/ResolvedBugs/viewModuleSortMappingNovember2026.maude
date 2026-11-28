@@ -1,0 +1,54 @@
+*** Claude discovered bug: view-module-sort-mapping
+
+set show advisories off .
+
+*** The mapping of Bool, a sort declared in a module, is reported as not applied, and
+*** then the view fails looking for true in the kind of B, as if it had been applied.
+*** Expected: either the mapping ignored everywhere (and the view usable, since N has
+*** true : -> Bool), or the mapping refused with a warning.
+
+fth T is
+  protecting BOOL .
+  sort E .
+endfth
+
+fmod N is
+  sort B .
+endfm
+
+view V from T to N is
+  sort E to B .
+  sort Bool to B .
+endv
+
+show view V .
+
+*** We now check that refusing the mapping still allows the view to
+*** re-evaluated if the from-theory changes.
+
+fmod FOO is
+  sort Foo .
+endfm
+
+fth T is
+  protecting FOO .
+  sort E .
+endfth
+
+fmod N is
+  sort B .
+endfm
+
+view V from T to N is
+  sort E to B .
+  sort Foo to B .
+endv
+
+show view V .
+
+fth T is
+  sort Foo .
+  sort E .
+endfth
+
+show view V .

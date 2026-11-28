@@ -391,9 +391,9 @@ SyntacticView::showProcessedView(ostream& s)
   //	We need to swap in our own aliases, even if they're empty
   //	if only to get rid of the modules' own aliases.
   //
-  MixfixParser* savedFromTheoryParser = 0;
+  MixfixParser* savedFromTheoryParser = nullptr;
   fromTheory->swapVariableAliasMap(fromTheoryVariableAliases, savedFromTheoryParser);
-  MixfixParser* savedToModuleParser = 0;
+  MixfixParser* savedToModuleParser = nullptr;
   toModule->swapVariableAliasMap(toModuleVariableAliases, savedToModuleParser);
 
   for (const auto& i : getOpTermMap())
@@ -407,7 +407,7 @@ SyntacticView::showProcessedView(ostream& s)
   //	Restore original variable aliases. Check that we didn't generate parsers.
   //
   fromTheory->swapVariableAliasMap(fromTheoryVariableAliases, savedFromTheoryParser);
-  Assert(savedFromTheoryParser == 0, "unexpected new from-theory parser");
+  Assert(savedFromTheoryParser == nullptr, "unexpected new from-theory parser");
   toModule->swapVariableAliasMap(toModuleVariableAliases, savedToModuleParser);
-  Assert(savedToModuleParser == 0, "unexpected new to module-parser");
+  Assert(savedToModuleParser == nullptr, "unexpected new to-module parser");
 }

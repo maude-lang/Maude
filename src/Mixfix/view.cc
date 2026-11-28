@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 1997-2025 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 1997-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -383,9 +383,25 @@ View::regretToInform(Entity* doomedEntity)
 ConnectedComponent*
 View::mapComponent(const ConnectedComponent* component) const
 {
-  Sort* sort = toModule->findSort(renameSort(component->sort(Sort::FIRST_USER_SORT)->id()));
-  Assert(sort != 0, "translation for sort failed");
-  return sort->component();
+  //
+  //	We map components by mapping their first user sort. We already
+  //	checked that sorts from the same component in our fromTheory map
+  //	to sorts in the same component in our toModule.
+  //
+  return mapSort(component->sort(Sort::FIRST_USER_SORT))->component();
+}
+
+Sort*
+View::mapSort(const Sort* sort) const
+{
+  if (sort->index() == Sort::KIND)
+    return mapComponent(sort->component())->sort(Sort::KIND);
+  int sortId = sort->id();
+  if (!(fromTheory->moduleDeclared(sort)))
+    sortId = renameSort(sortId);
+  Sort* transSort = toModule->findSort(sortId);
+  Assert(transSort != nullptr, "translation for sort failed");
+  return transSort;
 }
 
 bool
@@ -418,15 +434,22 @@ View::checkSorts()
 	  int jTrans = renameSort(jSort->id());
 	  if (fromTheory->moduleDeclared(jSort) && jTrans != jId)
 	    {
-	      IssueAdvisory(*this << ": sort mapping not applied to sort " << QUOTE(jSort) <<
-			    " as it was declared in a module rather than in a theory.");
-	      jTrans = jId;
+	      //
+	      //	We used to try an ignore such a mapping, but doing it consistently
+	      //	without removing the mapping from the underlying renaming is
+	      //	tricky, and removing the mapping breaks re-evaluation.
+	      //
+	      IssueWarning(*this << ": mapping of sort " << QUOTE(jSort) <<
+			   " that was declared in a module is not allowed.");
+	      return false;
 	    }
 	  Sort* jTransSort = toModule->findSort(jTrans);
-	  if (jTransSort == 0)
+	  if (jTransSort == nullptr)
 	    {
-	      IssueWarning(*this << ": failed to find sort " << QUOTE(Token::sortName(jTrans)) <<
-			   " in " << QUOTE(toModule) << " to represent sort " << QUOTE(jSort) <<
+	      IssueWarning(*this << ": failed to find sort " <<
+			   QUOTE(Token::sortName(jTrans)) <<
+			   " in " << QUOTE(toModule) << " to represent sort " <<
+			   QUOTE(jSort) <<
 			   " from " << QUOTE(fromTheory) << '.');
 	      return false;
 	    }
@@ -441,7 +464,8 @@ View::checkSorts()
 	      //
 	      IssueWarning(*this << ": implicit mapping of sort " << QUOTE(jSort) <<
 			   " that was declared in a module to sort " << QUOTE(jTransSort) <<
-			   (toModule->isTheory() ? " from the target theory" : " derived from a parameter theory") <<
+			   (toModule->isTheory() ?
+			    " from the target theory" : " derived from a parameter theory") <<
 			   " is not allowed.");
 	      return false;
 	    }
@@ -453,15 +477,14 @@ View::checkSorts()
 	  for (int k = 1; k < j; ++k)
 	    {
 	      Sort* kSort = kind->sort(k);
-	      int kId = kSort->id();
-	      if (!(fromTheory->moduleDeclared(kSort)))
-		kId = renameSort(kId);
-	      Sort* kTransSort = toModule->findSort(kId);
+	      Sort* kTransSort = mapSort(kSort);
 	      if (kTransSort->component() != transKind)
 		{
-		  IssueWarning(*this << ": sorts " << QUOTE(jSort) << " and " << QUOTE(kSort) << " from " <<
+		  IssueWarning(*this << ": sorts " << QUOTE(jSort) << " and " <<
+			       QUOTE(kSort) << " from " <<
 			       QUOTE(fromTheory) << " are in the same kind but " <<
-			       QUOTE(jTransSort) << " and " << QUOTE(kTransSort) << " from " <<
+			       QUOTE(jTransSort) << " and " << QUOTE(kTransSort) <<
+			       " from " <<
 			       QUOTE(toModule) << " are in different kinds.");
 		  return false;
 		}
@@ -471,7 +494,8 @@ View::checkSorts()
 		  //	<= is not preserved but this case doesn't lead to serious
 		  //	inconsistancies later on so we keep going.
 		  //
-		  IssueWarning(*this << ": " << QUOTE(jSort) << " is a subsort of " << QUOTE(kSort) <<
+		  IssueWarning(*this << ": " << QUOTE(jSort) << " is a subsort of " <<
+			       QUOTE(kSort) <<
 			       " in " << QUOTE(fromTheory) << " but " << QUOTE(jTransSort) <<
 			       " is not a subsort of " << QUOTE(kTransSort) << " in " <<
 			       QUOTE(toModule) << '.');
@@ -487,9 +511,10 @@ View::checkSorts()
     {
       int fromSortName = getSortFrom(i);
       Sort* fromSort = fromTheory->findSort(fromSortName);
-      if (fromSort == 0)
+      if (fromSort == nullptr)
 	{
-	  IssueAdvisory(*this << ": sort mapping for " << QUOTE(Token::sortName(fromSortName)) <<
+	  IssueAdvisory(*this << ": sort mapping for " <<
+			QUOTE(Token::sortName(fromSortName)) <<
 			" redundant because there is no such sort in the from-theory.");
 	}
     }
@@ -724,7 +749,7 @@ View::checkPolymorphicOps()
       for (int j = 0; j < nrSorts; ++j)
 	{
 	  Sort* s = domainAndRange[j];
-	  newDomainAndRange[j] = (s == 0) ? 0 : toModule->findSort(renameSort(s->id()));
+	  newDomainAndRange[j] = (s == nullptr) ? nullptr : mapSort(s);
 	}
       //
       //	Check to see that a suitable polymorphic operator exists in toModule.
@@ -732,9 +757,11 @@ View::checkPolymorphicOps()
       int toPolymorphIndex = toModule->findPolymorphIndex(id, newDomainAndRange);
       if (toPolymorphIndex == NONE)
 	{
-	  IssueWarning(*this << ": failed to find suitable polymorphic operator " << QUOTE(Token::name(id)) <<
+	  IssueWarning(*this << ": failed to find suitable polymorphic operator " <<
+		       QUOTE(Token::name(id)) <<
 		       " in " << QUOTE(toModule) << " to represent polymorphic operator " <<
-		       QUOTE(fromTheory->getPolymorphName(i)) << " from " << QUOTE(fromTheory) << '.');
+		       QUOTE(fromTheory->getPolymorphName(i)) << " from " <<
+		       QUOTE(fromTheory) << '.');
 	  return false;
 	}
       //
@@ -743,14 +770,17 @@ View::checkPolymorphicOps()
       if (msgMapping)
 	{
 	  SymbolType st = fromTheory->getPolymorphType(i);
-	  AdvisoryCheck(st.hasFlag(SymbolType::MESSAGE), *this << ": theory polymorphic symbol " <<
+	  AdvisoryCheck(st.hasFlag(SymbolType::MESSAGE), *this <<
+			": theory polymorphic symbol " <<
 			QUOTE(fromTheory->getPolymorphName(i)) <<
 			" is mapped by a msg mapping but does not have the msg attribute.");
 
 	  SymbolType tt = toModule->getPolymorphType(toPolymorphIndex);
-	  AdvisoryCheck(tt.hasFlag(SymbolType::MESSAGE), *this << ": theory polymorphic symbol " <<
+	  AdvisoryCheck(tt.hasFlag(SymbolType::MESSAGE), *this <<
+			": theory polymorphic symbol " <<
 			QUOTE(fromTheory->getPolymorphName(i)) <<
-			" is mapped to " << QUOTE(toModule->getPolymorphName(toPolymorphIndex)) <<
+			" is mapped to " <<
+			QUOTE(toModule->getPolymorphName(toPolymorphIndex)) <<
 			" by a msg mapping, but the latter polymorphic symbol does not have the msg attribute.");
 	}
     }
@@ -977,16 +1007,6 @@ View::evaluate()
     }
 
   return true;
-}
-
-Sort*
-View::mapSort(const Sort* sort) const
-{
-  if (sort->index() == Sort::KIND)
-    return mapComponent(sort->component())->sort(Sort::KIND);
-  Sort* transSort = toModule->findSort(renameSort(sort->id()));
-  Assert(transSort != 0, "translation for sort failed");
-  return transSort;
 }
 
 bool

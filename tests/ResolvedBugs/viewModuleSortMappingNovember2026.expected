@@ -1,0 +1,11 @@
+Warning: <standard input>, line 19 (view V): mapping of sort Bool that was
+    declared in a module is not allowed.
+Warning: view V cannot be used due to earlier errors.
+Warning: <standard input>, line 42 (view V): mapping of sort Foo that was
+    declared in a module is not allowed.
+Warning: view V cannot be used due to earlier errors.
+view V from T to N is
+  sort E to B .
+  sort Foo to B .
+endv
+Bye.

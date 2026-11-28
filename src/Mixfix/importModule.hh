@@ -126,9 +126,9 @@ public:
 				  const Vector<Argument*>& arguments,
 				  ModuleCache* moduleCache);
   static ImportModule* makeSummation(int moduleName, const Vector<ImportModule*>& modules, ModuleCache* moduleCache);
-  bool moduleDeclared(Sort* sort) const;
-  bool moduleDeclared(Symbol* symbol) const;
-  bool moduleDeclared(RewriteStrategy* strat) const;
+  bool moduleDeclared(const Sort* sort) const;
+  bool moduleDeclared(const Symbol* symbol) const;
+  bool moduleDeclared(const RewriteStrategy* strat) const;
   bool moduleDeclaredPolymorph(int index) const;
   bool parameterDeclared(Sort* sort) const;
   bool parameterDeclared(Symbol* symbol) const;
@@ -602,7 +602,7 @@ ImportModule::getLabels() const
 }
 
 inline bool
-ImportModule::moduleDeclared(Sort* sort) const
+ImportModule::moduleDeclared(const Sort* sort) const
 {
   Assert(sort->getModule() == this, "wrong module");
   //
@@ -614,14 +614,14 @@ ImportModule::moduleDeclared(Sort* sort) const
 }
 
 inline bool
-ImportModule::moduleDeclared(Symbol* symbol) const
+ImportModule::moduleDeclared(const Symbol* symbol) const
 {
   Assert(symbol->getModule() == this, "wrong module");
   return opDeclaredInModule.contains(symbol->getIndexWithinModule());
 }
 
 inline bool
-ImportModule::moduleDeclared(RewriteStrategy* strat) const
+ImportModule::moduleDeclared(const RewriteStrategy* strat) const
 {
   Assert(strat->getModule() == this, "wrong module");
   return stratDeclaredInModule.contains(strat->getIndexWithinModule());
