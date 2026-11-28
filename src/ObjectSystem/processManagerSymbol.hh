@@ -98,9 +98,7 @@ private:
   bool signalProcess(FreeDagNode* message, ObjectSystemRewritingContext& context);
 
   int checkStringList(DagNode* stringList);
-  char* const* makeStringArray(DagNode*  zeroArgument,
-			       DagNode* remainingArguments,
-			       int nrRemainingArguments);
+  char** makeStringArray(DagNode* remainingArguments, int nrRemainingArguments);
   bool getChildProcess(DagNode* processArg, int& processId, ChildProcess*& cpp);
   bool makeNonblockingSocketPair(int pair[2],
 				 FreeDagNode* message,

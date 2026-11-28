@@ -262,19 +262,28 @@ ProcessManagerSymbol::createProcess(FreeDagNode* message,
       //	We never free the strings we allocate via makeZeroTerminatedString()
       //	because we will either execvp() or exit().
       //
-      const Rope& rope = safeCast(StringDagNode*, executableArg)->getValue();
-      const char* file = rope.makeZeroTerminatedString();
-      char* const* argv = makeStringArray(executableArg, argumentsArg, nrArgs);
-      //
-      //	Replace Maude binary with file; on success failureReturnPipe[WRITE_END]
-      //	will be closed, enabling the parent to see our success.
-      //
-      (void) execvp(file, argv);
-      //
-      //	We can only reach here if the execvp() call failed.
-      //	We pass an error message back though failureReturnPipe.
-      //
-      const char* errText = strerror(errno);
+      const char* errText = "bad file name";
+      const Rope& rope = safeCastNonNull<StringDagNode*>(executableArg)->getValue();
+      char* fileName = rope.makeZeroTerminatedString();
+      if (fileName != nullptr)
+	{
+	  errText = "bad argument";
+	  char** argv = makeStringArray(argumentsArg, nrArgs);
+	  if (argv != nullptr)
+	    {
+	      argv[0] = fileName;
+	      //
+	      //	Replace Maude binary with file; on success failureReturnPipe[WRITE_END]
+	      //	will be closed, enabling the parent to see our success.
+	      //
+	      (void) execvp(fileName, argv);
+	      //
+	      //	We can only reach here if the execvp() call failed.
+	      //	We pass an error message back though failureReturnPipe.
+	      //
+	      errText = strerror(errno);
+	    }
+	}
       size_t length = strlen(errText);
       while (length > 0)
 	{
@@ -384,14 +393,13 @@ ProcessManagerSymbol::checkStringList(DagNode* stringList)
   return -1;
 }
 
-char* const*
-ProcessManagerSymbol::makeStringArray(DagNode* zeroArgument,
-				      DagNode* remainingArguments,
-				      int nrRemainingArguments)
+char**
+ProcessManagerSymbol::makeStringArray(DagNode* remainingArguments, int nrRemainingArguments)
 {
+  //
+  //	We never free this array because we're going to exit() or execvp() soon.
+  //
   char** array = new char*[1 + nrRemainingArguments + 1];
-  const Rope& rope = safeCast(StringDagNode*, zeroArgument)->getValue();
-  array[0] = rope.makeZeroTerminatedString();
 
   int index = 1;
   Symbol* s = remainingArguments->symbol();
@@ -402,8 +410,11 @@ ProcessManagerSymbol::makeStringArray(DagNode* zeroArgument,
       //
       for (DagArgumentIterator i(remainingArguments); i.valid(); i.next(), ++index)
 	{
-	  const Rope& rope = safeCast(StringDagNode*, i.argument())->getValue();
-	  array[index] = rope.makeZeroTerminatedString();
+	  const Rope& rope = safeCastNonNull<StringDagNode*>(i.argument())->getValue();
+	  if (char* argString = rope.makeZeroTerminatedString())
+	    array[index] = argString;
+	  else
+	    return nullptr;
 	}
     }
   else if (s == stringSymbol)
@@ -411,12 +422,16 @@ ProcessManagerSymbol::makeStringArray(DagNode* zeroArgument,
       //
       //	Singleton case.
       //
-      const Rope& rope = safeCast(StringDagNode*, remainingArguments)->getValue();
-      array[index] = rope.makeZeroTerminatedString();
+      const Rope& rope = safeCastNonNull<StringDagNode*>(remainingArguments)->getValue();
+      if (char* argString = rope.makeZeroTerminatedString())
+	array[index] = argString;
+      else
+	return nullptr;
       ++index;
     }
-
-  array[index] = 0;
+  else if (s != nilStringListSymbol)
+    return nullptr;
+  array[index] = nullptr;
   return array;
 }
 
@@ -529,29 +544,35 @@ ProcessManagerSymbol::signalProcess(FreeDagNode* message, ObjectSystemRewritingC
   if (signalName->symbol() == stringSymbol)
     {
       const Rope& rope = safeCast(StringDagNode*, signalName)->getValue();
-      char* signalString = rope.makeZeroTerminatedString();
-      int signalNumber = getSignalNumber(signalString);
-      delete [] signalString;
-      if (signalNumber != NONE)
+      if (char* signalString = rope.makeZeroTerminatedString())
 	{
-	  DagNode* processName = message->getArgument(0);
-	  int processId;
-	  ChildProcess* cpp;
-	  if (getChildProcess(processName, processId, cpp))
+	  int signalNumber = getSignalNumber(signalString);
+	  delete [] signalString;
+	  if (signalNumber != NONE)
 	    {
-	      kill(processId, signalNumber);
-	      //
-	      //	Make signaledProcess() message.
-	      //
-	      DagNode* target = message->getArgument(1);
-	      Vector<DagNode*> reply(2);
-	      reply[0] = target;
-	      reply[1] = processName;
-	      context.bufferMessage(target, signaledProcessMsg->makeDagNode(reply));
-	      return true;
+	      DagNode* processName = message->getArgument(0);
+	      int processId;
+	      ChildProcess* cpp;
+	      if (getChildProcess(processName, processId, cpp))
+		{
+		  kill(processId, signalNumber);
+		  //
+		  //	Make signaledProcess() message.
+		  //
+		  DagNode* target = message->getArgument(1);
+		  Vector<DagNode*> reply(2);
+		  reply[0] = target;
+		  reply[1] = processName;
+		  context.bufferMessage(target, signaledProcessMsg->makeDagNode(reply));
+		  return true;
+		}
+	      IssueAdvisory("no process to receive message " << QUOTE(message) << '.');
 	    }
-	  IssueAdvisory("no process to receive message " << QUOTE(message) << '.');
+	  else
+	    IssueAdvisory("unrecognized signal name " << QUOTE(message) << '.');
 	}
+      else
+	IssueAdvisory("bad signal name " << QUOTE(message) << '.');
     }
   else
     IssueAdvisory("malformed message " << QUOTE(message) << '.');

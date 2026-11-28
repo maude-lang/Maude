@@ -1,3 +1,11 @@
+2026-11-27  Saruman the White  <eker@eker10>
+
+	* rope.hh (class Rope): added comment for new
+	makeZeroTerminatedString() semantics
+
+	* rope.cc (Rope::makeZeroTerminatedString): refuse to convert
+	ropes that contain a null character
+
 2026-10-18  Saruman the White  <eker@eker10>
 
 	* pointerMap.cc (PointerMap::hash): replaced with Google AI Search

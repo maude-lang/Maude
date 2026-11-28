@@ -1,3 +1,18 @@
+2026-11-27  Saruman the White  <eker@eker10>
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): handle
+	nullptr returned from makeStringArray()
+	(ProcessManagerSymbol::signalProcess): handle nullptr returned
+	from makeZeroTerminatedString()
+
+	* processManagerSymbol.hh (class ProcessManagerSymbol): updated
+	decl for makeStringArray()
+
+	* processActions.cc (ProcessManagerSymbol::createProcess): handle
+	nullptr return from makeZeroTerminatedString()
+	(ProcessManagerSymbol::makeStringArray): handle nullptr return
+	from makeZeroTerminatedString()
+
 2026-11-06  Saruman the White  <eker@eker10>
 
 	* pseudoThread-ppoll.cc (PseudoThread::processFds): added

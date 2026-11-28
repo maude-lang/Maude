@@ -2,7 +2,7 @@
 
     This file is part of the Maude 3 interpreter.
 
-    Copyright 2020-2024 SRI International, Menlo Park, CA 94025, USA.
+    Copyright 2020-2026 SRI International, Menlo Park, CA 94025, USA.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -83,7 +83,12 @@ public:
 
   const_iterator begin() const;
   const_iterator end() const;
-  char* makeZeroTerminatedString() const;  // caller is responsible for deallocation
+  //
+  //	Make a zero terminated string allocated with new[].
+  //	Caller is responsible for deallocation.
+  //	If the rope contains a NUL, nullptr is returned for safety.
+  //
+  char* makeZeroTerminatedString() const;
 
   friend ostream& operator<<(ostream& s, const Rope& r);
 
